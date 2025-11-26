@@ -1,0 +1,11 @@
+[project]
+name = "stegcore"
+version = "0.1.0"
+description = "StegCore – the StegVerse state engine and truth layer"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
