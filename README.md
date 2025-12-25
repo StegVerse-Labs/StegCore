@@ -1,27 +1,55 @@
 # StegCore
 
-StegCore is the **state engine and truth layer** for the StegVerse ecosystem.
+StegCore decides what actions are permitted, given verified continuity.
 
-Its responsibilities:
+StegCore consumes verified continuity output (e.g., from StegID) and answers:
 
-- Track the current state of StegVerse services, AI entities, and devices.
-- Provide an append-only event log (`StateEvent`) for changes.
-- Offer a simple registry API so other services can announce their status.
-- Act as a *logical* source of truth (not a database) that can be persisted by
-  any storage backend (files, Redis, Postgres, etc.) later.
+- Can this actor do this now?
+- Under what constraints?
+- With whose consent?
 
-> ⚠️ StegCore is **not** a medical or diagnostic system. It is an infrastructure
-> component used for orchestration, security, and observability.
+StegCore may also maintain **internal state/audit signals** about StegVerse nodes
+(services, agents, devices) to support orchestration and observability — but it is
+**not** the continuity truth system.
+
+## What StegCore does NOT do
+
+StegCore does **not**:
+- verify receipts
+- mint receipts
+- store identity
+
+Continuity receipts and verification belong to StegID.
+
+> ⚠️ StegCore is **not** a medical or diagnostic system. It is infrastructure used
+> for orchestration, security, and observability.
+
+## v0.1 Scope (tight)
+
+v0.1 is **documentation-first**. The authoritative spec lives in `/docs`:
+
+- `docs/DECISION_MODEL.md`
+- `docs/POLICY_SHAPES.md`
+- `docs/WHY_STEGCORE_EXISTS.md`
+
+Code in `src/stegcore/` is scaffolding and substrate for future runtimes. It must
+eventually conform to the docs (docs win if there is disagreement).
 
 ## Concepts
 
-- **Node** – a service, AI entity, device, or process that participates in StegVerse.
-- **State** – a structured snapshot of a node's status (health, version, metadata).
-- **StateEvent** – an append-only record describing a change to some node's state.
-- **StateEngine** – in-memory state graph + event log.
-- **Registry** – helper API for services to register/unregister and publish heartbeats.
+- **VerifiedReceipt** – verified continuity evidence provided by StegID (input)
+- **Actor class** – human / ai / system (context, not identity)
+- **Action intent** – structured request describing what is being attempted
+- **Decision** – allow / deny / defer + machine-readable reason code
+- **Policy shapes** – quorum / guardian / veto / time-lock / escalation (structure only in v0)
 
-## Quickstart (conceptual)
+### Supporting substrate (non-authoritative in v0)
+- **Node** – a service, AI entity, device, or process in StegVerse
+- **NodeState** – a snapshot of a node’s status (health, version, metadata)
+- **StateEvent** – append-only record describing a node state change
+- **StateEngine** – in-memory state graph + event log (scaffolding)
+
+## Quickstart (scaffold: node state signals)
 
 ```python
 from stegcore import StateEngine, NodeState
@@ -40,37 +68,3 @@ engine.apply_event(
 
 snapshot = engine.get_node_state("CosDenOS")
 print(snapshot)
-
-Roadmap
-	•	Add persistence (file / DB backends)
-	•	Add signing / verification of events
-	•	Integrate with StegVerse audit and security systems
-	•	Expose an HTTP API (FastAPI) for external services to interact with
-
----
-
-## 4️⃣ `src/stegcore/__init__.py`
-
-```python
-from __future__ import annotations
-
-"""
-StegCore – central state engine and registry for StegVerse.
-
-This package provides:
-
-- dataclasses / models describing node states and events
-- the StateEngine for in-memory state graph + event log
-- a Registry helper for service registration and heartbeats
-"""
-
-from .models import NodeState, StateEvent
-from .state_engine import StateEngine
-from .registry import Registry
-
-__all__ = [
-    "NodeState",
-    "StateEvent",
-    "StateEngine",
-    "Registry",
-]
