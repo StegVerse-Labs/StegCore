@@ -51,6 +51,8 @@ eventually conform to the docs (docs win if there is disagreement).
 
 ## Quickstart (scaffold: node state signals)
 
+This example demonstrates internal state/audit signals only, not permission decisions.
+
 ```python
 from stegcore import StateEngine, NodeState
 
