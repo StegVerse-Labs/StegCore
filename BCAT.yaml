@@ -1,41 +1,45 @@
 bcat_version: 1.0
 
 module:
-  name: "<REPO_OR_MODULE_NAME>"
-  type: agent  # agent|service|workflow|automation|infrastructure
-  owner: "<HUMAN_OWNER_OR_TEAM>"
+  name: StegCore
+  type: service
+  owner: StegVerse-Labs / StegCore Maintainers
 
 authority:
-  source: "StegCore BCAT Gate"
-  scope: "Describe what this module is allowed to do"
+  source: StegCore doctrine + resolver
+  scope: Authority decisions for StegVerse actions
   renewal_required: true
 
 trust_continuity:
   assumptions:
-    - "List assumptions that must stay true"
+    - StegCore doctrine remains canonical and versioned
+    - Authority checks are invoked before execution paths
+    - Custody/accountability is recorded for actions
   continuity_signals:
-    - "List signals that indicate continuity remains intact"
+    - Governance validation passes on PR/push
+    - BCAT gate passes with explicit declaration present
+    - No undocumented bypass paths introduced
   break_conditions:
-    - "List conditions that represent a continuity break"
+    - Authority bypass introduced without StegCore reference
+    - Non-action treated as failure in core paths
+    - Uninspectable boundary conditions added
 
 boundary_conditions:
   operational:
-    - "Operational boundary conditions"
+    - Authority evaluation required prior to mutation
+    - Explainable deny/refuse path required
   temporal:
-    - "Time-related boundary conditions"
+    - Changes must be reviewable via Git history
   contextual:
-    - "Context-related boundary conditions"
+    - Any autonomy escalation requires explicit boundary update
 
 degradation_behavior:
-  modes:
-    - constrain
-    - suspend
-    - refuse
+  modes: [constrain, suspend, refuse]
   explanation_required: true
 
 human_accountability:
-  custodian: "<NAME_OR_ROLE>"
-  escalation_path: "How to reach a human decision-maker"
+  custodian: StegCore maintainers
+  escalation_path: GitHub issues + discussions in StegCore repo
 
 non_action_policy:
   refusal_is_success: true
