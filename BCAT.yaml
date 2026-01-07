@@ -1,0 +1,42 @@
+bcat_version: 1.0
+
+module:
+  name: "<REPO_OR_MODULE_NAME>"
+  type: agent  # agent|service|workflow|automation|infrastructure
+  owner: "<HUMAN_OWNER_OR_TEAM>"
+
+authority:
+  source: "StegCore BCAT Gate"
+  scope: "Describe what this module is allowed to do"
+  renewal_required: true
+
+trust_continuity:
+  assumptions:
+    - "List assumptions that must stay true"
+  continuity_signals:
+    - "List signals that indicate continuity remains intact"
+  break_conditions:
+    - "List conditions that represent a continuity break"
+
+boundary_conditions:
+  operational:
+    - "Operational boundary conditions"
+  temporal:
+    - "Time-related boundary conditions"
+  contextual:
+    - "Context-related boundary conditions"
+
+degradation_behavior:
+  modes:
+    - constrain
+    - suspend
+    - refuse
+  explanation_required: true
+
+human_accountability:
+  custodian: "<NAME_OR_ROLE>"
+  escalation_path: "How to reach a human decision-maker"
+
+non_action_policy:
+  refusal_is_success: true
+  explanation_required: true
