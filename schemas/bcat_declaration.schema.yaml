@@ -1,0 +1,16 @@
+# BCAT Declaration Schema (v1.0) - human-readable + enforceable
+bcat_version: 1.0
+
+required_top_level:
+  - bcat_version
+  - module
+  - authority
+  - trust_continuity
+  - boundary_conditions
+  - degradation_behavior
+  - human_accountability
+  - non_action_policy
+
+enums:
+  module.type: [agent, service, workflow, automation, infrastructure, machinery]
+  degradation_behavior.modes: [constrain, suspend, refuse]
