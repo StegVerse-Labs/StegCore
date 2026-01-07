@@ -1,0 +1,42 @@
+bcat_version: 1.0
+
+module:
+  name: string
+  type: [agent, service, workflow, automation, infrastructure]
+  owner: string
+
+authority:
+  source: string
+  scope: string
+  renewal_required: boolean
+
+trust_continuity:
+  assumptions:
+    - string
+  continuity_signals:
+    - string
+  break_conditions:
+    - string
+
+boundary_conditions:
+  operational:
+    - string
+  temporal:
+    - string
+  contextual:
+    - string
+
+degradation_behavior:
+  modes:
+    - constrain
+    - suspend
+    - refuse
+  explanation_required: true
+
+human_accountability:
+  custodian: string
+  escalation_path: string
+
+non_action_policy:
+  refusal_is_success: true
+  explanation_required: true
