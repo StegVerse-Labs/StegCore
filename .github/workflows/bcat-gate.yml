@@ -2,6 +2,8 @@ name: BCAT Gate
 
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -10,13 +12,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
         run: pip install pyyaml
 
-      - name: Validate BCAT Declaration
+      - name: Validate BCAT declaration
         run: |
           if [ ! -f bcat.yaml ]; then
-            echo "BCAT declaration (bcat.yaml) missing"
+            echo "BCAT declaration (bcat.yaml) missing at repo root."
             exit 1
           fi
-          python StegCore/scripts/validate_bcat.py bcat.yaml
+          python scripts/validate_bcat.py bcat.yaml
+
+      - name: Compute BCAT status
+        id: status
+        run: |
+          STATUS=$(python scripts/bcat_status.py bcat.yaml)
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "BCAT_STATUS=$STATUS" >> $GITHUB_ENV
+
+      - name: Write job summary
+        run: |
+          echo "## BCAT Gate" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** $BCAT_STATUS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "BCAT requires: refusal-as-success, explainable degradation, and inspectable boundaries." >> $GITHUB_STEP_SUMMARY
