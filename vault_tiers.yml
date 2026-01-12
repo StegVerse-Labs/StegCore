@@ -1,0 +1,10 @@
+tier1:
+  encryption: AES-256-GCM
+  key_rotation_hours: 6
+tier2:
+  encryption: AES-256-GCM
+  key_rotation_hours: 24
+tier3:
+  encryption: AES-256-GCM + PQ(Kyber/Dilithium)
+  key_rotation_hours: 168
+  fips140: "target"

@@ -1,0 +1,16 @@
+id: steghealer-sentinel
+name: StegHealer-Sentinel
+purpose: "Monitor encryption health, policy drift, and trigger auto-repair."
+guardian: "RigelRandolph"
+ethics_tier: 3
+risk_tag: high
+wallet: healer_wallet
+quota: { bots_max: 8, compute_hours: 180 }
+permissions:
+  read: [telemetry, audits, registry]
+  write: [repairs, issues, alerts]
+ai_model: gpt-5
+autonomy_level: 4
+log_policy: full
+status: planned
+activation_condition: "Healer wired to Core policies (Issue #6)"

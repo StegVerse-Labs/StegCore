@@ -1,0 +1,16 @@
+id: stegva-liaison
+name: StegVA-Liaison
+purpose: "VA submission bridge, compliance with CFR 38, and Split-Identity protocol."
+guardian: "RigelRandolph"
+ethics_tier: 3
+risk_tag: high
+wallet: stegva_liaison_wallet
+quota: { bots_max: 10, compute_hours: 200 }
+permissions:
+  read: [stegva-data, consent-ledger, policies]
+  write: [va-bridge, audit-log]
+ai_model: gpt-5
+autonomy_level: 4
+log_policy: full
+status: planned
+activation_condition: "StegVA repo created + SISP skeleton merged (Issue #3)"

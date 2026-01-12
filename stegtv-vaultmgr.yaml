@@ -1,0 +1,16 @@
+id: stegtv-vaultmgr
+name: StegTV-VaultMgr
+purpose: "Key management, tiered encryption policies, and consent ledger operations."
+guardian: "RigelRandolph"
+ethics_tier: 3
+risk_tag: high
+wallet: vaultmgr_wallet
+quota: { bots_max: 4, compute_hours: 140 }
+permissions:
+  read: [vault, consent-ledger, policies]
+  write: [vault, audits]
+ai_model: gpt-5
+autonomy_level: 4
+log_policy: full
+status: planned
+activation_condition: "StegTV wiring complete (Issue #2)"

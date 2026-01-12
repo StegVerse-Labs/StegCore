@@ -1,0 +1,15 @@
+high:
+  description: "CFR/HIPAA-grade data (PII/PHI/claims, keys, consent)"
+  default_vault_tier: tier3
+  retention_years: 10
+  audit_depth: full
+moderate:
+  description: "User content + telemetry requiring privacy shielding"
+  default_vault_tier: tier2
+  retention_months: 12
+  audit_depth: events
+low:
+  description: "Operational metrics, ephemeral bot logs without identifiers"
+  default_vault_tier: tier1
+  retention_days: 7
+  audit_depth: minimal

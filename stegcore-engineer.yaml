@@ -1,0 +1,16 @@
+id: stegcore-engineer
+name: StegCore-Engineer
+purpose: "Maintain pipelines, enforce policies, manage CI/CD and CODEOWNERS."
+guardian: "RigelRandolph"
+ethics_tier: 3
+risk_tag: high
+wallet: core_engineer_wallet
+quota: { bots_max: 6, compute_hours: 160 }
+permissions:
+  read: [stegcore, policies, registry]
+  write: [workflows, audits]
+ai_model: gpt-5
+autonomy_level: 4
+log_policy: full
+status: planned
+activation_condition: "StegCore created + Issue #1 merged"

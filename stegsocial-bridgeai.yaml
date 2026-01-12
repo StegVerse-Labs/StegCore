@@ -1,0 +1,16 @@
+id: stegsocial-bridgeai
+name: StegSocial-BridgeAI
+purpose: "Privacy-preserving social API proxy and metadata sanitizer."
+guardian: "RigelRandolph"
+ethics_tier: 2
+risk_tag: moderate
+wallet: social_bridge_wallet
+quota: { bots_max: 12, compute_hours: 160 }
+permissions:
+  read: [social_proxy_configs, consent-ledger]
+  write: [proxy_calls, audit-log]
+ai_model: gpt-5
+autonomy_level: 4
+log_policy: event
+status: planned
+activation_condition: "StegSocial-Bridge repo created + spec merged (Issue #5)"

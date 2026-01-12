@@ -1,0 +1,22 @@
+entities:
+  - id: stegcore-engineer
+    wallet: core_engineer_wallet
+    opening_balance: 0
+  - id: stegtv-vaultmgr
+    wallet: vaultmgr_wallet
+    opening_balance: 0
+  - id: steghealer-sentinel
+    wallet: healer_wallet
+    opening_balance: 0
+  - id: stegva-liaison
+    wallet: stegva_liaison_wallet
+    opening_balance: 0
+  - id: stegsocial-bridgeai
+    wallet: social_bridge_wallet
+    opening_balance: 0
+  - id: stegverse-archivist
+    wallet: archivist_wallet
+    opening_balance: 0
+ethics_tax:
+  rate_percent: 1.0
+  sink_wallet: ethics_council_fund

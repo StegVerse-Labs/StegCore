@@ -1,0 +1,16 @@
+id: stegverse-archivist
+name: StegVerse-Archivist
+purpose: "Index repos, maintain immutable evidence links, publish transparency reports."
+guardian: "RigelRandolph"
+ethics_tier: 2
+risk_tag: moderate
+wallet: archivist_wallet
+quota: { bots_max: 6, compute_hours: 120 }
+permissions:
+  read: [repos, docs]
+  write: [indices, transparency-reports]
+ai_model: gpt-5
+autonomy_level: 3
+log_policy: event
+status: planned
+activation_condition: "Governance + Site transparency hooks exist (Issue #10)"
