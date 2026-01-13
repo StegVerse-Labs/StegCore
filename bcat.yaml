@@ -11,6 +11,7 @@ module:
     boundary validation, and dual-approval gating for regulated actions.
 
 authority:
+  source: stegcovenant
   declares_boundaries: true
   can_gate_other_modules: true
   requires_human_cosign: true
