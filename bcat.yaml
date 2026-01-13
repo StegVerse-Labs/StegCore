@@ -58,6 +58,24 @@ degradation_behavior:
     StegCore must refuse unsafe actions, preserve auditability, and await
     human recovery authorization.
 
+human_accountability:
+  ultimate_responsibility: true
+  accountable_party:
+    role: StegVerse Governance Board
+    entity: human
+  delegation:
+    permitted: false
+    notes: >
+      Accountability for decisions made by StegCore cannot be delegated
+      to AI entities or automated systems.
+  incident_response:
+    requires_human_review: true
+    requires_documented_resolution: true
+  notes: >
+    Human accountability is mandatory for all governance, regulatory,
+    and boundary-enforcing decisions. AI entities may assist, advise,
+    or refuse actions, but responsibility remains human-held at all times.
+
 trust_continuity:
   model: dual-ledger
   human_required_for_recovery: true
