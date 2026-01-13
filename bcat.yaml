@@ -9,8 +9,28 @@ module:
     Defines AI entity classes, class mobility, dual-approval enforcement,
     and boundary conditions for regulated authority.
 
+authority:
+  declares_boundaries: true
+  can_gate_other_modules: true
+  requires_human_cosign: true
+  requires_ai_cosign: true
+  notes: >
+    StegCore may define and enforce BCAT boundaries for downstream modules.
+    All consequential decisions require dual approval (human + AI entity).
+
 bcat:
   id: stegcore-governance
   level: governance-core
   domain: ai-governance
   regulated: true
+
+owners:
+  human:
+    - StegVerse-Governance
+  ai:
+    - StegCore-AI-Council
+  escalation:
+    path: human
+    description: >
+      In the event of conflict, ambiguity, or system risk, authority
+      escalates to designated human governance.
