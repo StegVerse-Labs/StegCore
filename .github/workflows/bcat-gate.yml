@@ -1,44 +1,25 @@
-name: BCAT Gate
+bcat_version: 1
 
-on:
-  pull_request:
-  push:
-    branches: [main]
-  workflow_dispatch:
+module:
+  name: StegCore
+  type: governance
+  criticality: high
+  description: >
+    Core governance and decision authority module for StegVerse.
+    Defines AI entity classes, class mobility, dual-approval enforcement,
+    and boundary conditions for regulated authority.
 
-jobs:
-  bcat-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+authority:
+  declares_boundaries: true
+  can_gate_other_modules: true
+  requires_human_cosign: true
+  requires_ai_cosign: true
+  notes: >
+    StegCore may define and enforce BCAT boundaries for downstream modules.
+    All consequential decisions require dual approval (human + AI entity).
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install deps
-        run: pip install pyyaml
-
-      - name: Validate BCAT declaration
-        run: |
-          if [ ! -f bcat.yaml ]; then
-            echo "BCAT declaration (bcat.yaml) missing at repo root."
-            exit 1
-          fi
-          python scripts/validate_bcat.py bcat.yaml
-
-      - name: Compute BCAT status
-        id: status
-        run: |
-          STATUS=$(python scripts/bcat_status.py bcat.yaml)
-          echo "status=$STATUS" >> $GITHUB_OUTPUT
-          echo "BCAT_STATUS=$STATUS" >> $GITHUB_ENV
-
-      - name: Write job summary
-        run: |
-          echo "## BCAT Gate" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** $BCAT_STATUS" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "BCAT requires: refusal-as-success, explainable degradation, and inspectable boundaries." >> $GITHUB_STEP_SUMMARY
+bcat:
+  id: stegcore-governance
+  level: governance-core
+  domain: ai-governance
+  regulated: true
