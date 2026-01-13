@@ -1,6 +1,7 @@
-version: 1
+bcat_version: 1
 
 bcat:
+  id: stegcore-governance
   level: governance-core
   domain: ai-governance
   regulated: true
