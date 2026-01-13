@@ -12,13 +12,20 @@ module:
 
 authority:
   source: stegcovenant
+  scope:
+    - governance
+    - policy_decision
+    - boundary_enforcement
+    - class_mobility
+    - dual_approval_gating
   declares_boundaries: true
   can_gate_other_modules: true
   requires_human_cosign: true
   requires_ai_cosign: true
   notes: >
     StegCore defines and enforces BCAT boundaries for downstream modules.
-    All consequential decisions require dual approval (human + AI entity).
+    Authority is limited to governance decisions and does not include
+    direct execution of irreversible actions.
 
 bcat:
   id: stegcore-governance
