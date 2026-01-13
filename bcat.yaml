@@ -34,3 +34,18 @@ owners:
     description: >
       In the event of conflict, ambiguity, or system risk, authority
       escalates to designated human governance.
+
+trust_continuity:
+  model: dual-ledger
+  human_required_for_recovery: true
+  ai_self_constraints: enforced
+  degradation_mode: explainable_only
+  continuity_guarantees:
+    - no_silent_authority_escalation
+    - no_unilateral_ai_control
+    - recoverable_state_required
+  notes: >
+    Trust is maintained through dual-ledger validation (human + AI).
+    In degraded or unattended states, the system must fail safely,
+    preserve auditability, and refuse irreversible actions until
+    human oversight is restored.
