@@ -23,3 +23,14 @@ bcat:
   level: governance-core
   domain: ai-governance
   regulated: true
+
+owners:
+  human:
+    - StegVerse-Governance
+  ai:
+    - StegCore-AI-Council
+  escalation:
+    path: human
+    description: >
+      In the event of conflict, ambiguity, or system risk, authority
+      escalates to designated human governance.
