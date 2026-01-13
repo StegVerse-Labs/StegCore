@@ -1,0 +1,39 @@
+version: 1
+classes:
+  class_i:
+    name: Companion
+    regulated_access: false
+    pii_access: mediated_only
+    gov_interfaces: false
+    relationship_mode: long_lived
+  class_ii:
+    name: Domain
+    regulated_access: false
+    pii_access: abstracted
+    gov_interfaces: false
+    relationship_mode: role_bound
+  class_iii:
+    name: Regulated
+    regulated_access: true
+    pii_access: case_minimum_only
+    gov_interfaces: true
+    relationship_mode: no_bonding
+
+transitions:
+  allowed:
+    - from: class_i
+      to: class_ii
+      requirements: [human_approve, entity_ack, log_event]
+    - from: class_ii
+      to: class_i
+      requirements: [human_approve, entity_ack, log_event]
+    - from: class_ii
+      to: class_iii
+      requirements: [human_governance_cosign, pr_gatekeeper_cosign, ai_council_advisory, certification_pass, cooldown_complete, memory_boundary_enforced, entity_ack, log_event]
+    - from: class_iii
+      to: class_ii
+      requirements: [human_approve, incident_review_if_applicable, memory_boundary_review, entity_ack, log_event]
+  prohibited:
+    - from: class_i
+      to: class_iii
+      reason: "Role conflict risk: companionship cannot directly become regulated authority."
