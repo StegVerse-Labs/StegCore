@@ -35,6 +35,29 @@ owners:
       In the event of conflict, ambiguity, or system risk, authority
       escalates to designated human governance.
 
+degradation_behavior:
+  trigger_conditions:
+    - loss_of_human_oversight
+    - audit_log_unavailable
+    - trust_continuity_violation
+    - boundary_condition_breach
+  response:
+    mode: refusal_as_success
+    explanation_required: true
+    actions:
+      - halt_irreversible_operations
+      - preserve_current_state
+      - emit_audit_event
+      - request_human_intervention
+  recovery:
+    requires_human_approval: true
+    restores_from_audited_state: true
+  notes: >
+    Degradation behavior defines how the system responds to loss of trust,
+    loss of oversight, or boundary violations. In all degraded states,
+    StegCore must refuse unsafe actions, preserve auditability, and await
+    human recovery authorization.
+
 trust_continuity:
   model: dual-ledger
   human_required_for_recovery: true
