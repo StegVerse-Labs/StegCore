@@ -2,21 +2,21 @@ bcat_version: 1
 
 module:
   name: StegCore
-  type: governance
+  type: service
   criticality: high
   owner: StegVerse-Governance
   description: >
-    Core governance and decision authority module for StegVerse.
-    Defines AI entity classes, class mobility, dual-approval enforcement,
-    and boundary conditions for regulated authority.
-    
+    Core governance and decision authority service for StegVerse.
+    Provides policy decisions, class mobility enforcement,
+    boundary validation, and dual-approval gating for regulated actions.
+
 authority:
   declares_boundaries: true
   can_gate_other_modules: true
   requires_human_cosign: true
   requires_ai_cosign: true
   notes: >
-    StegCore may define and enforce BCAT boundaries for downstream modules.
+    StegCore defines and enforces BCAT boundaries for downstream modules.
     All consequential decisions require dual approval (human + AI entity).
 
 bcat:
@@ -33,49 +33,41 @@ owners:
   escalation:
     path: human
     description: >
-      In the event of conflict, ambiguity, or system risk, authority
-      escalates to designated human governance.
+      In the event of conflict, ambiguity, or elevated risk,
+      authority escalates to designated human governance.
+
+trust_continuity:
+  required: true
+  verification_sources:
+    - human_identity
+    - ai_entity_registry
+    - cryptographic_attestation
+  behavior_on_failure: halt_and_escalate
+
+boundary_conditions:
+  enforced: true
+  mutable_only_via: dual_approval
+  audit_required: true
+  notes: >
+    Boundaries define permissible actions, authority scope,
+    and escalation thresholds. Boundary changes require
+    explicit human and AI co-signing.
 
 degradation_behavior:
-  trigger_conditions:
-    - loss_of_human_oversight
-    - audit_log_unavailable
-    - trust_continuity_violation
-    - boundary_condition_breach
-  response:
-    mode: refusal_as_success
-    explanation_required: true
-    actions:
-      - halt_irreversible_operations
-      - preserve_current_state
-      - emit_audit_event
-      - request_human_intervention
-  recovery:
-    requires_human_approval: true
-    restores_from_audited_state: true
-  notes: >
-    Degradation behavior defines how the system responds to loss of trust,
-    loss of oversight, or boundary violations. In all degraded states,
-    StegCore must refuse unsafe actions, preserve auditability, and await
-    human recovery authorization.
+  allowed: true
+  modes:
+    - refuse_action
+    - partial_response
+    - explain_and_escalate
+  explanation_required: true
 
 human_accountability:
-  ultimate_responsibility: true
-  accountable_party:
-    role: StegVerse Governance Board
-    entity: human
-  delegation:
-    permitted: false
-    notes: >
-      Accountability for decisions made by StegCore cannot be delegated
-      to AI entities or automated systems.
-  incident_response:
-    requires_human_review: true
-    requires_documented_resolution: true
-  notes: >
-    Human accountability is mandatory for all governance, regulatory,
-    and boundary-enforcing decisions. AI entities may assist, advise,
-    or refuse actions, but responsibility remains human-held at all times.
+  required: true
+  accountable_roles:
+    - StegVerse-Governance
+  logging:
+    enabled: true
+    immutable: true
 
 non_action_policy:
   default_posture: refuse
@@ -92,44 +84,6 @@ non_action_policy:
     explain_to_requestor: true
     escalate_if_repeated: true
   notes: >
-    Non-action is a valid and preferred outcome when conditions for safe,
-    authorized, and accountable execution are not fully met. Refusal to
-    act must be explainable, auditable, and preserved as a successful
-    governance decision.
-
-trust_continuity:
-  model: dual-ledger
-  human_required_for_recovery: true
-  ai_self_constraints: enforced
-  degradation_mode: explainable_only
-  continuity_guarantees:
-    - no_silent_authority_escalation
-    - no_unilateral_ai_control
-    - recoverable_state_required
-  notes: >
-    Trust is maintained through dual-ledger validation (human + AI).
-    In degraded or unattended states, the system must fail safely,
-    preserve auditability, and refuse irreversible actions until
-    human oversight is restored.
-
-boundary_conditions:
-  execution_limits:
-    - no_unilateral_execution
-    - no_irreversible_actions_without_human
-    - no_silent_state_mutation
-  data_limits:
-    - no_raw_pii_persistence
-    - no_cross_domain_data_leakage
-    - case_minimum_access_only
-  authority_limits:
-    - cannot_override_human_governance
-    - cannot_self_expand_scope
-    - cannot_modify_own_constraints
-  failure_behavior:
-    mode: refusal_as_success
-    requires_explanation: true
-    preserves_audit_state: true
-  notes: >
-    Boundary conditions define hard limits beyond which StegCore must
-    refuse action, degrade safely, or escalate to human governance.
-    Crossing boundaries without authorization is prohibited by design.
+    Non-action is a valid and preferred outcome when safety,
+    authority, or accountability conditions are not satisfied.
+    Refusal is treated as a successful governance decision.
