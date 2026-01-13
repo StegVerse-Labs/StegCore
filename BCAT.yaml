@@ -1,46 +1,39 @@
-bcat_version: 1.0
+bcat_version: 1
 
-module:
-  name: StegCore
-  type: service
-  owner: StegVerse-Labs / StegCore Maintainers
+bcat:
+  id: stegcore-governance
+  level: governance-core
+  domain: ai-governance
+  regulated: true
 
-authority:
-  source: StegCore doctrine + resolver
-  scope: Authority decisions for StegVerse actions
-  renewal_required: true
+scope:
+  description: >
+    StegCore defines governance, decision authority, AI entity classes,
+    class mobility, and dual-approval enforcement across StegVerse.
+  affects:
+    - ai_entities
+    - governance
+    - compliance
+    - class_mobility
 
-trust_continuity:
-  assumptions:
-    - StegCore doctrine remains canonical and versioned
-    - Authority checks are invoked before execution paths
-    - Custody/accountability is recorded for actions
-  continuity_signals:
-    - Governance validation passes on PR/push
-    - BCAT gate passes with explicit declaration present
-    - No undocumented bypass paths introduced
-  break_conditions:
-    - Authority bypass introduced without StegCore reference
-    - Non-action treated as failure in core paths
-    - Uninspectable boundary conditions added
+requirements:
+  human_cosign_required: true
+  ai_entity_ack_required: true
+  immutable_audit_log: true
 
-boundary_conditions:
-  operational:
-    - Authority evaluation required prior to mutation
-    - Explainable deny/refuse path required
-  temporal:
-    - Changes must be reviewable via Git history
-  contextual:
-    - Any autonomy escalation requires explicit boundary update
+constraints:
+  prohibits:
+    - unilateral_ai_execution
+    - unlogged_class_transition
+    - class_i_to_class_iii_direct
 
-degradation_behavior:
-  modes: [constrain, suspend, refuse]
-  explanation_required: true
+compliance:
+  aligned_with:
+    - CFR_38
+    - Privacy_Act_1974
+    - FISMA
+    - StegVerse_Ethics_Constitution
 
-human_accountability:
-  custodian: StegCore maintainers
-  escalation_path: GitHub issues + discussions in StegCore repo
-
-non_action_policy:
-  refusal_is_success: true
-  explanation_required: true
+owners:
+  human_guardian: StegVerse-Governance
+  ai_council: advisory
