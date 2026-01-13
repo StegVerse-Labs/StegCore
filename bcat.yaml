@@ -4,11 +4,12 @@ module:
   name: StegCore
   type: governance
   criticality: high
+  owner: StegVerse-Governance
   description: >
     Core governance and decision authority module for StegVerse.
     Defines AI entity classes, class mobility, dual-approval enforcement,
     and boundary conditions for regulated authority.
-
+    
 authority:
   declares_boundaries: true
   can_gate_other_modules: true
