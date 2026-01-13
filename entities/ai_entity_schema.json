@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StegVerse AI Entity Registry Entry",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "class",
+    "charter",
+    "guardian_key",
+    "wallet",
+    "acknowledgements",
+    "created_at"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string",
+      "pattern": "^ai:[a-z0-9\\-\\.]+$"
+    },
+    "class": {
+      "type": "string",
+      "enum": [
+        "class_i",
+        "class_ii",
+        "class_iii"
+      ]
+    },
+    "charter": {
+      "type": "string",
+      "description": "URI/path to the entity charter document"
+    },
+    "guardian_key": {
+      "type": "string",
+      "description": "StegCore/StegTV guardian public key identifier"
+    },
+    "wallet": {
+      "type": "string",
+      "description": "StegTV wallet/address for compensation"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "acknowledgements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "timestamp",
+          "entity_ack_sig"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "class_ack",
+              "charter_ack",
+              "prohibitions_ack"
+            ]
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "entity_ack_sig": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "class_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "reason",
+          "timestamp",
+          "approvals",
+          "safeguards"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "enum": [
+              "class_i",
+              "class_ii",
+              "class_iii"
+            ]
+          },
+          "to": {
+            "type": "string",
+            "enum": [
+              "class_i",
+              "class_ii",
+              "class_iii"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "approvals": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "safeguards": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    }
+  }
+}
