@@ -2,13 +2,8 @@ bcat_version: 1
 
 module:
   name: StegCore
-  type: service
-  criticality: high
   owner: StegVerse-Governance
-  description: >
-    Core governance and decision authority service for StegVerse.
-    Provides policy decisions, class mobility enforcement,
-    boundary validation, and dual-approval gating for regulated actions.
+  type: service
 
 authority:
   source: stegcovenant
@@ -18,80 +13,47 @@ authority:
     - boundary_enforcement
     - class_mobility
     - dual_approval_gating
-  declares_boundaries: true
-  can_gate_other_modules: true
-  requires_human_cosign: true
-  requires_ai_cosign: true
-  notes: >
-    StegCore defines and enforces BCAT boundaries for downstream modules.
-    Authority is limited to governance decisions and does not include
-    direct execution of irreversible actions.
-
-bcat:
-  id: stegcore-governance
-  level: governance-core
-  domain: ai-governance
-  regulated: true
-
-owners:
-  human:
-    - StegVerse-Governance
-  ai:
-    - StegCore-AI-Council
-  escalation:
-    path: human
-    description: >
-      In the event of conflict, ambiguity, or elevated risk,
-      authority escalates to designated human governance.
+  renewal_required: true
 
 trust_continuity:
-  required: true
-  verification_sources:
-    - human_identity
-    - ai_entity_registry
-    - cryptographic_attestation
-  behavior_on_failure: halt_and_escalate
+  assumptions:
+    - Human governance identities are verifiable.
+    - AI entities used for co-signing are registered and auditable.
+    - Repo state and CI results are the canonical reference for declared policy.
+  continuity_signals:
+    - Passing BCAT Gate on main
+    - Valid AI entity registry entries
+    - Audit log continuity preserved across releases
+  break_conditions:
+    - Human oversight unavailable beyond policy threshold
+    - Audit log unavailable or tampered
+    - Boundary definition missing or inconsistent
+    - Unregistered or impersonated co-signing entity detected
 
 boundary_conditions:
-  enforced: true
-  mutable_only_via: dual_approval
-  audit_required: true
-  notes: >
-    Boundaries define permissible actions, authority scope,
-    and escalation thresholds. Boundary changes require
-    explicit human and AI co-signing.
+  operational:
+    - No irreversible actions are authorized by StegCore alone.
+    - No unilateral execution; decisions must be dual-approved where required.
+    - No storage of raw PII as part of governance decisions.
+  temporal:
+    - Authority must be renewed on governance cadence; expired authority halts action.
+    - If trust signals are stale, system must refuse and escalate.
+    - Any policy change requires review before becoming effective.
+  contextual:
+    - If regulatory ambiguity exists, refuse and escalate to human custodian.
+    - If requested action exceeds declared scope, refuse and log.
+    - If downstream module BCAT is missing, gate it closed.
 
 degradation_behavior:
-  allowed: true
   modes:
-    - refuse_action
-    - partial_response
-    - explain_and_escalate
+    - constrain
+    - refuse
   explanation_required: true
 
 human_accountability:
-  required: true
-  accountable_roles:
-    - StegVerse-Governance
-  logging:
-    enabled: true
-    immutable: true
+  custodian: StegVerse-Governance
+  escalation_path: human
 
 non_action_policy:
-  default_posture: refuse
-  justification_required: true
-  permitted_when:
-    - boundary_conditions_uncertain
-    - human_approval_unavailable
-    - trust_continuity_unverified
-    - regulatory_ambiguity_detected
-    - irreversible_action_requested_without_cosign
-  behavior:
-    log_decision: true
-    preserve_state: true
-    explain_to_requestor: true
-    escalate_if_repeated: true
-  notes: >
-    Non-action is a valid and preferred outcome when safety,
-    authority, or accountability conditions are not satisfied.
-    Refusal is treated as a successful governance decision.
+  refusal_is_success: true
+  explanation_required: true
