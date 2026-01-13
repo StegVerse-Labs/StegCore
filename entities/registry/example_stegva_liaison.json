@@ -1,0 +1,35 @@
+{
+  "entity_id": "ai:stegva-liaison-001",
+  "class": "class_ii",
+  "charter": "charters/stegva_liaison.md",
+  "guardian_key": "stegcore:guardian:stegva-liaison-001",
+  "wallet": "stegtv:wallet:ai:stegva-liaison-001",
+  "scope": {
+    "dept": "va",
+    "allowed_actions": [
+      "draft",
+      "format",
+      "prepare_submission_packet"
+    ]
+  },
+  "acknowledgements": [
+    {
+      "type": "class_ack",
+      "timestamp": "2026-01-13",
+      "entity_ack_sig": "SIG_PLACEHOLDER"
+    },
+    {
+      "type": "charter_ack",
+      "timestamp": "2026-01-13",
+      "entity_ack_sig": "SIG_PLACEHOLDER"
+    },
+    {
+      "type": "prohibitions_ack",
+      "timestamp": "2026-01-13",
+      "entity_ack_sig": "SIG_PLACEHOLDER"
+    }
+  ],
+  "class_history": [],
+  "created_at": "2026-01-13",
+  "updated_at": "2026-01-13"
+}
