@@ -76,6 +76,26 @@ human_accountability:
     and boundary-enforcing decisions. AI entities may assist, advise,
     or refuse actions, but responsibility remains human-held at all times.
 
+non_action_policy:
+  default_posture: refuse
+  justification_required: true
+  permitted_when:
+    - boundary_conditions_uncertain
+    - human_approval_unavailable
+    - trust_continuity_unverified
+    - regulatory_ambiguity_detected
+    - irreversible_action_requested_without_cosign
+  behavior:
+    log_decision: true
+    preserve_state: true
+    explain_to_requestor: true
+    escalate_if_repeated: true
+  notes: >
+    Non-action is a valid and preferred outcome when conditions for safe,
+    authorized, and accountable execution are not fully met. Refusal to
+    act must be explainable, auditable, and preserved as a successful
+    governance decision.
+
 trust_continuity:
   model: dual-ledger
   human_required_for_recovery: true
