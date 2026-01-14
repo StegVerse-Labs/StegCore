@@ -35,22 +35,22 @@ Emergency execution is allowed only inside pre-authorized, machine-enforced enve
 ## Canonical Flow
 1) Signal ingest (telemetry, sensors, reports, comms health)
 2) EDM fusion + scoring
-3) StegCore: emergency state proposal → decision (allow/defer/deny)
+3) StegCore: emergency state proposal â decision (allow/defer/deny)
 4) MPSS branch simulation (cull fast; keep best outcomes)
-5) If compute shortfall: StegCore verifies ECE → execute emergency compute purchase
+5) If compute shortfall: StegCore verifies ECE â execute emergency compute purchase
 6) Generate action candidates + ranked outcome sets
 7) Command & comms orchestration (human-first)
 8) Stabilization and automatic rollback
 9) Post-event review (mandatory)
 
 ## MPSS Requirements
-- Branch simulation MUST be time-boxed (e.g., 30–120s bursts).
+- Branch simulation MUST be time-boxed (e.g., 30â120s bursts).
 - Branch simulation MUST support adversarial and stochastic factors.
 - Branch simulation MUST emit:
   - top outcomes,
   - confidence bounds,
   - recommended actions,
-  - and “unknowns / missing data”.
+  - and âunknowns / missing dataâ.
 
 ## Command & Communications
 Priority order:
