@@ -1,0 +1,47 @@
+name: Release bump (version + changelog)
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "patch | minor | major OR explicit version X.Y.Z"
+        required: true
+        default: "patch"
+        type: string
+      summary:
+        description: "One-line changelog summary"
+        required: true
+        default: "Describe this release"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bump version
+        run: |
+          python scripts/release/bump_version.py "${{ inputs.bump }}"
+          echo "NEW_VERSION=$(cat VERSION)" >> $GITHUB_ENV
+
+      - name: Update changelog
+        run: |
+          python scripts/release/update_changelog.py "$NEW_VERSION" "${{ inputs.summary }}"
+
+      - name: Commit changes
+        run: |
+          git config user.name "stegverse-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add VERSION CHANGELOG.md
+          git commit -m "chore(release): v$NEW_VERSION"
+          git push
