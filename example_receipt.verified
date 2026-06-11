@@ -1,0 +1,78 @@
+{
+  "schema": "stegverse.admissibility_receipt.v1",
+  "timestamp_utc": "2026-06-11T10:42:41Z",
+  "entity": "AdmittedCode",
+  "repo": "admittedcode/repo-guard",
+  "release": "v1.0.0",
+  "stage": "publish",
+  "actor": "ci/release",
+  "declared_action": "publish_product_release",
+  "input": {
+    "path": ".",
+    "sha256": "sha256:0474469e82ebe7fbf6a7f9bf7e5280e6e5e0aaa67c5b4ac8f0e12b8e40345b25"
+  },
+  "manifest": {
+    "path": "repo-guard.json",
+    "sha256": "sha256:3d174059304f3dc2e05307a652be8c8929a6a91332f2246be47ad98ceddb2e3b"
+  },
+  "decision": {
+    "engine": "StegCore",
+    "engine_version": "0.1.0",
+    "engine_hash": "sha256:PINNED",
+    "decision": "ALLOW",
+    "reason_code": "OK",
+    "basis": "conforms to declared manifest; no forbidden patterns",
+    "fingerprint": "sha256:4a81196fa2b378e01287446929d7578e218a562b8a0e989e02ea35913774d8ce"
+  },
+  "enforcement": {
+    "manager": "StegCGE",
+    "manager_version": "0.1.0",
+    "manager_hash": "sha256:PINNED",
+    "route": "ALLOW",
+    "enacted_decision_fingerprint": "sha256:4a81196fa2b378e01287446929d7578e218a562b8a0e989e02ea35913774d8ce",
+    "portability_class": "hybrid",
+    "platform_dependencies": [
+      "ci_runner_identity"
+    ],
+    "fail_closed_reason": ""
+  },
+  "verification": {
+    "state_hash": "0474469e82ebe7fbf6a7f9bf7e5280e6e5e0aaa67c5b4ac8f0e12b8e40345b25",
+    "reverification_possible": true,
+    "reverify_command": "python -m stegcge.replay --receipt <file> --repo <path>",
+    "replay_hash": "0474469e82ebe7fbf6a7f9bf7e5280e6e5e0aaa67c5b4ac8f0e12b8e40345b25",
+    "merkle_root": ""
+  },
+  "canonicalization": {
+    "method": "stegverse.jcs.v1",
+    "hash": "sha256",
+    "notes": "UTF-8; keys byte-sorted; integers only in hashed numerics; LF; no insignificant whitespace"
+  },
+  "scope": {
+    "asserts": [
+      "conforms to declared manifest under GCAT/BCAT at this release",
+      "reproducible from committed policy + receipt"
+    ],
+    "does_not_assert": [
+      "security",
+      "regulatory compliance",
+      "fitness for purpose",
+      "runtime correctness beyond policy"
+    ]
+  },
+  "outputs": [],
+  "previous_receipt_hash": "sha256:GENESIS",
+  "transition": {
+    "transition_class": "release_publish",
+    "transition_cell": "ADMITTEDCODE.RELEASE.PUBLISH",
+    "authority_class": "policy_admissible_release",
+    "state_effect": "release_publication_allowed",
+    "binding_level": "release"
+  },
+  "authority_evidence": {
+    "tvc_policy_hash": "sha256:PINNED",
+    "tv_receipt_refs": [],
+    "formalism_refs": []
+  },
+  "receipt_id": "sha256:a6023730747736b6c5a91356fb358c76e971f598371cb9e25bbae1abe1aeb8c7"
+}
