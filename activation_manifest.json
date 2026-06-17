@@ -1,0 +1,46 @@
+{
+  "schema": {
+    "name": "stegverse.stegcore.activation_manifest",
+    "version": "0.1.0"
+  },
+  "repository": {
+    "organization": "StegVerse-Labs",
+    "name": "StegCore"
+  },
+  "activation_target": {
+    "name": "stegverse_001_002_controlled_baseline",
+    "description": "Controlled continuity and master-record ingestion baseline for StegVerse-001 and StegVerse-002.",
+    "status": "activation_candidate"
+  },
+  "scope": {
+    "stegverse_001": "data_continuation_entity_layer",
+    "stegverse_002": "master_records_core_lite_ingestion_entity_layer",
+    "stegcore": "admissibility_decision_surface"
+  },
+  "required_inputs": [
+    "continuity_receipt_present",
+    "policy_reference_present",
+    "authority_boundary_declared",
+    "commit_time_context_present"
+  ],
+  "blocking_conditions": [
+    "stale_context",
+    "authority_overreach",
+    "missing_receipt",
+    "missing_policy_reference",
+    "missing_commit_time_context"
+  ],
+  "non_claims": {
+    "identity_truth_system": false,
+    "receipt_minting_system": false,
+    "secret_storage_system": false,
+    "user_consent_system": false,
+    "org_wide_completion": false
+  },
+  "queued_validation_paths": [
+    "tools/evaluate_admissibility.py",
+    "tests/vectors/admissibility_baseline_vectors.yml",
+    "tests/test_admissibility_baseline.py",
+    ".github/workflows/stegverse-001-002-validator.yml"
+  ]
+}
