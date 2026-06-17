@@ -1,0 +1,13 @@
+{
+  "authority_context_ref": "auth:records:baseline",
+  "context_valid": true,
+  "evidence_fresh": true,
+  "expected_status": "override_required",
+  "identity_valid": true,
+  "ingestion_id": "mri-override-001",
+  "override_authority_verified": false,
+  "override_requested": true,
+  "owner_entity": "StegVerse-002",
+  "policy_ref": "policy:records:baseline",
+  "schema_id": "master_record_ingestion"
+}
