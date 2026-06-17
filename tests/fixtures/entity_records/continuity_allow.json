@@ -1,0 +1,11 @@
+{
+  "authority_context_ref": "auth:continuity:baseline",
+  "context_valid": true,
+  "evidence_fresh": true,
+  "expected_status": "allow",
+  "identity_valid": true,
+  "owner_entity": "StegVerse-001",
+  "policy_ref": "policy:continuity:baseline",
+  "receipt_id": "crpt-allow-001",
+  "schema_id": "continuity_receipt"
+}
