@@ -1,0 +1,34 @@
+name: Validate 001/002 adapter
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "src/stegcore/adapters/**"
+      - "tests/test_entity_001_002_adapter.py"
+      - "tests/fixtures/entity_records/**"
+      - "docs/STEGCORE_001_002_REPO_ALIGNED_ADAPTER.md"
+      - ".github/workflows/validate-001-002-adapter.yml"
+  push:
+    paths:
+      - "src/stegcore/adapters/**"
+      - "tests/test_entity_001_002_adapter.py"
+      - "tests/fixtures/entity_records/**"
+      - "docs/STEGCORE_001_002_REPO_ALIGNED_ADAPTER.md"
+      - ".github/workflows/validate-001-002-adapter.yml"
+
+jobs:
+  validate-001-002-adapter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run adapter tests
+        run: PYTHONPATH=src python -m unittest discover -s tests
