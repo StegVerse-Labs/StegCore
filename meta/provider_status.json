@@ -1,0 +1,17 @@
+{
+  "provider": "StegCore",
+  "state": "ok",
+  "reason": "provider-contract-installed",
+  "generated_at_utc": "2026-06-17T15:30:00Z",
+  "scope": "admissibility_engine_operational_posture_only",
+  "artifacts": {
+    "provider_contract_version": "stegbrain.provider_status.v1",
+    "stegbrain_status_path": "meta/provider_status.json"
+  },
+  "details": {
+    "repo": "StegVerse-Labs/StegCore",
+    "boundary": "Reports StegCore operational posture for StegBrain. Does not replace StegCore admissibility decisions, StegID continuity receipts, user consent, or authority policy.",
+    "public_surface": true,
+    "activation_role": "first_downstream_provider_contract"
+  }
+}
