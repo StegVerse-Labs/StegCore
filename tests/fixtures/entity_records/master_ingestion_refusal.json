@@ -1,0 +1,13 @@
+{
+  "authority_context_ref": "auth:records:baseline",
+  "context_valid": true,
+  "evidence_fresh": true,
+  "expected_status": "refusal",
+  "identity_valid": true,
+  "ingestion_id": "mri-refusal-001",
+  "override_authority_verified": false,
+  "owner_entity": "StegVerse-002",
+  "policy_ref": "policy:records:baseline",
+  "reviewer_refusal": true,
+  "schema_id": "master_record_ingestion"
+}
