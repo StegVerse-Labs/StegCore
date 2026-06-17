@@ -1,0 +1,13 @@
+{
+  "authority_context_ref": "auth:records:baseline",
+  "context_valid": true,
+  "evidence_fresh": true,
+  "expected_status": "deny",
+  "identity_valid": true,
+  "ingestion_id": "mri-deny-public-001",
+  "owner_entity": "StegVerse-002",
+  "policy_ref": "policy:records:baseline",
+  "public_user_direct_access": true,
+  "raw_master_record_ingestion": true,
+  "schema_id": "master_record_ingestion"
+}
