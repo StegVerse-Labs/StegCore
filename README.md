@@ -12,6 +12,24 @@ StegCore may also maintain **internal state/audit signals** about StegVerse node
 (services, agents, devices) to support orchestration and observability — but it is
 **not** the continuity truth system.
 
+## StegBrain provider status
+
+StegCore now emits a StegBrain-compatible provider status artifact at:
+
+```text
+meta/provider_status.json
+```
+
+This status artifact reports StegCore operational posture only. It does not replace:
+
+- StegCore admissibility decisions;
+- StegID continuity receipts;
+- user consent;
+- authority policy;
+- commit-time validation.
+
+StegBrain may consume this status file as an ecosystem signal, but StegBrain must not treat the status artifact as permission to execute an action.
+
 ## What StegCore does NOT do
 
 StegCore does **not**:
@@ -70,3 +88,4 @@ engine.apply_event(
 
 snapshot = engine.get_node_state("CosDenOS")
 print(snapshot)
+```
