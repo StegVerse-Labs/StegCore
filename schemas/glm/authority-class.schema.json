@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/well-known/glm/schemas/authority-class.schema.json",
+  "title": "StegVerse Authority Class",
+  "type": "object",
+  "required": ["class_id", "source", "scope", "assertion_boundaries"],
+  "properties": {
+    "class_id": {"type": "string", "minLength": 1},
+    "source": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "delegation_chain": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "assertion_boundaries": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "external_validation_required": {"type": "boolean", "default": false}
+  },
+  "additionalProperties": false
+}
