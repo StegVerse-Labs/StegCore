@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/stegverse-precision-compute-intake.schema.json",
+  "title": "StegVerse Precision Compute Intake Schema",
+  "description": "Customer experiment intake schema for StegVerse Precision Compute verification runs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "submission_id",
+    "submitted_utc",
+    "customer_ref",
+    "experiment",
+    "precision",
+    "execution_boundary",
+    "success_condition",
+    "receipt_required"
+  ],
+  "properties": {
+    "submission_id": {
+      "type": "string",
+      "pattern": "^spc-[0-9]{4,}-[a-z0-9-]+$",
+      "description": "Stable submission identifier."
+    },
+    "submitted_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "customer_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["customer_id", "contact_channel", "segment"],
+      "properties": {
+        "customer_id": {"type": "string"},
+        "contact_channel": {"type": "string"},
+        "segment": {
+          "type": "string",
+          "enum": ["ai_eval_builder", "researcher", "quant", "governance_team", "enterprise", "other"]
+        }
+      }
+    },
+    "experiment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "summary", "script_ref", "data_ref"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1},
+        "script_ref": {"type": "string", "minLength": 1},
+        "data_ref": {"type": "string", "minLength": 1},
+        "expected_output_ref": {"type": "string"},
+        "runtime_notes": {"type": "string"}
+      }
+    },
+    "precision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier"],
+      "properties": {
+        "tier": {
+          "type": "string",
+          "enum": ["starter", "pro", "critical", "custom"]
+        },
+        "target": {
+          "type": "string",
+          "description": "Optional declared target such as 1e-2, 1e-4, or 1e-5."
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["standard", "priority", "urgent"],
+          "default": "standard"
+        }
+      }
+    },
+    "execution_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment", "dependencies", "allowed_network", "allowed_external_state"],
+      "properties": {
+        "environment": {"type": "string"},
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "allowed_network": {"type": "boolean"},
+        "allowed_external_state": {"type": "boolean"},
+        "notes": {"type": "string"}
+      }
+    },
+    "success_condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "description"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["exact_match", "threshold", "statistical", "artifact_exists", "custom"]
+        },
+        "description": {"type": "string", "minLength": 1},
+        "threshold": {"type": "string"}
+      }
+    },
+    "receipt_required": {
+      "type": "boolean",
+      "const": true
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "report_format": {
+          "type": "string",
+          "enum": ["markdown", "json", "both"],
+          "default": "both"
+        },
+        "deadline_utc": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "x-stegverse-status": {
+    "org": "StegVerse-Labs - 41% complete",
+    "repo": "StegCore - 36% complete",
+    "activation": "StegCore - 31% complete TO GOAL ACTIVATION;",
+    "files_vs_scaffolding": "Fully developed files vs scaffolding/stubs - 41% complete",
+    "delta": "Δ [StegCore: 36%vs41%] - Intake schema is now defined; activation still needs implementation wiring, verification report template, external experiments, paid use, and repeat-use proof."
+  }
+}
