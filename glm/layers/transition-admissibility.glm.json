@@ -1,0 +1,100 @@
+{
+  "schema": "glm-layer-manifest",
+  "schema_version": "1.3-hypothetical",
+  "artifact_status": "hypothetical_boundary_review_packet",
+  "layer": {
+    "id": "stegverse-transition-admissibility",
+    "name": "StegVerse Transition Admissibility Layer",
+    "operator": "StegVerse",
+    "status": "hypothetical_declaration"
+  },
+  "timing_position": {
+    "axis": "pre_commit",
+    "description": "The layer evaluates whether a proposed transition has standing before consequence attempts to bind."
+  },
+  "admissibility_assertion": {
+    "primary_assertion": "Given the declared StegVerse governance boundary, visible authority class, policy reference, context state, review posture, and receipt conditions at commit time, this transition is admitted or denied by the StegVerse transition-admissibility layer.",
+    "assertion_scope": "layer_scoped",
+    "universal_admissibility_claim": false,
+    "commit_time_bound": true
+  },
+  "observes": [
+    "proposed transition identifier",
+    "source state reference",
+    "target state reference",
+    "authority class asserted",
+    "policy reference",
+    "context state visible at commit time",
+    "review posture",
+    "receipt structure",
+    "commit-time validity result"
+  ],
+  "assumes_but_does_not_independently_validate": [
+    "truth of upstream evidence unless explicitly retained and checked by the layer",
+    "legal sufficiency of external authority assertions",
+    "continued downstream validity after the admitted transition",
+    "complete post-event evidentiary reconstruction outside retained artifacts",
+    "semantic equivalence between adjacent governance layers"
+  ],
+  "non_claims": [
+    "The layer does not claim universal admissibility.",
+    "The layer does not claim that all upstream governance sources were globally valid.",
+    "The layer does not claim that downstream consequences remain valid indefinitely.",
+    "The layer does not claim legal, regulatory, or organizational sufficiency outside its declared boundary.",
+    "The layer does not claim that discovery through an organization index creates authority inheritance.",
+    "The layer does not claim interoperability with GLM, EVIDE, or any adjacent governance system.",
+    "The layer does not claim complete post-event evidentiary reconstruction."
+  ],
+  "evidentiary_handoff": {
+    "expected_artifacts": [
+      "transition receipt",
+      "authority class reference",
+      "policy reference",
+      "review posture record",
+      "commit-time validity result",
+      "admit_or_deny result",
+      "replay material when available",
+      "external assumptions list"
+    ],
+    "handoff_scope": "Materials required to reconstruct what the StegVerse layer asserted at commit time."
+  },
+  "reconstructability_boundaries": {
+    "replayable_if_retained": [
+      "declared policy reference",
+      "transition receipt",
+      "admissibility result",
+      "authority class reference",
+      "review posture record",
+      "commit-time validity result"
+    ],
+    "externally_reviewable": [
+      "manifest claim scope",
+      "non-claims",
+      "timing position",
+      "listed assumptions",
+      "receipt field structure",
+      "composition posture"
+    ],
+    "visibility_ends_at": [
+      "unretained upstream evidence",
+      "unobserved external legal interpretations",
+      "downstream systems that alter state after commit",
+      "evidentiary registries outside StegVerse unless explicitly referenced",
+      "adjacent governance layers that have not explicitly declared a composition relationship"
+    ]
+  },
+  "composition_posture": {
+    "composable_with_adjacent_layers": "possible_but_not_implied",
+    "authority_inheritance": false,
+    "semantic_merging": false,
+    "automatic_interoperability": false,
+    "requires_explicit_agreement_for_interoperability": true
+  },
+  "five_question_boundary_model": {
+    "what_does_the_layer_claim": "It claims that a proposed transition is admitted or denied within the declared StegVerse transition-governance boundary at commit time.",
+    "what_does_the_layer_observe": "It observes the transition request, authority class, policy reference, visible context state, review posture, receipt conditions, and commit-time validity result.",
+    "what_does_the_layer_assume": "It may assume upstream evidence truth, external legal sufficiency, downstream continuity, and completeness of later reconstruction unless those matters are explicitly inside the declared boundary and supported by retained artifacts.",
+    "what_remains_reviewable": "The transition receipt, authority class reference, policy reference, review posture, admissibility result, commit-time validity result, and retained replay materials may remain reviewable if preserved.",
+    "where_does_visibility_end": "Visibility ends at unobserved upstream evidence, external authority systems, legal interpretations outside the declared boundary, downstream consequences after commit, and evidentiary registries not explicitly referenced by the StegVerse receipt structure."
+  }
+}
