@@ -20,6 +20,18 @@ Authority posture: documentation-only
 Created: docs/STEGCORE_MIRROR_HANDOFF.md on main
 Handoff commit: 35e29be011267ae56e96391ccfd70781be64e317
 Created: docs/comparisons/PACKAGE_INSTALL_EVIDENCE.md on main
+Installed: canonical comparison document
+Installed: README/site excerpt
+Installed: directory index
+Installed: install guide
+Installed: package manifest JSON
+Installed: machine-readable comparison JSON
+Installed: GitHub target probe report
+Installed: StegCore adapter
+Installed: install decision record
+Installed: progress line 4 spec
+Installed: repo structure delta report
+Installed: line 4 adoption receipt
 ```
 
 ## Current Verified Repo State
@@ -29,9 +41,20 @@ Confirmed: StegVerse-Labs/Site/docs/SITE_MIRROR_HANDOFF.md exists and remains th
 Confirmed: StegVerse-Labs/StegCore/README.md exists.
 Confirmed: StegVerse-Labs/StegCore/docs/STEGCORE_MIRROR_HANDOFF.md exists.
 Confirmed: docs/comparisons/PACKAGE_INSTALL_EVIDENCE.md exists.
-Pending: canonical comparison package files still need installation into docs/comparisons.
-Pending: in-repo JSON validation after installation.
-Pending: README integration after canonical files are present.
+Confirmed: docs/comparisons/STEGVERSE_001_AND_CONTEMPORARY_AI_SYSTEMS.md exists.
+Confirmed: docs/comparisons/README_COMPARISON_EXCERPT.md exists.
+Confirmed: docs/comparisons/INDEX.md exists.
+Confirmed: docs/comparisons/INSTALL.md exists.
+Confirmed: docs/comparisons/comparison_manifest.json exists.
+Confirmed: docs/comparisons/stegverse_001_ai_systems_comparison.json exists.
+Confirmed: docs/comparisons/GITHUB_TARGET_PROBE_REPORT.md exists.
+Confirmed: docs/comparisons/CONFIRMED_REPO_ADAPTER_STEGCORE.md exists.
+Confirmed: docs/comparisons/INSTALL_DECISION_RECORD.md exists.
+Confirmed: docs/comparisons/PROGRESS_LINE_4_SPEC.md exists.
+Confirmed: docs/comparisons/REPO_STRUCTURE_DELTA_REPORT.md exists.
+Confirmed: docs/comparisons/LINE_4_ADOPTION_RECEIPT.md exists.
+Pending: README integration.
+Pending: independent in-repo JSON validation run output capture.
 ```
 
 ## Required Canonical Install Targets
@@ -57,4 +80,4 @@ This evidence file records documentation installation status only. It does not c
 
 ## Next Action
 
-Install the canonical package files listed above into `docs/comparisons`, validate the JSON files in-repo, then update this evidence record with the final install commit SHA and verification results.
+Add the approved comparison block to `README.md`, then capture the README integration commit SHA and the final verification result.
