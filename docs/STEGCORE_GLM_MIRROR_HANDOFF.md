@@ -33,7 +33,12 @@ docs/glm/STEGVERSE_GLM_REVIEW_RUBRIC.md
 docs/glm/STEGVERSE_GLM_FEEDBACK_PLAN.md
 docs/glm/emanuel-review-note.md
 docs/STEGCORE_GLM_MIRROR_HANDOFF.md
+.github/workflows/validate-glm-boundary.yml
 ```
+
+## Path Display Note
+
+The actual workflow path starts with a leading dot. It is displayed here as `.github/workflows/validate-glm-boundary.yml` because this file is already in GitHub and not an iPhone upload bundle. Upload bundles should keep visible paths unless a deployment process remaps them.
 
 ## Repo Placement Decision
 
@@ -75,6 +80,18 @@ Expected result:
 valid: StegCore GLM boundary packet
 ```
 
+## CI Validation
+
+The repository now includes a GLM boundary validation workflow.
+
+Displayed path:
+
+```text
+github/workflows/validate-glm-boundary.yml
+```
+
+Actual repository path includes the leading dot.
+
 ## External Review Target
 
 Use:
@@ -103,6 +120,7 @@ Resolved: transition-admissibility layer manifest installed.
 Resolved: receipt, authority-class, and policy-reference schemas installed.
 Resolved: admit and deny receipt examples installed.
 Resolved: validator installed.
+Resolved: validation workflow installed.
 Resolved: human boundary note, checklist, rubric, feedback plan, and reviewer note installed.
 Pending: repository checkout/CI validation output, external boundary review, feedback incorporation, and optional public URI deployment.
 ```
