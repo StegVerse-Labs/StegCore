@@ -21,6 +21,7 @@ Created: docs/STEGCORE_MIRROR_HANDOFF.md on main
 Handoff commit: 35e29be011267ae56e96391ccfd70781be64e317
 Created: docs/comparisons/PACKAGE_INSTALL_EVIDENCE.md on main
 README integration commit: 96ab9c1bf15035f2b80f4cd1ab826f7c00fa6725
+JSON validation receipt commit: 117f7c94916a4a2753da66836ea4171c5eea7155
 Installed: canonical comparison document
 Installed: README/site excerpt
 Installed: directory index
@@ -33,6 +34,7 @@ Installed: install decision record
 Installed: progress line 4 spec
 Installed: repo structure delta report
 Installed: line 4 adoption receipt
+Installed: JSON validation receipt
 ```
 
 ## Current Verified Repo State
@@ -55,7 +57,9 @@ Confirmed: docs/comparisons/INSTALL_DECISION_RECORD.md exists.
 Confirmed: docs/comparisons/PROGRESS_LINE_4_SPEC.md exists.
 Confirmed: docs/comparisons/REPO_STRUCTURE_DELTA_REPORT.md exists.
 Confirmed: docs/comparisons/LINE_4_ADOPTION_RECEIPT.md exists.
-Pending: independent in-repo JSON validation run output capture.
+Confirmed: docs/comparisons/JSON_VALIDATION_RECEIPT.md exists.
+Confirmed: source package JSON parse status passed before installation.
+Not captured: runner-backed in-repo JSON validation output.
 ```
 
 ## Required Canonical Install Targets
@@ -73,6 +77,7 @@ docs/comparisons/INSTALL_DECISION_RECORD.md
 docs/comparisons/PROGRESS_LINE_4_SPEC.md
 docs/comparisons/REPO_STRUCTURE_DELTA_REPORT.md
 docs/comparisons/LINE_4_ADOPTION_RECEIPT.md
+docs/comparisons/JSON_VALIDATION_RECEIPT.md
 ```
 
 ## Boundary Statement
@@ -81,4 +86,4 @@ This evidence file records documentation installation status only. It does not c
 
 ## Next Action
 
-Capture independent JSON validation output or create a lightweight validation receipt if no workflow runner is available in this session.
+If this documentation goal is considered complete, archive this thread and move the next integration goal to runner-backed validation or broader StegCore runtime/documentation alignment.
