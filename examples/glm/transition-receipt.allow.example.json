@@ -1,0 +1,69 @@
+{
+  "receipt_id": "receipt-example-allow-001",
+  "transition_id": "transition-example-001",
+  "layer_id": "stegverse-transition-admissibility",
+  "issued_at_utc": "2026-06-18T00:00:00Z",
+  "admissibility_result": "ADMIT",
+  "authority_class": {
+    "class_id": "internal-governance-authority",
+    "source": "StegVerse hypothetical governance boundary",
+    "scope": "transition admissibility within declared StegVerse layer scope",
+    "delegation_chain": [
+      "StegVerse",
+      "StegCore",
+      "stegverse-transition-admissibility"
+    ],
+    "assertion_boundaries": [
+      "layer-scoped",
+      "commit-time-bound",
+      "not universal admissibility",
+      "not legal sufficiency"
+    ],
+    "external_validation_required": false
+  },
+  "policy_reference": {
+    "policy_id": "policy-example-transition-boundary",
+    "policy_version": "0.1.0-hypothetical",
+    "source": "StegCore GLM boundary example",
+    "scope": "commit-time admissibility example",
+    "retained_reference": true,
+    "reference_uri": "docs/glm/STEGVERSE_GLM_BOUNDARY_NOTE.md",
+    "non_claims": [
+      "This example does not prove policy correctness.",
+      "This example does not claim external legal sufficiency."
+    ]
+  },
+  "review_posture": "human_reviewed",
+  "commit_time_validity": {
+    "valid_at_commit": true,
+    "commit_time_utc": "2026-06-18T00:00:00Z"
+  },
+  "visible_context": {
+    "transition_request_present": true,
+    "authority_class_visible": true,
+    "policy_reference_visible": true,
+    "receipt_structure_visible": true
+  },
+  "external_assumptions": [
+    "Upstream evidence is represented as provided.",
+    "External legal sufficiency is outside this example boundary.",
+    "Downstream consequences are not guaranteed indefinitely."
+  ],
+  "non_claims": [
+    "This receipt does not claim universal admissibility.",
+    "This receipt does not certify interoperability.",
+    "This receipt does not create authority inheritance."
+  ],
+  "replay_materials": [
+    {
+      "name": "transition manifest",
+      "available": true,
+      "reference": "glm/layers/transition-admissibility.glm.json"
+    },
+    {
+      "name": "boundary note",
+      "available": true,
+      "reference": "docs/glm/STEGVERSE_GLM_BOUNDARY_NOTE.md"
+    }
+  ]
+}
