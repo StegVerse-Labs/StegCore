@@ -1,0 +1,61 @@
+{
+  "generated": "2026-06-15",
+  "package": "stegverse_001_ai_systems_comparison_package",
+  "target_path": "docs/comparisons/",
+  "documentation_only": true,
+  "canonical_anchor": "Contemporary AI systems mostly govern what models may say, access, or call. StegVerse governs whether a proposed transition may become part of system reality.",
+  "canonical_ai_entity_definition": "A bounded, receipt-bearing, consequence-capable work-entity whose authority is externally accredited and revocable.",
+  "supported_claim": "StegVerse-001 is a governance/control-plane architecture for consequence-bearing AI transitions.",
+  "unsupported_claims": [
+    "StegVerse-001 is smarter than frontier models",
+    "StegVerse-001 is conscious",
+    "StegVerse-001 is sovereign",
+    "StegVerse-001 is self-accrediting",
+    "A governed packet is installation authority",
+    "A receipt alone is production authority",
+    "Portability equals authority"
+  ],
+  "files": [
+    {
+      "path": "docs/comparisons/STEGVERSE_001_AND_CONTEMPORARY_AI_SYSTEMS.md",
+      "role": "canonical_long_form_comparison",
+      "required": true
+    },
+    {
+      "path": "docs/comparisons/README_COMPARISON_EXCERPT.md",
+      "role": "readme_or_site_excerpt",
+      "required": true
+    },
+    {
+      "path": "docs/comparisons/stegverse_001_ai_systems_comparison.json",
+      "role": "machine_readable_comparison_map",
+      "required": true
+    },
+    {
+      "path": "docs/comparisons/INDEX.md",
+      "role": "directory_index",
+      "required": true
+    },
+    {
+      "path": "docs/comparisons/INSTALL.md",
+      "role": "integration_instructions",
+      "required": true
+    },
+    {
+      "path": "docs/comparisons/comparison_manifest.json",
+      "role": "package_manifest",
+      "required": true
+    }
+  ],
+  "validation": {
+    "json_files_must_parse": [
+      "docs/comparisons/stegverse_001_ai_systems_comparison.json",
+      "docs/comparisons/comparison_manifest.json"
+    ],
+    "required_phrases": [
+      "Contemporary AI systems mostly govern what models may say, access, or call. StegVerse governs whether a proposed transition may become part of system reality.",
+      "A bounded, receipt-bearing, consequence-capable work-entity whose authority is externally accredited and revocable.",
+      "StegVerse relocates governance to the consequence-binding transition."
+    ]
+  }
+}
