@@ -1,0 +1,42 @@
+version: 0.1
+goal: ecosystem_managed_task_handoff_and_completion
+
+assessment_rule: >-
+  Continue building until the active task chain is complete or until task handoff,
+  verification, next-task selection, and archive readiness can be handled by
+  ecosystem management receipts.
+
+required_management_capabilities:
+  - mirror_handoff_present
+  - machine_readable_task_registry_present
+  - completion_criteria_declared
+  - next_integration_candidate_declared
+  - verification_command_declared
+  - report_artifact_declared
+  - parallel_session_non_overlap_declared
+  - archive_readiness_declared
+
+active_chain:
+  org: StegVerse-Labs
+  current_repo: stegfin-provider-banking
+  current_status: self_bootstrapped_and_maturity_verifier_committed
+  current_goal_activation: complete_when_bootstrap_and_verify_workflow_commits_report
+  next_integration_candidate: stegfin-provider-acquisition-close
+  parallel_session_overlap_status: no known overlapping session for provider-banking/acquisition-close chain
+
+managed_repos:
+  - name: stegfin-provider-token-ledger-executor
+    status: management-capable
+    handoff: live_execution/docs/STEGFIN_LIVE_TOKEN_LEDGER_EXECUTION_SHADOW_MIRROR_HANDOFF.md
+    next_candidate: stegfin-provider-treasury-record
+  - name: stegfin-provider-treasury-record
+    status: management-capable
+    handoff: docs/STEGFIN_PROVIDER_TREASURY_RECORD_MIRROR_HANDOFF.md
+    next_candidate: stegfin-provider-banking
+  - name: stegfin-provider-banking
+    status: management-capable-pending-workflow-run
+    handoff: docs/STEGFIN_PROVIDER_BANKING_MIRROR_HANDOFF.md
+    next_candidate: stegfin-provider-acquisition-close
+
+artifacts:
+  management_report: brain_reports/stegverse_ecosystem_management_readiness_report.json
