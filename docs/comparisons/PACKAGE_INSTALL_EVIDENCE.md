@@ -20,6 +20,7 @@ Authority posture: documentation-only
 Created: docs/STEGCORE_MIRROR_HANDOFF.md on main
 Handoff commit: 35e29be011267ae56e96391ccfd70781be64e317
 Created: docs/comparisons/PACKAGE_INSTALL_EVIDENCE.md on main
+README integration commit: 96ab9c1bf15035f2b80f4cd1ab826f7c00fa6725
 Installed: canonical comparison document
 Installed: README/site excerpt
 Installed: directory index
@@ -39,6 +40,7 @@ Installed: line 4 adoption receipt
 ```text
 Confirmed: StegVerse-Labs/Site/docs/SITE_MIRROR_HANDOFF.md exists and remains the Site/Publisher source-of-truth handoff.
 Confirmed: StegVerse-Labs/StegCore/README.md exists.
+Confirmed: StegVerse-Labs/StegCore/README.md includes the approved comparison block.
 Confirmed: StegVerse-Labs/StegCore/docs/STEGCORE_MIRROR_HANDOFF.md exists.
 Confirmed: docs/comparisons/PACKAGE_INSTALL_EVIDENCE.md exists.
 Confirmed: docs/comparisons/STEGVERSE_001_AND_CONTEMPORARY_AI_SYSTEMS.md exists.
@@ -53,7 +55,6 @@ Confirmed: docs/comparisons/INSTALL_DECISION_RECORD.md exists.
 Confirmed: docs/comparisons/PROGRESS_LINE_4_SPEC.md exists.
 Confirmed: docs/comparisons/REPO_STRUCTURE_DELTA_REPORT.md exists.
 Confirmed: docs/comparisons/LINE_4_ADOPTION_RECEIPT.md exists.
-Pending: README integration.
 Pending: independent in-repo JSON validation run output capture.
 ```
 
@@ -80,4 +81,4 @@ This evidence file records documentation installation status only. It does not c
 
 ## Next Action
 
-Add the approved comparison block to `README.md`, then capture the README integration commit SHA and the final verification result.
+Capture independent JSON validation output or create a lightweight validation receipt if no workflow runner is available in this session.
