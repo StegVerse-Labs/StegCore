@@ -1,0 +1,39 @@
+{
+  "schema": "glm-organization-index",
+  "schema_version": "1.3-hypothetical",
+  "artifact_status": "hypothetical_boundary_review_packet",
+  "organization": {
+    "name": "StegVerse",
+    "url": "https://stegverse.org"
+  },
+  "purpose": "Discovery of StegVerse governance layer declarations.",
+  "index_scope": "discovery_only",
+  "claims": [
+    "This index identifies governance layer declarations published by StegVerse."
+  ],
+  "non_claims": [
+    "This index is not a governance layer.",
+    "This index makes no admissibility decision.",
+    "This index transfers no authority between layers.",
+    "This index does not certify interoperability.",
+    "This index does not imply semantic merging.",
+    "This index does not imply authority inheritance.",
+    "This index does not validate the correctness of any listed layer."
+  ],
+  "layers": [
+    {
+      "id": "stegverse-transition-admissibility",
+      "name": "StegVerse Transition Admissibility Layer",
+      "manifest": "https://stegverse.org/well-known/glm/layers/transition-admissibility.glm.json",
+      "local_manifest": "glm/layers/transition-admissibility.glm.json",
+      "summary": "Declares the boundary for scoped commit-time transition admissibility assertions.",
+      "relationship_to_index": "listed_for_discovery_only"
+    }
+  ],
+  "composition_posture": {
+    "composition_by_index": false,
+    "authority_inheritance_by_index": false,
+    "semantic_merging_by_index": false,
+    "interoperability_certification_by_index": false
+  }
+}
