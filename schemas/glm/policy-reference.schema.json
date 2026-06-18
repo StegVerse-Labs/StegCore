@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/well-known/glm/schemas/policy-reference.schema.json",
+  "title": "StegVerse Policy Reference",
+  "type": "object",
+  "required": ["policy_id", "policy_version", "source", "scope", "retained_reference"],
+  "properties": {
+    "policy_id": {"type": "string", "minLength": 1},
+    "policy_version": {"type": "string", "minLength": 1},
+    "source": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "retained_reference": {"type": "boolean"},
+    "reference_uri": {"type": "string"},
+    "sha256": {"type": "string"},
+    "non_claims": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "additionalProperties": false
+}
