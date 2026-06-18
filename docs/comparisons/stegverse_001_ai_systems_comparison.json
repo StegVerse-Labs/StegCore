@@ -1,0 +1,128 @@
+{
+  "generated": "2026-06-15",
+  "artifact": "stegverse_001_ai_systems_comparison",
+  "anchor_distinction": "Contemporary AI systems mostly govern what models may say, access, or call. StegVerse governs whether a proposed transition may become part of system reality.",
+  "ai_entity_definition": "A bounded, receipt-bearing, consequence-capable work-entity whose authority is externally accredited and revocable.",
+  "primary_positioning": "StegVerse-001 is a governance/control-plane architecture for consequence-bearing AI transitions, not a direct frontier-model competitor.",
+  "core_claim": "StegVerse relocates governance to the consequence-binding transition.",
+  "claims_to_avoid": [
+    "StegVerse-001 is smarter than frontier models",
+    "StegVerse-001 is sovereign AI",
+    "StegVerse-001 is conscious or person-like",
+    "A governed packet is installation authority",
+    "A receipt alone is production authority",
+    "Portability equals authority"
+  ],
+  "core_primitives": [
+    "external accreditation",
+    "declared-task routing",
+    "authority reconstruction",
+    "policy scope reconstruction",
+    "BCAT/GCAT-style admissibility",
+    "receipts",
+    "replay lineage",
+    "fail-closed denial",
+    "revocation",
+    "reaccreditation"
+  ],
+  "comparison_entities": [
+    {
+      "name": "StegVerse-001",
+      "primary_layer": "Governance-first work-entity over models, tools, packets, and review surfaces",
+      "control_plane": "Commit-time admissibility gate",
+      "authority_model": "External accreditation; no self-sovereign authority",
+      "receipt_replay_posture": "Portable receipts, replay lineage, declared-task routing",
+      "revocation_posture": "Native revocation and reaccreditation",
+      "production_boundary": "Accredited participation",
+      "difference_from_stegverse": "Baseline"
+    },
+    {
+      "name": "OpenAI GPT-4o / Responses",
+      "primary_layer": "Multimodal model and API tool stack",
+      "control_plane": "Model behavior, API policy, account controls",
+      "authority_model": "Provider and application-defined",
+      "receipt_replay_posture": "Logs and platform traces; not native portable consequence receipts",
+      "revocation_posture": "Provider/app policy dependent",
+      "production_boundary": "Provider deployment and app scopes",
+      "difference_from_stegverse": "Strong cognition substrate, not a transition authority layer"
+    },
+    {
+      "name": "Anthropic Claude",
+      "primary_layer": "Frontier assistant/model family",
+      "control_plane": "Constitutional/post-training behavior, workspace controls",
+      "authority_model": "Provider and workspace-defined",
+      "receipt_replay_posture": "System cards, logs, retention settings; not portable transition receipts",
+      "revocation_posture": "Provider/workspace policy dependent",
+      "production_boundary": "Provider/cloud deployment controls",
+      "difference_from_stegverse": "Strong assistant lineage, but consequence binding remains external"
+    },
+    {
+      "name": "Google Gemini / Agent Platform",
+      "primary_layer": "Model family and enterprise agent platform",
+      "control_plane": "Cloud IAM, agent governance, regional/project controls",
+      "authority_model": "Cloud/project/admin-defined",
+      "receipt_replay_posture": "Cloud logs and agent traces; not native portable bind receipts",
+      "revocation_posture": "Platform/admin policy dependent",
+      "production_boundary": "Project, region, and cloud-policy boundary",
+      "difference_from_stegverse": "Strong enterprise agent stack, but authority objects are not the core primitive"
+    },
+    {
+      "name": "Meta Llama ecosystem",
+      "primary_layer": "Open-weight model ecosystem",
+      "control_plane": "Deployer-defined governance",
+      "authority_model": "Deployer-defined",
+      "receipt_replay_posture": "Optional safeguards and observability; no native receipt regime",
+      "revocation_posture": "Deployer-defined",
+      "production_boundary": "Whatever deployer defines",
+      "difference_from_stegverse": "Flexible substrate; governance burden shifts to operator"
+    },
+    {
+      "name": "Microsoft 365 Copilot",
+      "primary_layer": "Enterprise application envelope over LLMs and Microsoft Graph",
+      "control_plane": "Tenant permissions, service boundary, admin controls",
+      "authority_model": "Signed-in user and tenant permissions",
+      "receipt_replay_posture": "Citations, prompts/responses, compliance tooling; not portable transition receipts",
+      "revocation_posture": "Tenant/admin policy dependent",
+      "production_boundary": "Microsoft 365 service boundary",
+      "difference_from_stegverse": "Strong permission grounding, but not transition admissibility"
+    },
+    {
+      "name": "LangGraph",
+      "primary_layer": "Agent orchestration runtime",
+      "control_plane": "Graph state, checkpoints, human-in-loop controls",
+      "authority_model": "Developer-defined",
+      "receipt_replay_posture": "Tracing and durable execution; receipts must be built by developer",
+      "revocation_posture": "Developer-defined",
+      "production_boundary": "Application deployment boundary",
+      "difference_from_stegverse": "Strong runtime substrate; authority semantics are external"
+    },
+    {
+      "name": "AutoGPT",
+      "primary_layer": "Continuous-agent platform",
+      "control_plane": "Agent lifecycle, workflows, deployment controls",
+      "authority_model": "Builder/operator-defined",
+      "receipt_replay_posture": "Platform lifecycle traces; limited intrinsic accreditation semantics",
+      "revocation_posture": "Builder/operator-defined",
+      "production_boundary": "Builder-exposed deployment",
+      "difference_from_stegverse": "Continuous automation, but not native consequence admissibility"
+    },
+    {
+      "name": "Waymo Driver",
+      "primary_layer": "Closed-loop autonomous physical system",
+      "control_plane": "Safety case, operating domain, vehicle/software controls",
+      "authority_model": "Company/service-defined",
+      "receipt_replay_posture": "Safety data, telemetry, operational evidence",
+      "revocation_posture": "Service suspension, updates, ODD restrictions",
+      "production_boundary": "Defined service areas and operating conditions",
+      "difference_from_stegverse": "Closest on deployment seriousness, but not portable cross-domain transition receipts"
+    }
+  ],
+  "done_criteria": [
+    "Anchor distinction appears in canonical comparison document",
+    "Clarified AI entity definition appears before extended comparison language",
+    "Long-form markdown document exists",
+    "JSON comparison map exists",
+    "Concise README/site excerpt exists",
+    "No public-facing claim implies model superiority, consciousness, sovereignty, or self-accreditation"
+  ]
+}
