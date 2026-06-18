@@ -1,0 +1,41 @@
+name: Validate StegVerse 001 002 Baseline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile source and tests
+        run: python -m compileall src tests
+
+      - name: Validate baseline manifest
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path('activation_manifest.json').read_text(encoding='utf-8'))
+          assert manifest['schema']['name'] == 'stegverse.stegcore.activation_manifest'
+          assert manifest['activation_target']['name'] == 'stegverse_001_002_controlled_baseline'
+          assert 'commit_time_context_present' in manifest['required_inputs']
+          assert 'stale_context' in manifest['blocking_conditions']
+          assert 'authority_overreach' in manifest['blocking_conditions']
+          print('ok')
+          PY
