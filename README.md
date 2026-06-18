@@ -12,6 +12,20 @@ StegCore may also maintain **internal state/audit signals** about StegVerse node
 (services, agents, devices) to support orchestration and observability — but it is
 **not** the continuity truth system.
 
+## Contemporary AI Systems Comparison
+
+A maintained comparison package for StegVerse-001 is available under `docs/comparisons/`.
+
+The comparison does not claim StegVerse-001 is a frontier-model competitor. It frames StegVerse-001 as a governance/control-plane architecture for consequence-bearing AI transitions.
+
+Contemporary AI systems mostly govern what models may say, access, or call. StegVerse governs whether a proposed transition may become part of system reality.
+
+In this context, an **AI entity** means:
+
+> A bounded, receipt-bearing, consequence-capable work-entity whose authority is externally accredited and revocable.
+
+See [`docs/comparisons/STEGVERSE_001_AND_CONTEMPORARY_AI_SYSTEMS.md`](docs/comparisons/STEGVERSE_001_AND_CONTEMPORARY_AI_SYSTEMS.md) for the canonical comparison.
+
 ## StegBrain provider status
 
 StegCore now emits a StegBrain-compatible provider status artifact at:
