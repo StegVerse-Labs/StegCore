@@ -9,6 +9,7 @@ on:
       - 'tests/**'
       - 'scripts/**'
       - 'docs/**'
+      - 'evidence/downstream-verification-dispatch.json'
       - 'pyproject.toml'
       - '.github/workflows/runtime-tests.yml'
   pull_request:
@@ -17,6 +18,7 @@ on:
       - 'tests/**'
       - 'scripts/**'
       - 'docs/**'
+      - 'evidence/downstream-verification-dispatch.json'
       - 'pyproject.toml'
       - '.github/workflows/runtime-tests.yml'
   schedule:
@@ -72,9 +74,10 @@ jobs:
         run: |
           BEFORE="$(cat evidence/runtime-validation.json evidence/release-readiness.json 2>/dev/null | sha256sum | awk '{print $1}' || true)"
           GOVERNANCE_SHA="$(git -C "$GOVERNANCE_DIR" rev-parse HEAD)"
-          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs pyproject.toml .github/workflows/runtime-tests.yml)"
+          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
           python scripts/record_runtime_validation.py \
             --output evidence/runtime-validation.json \
+            --dispatch evidence/downstream-verification-dispatch.json \
             --stegcore-commit "$CONTRACT_SHA" \
             --governance-commit "$GOVERNANCE_SHA" \
             --run-id "${GITHUB_RUN_ID}" \
@@ -114,7 +117,7 @@ jobs:
           GOVERNANCE_SHA: ${{ steps.evidence.outputs.governance_sha }}
         run: |
           IMPLEMENTATION_STATE="$(gh issue view 22 --repo "$GITHUB_REPOSITORY" --json state --jq '.state')"
-          COMPLETION_COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against Governance commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Release state: evidence/release-readiness.json. This establishes validated_not_released only."
+          COMPLETION_COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against Governance commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Release state: evidence/release-readiness.json. Downstream dispatch: evidence/downstream-verification-dispatch.json. This establishes validated_not_released only."
           if [ "$IMPLEMENTATION_STATE" = "OPEN" ]; then
             gh issue close 22 --repo "$GITHUB_REPOSITORY" --reason completed --comment "$COMPLETION_COMMENT"
           fi
@@ -134,12 +137,15 @@ jobs:
 
           - `evidence/runtime-validation.json`
           - `evidence/release-readiness.json`
+          - `evidence/downstream-verification-dispatch.json`
           - StegCore contract commit: `${CONTRACT_SHA}`
           - Governance contract commit: `${GOVERNANCE_SHA}`
 
           The machine-readable assessment keeps release and tagging blocked until independent release policy and all four downstream verification gates are durably recorded as pass.
 
-          This issue does not grant release, production, continuity, deployment, or receipt-minting authority.
+          Downstream verification is already queued in Site #14, Publisher #4, admissibility-wiki #19, and StegGuardian Wiki #4.
+
+          This issue does not grant release, production, continuity, deployment, cross-repository mutation, or receipt-minting authority.
           EOF
           )
           READINESS_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore three-layer candidate in:title" --json number --jq '.[0].number // empty')"
