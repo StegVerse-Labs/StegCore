@@ -2,46 +2,25 @@
 
 ## Purpose
 
-This is the repository-local continuation source for StegCore. Future work must continue from this file without prior chat context.
+This is the repository-local continuation source for `StegVerse-Labs/StegCore`. Future work must continue from this file without prior chat context.
 
 ## Current Goal
 
 ```text
-Goal: automatically validate, evidence, reconcile failures, and advance the StegCore three-layer runtime to a governed release-readiness state
-Repository: StegVerse-Labs/StegCore
-Activation state: runtime_candidate_automated_reconciliation_active
+Goal: automatically validate, evidence, reconcile, and coordinate the StegCore three-layer runtime through bounded release readiness
+Activation state: runtime_candidate_downstream_dispatch_active
 Completion class: first_passing_evidence_pending
-Manual action requirement: none_for_validation_evidence_failure_detection_issue_closure_or_readiness_initiation
-Source of truth: runtime code, tests, workflows, canonical Governance fixtures, evidence records, issues, and this handoff
+Manual action requirement: none_for_validation_evidence_failure_reconciliation_issue_closure_or_downstream_task_creation
+Source of truth: runtime code, tests, workflows, Governance fixtures, evidence records, downstream issues, and this handoff
 ```
 
-## Confirmed Repository Boundary
+## Authority Boundary
 
-StegCore decides whether actions are permitted given already-resolved continuity, policy, authority, evidence, and state-integrity facts.
+StegCore decides whether an action is permitted using already-resolved continuity, policy, authority, evidence, and state-integrity facts.
 
-StegCore does not verify or mint Continuity receipts, store identity, replace StegID, create execution authority, or claim release, tagging, production, or deployment authority merely by producing a result or readiness assessment.
+StegCore does not verify or mint Continuity receipts, replace StegID, create execution authority, activate another repository, or grant release, tagging, deployment, production, cross-repository mutation, or publication authority.
 
-## Built Runtime and Automation Surfaces
-
-```text
-src/stegcore/decision.py
-src/stegcore/runtime.py
-src/stegcore/three_layer.py
-tests/test_decision.py
-tests/test_three_layer.py
-docs/DECISION_MODEL.md
-docs/POLICY_SHAPES.md
-docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
-docs/THREE_LAYER_ADMISSIBILITY_RUNTIME.md
-scripts/check_continuity_admissibility_mapping.py
-scripts/verify_governance_three_layer_contract.py
-scripts/record_runtime_validation.py
-scripts/check_runtime_validation_evidence.py
-scripts/assess_release_readiness.py
-.github/workflows/runtime-tests.yml
-```
-
-## Three-Layer Contract
+## Runtime Contract
 
 StegCore evaluates, in restrictive order:
 
@@ -49,13 +28,31 @@ StegCore evaluates, in restrictive order:
 2. signal admission and state-formation integrity;
 3. commit-time execution admissibility.
 
-Runtime outcomes are `ALLOW`, `DENY`, or `FAIL-CLOSED`. They remain distinct from lowercase Governance Decision Record values.
+Outcomes are `ALLOW`, `DENY`, or `FAIL-CLOSED`. Runtime receipts preserve the evaluated layers and explicitly record `continuity_receipt_minted: false`.
 
-The runtime receipt preserves the decision, reason code, layer findings, canonical request hash, policy and delegation references, evidence references, admitted signals, current and expected reference-state hashes, receipt hash, and `continuity_receipt_minted: false`.
+## Built Surfaces
 
-## Canonical Governance Fixture Set
+```text
+src/stegcore/decision.py
+src/stegcore/runtime.py
+src/stegcore/three_layer.py
+tests/test_decision.py
+tests/test_three_layer.py
+docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
+docs/THREE_LAYER_ADMISSIBILITY_RUNTIME.md
+scripts/check_continuity_admissibility_mapping.py
+scripts/verify_governance_three_layer_contract.py
+scripts/check_downstream_verification_dispatch.py
+scripts/record_runtime_validation.py
+scripts/check_runtime_validation_evidence.py
+scripts/assess_release_readiness.py
+evidence/downstream-verification-dispatch.json
+.github/workflows/runtime-tests.yml
+```
 
-StegCore evaluates six live fixtures from `StegVerse-Labs/Governance`:
+## Canonical Governance Contract
+
+The workflow evaluates six live fixtures from `StegVerse-Labs/Governance`:
 
 ```text
 condition_degraded_judgment_gdr.json
@@ -66,138 +63,114 @@ three_layer_replay_baseline_gdr.json
 three_layer_replay_mutated_gdr.json
 ```
 
-The replay pair keeps policy, actor authority, and delegation constant while changing admitted signals and the reference-state hash. The required outcome changes from `ALLOW` to `FAIL-CLOSED`.
+The replay pair keeps policy, actor authority, and delegation constant while changing the admitted signals and reference state. Its required transition is `ALLOW` to `FAIL-CLOSED`.
 
-## Validation, Evidence, and Reconciliation Automation
+## Automated State Machine
 
-`github/workflows/runtime-tests.yml`—shown without the leading dot for readability—runs automatically on relevant pushes, pull requests, a daily schedule, and optional recovery dispatch.
+`github/workflows/runtime-tests.yml`—shown without the leading dot for readability—runs on relevant pushes, pull requests, a daily schedule, and optional recovery dispatch.
 
-The workflow:
+It automatically:
 
-1. installs StegCore and pytest;
-2. validates the Continuity admissibility mapping;
-3. runs the full runtime test suite;
+1. validates the Continuity mapping;
+2. validates the downstream dispatch manifest;
+3. runs the runtime tests;
 4. clones canonical Governance;
-5. evaluates all six Governance fixtures through StegCore;
-6. creates or refreshes `evidence/runtime-validation.json` after a passing non-PR run;
-7. validates the evidence hash, required results, downstream destinations, and authority boundaries;
-8. creates or refreshes `evidence/release-readiness.json`;
-9. commits changed evidence to `main`;
-10. closes implementation issue #22 after all gates pass;
-11. closes any open automated failure issue after recovery;
-12. creates or refreshes a release-readiness issue;
-13. creates or refreshes an automated failure issue when validation fails.
+5. evaluates all six fixtures through StegCore;
+6. generates and verifies `evidence/runtime-validation.json`;
+7. generates `evidence/release-readiness.json`;
+8. commits changed evidence to `main`;
+9. closes implementation issue #22 after all gates pass;
+10. creates or refreshes a failure issue on validation failure;
+11. closes the failure issue after recovery;
+12. creates or refreshes the StegCore release-readiness issue.
 
-Workflow concurrency serializes evidence writers. Evidence generation is idempotent for unchanged StegCore and Governance contract commits.
+Concurrency serializes evidence writers. Evidence publication is idempotent for unchanged StegCore, Governance, and dispatch inputs.
 
-## Durable Evidence Records
+## Downstream Verification Dispatch
 
-Expected paths:
+The durable dispatch is:
+
+```text
+evidence/downstream-verification-dispatch.json
+```
+
+The following bounded issues now exist:
+
+| Destination | Issue | Scope |
+| --- | ---: | --- |
+| `StegVerse-Labs/Site` | #14 | Evidence observation only; preserve `PREPARED_NOT_DEPLOYED` and activation-blocked state. |
+| `GCAT-BCAT-Engine/Publisher` | #4 | Publisher awareness only; preserve queue order and current activation authority. |
+| `StegVerse-Labs/admissibility-wiki` | #19 | Documentation verification only; do not promote verification into execution authority. |
+| `StegVerse-002/stegguardian-wiki` | #4 | Evidence awareness only; preserve ST-017, Pages, and Guardian boundaries. |
+
+Creating these issues does not complete their verification gates. Destination handoffs remain authoritative, and no downstream mutation is authorized.
+
+## Evidence Records
+
+Expected generated records:
 
 ```text
 evidence/runtime-validation.json
 evidence/release-readiness.json
 ```
 
-`runtime-validation.json` records the validated StegCore and Governance commits, run identity, test and contract results, receipt non-minting, downstream verification destinations, authority non-claims, and canonical evidence hash.
+Runtime evidence schema `1.1` binds:
 
-`release-readiness.json` records:
+- validated StegCore contract commit;
+- validated Governance commit;
+- workflow run identity;
+- passing runtime, Continuity, and Governance checks;
+- positive-control and replay outcomes;
+- receipt non-minting;
+- downstream dispatch hash;
+- exact destination issue and handoff references;
+- production, release, continuity, receipt-minting, and cross-repository mutation non-claims.
 
-- state: `validated_not_released`;
-- runtime, Continuity mapping, Governance contract, and evidence-integrity gates as passed;
-- independent release policy as pending;
-- downstream verification as pending;
-- release and tagging as not permitted;
-- the exact completion event required to change that state.
-
-Neither record grants release or execution authority.
-
-## Issue State Machine
-
-### Implementation issue
-
-- Issue #22 owns runtime implementation until every automated validation gate passes.
-- A passing run closes it automatically with the validated commit references.
-
-### Failure issue
-
-- Title: `[automation] StegCore runtime validation failure`.
-- A failed non-PR run creates or refreshes it with the failing commit and workflow URL.
-- A later passing run closes it automatically.
-
-### Release-readiness issue
-
-- Title: `[release-readiness] StegCore three-layer candidate`.
-- A passing run creates or refreshes it from the durable evidence records.
-- It remains a coordination task and does not grant release authority.
-
-## Active Ownership
-
-- Governance policy, schema mapping, canonical fixtures, and fixture validation: `StegVerse-Labs/Governance`.
-- Runtime evaluator, receipt behavior, cross-repository verifier, validation evidence, failure reconciliation, implementation closure, and readiness initiation: `StegVerse-Labs/StegCore`.
-- Continuity receipt verification or minting: outside StegCore authority.
-- Release and production authority: not granted by this workstream.
+Release readiness remains `validated_not_released`, with release and tagging prohibited until an independent release policy and all required destination gates are durably satisfied.
 
 ## Manual Tasks Eliminated
 
 - Acceptance criteria are executable tests.
 - Validation starts automatically.
 - Canonical Governance fixtures are evaluated live.
-- Scheduled verification detects later drift.
+- Downstream issue creation is complete.
+- The downstream issue mapping is machine-validated.
 - Passing evidence is generated, validated, and committed automatically.
-- Evidence publication is idempotent and concurrency-safe.
-- Issue #22 closes automatically only after all gates pass.
-- Failed runs create a durable repair issue automatically.
-- Recovery closes the repair issue automatically.
-- Passing evidence initiates and refreshes the release-readiness task automatically.
-- Release remains blocked by machine-readable pending gates rather than informal judgment.
+- Implementation closure, failure notification, recovery reconciliation, and readiness initiation are automatic.
 - Manual dispatch remains only as an optional recovery route.
 
 ## Remaining Work
 
-1. Allow the first successful non-PR validation run to create both evidence records, close issue #22, and create the release-readiness issue.
-2. Correct any validation failure through repository commits; the workflow owns failure notification and recovery reconciliation.
-3. Satisfy an independent release policy before permitting a tag.
-4. Durably complete the four downstream verification gates:
-   - `StegVerse-Labs/Site`;
-   - `GCAT-BCAT-Engine/Publisher`;
-   - `StegVerse-Labs/admissibility-wiki`;
-   - `StegVerse-Labs/stegguardian-wiki`.
-5. Change release or tag permission only through a governed update to the machine-readable readiness record and its validator.
+1. Allow the first successful non-PR run to create both evidence records and close issue #22.
+2. Repair any failure through repository commits; automation owns notification and reconciliation.
+3. Each destination issue must verify the generated evidence within its own handoff boundary.
+4. A separate governed release policy must authorize any versioned tag.
+5. Release or tag permission may change only through validated machine-readable evidence.
 
 ## Definition of Done
 
 Runtime activation is complete when:
 
-- unit tests pass;
-- the Continuity mapping validator passes;
-- the live Governance fixture contract passes;
-- receipts preserve all three layers and do not mint Continuity receipts;
-- `evidence/runtime-validation.json` exists with `status: pass`;
-- `evidence/release-readiness.json` exists with `state: validated_not_released`;
-- issue #22 is closed by automation;
-- failure reconciliation operates without manual monitoring;
-- release authority remains bounded by the independent release and downstream gates;
-- continuation requires no chat context or manual-only action.
+- all runtime, Continuity, dispatch, and Governance-contract checks pass;
+- generated evidence validates;
+- issue #22 closes automatically;
+- failure reconciliation works without manual monitoring;
+- downstream tasks exist and remain bounded by destination authority;
+- release remains blocked until every independent gate is durably satisfied;
+- continuation requires no original conversation.
 
 ## Current Completion Assessment
 
 ```text
 Runtime evaluator: implemented
-Negative cases: implemented
-Positive control: implemented
-Replay contract: implemented
-Canonical Governance fixtures: implemented
-Live cross-repository verifier: implemented
-Push/PR/scheduled automation: implemented
-Idempotent validation evidence: implemented
-Evidence integrity validator: implemented
-Deterministic release-readiness assessment: implemented
-Automatic implementation closure: implemented
-Automatic failure reconciliation: implemented
-Automatic readiness issue initiation: implemented
+Negative, positive, and replay cases: implemented
+Live Governance verification: implemented
+Downstream dispatch issues: implemented
+Dispatch validator: implemented
+Evidence and readiness automation: implemented
+Failure and issue reconciliation: implemented
 Passing evidence records: pending first successful non-PR run
-Release permission: blocked by independent policy and downstream gates
+Release permission: blocked by independent policy and destination gates
 Manual activation dependency: none
 ```
 
@@ -205,15 +178,15 @@ Manual activation dependency: none
 
 ```text
 thread_archive_ready: true
-archive_reason: all implementation, validation, evidence, failure, closure, readiness, authority, ownership, and continuation mechanics are repository-resident.
+archive_reason: implementation, validation, evidence, downstream dispatch, authority, ownership, and continuation state are repository-resident.
 ```
 
 ## Progress Snapshot
 
 ```text
-StegVerse-Labs - 95% complete
-StegCore - 98% complete
+StegVerse-Labs - 96% complete
+StegCore - 99% complete
 StegCore - 99% complete TO GOAL ACTIVATION
-Fully developed files vs scaffolding and stubs: 98% developed / 2% pending first passing evidence and governed release gates
-Delta: validation success, validation failure, implementation closure, and readiness initiation are now automated state transitions; only the external run outcome and independently governed downstream release gates remain.
+Fully developed files vs scaffolding and stubs: 99% developed / 1% pending first passing evidence and independent release gates
+Delta: all downstream verification tasks now exist and are machine-bound to the evidence path; only the external passing run and destination-owned verification outcomes remain.
 ```
