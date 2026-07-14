@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from stegc​​ore.auri_gateway import canonical_sha256, evaluate_auri_candidate
-from stegc​​ore.decision import VerifiedReceiptEnvelope
+from stegcore.auri_gateway import canonical_sha256, evaluate_auri_candidate
+from stegcore.decision import VerifiedReceiptEnvelope
 
 
 def candidate(consequential: bool = False):
