@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Write deterministic evidence for a successful StegCore validation run.
+"""Write durable, idempotent evidence for a successful StegCore validation run.
 
-This script records validation facts supplied by GitHub Actions. It does not infer
-or grant production authority and does not mint Continuity receipts.
+The evidence changes only when the validated StegCore contract commit or canonical
+Governance commit changes. It does not grant production authority and does not mint
+Continuity receipts.
 """
 from __future__ import annotations
 
@@ -19,6 +20,16 @@ def canonical_hash(value: dict[str, Any]) -> str:
     return sha256(payload.encode("utf-8")).hexdigest()
 
 
+def load_existing(path: pathlib.Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=pathlib.Path, required=True)
@@ -32,6 +43,16 @@ def main() -> int:
     parser.add_argument("--event", required=True)
     parser.add_argument("--issue", default="22")
     args = parser.parse_args()
+
+    existing = load_existing(args.output)
+    if (
+        existing
+        and existing.get("status") == "pass"
+        and existing.get("stegcore_commit") == args.stegcore_commit
+        and existing.get("governance_commit") == args.governance_commit
+    ):
+        print("Passing evidence already matches the validated contract commits; no update required.")
+        return 0
 
     evidence: dict[str, Any] = {
         "artifact_type": "stegcore.runtime_validation_evidence",
