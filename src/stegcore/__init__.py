@@ -8,6 +8,7 @@ This package currently includes:
 - minimal decision interface (docs-aligned)
 - fail-closed governed runtime binding
 - three-layer judgment, signal-state, and execution admissibility evaluator
+- AURI-L1 external admissibility gateway
 
 Continuity receipts and verification belong to StegID.
 """
@@ -33,6 +34,7 @@ from .three_layer import (
     ThreeLayerResult,
     evaluate_three_layer,
 )
+from .auri_gateway import AuriGatewayResult, canonical_sha256, evaluate_auri_candidate
 
 __all__ = [
     "NodeState",
@@ -55,4 +57,7 @@ __all__ = [
     "LayerFinding",
     "ThreeLayerResult",
     "evaluate_three_layer",
+    "AuriGatewayResult",
+    "canonical_sha256",
+    "evaluate_auri_candidate",
 ]
