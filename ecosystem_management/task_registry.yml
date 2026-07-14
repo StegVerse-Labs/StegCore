@@ -37,6 +37,13 @@ managed_repos:
     status: management-capable-pending-workflow-run
     handoff: docs/STEGFIN_PROVIDER_BANKING_MIRROR_HANDOFF.md
     next_candidate: stegfin-provider-acquisition-close
+  - name: StegVA
+    status: interim-handoff-recorded-pending-dedicated-repository
+    handoff: docs/STEGVA_MIRROR_HANDOFF.md
+    next_candidate: dedicated-stegva-repository-bootstrap
+    ownership: stegva-nonprofit-formation-workstream
+    non_overlap: does-not-claim-active-stegfin-provider-chain
 
 artifacts:
   management_report: brain_reports/stegverse_ecosystem_management_readiness_report.json
+  stegva_interim_handoff: docs/STEGVA_MIRROR_HANDOFF.md
