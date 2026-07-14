@@ -84,6 +84,7 @@ jobs:
             --ref "${GITHUB_REF}" \
             --event "${GITHUB_EVENT_NAME}" \
             --issue 22
+          python scripts/check_runtime_validation_evidence.py evidence/runtime-validation.json
           AFTER="$(sha256sum evidence/runtime-validation.json | awk '{print $1}')"
           if [ "$BEFORE" != "$AFTER" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -110,7 +111,7 @@ jobs:
           GOVERNANCE_SHA: ${{ steps.evidence.outputs.governance_sha }}
         run: |
           STATE="$(gh issue view 22 --repo "$GITHUB_REPOSITORY" --json state --jq '.state')"
-          COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against Governance commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Unit tests, Continuity mapping validation, live Governance fixture evaluation, positive control, replay mutation, and receipt non-minting checks passed."
+          COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against Governance commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Unit tests, Continuity mapping validation, live Governance fixture evaluation, positive control, replay mutation, evidence integrity, downstream task declarations, and receipt non-minting checks passed."
           if [ "$STATE" = "OPEN" ]; then
             gh issue close 22 --repo "$GITHUB_REPOSITORY" --reason completed --comment "$COMMENT"
           fi
