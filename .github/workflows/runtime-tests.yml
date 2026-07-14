@@ -109,7 +109,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           CONTRACT_SHA: ${{ steps.evidence.outputs.contract_sha }}
           GOVERNANCE_SHA: ${{ steps.evidence.outputs.governance_sha }}
-          EVIDENCE_CHANGED: ${{ steps.evidence.outputs.changed }}
         run: |
           IMPLEMENTATION_STATE="$(gh issue view 22 --repo "$GITHUB_REPOSITORY" --json state --jq '.state')"
           COMPLETION_COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against Governance commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Unit tests, Continuity mapping validation, live Governance fixture evaluation, positive control, replay mutation, receipt non-minting, and evidence-integrity checks passed. This establishes validated_not_released only."
@@ -118,7 +117,7 @@ jobs:
           fi
 
           FAILURE_TITLE="[automation] StegCore runtime validation failure"
-          FAILURE_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "in:title $FAILURE_TITLE" --json number,title --jq '.[] | select(.title == env.FAILURE_TITLE) | .number' | head -n1)"
+          FAILURE_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "StegCore runtime validation failure in:title" --json number,title --jq '.[0].number // empty')"
           if [ -n "$FAILURE_NUMBER" ]; then
             gh issue close "$FAILURE_NUMBER" --repo "$GITHUB_REPOSITORY" --reason completed --comment "Automatic runtime validation recovered. Passing evidence is recorded at evidence/runtime-validation.json."
           fi
@@ -157,7 +156,7 @@ jobs:
           This issue does not grant release, production, continuity, deployment, or receipt-minting authority.
           EOF
           )
-          READINESS_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "in:title $READINESS_TITLE" --json number,title --jq '.[] | select(.title == env.READINESS_TITLE) | .number' | head -n1)"
+          READINESS_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore three-layer candidate in:title" --json number,title --jq '.[0].number // empty')"
           if [ -n "$READINESS_NUMBER" ]; then
             gh issue edit "$READINESS_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$READINESS_BODY"
             gh issue reopen "$READINESS_NUMBER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
@@ -182,7 +181,7 @@ jobs:
           Resolution is owned by repository automation and the next corrective commit. Do not close this issue until a later successful run closes it automatically.
           EOF
           )
-          NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "in:title $TITLE" --json number,title --jq '.[] | select(.title == env.TITLE) | .number' | head -n1)"
+          NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore runtime validation failure in:title" --json number,title --jq '.[0].number // empty')"
           if [ -n "$NUMBER" ]; then
             gh issue edit "$NUMBER" --repo "$GITHUB_REPOSITORY" --body "$BODY"
             gh issue reopen "$NUMBER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
