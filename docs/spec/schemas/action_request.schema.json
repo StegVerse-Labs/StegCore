@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/action_request.schema.json",
+  "title": "StegVerse Action Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["transition_id", "action", "actor_identity", "scope", "policy_reference", "policy_version", "evidence_references", "execution_context", "validity_window", "recoverability_profile", "state_digest"],
+  "properties": {
+    "transition_id": {"type": "string", "minLength": 1},
+    "action": {"type": "object", "required": ["type", "target"], "properties": {"type": {"type": "string"}, "target": {"type": "string"}, "parameters": {"type": "object"}}, "additionalProperties": false},
+    "actor_identity": {"type": "string", "minLength": 1},
+    "actor_authority": {"type": "string"},
+    "scope": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+    "policy_reference": {"type": "string", "minLength": 1},
+    "policy_version": {"type": "string", "minLength": 1},
+    "delegation_reference": {"type": ["string", "null"]},
+    "consent_reference": {"type": ["string", "null"]},
+    "evidence_references": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+    "execution_context": {"type": "object"},
+    "validity_window": {"type": "object", "required": ["not_before", "not_after"], "properties": {"not_before": {"type": "string", "format": "date-time"}, "not_after": {"type": "string", "format": "date-time"}}, "additionalProperties": false},
+    "recoverability_profile": {"type": "object", "required": ["mode"], "properties": {"mode": {"enum": ["rollback", "compensation", "containment", "none"]}}, "additionalProperties": true},
+    "state_digest": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}
+  }
+}
