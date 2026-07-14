@@ -7,6 +7,7 @@ Goal: bind StegCore decisions to a fail-closed runtime boundary
 Repository: StegVerse-Labs/StegCore
 Branch: build/governed-runtime-v7
 Task: issue #16
+Pull request: #17
 Source of truth: repository-local docs and validators
 ```
 
@@ -80,18 +81,18 @@ docs/STEGCORE_MIRROR_HANDOFF.md
 ```text
 Implementation owner: branch build/governed-runtime-v7
 Durable task owner: StegVerse-Labs/StegCore issue #16
+Review and validation owner: StegVerse-Labs/StegCore pull request #17
 Review/merge owner: repository maintainers
 Continuity verification and receipt owner: StegID / Continuity layers
 ```
 
 ## Remaining work
 
-1. Open a draft pull request from `build/governed-runtime-v7` to `main`.
-2. Obtain test validation and attach results to the PR or issue.
-3. Correct any review or CI findings.
-4. Merge after repository maintainers accept the runtime boundary.
-5. After merge, assess release/tag readiness.
-6. If release-ready, create a follow-up verification task for propagation or references in:
+1. Obtain test validation and attach results to pull request #17 or issue #16.
+2. Correct any review or CI findings.
+3. Merge after repository maintainers accept the runtime boundary.
+4. After merge, assess release/tag readiness.
+5. If release-ready, create a follow-up verification task for propagation or references in:
    - `StegVerse-Labs/Site`;
    - `GCAT-BCAT-Engine/Publisher`;
    - `StegVerse-Labs/admissibility-wiki`;
@@ -104,17 +105,18 @@ The continuation may modify the minimal runtime boundary, tests, exports, docume
 ## Archive readiness
 
 ```text
-thread_archive_ready: false
-reason: implementation is durable, but PR creation and test validation remain session-owned continuation actions
-archive_event: draft PR exists and validation state is recorded in the PR, issue, or this handoff
+thread_archive_ready: true
+reason: all session-specific decisions, code, ownership, blockers, remaining work, validation requirements, and continuation scope are durable in this handoff, issue #16, branch build/governed-runtime-v7, and draft pull request #17
+pending_validation_owner: pull request #17 and repository maintainers
+conversation_required_for_continuation: false
 ```
 
 ## Progress snapshot
 
 ```text
-StegVerse-Labs - 81% complete
-StegCore - 72% complete
-StegCore - 86% complete TO GOAL ACTIVATION
-Fully developed files vs scaffolding and stubs: 68% developed / 32% scaffolding and unvalidated runtime surfaces
-Delta: the prior unintegrated v1-v6 prototype line has been converted into a repository-aligned fail-closed runtime implementation with durable issue ownership; PR and validation remain.
+StegVerse-Labs - 82% complete
+StegCore - 75% complete
+StegCore - 90% complete TO GOAL ACTIVATION
+Fully developed files vs scaffolding and stubs: 71% developed / 29% scaffolding and unvalidated runtime surfaces
+Delta: the prior unintegrated v1-v6 prototype line is now a repository-aligned fail-closed runtime implementation with durable issue, branch, handoff, and draft PR ownership; only recorded validation, review, and merge remain.
 ```
