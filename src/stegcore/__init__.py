@@ -6,6 +6,7 @@ StegCore – constraint and governance layer for StegVerse.
 This package currently includes:
 - state/audit substrate (NodeState, StateEvent, StateEngine)
 - minimal decision interface (docs-aligned)
+- fail-closed runtime binding for injected execution callbacks
 
 Continuity receipts and verification belong to StegID.
 """
@@ -24,6 +25,12 @@ from .decision import (
     DecisionResult,
     decide,
 )
+from .runtime import (
+    ExecutionObservation,
+    GovernedRuntime,
+    canonical_hash,
+    governed_execute,
+)
 
 __all__ = [
     "NodeState",
@@ -36,4 +43,8 @@ __all__ = [
     "DecisionRequest",
     "DecisionResult",
     "decide",
+    "ExecutionObservation",
+    "GovernedRuntime",
+    "canonical_hash",
+    "governed_execute",
 ]
