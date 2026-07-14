@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "task_id": "AURI-004",
+  "repository": "StegVerse-Labs/StegCore",
+  "result": "PASS",
+  "verified_invariants": {
+    "valid_advisory_candidate_allows_without_execution": true,
+    "missing_verified_receipt_denies": true,
+    "consequential_candidate_requires_policy_and_delegation": true,
+    "policy_shape_can_defer": true,
+    "commit_time_hash_mismatch_denies": true,
+    "auri_execution_authority_claim_denies": true,
+    "decision_receipt_is_hash_addressed": true
+  },
+  "execution_performed": false,
+  "manual_tasks_required": false,
+  "verification_command": "python scripts/verify_auri_gateway.py",
+  "next_task": "AURI-005",
+  "verified_at": "2026-07-14"
+}
