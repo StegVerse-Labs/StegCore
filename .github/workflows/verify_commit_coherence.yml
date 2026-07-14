@@ -1,0 +1,121 @@
+name: Verify Commit Coherence
+
+on:
+  push:
+    paths:
+      - "src/stegcore/commit_governance.py"
+      - "tests/test_commit_governance.py"
+      - "docs/COMMIT_COHERENCE.md"
+      - ".github/workflows/verify_commit_coherence.yml"
+  pull_request:
+    paths:
+      - "src/stegcore/commit_governance.py"
+      - "tests/test_commit_governance.py"
+      - "docs/COMMIT_COHERENCE.md"
+      - ".github/workflows/verify_commit_coherence.yml"
+  workflow_dispatch:
+    inputs:
+      expected:
+        description: "Expected governed decision"
+        required: true
+        type: choice
+        options:
+          - allow
+          - deny
+        default: allow
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package and tests
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+
+      - name: Run commit-coherence tests
+        run: python -m pytest -q tests/test_commit_governance.py
+
+  selected-decision:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package
+        run: python -m pip install -e .
+
+      - name: Verify selected decision
+        env:
+          EXPECTED: ${{ inputs.expected }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from stegcore.commit_governance import coherence_gate
+
+          expected = os.environ["EXPECTED"].strip().lower()
+          if expected == "allow":
+              execution_mode = "manual"
+              expected_decision = "ALLOW"
+              expected_coherent = True
+              expected_denial_preserved = True
+          elif expected == "deny":
+              execution_mode = "auto"
+              expected_decision = "DENY"
+              expected_coherent = False
+              expected_denial_preserved = False
+          else:
+              raise SystemExit(f"unsupported selection: {expected!r}")
+
+          gate = coherence_gate(
+              task="verification_task",
+              payload={},
+              capability_surface={
+                  "actions_exposed": ["verification_task"],
+                  "execution_mode": execution_mode,
+                  "requires_governed_commit": True,
+              },
+              state_hash="workflow-state",
+              actor_binding="github-actions",
+              authority_resolution={
+                  "status": "approved",
+                  "basis_invalidated_by_action": False,
+              },
+          )
+          receipt = gate["receipt"]
+          summary = {
+              "selected": expected,
+              "decision": receipt["decision"],
+              "coherent": receipt["coherent"],
+              "coherence_checks": receipt["coherence_checks"],
+              "capability_hash": receipt["capability_hash"],
+              "receipt_hash": receipt["receipt_hash"],
+          }
+          print(json.dumps(summary, indent=2, sort_keys=True))
+
+          assert receipt["decision"] == expected_decision
+          assert receipt["coherent"] is expected_coherent
+          assert (
+              receipt["coherence_checks"]["denial_preserved"]
+              is expected_denial_preserved
+          )
+          print("VERIFICATION_PASSED")
+          PY
