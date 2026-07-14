@@ -19,6 +19,8 @@ on:
       - 'docs/**'
       - 'pyproject.toml'
       - '.github/workflows/runtime-tests.yml'
+  schedule:
+    - cron: '17 5 * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -27,8 +29,10 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out StegCore
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -46,3 +50,9 @@ jobs:
 
       - name: Run runtime tests
         run: pytest -q
+
+      - name: Check out canonical Governance contract
+        run: git clone --depth 1 https://github.com/StegVerse-Labs/Governance.git "$RUNNER_TEMP/governance"
+
+      - name: Verify Governance three-layer fixtures through StegCore
+        run: python scripts/verify_governance_three_layer_contract.py "$RUNNER_TEMP/governance"
