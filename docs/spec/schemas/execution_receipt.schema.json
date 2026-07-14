@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/execution_receipt.schema.json",
+  "title": "StegVerse Execution Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["transition_id", "decision_receipt_digest", "commit_time_valid", "execution_status", "executed_at", "effect_references", "receipt_digest"],
+  "properties": {
+    "transition_id": {"type": "string", "minLength": 1},
+    "decision_receipt_digest": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+    "commit_time_valid": {"type": "boolean"},
+    "commit_time_reason_codes": {"type": "array", "items": {"type": "string"}},
+    "execution_status": {"enum": ["EXECUTED", "BLOCKED", "FAILED", "COMPENSATED", "CONTAINED"]},
+    "executed_at": {"type": "string", "format": "date-time"},
+    "effect_references": {"type": "array", "items": {"type": "string"}},
+    "compensation_reference": {"type": ["string", "null"]},
+    "post_state_digest": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"},
+    "receipt_digest": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"commit_time_valid": {"const": false}}},
+      "then": {"properties": {"execution_status": {"const": "BLOCKED"}}}
+    }
+  ]
+}
