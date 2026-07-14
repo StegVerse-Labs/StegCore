@@ -6,16 +6,14 @@ StegCore – constraint and governance layer for StegVerse.
 This package currently includes:
 - state/audit substrate (NodeState, StateEvent, StateEngine)
 - minimal decision interface (docs-aligned)
+- fail-closed governed runtime binding
 
 Continuity receipts and verification belong to StegID.
 """
 
 from .models import NodeState, StateEvent
 from .state_engine import StateEngine
-
-# Optional: only if registry.py exists in your repo
 from .registry import Registry
-
 from .decision import (
     VerifiedReceiptEnvelope,
     ActionIntent,
@@ -24,6 +22,7 @@ from .decision import (
     DecisionResult,
     decide,
 )
+from .runtime import ExecutionObservation, GovernedRuntime, governed_execute
 
 __all__ = [
     "NodeState",
@@ -36,4 +35,7 @@ __all__ = [
     "DecisionRequest",
     "DecisionResult",
     "decide",
+    "ExecutionObservation",
+    "GovernedRuntime",
+    "governed_execute",
 ]
