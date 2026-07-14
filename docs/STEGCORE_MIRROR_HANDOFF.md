@@ -1,199 +1,120 @@
 # StegCore Mirror Handoff
 
-## Purpose
-
-This handoff lets a future StegCore build session continue repository activation, admissibility mapping, comparison documentation, or ecosystem-management work without prior chat context.
-
-It follows the same repository-resident handoff pattern used by Site and Publisher: the repository must carry enough state, acceptance criteria, non-claims, and next-action instructions for the ecosystem to continue or close the task without manual chat reconstruction.
-
-## Current Assessment Goal
+## Current goal
 
 ```text
-Continue building without manual actions needed through completion OR until task handoff and task completion is capable of being handled by the ecosystem's own management.
-```
-
-## Current Goal
-
-```text
-Goal: StegCore repository-managed continuation readiness
+Goal: bind StegCore decisions to a fail-closed runtime boundary
 Repository: StegVerse-Labs/StegCore
-Activation state: self_managed_handoff_ready
-Completion class: self_managed_handoff_completion
+Branch: build/governed-runtime-v7
+Task: issue #16
 Source of truth: repository-local docs and validators
-Manual action requirement: none_for_handoff_continuation
-Remaining dependency: future runtime implementation and optional comparison-package expansion must conform to repository-local docs before production authority is claimed
 ```
 
-## Confirmed Repository Boundary
+## Repository boundary
 
-StegCore decides whether actions are permitted given verified continuity. It answers whether an actor can act now, under what constraints, and with whose consent.
+StegCore decides whether an action is permitted given already-verified continuity evidence. It does not verify or mint continuity receipts and does not store identity. Those responsibilities remain with StegID and the Continuity receipt-governance layer.
 
-StegCore is not the continuity truth system. It does not verify receipts, mint receipts, or store identity. Continuity receipts and verification belong to StegID and the Continuity receipt-governance layer.
+Documentation wins if implementation and documentation diverge.
 
-This handoff must not be read as production authority, execution authority, proof authority, continuity authority, accreditation authority, or receipt-minting authority.
+## Session decisions preserved
 
-## Built Files Known To This Handoff
+1. StegCore is the correct repository for runtime-governance and consequence-bearing execution checks.
+2. The retained execution flow is:
+
+   `verified continuity input -> StegCore decision -> execute or refuse -> local execution observation`
+
+3. Prior prototype bundles `stegcore_gate_bundle_v1` through `stegcore_gate_bundle_v6` are design evidence only and must not be installed wholesale.
+4. Retained concepts:
+   - mandatory fail-closed execution boundary;
+   - explicit `allow`, `deny`, and `defer` handling;
+   - deterministic pre/post hashing;
+   - structured execution/refusal observation;
+   - injected execution callback rather than an unrestricted command endpoint.
+5. Superseded prototype components:
+   - embedded authority signing and demo HMAC secret;
+   - local continuity-signature verification;
+   - receipt-chain minting inside StegCore;
+   - public unrestricted command execution;
+   - a new standalone workflow for this task.
+
+## Built files
 
 ```text
-README.md
-docs/DECISION_MODEL.md
-docs/POLICY_SHAPES.md
-docs/WHY_STEGCORE_EXISTS.md
-docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
+src/stegcore/runtime.py
+tests/test_runtime.py
+src/stegcore/__init__.py
 docs/STEGCORE_MIRROR_HANDOFF.md
-scripts/check_continuity_admissibility_mapping.py
-src/stegcore/
 ```
 
-## Current Repository State
+## Runtime behavior
+
+`src/stegcore/runtime.py`:
+
+- accepts the canonical `DecisionRequest`;
+- calls `decide()` from `src/stegcore/decision.py`;
+- invokes the injected callback only when the decision is `allow`;
+- never invokes the callback for `deny` or `defer`;
+- captures callback failure as `failed` without converting it into successful execution;
+- emits `stegcore.execution_observation`, explicitly not a continuity receipt;
+- records deterministic pre-state and post-state SHA-256 hashes over declared JSON-compatible state.
+
+## Tests added
+
+`tests/test_runtime.py` covers:
+
+- allow executes exactly once;
+- deny invokes the executor zero times;
+- defer invokes the executor zero times;
+- execution observations have no receipt identifier or signature surface;
+- executor exceptions produce a failed observation.
+
+## Known blockers and cautions
+
+- Validation has not yet been observed through repository CI or an external test run.
+- Policy shapes remain descriptive in v0.1; this implementation binds the canonical decision output but does not invent a new policy engine.
+- The execution observation is local evidence only and must not be presented as a continuity receipt.
+- Integrating applications remain responsible for the actual callback and for forwarding evidence to the appropriate external receipt layer.
+
+## Ownership
 
 ```text
-README goal: present
-Continuity admissibility mapping: present
-Continuity admissibility mapping validator: present
-Comparison package expansion: optional_future_expansion
-Runtime authority: not_yet_claimed
-Self-managed handoff: ready
+Implementation owner: branch build/governed-runtime-v7
+Durable task owner: StegVerse-Labs/StegCore issue #16
+Review/merge owner: repository maintainers
+Continuity verification and receipt owner: StegID / Continuity layers
 ```
 
-## Continuity Integration Target
+## Remaining work
+
+1. Open a draft pull request from `build/governed-runtime-v7` to `main`.
+2. Obtain test validation and attach results to the PR or issue.
+3. Correct any review or CI findings.
+4. Merge after repository maintainers accept the runtime boundary.
+5. After merge, assess release/tag readiness.
+6. If release-ready, create a follow-up verification task for propagation or references in:
+   - `StegVerse-Labs/Site`;
+   - `GCAT-BCAT-Engine/Publisher`;
+   - `StegVerse-Labs/admissibility-wiki`;
+   - the canonical StegGuardian wiki repository.
+
+## Permitted continuation scope
+
+The continuation may modify the minimal runtime boundary, tests, exports, documentation, task records, and PR evidence necessary to prove that StegCore decisions bind execution. It must not absorb identity, continuity verification, continuity receipt minting, or unrestricted command orchestration.
+
+## Archive readiness
 
 ```text
-docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
+thread_archive_ready: false
+reason: implementation is durable, but PR creation and test validation remain session-owned continuation actions
+archive_event: draft PR exists and validation state is recorded in the PR, issue, or this handoff
 ```
 
-This file maps Continuity continuation receipt fields to StegCore proceed, pause, deny, and commit-time check conditions.
-
-The mapping establishes:
+## Progress snapshot
 
 ```text
-Continuity receipt
-  -> standing evidence
-  -> StegCore admissibility check
-  -> proceed, pause, deny, or commit-time recheck
-```
-
-## Current Validation Path
-
-The continuity admissibility mapping is validated by:
-
-```text
-python scripts/check_continuity_admissibility_mapping.py docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
-```
-
-The validator checks that the mapping preserves:
-
-```text
-Continuity receipt
-StegCore admissibility check
-Proceed Conditions
-Pause Conditions
-Deny Conditions
-Commit-Time Check
-does not mint continuity receipts
-receipt_id
-source_repository
-target_repository
-current_goal
-activation_state
-standing_basis
-files_built
-files_pending
-completion_assessment
-thread_archive_ready
-```
-
-## Acceptance Criteria
-
-The StegCore continuation task is complete when one of these conditions is true:
-
-```text
-A. Runtime completion:
-   - StegCore runtime implements the documented decision model.
-   - Runtime tests prove proceed, pause, deny, and commit-time recheck behavior.
-   - Runtime behavior conforms to docs/DECISION_MODEL.md, docs/POLICY_SHAPES.md, and docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md.
-   - Runtime evidence proves StegCore does not mint or replace continuity receipts.
-
-B. Self-managed handoff completion:
-   - This file exists.
-   - README.md states the current assessment goal.
-   - docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md defines repository-local continuation evidence.
-   - scripts/check_continuity_admissibility_mapping.py validates the mapping.
-   - Remaining work is future runtime implementation, optional comparison-package expansion, or workflow activation; not reconstruction from chat.
-```
-
-## Current Completion Classification
-
-```text
-classification: self_managed_handoff_completion
-runtime_completion: not_yet_observed
-reason: StegCore currently remains documentation-first with scaffolding substrate; repository-local handoff and mapping validation are sufficient for ecosystem-managed continuation without this chat.
-```
-
-## Non-Claims
-
-This handoff does not claim:
-
-```text
-- StegCore runtime is production complete;
-- StegCore has authority to mint continuity receipts;
-- StegCore replaces StegID or Continuity receipt verification;
-- scaffolding in src/stegcore is authoritative over docs;
-- comparison documentation is required before the repository can carry its own continuation state;
-- future task completion requires this chat thread.
-```
-
-## Next Ecosystem Action
-
-```text
-1. Treat docs/STEGCORE_MIRROR_HANDOFF.md as the continuation source of truth.
-2. Keep docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md aligned with StegCore decision language.
-3. Keep scripts/check_continuity_admissibility_mapping.py passing before expanding runtime authority.
-4. Add a dedicated handoff checker if StegCore begins automated workflow activation.
-5. Install optional docs/comparisons material only from a governed in-repo source or renewed source artifact.
-6. Promote runtime code from scaffold to authority-bearing only after tests prove conformance to docs.
-```
-
-## Evidence To Capture On Future Expansion
-
-```text
-Commit SHA that updates this handoff
-Commit SHA that updates docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
-Validator output for scripts/check_continuity_admissibility_mapping.py
-Runtime test output when runtime implementation begins
-Optional comparison-package source artifact or in-repo source path
-Optional comparison JSON validation output
-Repo file-structure verification result after expansion
-```
-
-## Current Delta
-
-```text
-Resolved: Site handoff was checked before continuing.
-Resolved: StegCore was confirmed as an adjacent governance repo.
-Resolved: StegCore has a repo-local mirror handoff for comparison/governance documentation.
-Resolved: StegCore README.md states the current ecosystem-managed continuation goal.
-Resolved: docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md maps continuation receipts to StegCore admissibility language.
-Resolved: scripts/check_continuity_admissibility_mapping.py validates the continuity admissibility mapping.
-Resolved: this handoff no longer depends on a downloadable comparison package for archive readiness.
-Pending: future runtime implementation and tests.
-Pending: optional comparison package installation if a governed source artifact is present.
-Pending: optional dedicated StegCore handoff checker if workflow activation begins.
-```
-
-## Archive Readiness
-
-```text
-thread_archive_ready: true
-archive_reason: StegCore continuation state is now repository-resident. The repo contains its current goal, docs-first authority boundary, continuation mapping, validator, acceptance criteria, non-claims, current delta, and next ecosystem action. No additional content from this chat or from a downloadable package is required for future StegCore continuation.
-```
-
-## Progress Snapshot
-
-```text
-StegVerse-Labs - 79% complete
-StegCore - 66% complete
-StegCore - 100% complete TO GOAL ACTIVATION
-Fully developed files vs scaffolding and stubs: 62% developed / 38% scaffolding and future runtime surfaces
-Delta: StegCore now has a repo-local handoff, Continuity admissibility receipt mapping, mapping validator, and self-managed continuation state; runtime implementation remains future work and optional comparison-package expansion is no longer an archive-readiness blocker.
+StegVerse-Labs - 81% complete
+StegCore - 72% complete
+StegCore - 86% complete TO GOAL ACTIVATION
+Fully developed files vs scaffolding and stubs: 68% developed / 32% scaffolding and unvalidated runtime surfaces
+Delta: the prior unintegrated v1-v6 prototype line has been converted into a repository-aligned fail-closed runtime implementation with durable issue ownership; PR and validation remain.
 ```
