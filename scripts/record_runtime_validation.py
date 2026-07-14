@@ -58,6 +58,7 @@ def main() -> int:
         "artifact_type": "stegcore.runtime_validation_evidence",
         "schema_version": "1.0",
         "status": "pass",
+        "release_state": "validated_not_released",
         "repository": args.repository,
         "stegcore_commit": args.stegcore_commit,
         "governance_repository": "StegVerse-Labs/Governance",
@@ -80,7 +81,30 @@ def main() -> int:
             "production_authority_claimed": False,
             "continuity_authority_claimed": False,
             "receipt_minting_authority_claimed": False,
+            "release_authority_claimed": False,
         },
+        "downstream_verification_tasks": [
+            {
+                "destination": "StegVerse-Labs/Site",
+                "task": "Verify three-layer runtime evidence and public integration references after release readiness.",
+                "state": "pending_release_readiness",
+            },
+            {
+                "destination": "GCAT-BCAT-Engine/Publisher",
+                "task": "Verify publication and distribution handling for the validated three-layer runtime contract after release readiness.",
+                "state": "pending_release_readiness",
+            },
+            {
+                "destination": "StegVerse-Labs/admissibility-wiki",
+                "task": "Verify admissibility documentation reflects the validated judgment, signal-state, and execution contract after release readiness.",
+                "state": "pending_release_readiness",
+            },
+            {
+                "destination": "StegVerse-Labs/stegguardian-wiki",
+                "task": "Verify Guardian documentation reflects judgment conditions, state integrity, and execution-boundary behavior after release readiness.",
+                "state": "pending_release_readiness",
+            },
+        ],
         "validated_at": datetime.now(timezone.utc).isoformat(),
     }
     evidence["evidence_hash"] = canonical_hash(evidence)
