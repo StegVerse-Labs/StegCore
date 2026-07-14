@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Write durable, idempotent evidence for a successful StegCore validation run.
 
-The evidence changes only when the validated StegCore contract commit or canonical
-Governance commit changes. It does not grant production authority and does not mint
-Continuity receipts.
+The evidence changes only when the validated StegCore contract commit, canonical
+Governance commit, or downstream dispatch changes. It does not grant production,
+release, cross-repository mutation, or Continuity authority.
 """
 from __future__ import annotations
 
@@ -20,19 +20,26 @@ def canonical_hash(value: dict[str, Any]) -> str:
     return sha256(payload.encode("utf-8")).hexdigest()
 
 
+def load_object(path: pathlib.Path) -> dict[str, Any]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError(f"{path}: root must be an object")
+    return value
+
+
 def load_existing(path: pathlib.Path) -> dict[str, Any] | None:
     if not path.exists():
         return None
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+        return load_object(path)
+    except (OSError, json.JSONDecodeError, ValueError):
         return None
-    return value if isinstance(value, dict) else None
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=pathlib.Path, required=True)
+    parser.add_argument("--dispatch", type=pathlib.Path, required=True)
     parser.add_argument("--stegcore-commit", required=True)
     parser.add_argument("--governance-commit", required=True)
     parser.add_argument("--run-id", required=True)
@@ -44,19 +51,44 @@ def main() -> int:
     parser.add_argument("--issue", default="22")
     args = parser.parse_args()
 
+    dispatch = load_object(args.dispatch)
+    if dispatch.get("artifact_type") != "stegcore.downstream_verification_dispatch":
+        raise SystemExit("downstream dispatch artifact_type is invalid")
+    destinations = dispatch.get("destinations")
+    if not isinstance(destinations, list) or not destinations:
+        raise SystemExit("downstream dispatch must contain destinations")
+
+    dispatch_hash = canonical_hash(dispatch)
     existing = load_existing(args.output)
     if (
         existing
         and existing.get("status") == "pass"
         and existing.get("stegcore_commit") == args.stegcore_commit
         and existing.get("governance_commit") == args.governance_commit
+        and existing.get("downstream_dispatch_hash") == dispatch_hash
     ):
-        print("Passing evidence already matches the validated contract commits; no update required.")
+        print("Passing evidence already matches contract commits and downstream dispatch.")
         return 0
+
+    downstream_verification = []
+    for item in destinations:
+        if not isinstance(item, dict):
+            raise SystemExit("downstream dispatch destinations must be objects")
+        downstream_verification.append(
+            {
+                "repository": item.get("repository"),
+                "issue_number": item.get("issue_number"),
+                "issue_url": item.get("issue_url"),
+                "handoff": item.get("handoff"),
+                "required": item.get("required") is True,
+                "state": item.get("state"),
+                "scope": item.get("scope"),
+            }
+        )
 
     evidence: dict[str, Any] = {
         "artifact_type": "stegcore.runtime_validation_evidence",
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "status": "pass",
         "release_state": "validated_not_released",
         "repository": args.repository,
@@ -82,29 +114,11 @@ def main() -> int:
             "continuity_authority_claimed": False,
             "receipt_minting_authority_claimed": False,
             "release_authority_claimed": False,
+            "cross_repository_mutation_authority_claimed": False,
         },
-        "downstream_verification_tasks": [
-            {
-                "destination": "StegVerse-Labs/Site",
-                "task": "Verify three-layer runtime evidence and public integration references after release readiness.",
-                "state": "pending_release_readiness",
-            },
-            {
-                "destination": "GCAT-BCAT-Engine/Publisher",
-                "task": "Verify publication and distribution handling for the validated three-layer runtime contract after release readiness.",
-                "state": "pending_release_readiness",
-            },
-            {
-                "destination": "StegVerse-Labs/admissibility-wiki",
-                "task": "Verify admissibility documentation reflects the validated judgment, signal-state, and execution contract after release readiness.",
-                "state": "pending_release_readiness",
-            },
-            {
-                "destination": "StegVerse-Labs/stegguardian-wiki",
-                "task": "Verify Guardian documentation reflects judgment conditions, state integrity, and execution-boundary behavior after release readiness.",
-                "state": "pending_release_readiness",
-            },
-        ],
+        "downstream_dispatch_path": str(args.dispatch),
+        "downstream_dispatch_hash": dispatch_hash,
+        "downstream_verification": downstream_verification,
         "validated_at": datetime.now(timezone.utc).isoformat(),
     }
     evidence["evidence_hash"] = canonical_hash(evidence)
