@@ -64,13 +64,13 @@ jobs:
       - name: Verify Governance three-layer fixtures through StegCore
         run: python scripts/verify_governance_three_layer_contract.py "$RUNNER_TEMP/governance"
 
-      - name: Record passing validation evidence
+      - name: Record passing validation and release-readiness evidence
         id: evidence
         if: github.event_name != 'pull_request'
         env:
           GOVERNANCE_DIR: ${{ runner.temp }}/governance
         run: |
-          BEFORE="$(sha256sum evidence/runtime-validation.json 2>/dev/null | awk '{print $1}' || true)"
+          BEFORE="$(cat evidence/runtime-validation.json evidence/release-readiness.json 2>/dev/null | sha256sum | awk '{print $1}' || true)"
           GOVERNANCE_SHA="$(git -C "$GOVERNANCE_DIR" rev-parse HEAD)"
           CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs pyproject.toml .github/workflows/runtime-tests.yml)"
           python scripts/record_runtime_validation.py \
@@ -85,7 +85,10 @@ jobs:
             --event "${GITHUB_EVENT_NAME}" \
             --issue 22
           python scripts/check_runtime_validation_evidence.py evidence/runtime-validation.json
-          AFTER="$(sha256sum evidence/runtime-validation.json | awk '{print $1}')"
+          python scripts/assess_release_readiness.py \
+            --evidence evidence/runtime-validation.json \
+            --output evidence/release-readiness.json
+          AFTER="$(cat evidence/runtime-validation.json evidence/release-readiness.json | sha256sum | awk '{print $1}')"
           if [ "$BEFORE" != "$AFTER" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
@@ -99,8 +102,8 @@ jobs:
         run: |
           git config user.name "stegcore-validation-bot"
           git config user.email "stegcore-validation-bot@users.noreply.github.com"
-          git add evidence/runtime-validation.json
-          git commit -m "Record passing StegCore runtime validation [skip ci]"
+          git add evidence/runtime-validation.json evidence/release-readiness.json
+          git commit -m "Record StegCore validation and release-readiness state [skip ci]"
           git push origin HEAD:main
 
       - name: Reconcile implementation and release-readiness issues
@@ -111,15 +114,14 @@ jobs:
           GOVERNANCE_SHA: ${{ steps.evidence.outputs.governance_sha }}
         run: |
           IMPLEMENTATION_STATE="$(gh issue view 22 --repo "$GITHUB_REPOSITORY" --json state --jq '.state')"
-          COMPLETION_COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against Governance commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Unit tests, Continuity mapping validation, live Governance fixture evaluation, positive control, replay mutation, receipt non-minting, and evidence-integrity checks passed. This establishes validated_not_released only."
+          COMPLETION_COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against Governance commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Release state: evidence/release-readiness.json. This establishes validated_not_released only."
           if [ "$IMPLEMENTATION_STATE" = "OPEN" ]; then
             gh issue close 22 --repo "$GITHUB_REPOSITORY" --reason completed --comment "$COMPLETION_COMMENT"
           fi
 
-          FAILURE_TITLE="[automation] StegCore runtime validation failure"
-          FAILURE_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "StegCore runtime validation failure in:title" --json number,title --jq '.[0].number // empty')"
+          FAILURE_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "StegCore runtime validation failure in:title" --json number --jq '.[0].number // empty')"
           if [ -n "$FAILURE_NUMBER" ]; then
-            gh issue close "$FAILURE_NUMBER" --repo "$GITHUB_REPOSITORY" --reason completed --comment "Automatic runtime validation recovered. Passing evidence is recorded at evidence/runtime-validation.json."
+            gh issue close "$FAILURE_NUMBER" --repo "$GITHUB_REPOSITORY" --reason completed --comment "Automatic runtime validation recovered. Passing evidence is recorded under evidence/."
           fi
 
           READINESS_TITLE="[release-readiness] StegCore three-layer candidate"
@@ -128,35 +130,19 @@ jobs:
 
           `validated_not_released`
 
-          ## Evidence
+          ## Durable records
 
+          - `evidence/runtime-validation.json`
+          - `evidence/release-readiness.json`
           - StegCore contract commit: `${CONTRACT_SHA}`
           - Governance contract commit: `${GOVERNANCE_SHA}`
-          - Durable evidence: `evidence/runtime-validation.json`
 
-          ## Required release gates
-
-          - [x] StegCore unit tests pass
-          - [x] Continuity admissibility mapping passes
-          - [x] Canonical Governance fixture contract passes
-          - [x] Positive control yields `ALLOW`
-          - [x] Replay mutation yields `FAIL-CLOSED`
-          - [x] Continuity receipt minting remains false
-          - [x] Evidence hash and authority boundary validate
-          - [ ] Independent release policy permits a tag
-          - [ ] Downstream verification is complete
-
-          ## Downstream verification destinations
-
-          - `StegVerse-Labs/Site`
-          - `GCAT-BCAT-Engine/Publisher`
-          - `StegVerse-Labs/admissibility-wiki`
-          - `StegVerse-Labs/stegguardian-wiki`
+          The machine-readable assessment keeps release and tagging blocked until independent release policy and all four downstream verification gates are durably recorded as pass.
 
           This issue does not grant release, production, continuity, deployment, or receipt-minting authority.
           EOF
           )
-          READINESS_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore three-layer candidate in:title" --json number,title --jq '.[0].number // empty')"
+          READINESS_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore three-layer candidate in:title" --json number --jq '.[0].number // empty')"
           if [ -n "$READINESS_NUMBER" ]; then
             gh issue edit "$READINESS_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$READINESS_BODY"
             gh issue reopen "$READINESS_NUMBER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
@@ -178,10 +164,10 @@ jobs:
           - Event: `${GITHUB_EVENT_NAME}`
           - Run: ${RUN_URL}
 
-          Resolution is owned by repository automation and the next corrective commit. Do not close this issue until a later successful run closes it automatically.
+          Resolution is owned by repository automation and the next corrective commit. A later successful run closes this issue automatically.
           EOF
           )
-          NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore runtime validation failure in:title" --json number,title --jq '.[0].number // empty')"
+          NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore runtime validation failure in:title" --json number --jq '.[0].number // empty')"
           if [ -n "$NUMBER" ]; then
             gh issue edit "$NUMBER" --repo "$GITHUB_REPOSITORY" --body "$BODY"
             gh issue reopen "$NUMBER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
