@@ -61,14 +61,17 @@ jobs:
         run: python scripts/verify_governance_three_layer_contract.py "$RUNNER_TEMP/governance"
 
       - name: Record passing validation evidence
+        id: evidence
         if: github.event_name != 'pull_request'
         env:
           GOVERNANCE_DIR: ${{ runner.temp }}/governance
         run: |
+          BEFORE="$(sha256sum evidence/runtime-validation.json 2>/dev/null | awk '{print $1}' || true)"
           GOVERNANCE_SHA="$(git -C "$GOVERNANCE_DIR" rev-parse HEAD)"
+          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs pyproject.toml .github/workflows/runtime-tests.yml)"
           python scripts/record_runtime_validation.py \
             --output evidence/runtime-validation.json \
-            --stegcore-commit "${GITHUB_SHA}" \
+            --stegcore-commit "$CONTRACT_SHA" \
             --governance-commit "$GOVERNANCE_SHA" \
             --run-id "${GITHUB_RUN_ID}" \
             --run-attempt "${GITHUB_RUN_ATTEMPT}" \
@@ -77,29 +80,33 @@ jobs:
             --ref "${GITHUB_REF}" \
             --event "${GITHUB_EVENT_NAME}" \
             --issue 22
+          AFTER="$(sha256sum evidence/runtime-validation.json | awk '{print $1}')"
+          if [ "$BEFORE" != "$AFTER" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "contract_sha=$CONTRACT_SHA" >> "$GITHUB_OUTPUT"
+          echo "governance_sha=$GOVERNANCE_SHA" >> "$GITHUB_OUTPUT"
 
       - name: Commit durable validation evidence
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.evidence.outputs.changed == 'true'
         run: |
           git config user.name "stegcore-validation-bot"
           git config user.email "stegcore-validation-bot@users.noreply.github.com"
           git add evidence/runtime-validation.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Record passing StegCore runtime validation [skip ci]"
-            git push
-          else
-            echo "Validation evidence is unchanged."
-          fi
+          git commit -m "Record passing StegCore runtime validation [skip ci]"
+          git push
 
       - name: Close runtime implementation issue
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.evidence.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          CONTRACT_SHA: ${{ steps.evidence.outputs.contract_sha }}
+          GOVERNANCE_SHA: ${{ steps.evidence.outputs.governance_sha }}
         run: |
           STATE="$(gh issue view 22 --repo "$GITHUB_REPOSITORY" --json state --jq '.state')"
-          COMMENT="Automated validation passed for StegCore commit ${GITHUB_SHA} against Governance commit $(git -C \"$RUNNER_TEMP/governance\" rev-parse HEAD). Durable evidence: evidence/runtime-validation.json. Unit tests, Continuity mapping validation, live Governance fixture evaluation, positive control, replay mutation, and receipt non-minting checks passed."
+          COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against Governance commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Unit tests, Continuity mapping validation, live Governance fixture evaluation, positive control, replay mutation, and receipt non-minting checks passed."
           if [ "$STATE" = "OPEN" ]; then
             gh issue close 22 --repo "$GITHUB_REPOSITORY" --reason completed --comment "$COMMENT"
-          else
-            gh issue comment 22 --repo "$GITHUB_REPOSITORY" --body "$COMMENT"
           fi
