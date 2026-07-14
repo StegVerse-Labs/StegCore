@@ -12,7 +12,7 @@ It records the bounded continuation scope arising from public discussion of dura
 Organization: StegVerse-Labs
 Repository: StegCore
 Goal: maintain and harden StegCore as the StegVerse proof anchor while moving outward through demonstrable technology
-Status: decision_recorded_hardening_review_pending
+Status: invariant_mapping_complete_hardening_queue_defined
 ```
 
 ## Durable Decisions
@@ -49,6 +49,34 @@ The hardening review should test at least these conditions:
 7. Downstream integration pressure that attempts to turn StegCore into a negotiable service or authority source.
 8. Hostile or divergent forks attempting to preserve the name while weakening the invariants.
 
+## Completed Hardening Review Step
+
+The current repository has been mapped against the proof-anchor invariants in:
+
+```text
+docs/STEGCORE_PROOF_ANCHOR_INVARIANT_MATRIX.md
+```
+
+The matrix classifies each invariant as `implemented_and_testable`, `implemented_partial`, `documented_only`, or `absent`, links it to current repository evidence, assigns material gaps, and defines one bounded outward demonstration candidate.
+
+The review found that the three-layer fail-closed evaluation boundary is implemented. The principal remaining proof-anchor gaps are:
+
+1. immutable policy/delegation version and decision-epoch binding;
+2. offline, content-addressed proof portability;
+3. machine-enforced constitutional change classification and invariant-diff review;
+4. downstream non-override and refusal-preservation tests; and
+5. fork identity and conformance-claim rules.
+
+## Selected Bounded Demonstration Candidate
+
+```text
+Candidate: Offline Replay Discontinuity Proof
+Purpose: reproduce an ALLOW baseline and deterministic FAIL-CLOSED mutated-state result from one exported proof packet without GitHub, network access, hosted endpoints, or privileged credentials.
+Acceptance criteria source: docs/STEGCORE_PROOF_ANCHOR_INVARIANT_MATRIX.md
+```
+
+Selection does not authorize release, deployment, publication, external association, or a guarantee claim. Implementation and validation evidence are still required.
+
 ## Documentation Candidate
 
 Only after checking the current public-review boundary and existing documentation structure, consider a concise statement equivalent to:
@@ -64,14 +92,15 @@ A compact non-goals section may also be appropriate if not already expressed els
 
 Do not name or imply endorsement by an external person, project, protocol, or standard without the applicable review and association boundary being satisfied.
 
-## Discovered Tasks
+## Remaining Durable Tasks
 
-1. Compare these proof-anchor invariants against the current StegCore specification, README, schemas, evaluators, fixtures, and tests.
-2. Identify which invariants are already implemented, documented, tested, partially represented, or absent.
-3. Add only the minimum documentation needed to make already-implemented properties legible.
-4. Convert material gaps into executable hostile-assumption fixtures and deterministic tests.
-5. Select one outward-facing demonstration that proves continuity or admissibility under partial failure without weakening the anchor.
-6. Keep public-review and third-party naming constraints synchronized with `docs/STEGCORE_BOUNDARY_REVIEW_MIRROR_HANDOFF.md`.
+1. Convert identity-without-authority, replay/version substitution, and downstream refusal-override gaps into deterministic hostile-assumption fixtures and tests.
+2. Bind decisions and proof packets to immutable policy/delegation versions or artifact hashes and an explicit decision epoch.
+3. Produce the self-contained offline replay proof packet and dependency-free verifier.
+4. Install or verify a machine-enforced constitutional change gate for governance-semantic changes.
+5. Define fork identity and StegCore conformance-claim rules.
+6. Validate the bounded demonstration against every acceptance criterion before making any implementation guarantee.
+7. Keep public-review and third-party naming constraints synchronized with `docs/STEGCORE_BOUNDARY_REVIEW_MIRROR_HANDOFF.md`.
 
 ## Blockers and Constraints
 
@@ -79,13 +108,14 @@ Do not name or imply endorsement by an external person, project, protocol, or st
 - Existing private-review-first and neutral-naming-first rules remain controlling for any third-party association or named comparison.
 - A claim must not be promoted from architectural intent to implemented guarantee until repository evidence and repeatable validation support it.
 - Documentation work must remain subordinate to demonstrable product and technical proof.
+- GitHub and CI may build or validate proof artifacts, but neither may become the legitimacy source required to verify them.
 
 ## Ownership and Continuation
 
 ```text
 Current owner: StegVerse-Labs/StegCore continuation workflow or an explicitly assigned implementation session
 This archived conversation: no continuing mutation or validation claim after this handoff is committed
-Permitted continuation: repository inspection, gap classification, minimal documentation augmentation, hostile-assumption fixtures/tests, and selection of one bounded outward demonstration
+Permitted continuation: hostile-assumption fixtures/tests, immutable version/epoch binding, offline proof packet/verifier, governance-change enforcement, fork/conformance rules, and validation of the selected bounded demonstration
 Prohibited continuation: broad narrative rewrite, unreviewed third-party association, unsupported guarantee claims, speculative token integration, or expansion unrelated to proof-anchor hardening
 ```
 
@@ -93,12 +123,13 @@ Prohibited continuation: broad narrative rewrite, unreviewed third-party associa
 
 This workstream is ready for its next transition when:
 
-1. the current repository is mapped against every invariant in this handoff;
-2. each invariant has evidence classified as implemented, documented-only, test-only, partial, or absent;
-3. material gaps have assigned durable tasks or committed tests/fixtures;
-4. any public wording change has passed the applicable review boundary; and
-5. one bounded outward demonstration candidate has been selected with explicit acceptance criteria.
+1. material gaps have committed deterministic tests or assigned durable tasks;
+2. the exported proof packet verifies offline and reproduces the declared baseline/mutated outcomes;
+3. governance-semantic changes are machine-classified and review-gated;
+4. downstream refusal cannot be converted into execution through callback, provider status, health state, or executor output;
+5. fork identity and conformance claims are explicit; and
+6. any public wording change has passed the applicable review boundary.
 
 ## Archive Readiness
 
-This handoff preserves the session's unique decisions, discovered hardening tasks, constraints, remaining work, ownership posture, pending validation requirements, and permitted continuation scope. Once committed, the originating conversation is not required for continuation.
+This handoff and the invariant matrix preserve the decisions, evidence classification, remaining tasks, selected demonstration, ownership, blockers, and permitted continuation scope. The originating conversation is not required for continuation after the branch and pull request are durably recorded.
