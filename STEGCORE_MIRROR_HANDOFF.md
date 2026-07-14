@@ -85,3 +85,23 @@ Continue work on StegCore decision contracts, capability-surface binding, commit
 - Fully developed: handoff, commit-coherence contract, deterministic predicates, capability hashing, decision receipt hashing, replay comparison, seven tests, and iPhone-triggerable verification workflow.
 - Scaffolding: connection to a production executor remains intentionally deferred until that executor is identified in its owning repository.
 - Activation blocker: PR #18 CI must be observed and verified.
+
+## Initial Boundary and Public-Launch Session Record
+
+The earlier session that established StegCore's initial public posture made and completed the following decisions and work:
+
+- StegID proves verified continuity; StegCore consumes that evidence and decides permission.
+- Initial decision outcomes were defined as `allow`, `deny`, and first-class `defer` with machine-readable reasons.
+- Initial policy shapes were quorum, guardian, veto, time-lock, and escalation.
+- Execution remained outside StegCore.
+- Node state and append-only events were retained as internal state/audit substrate, not continuity truth.
+- Public positioning was limited to: `StegVerse enables AI systems that are accountable, recoverable, and constrained by verifiable continuity.` No AGI claim was made.
+- At the initial v0.1 stage, docs were authoritative over scaffold code, while later safe/future/scaffold annotations were deliberately deferred to avoid blocking functional progress.
+- The session created or aligned the README, decision model, policy shapes, rationale, agent lifecycle, decision interface, policy-shape dataclasses, package initializer, registry, decision tests, and package metadata.
+- Initial CI evidence shown in that session was green on Python 3.11 with six tests passing across decision, registry, and state-engine tests.
+- GitHub Discussion #1 was created as the durable public feedback venue: https://github.com/StegVerse-Labs/StegCore/discussions/1
+- A Show HN submission was published with the decision-boundary framing; the session did not preserve its HN URL.
+- Traffic screenshots were observational and subject to GitHub's displayed traffic-metrics warning. Recorded snapshots included 92 clones / 60 unique cloners / 128 views / 15 unique visitors for an early snapshot, and a later screenshot showing 1,230 clones / 374 unique cloners / 1,317 views. These figures must not be treated as validated adoption counts.
+- The earlier session owns no remaining mutation, validation, monitoring, or response obligation. Its deferred ideas—future module annotation, concrete examples, later runtime milestones, Books, and StegTalk work—are not active claims and must be reconstructed from current issues, workflows, and newer handoffs.
+
+This historical section preserves the unique decisions and evidence from that session without superseding the active PR #18 continuation state above.
