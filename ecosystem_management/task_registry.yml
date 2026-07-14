@@ -43,7 +43,16 @@ managed_repos:
     next_candidate: dedicated-stegva-repository-bootstrap
     ownership: stegva-nonprofit-formation-workstream
     non_overlap: does-not-claim-active-stegfin-provider-chain
+    parallel_dependency: StegVerse-Labs/VAwatchdog
+    parallel_boundary: StegVerse-Labs/VAwatchdog/docs/STEGVA_INTEGRATION_BOUNDARY.md
+  - name: VAwatchdog
+    status: management-capable-stegva-boundary-recorded
+    handoff: docs/VAWATCHDOG_MIRROR_HANDOFF.md
+    next_candidate: source-hardening-only-when-new-metadata-arrives
+    ownership: vawatchdog-evidence-and-accountability-workstream
+    non_overlap: does-not-own-stegva-private-claim-service
 
 artifacts:
   management_report: brain_reports/stegverse_ecosystem_management_readiness_report.json
   stegva_interim_handoff: docs/STEGVA_MIRROR_HANDOFF.md
+  stegva_vawatchdog_parallel_work_receipt: docs/STEGVA_VAWATCHDOG_PARALLEL_WORK_RECEIPT.md
