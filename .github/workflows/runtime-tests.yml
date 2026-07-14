@@ -23,6 +23,10 @@ on:
     - cron: '17 5 * * *'
   workflow_dispatch: {}
 
+concurrency:
+  group: stegcore-runtime-validation
+  cancel-in-progress: false
+
 permissions:
   contents: write
   issues: write
@@ -96,7 +100,7 @@ jobs:
           git config user.email "stegcore-validation-bot@users.noreply.github.com"
           git add evidence/runtime-validation.json
           git commit -m "Record passing StegCore runtime validation [skip ci]"
-          git push
+          git push origin HEAD:main
 
       - name: Close runtime implementation issue
         if: github.event_name != 'pull_request' && steps.evidence.outputs.changed == 'true'
