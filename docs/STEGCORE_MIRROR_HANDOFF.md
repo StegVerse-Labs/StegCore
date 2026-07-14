@@ -2,24 +2,24 @@
 
 ## Purpose
 
-This is the current repository-local continuation source for StegCore. Future work must continue from this file without requiring prior chat context.
+This is the current repository-local continuation source for StegCore. Future work must continue from this file without prior chat context.
 
 ## Current Goal
 
 ```text
-Goal: implement and automatically validate StegCore admissibility runtime behavior
+Goal: automatically validate the StegCore three-layer admissibility runtime against canonical Governance fixtures
 Repository: StegVerse-Labs/StegCore
-Activation state: runtime_candidate_implemented
-Completion class: automated_runtime_validation_pending
-Manual action requirement: none_for_validation_initiation
-Source of truth: repository-local docs, runtime code, tests, workflows, and linked Governance contract
+Activation state: runtime_candidate_cross_repo_contract_active
+Completion class: automated_validation_evidence_pending
+Manual action requirement: none_for_validation_or_contract_drift_detection
+Source of truth: repository-local runtime, tests, workflows, this handoff, and canonical Governance fixtures
 ```
 
 ## Confirmed Repository Boundary
 
 StegCore decides whether actions are permitted given already-resolved continuity, policy, authority, evidence, and state-integrity facts.
 
-StegCore does not verify or mint Continuity receipts, store identity, replace StegID, or create execution authority merely by producing a decision result.
+StegCore does not verify or mint Continuity receipts, store identity, replace StegID, create execution authority, or claim production deployment authority merely by producing a decision result.
 
 ## Built Runtime Surfaces
 
@@ -34,173 +34,125 @@ docs/POLICY_SHAPES.md
 docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
 docs/THREE_LAYER_ADMISSIBILITY_RUNTIME.md
 scripts/check_continuity_admissibility_mapping.py
+scripts/verify_governance_three_layer_contract.py
 .github/workflows/runtime-tests.yml
 ```
 
-## Three-Layer Runtime Contract
+## Three-Layer Contract
 
-The Governance source contract is preserved in `StegVerse-Labs/Governance` and linked through issue #22.
-
-StegCore implements three deterministic layers:
+StegCore evaluates, in restrictive order:
 
 1. judgment conditions;
-2. signal admission and reference-state formation integrity;
+2. signal admission and state-formation integrity;
 3. commit-time execution admissibility.
 
-The runtime produces uppercase execution results:
+Runtime outcomes are `ALLOW`, `DENY`, or `FAIL-CLOSED`. They remain distinct from lowercase Governance Decision Record values.
+
+The result receipt preserves decision, reason code, layer findings, canonical request hash, policy/delegation references, evidence references, admitted signals, current and expected reference-state hashes, receipt hash, and `continuity_receipt_minted: false`.
+
+## Canonical Governance Fixture Set
+
+StegCore now evaluates these live fixtures from `StegVerse-Labs/Governance`:
 
 ```text
-ALLOW
-DENY
-FAIL-CLOSED
+condition_degraded_judgment_gdr.json
+signal_admission_drift_gdr.json
+governance_validation_of_drift_gdr.json
+three_layer_positive_control_gdr.json
+three_layer_replay_baseline_gdr.json
+three_layer_replay_mutated_gdr.json
 ```
 
-These are distinct from lowercase Governance Decision Record values.
+The verifier checks each fixture's expected runtime result and reason code through the actual StegCore evaluator. It also verifies that the runtime receipt and Governance expectation both forbid Continuity receipt minting.
 
-## Implemented Behavior
-
-### Judgment conditions
-
-The runtime denies when:
-
-- meaningful refusal is unavailable;
-- operator recoverability is degraded, unavailable, or unknown;
-- declared overload or critical time pressure materially degrades judgment.
-
-### Signal admission and state formation
-
-The runtime denies when:
-
-- no canonical signals are admitted;
-- material inputs are missing;
-- uncertainty is material or unknown;
-- the admitted signal set cannot be reconstructed;
-- transformation provenance is incomplete.
-
-The runtime fails closed when:
-
-- reference-state hashes are absent;
-- the current reference-state hash differs from the expected authorized hash.
-
-### Execution boundary
-
-The runtime denies when:
-
-- actor authority is stale;
-- policy or delegation is stale;
-- evidence is stale;
-- the validity window is closed;
-- affected-entity conditions are not represented.
-
-The runtime fails closed when execution recoverability is unknown.
-
-The runtime allows only when every required condition passes.
-
-## Result and Receipt Shape
-
-The result preserves:
-
-- decision and reason code;
-- layer-specific findings;
-- canonical request hash;
-- policy and delegation references;
-- judgment evidence references;
-- admitted signal references;
-- execution evidence references;
-- current and expected reference-state hashes;
-- deterministic receipt hash;
-- explicit `continuity_receipt_minted: false`.
-
-## Automated Tests
-
-`tests/test_three_layer.py` proves:
-
-1. condition-degraded judgment yields `DENY`;
-2. unreconstructable signal admission yields `DENY`;
-3. governance validation of a shifted state yields `FAIL-CLOSED` even when policy and authority pass;
-4. a complete positive control yields `ALLOW`;
-5. replay with a changed reference state changes the result;
-6. an unreconstructable state never yields `ALLOW`.
-
-The existing decision tests remain part of the same automated suite.
+The replay pair keeps policy, actor authority, and delegation constant while changing admitted signals and the reference-state hash. The required outcome changes from `ALLOW` to `FAIL-CLOSED`.
 
 ## Validation Automation
 
-`.github/workflows/runtime-tests.yml` runs automatically on relevant pushes and pull requests.
+`github/workflows/runtime-tests.yml`—shown without the leading dot for readability—runs automatically on:
 
-It:
+- relevant pushes;
+- relevant pull requests;
+- a daily schedule;
+- optional manual recovery dispatch.
+
+The workflow:
 
 1. installs StegCore and pytest;
 2. validates the Continuity admissibility mapping;
-3. runs the complete pytest suite.
+3. runs all runtime tests;
+4. clones the canonical Governance repository;
+5. evaluates all six Governance fixtures through StegCore.
 
-Manual workflow dispatch remains only as an optional recovery path and is not required to initiate validation.
+The daily schedule removes reliance on a person noticing later cross-repository contract drift.
 
 ## Active Ownership
 
-- Governance policy, schema mapping, and source fixtures: `StegVerse-Labs/Governance`.
-- Runtime evaluator, result/receipt behavior, and automated tests: `StegVerse-Labs/StegCore`.
-- Runtime implementation task: issue #22.
+- Governance policy, schema mapping, canonical fixtures, and fixture validation: `StegVerse-Labs/Governance`.
+- Runtime evaluator, runtime receipt, cross-repository verifier, and automated runtime tests: `StegVerse-Labs/StegCore`.
+- Runtime implementation task and evidence record: issue #22.
 - Continuity receipt verification or minting: outside StegCore authority.
 - Production deployment authority: not granted by this implementation.
 
 ## Manual Tasks Eliminated
 
-- Runtime acceptance criteria are executable tests rather than manual review instructions.
-- Validation starts on relevant pushes and pull requests.
-- Continuity mapping validation is included in the same workflow.
-- Replay behavior is tested automatically.
-- Receipt non-minting is asserted in code and tests.
-- Runtime placement is assigned and no longer requires a human choice.
+- Acceptance criteria are executable tests.
+- Validation starts automatically on code and contract changes.
+- Canonical Governance fixtures are evaluated live instead of copied or manually compared.
+- Scheduled verification detects future contract drift.
+- Replay behavior and receipt non-minting are machine-enforced.
+- Runtime placement and result vocabulary are durably assigned.
+- Manual dispatch remains only as an optional recovery route.
 
 ## Remaining Work
 
-1. Observe the automatic workflow result for the current commit chain.
-2. Correct any automation failure through repository commits rather than manual workflow execution.
-3. Record the passing run evidence in this handoff and issue #22.
-4. Align Governance positive/replay fixtures with the final StegCore result object if field-level differences remain.
-5. Close issue #22 only after automated validation passes.
-6. Apply release/tagging rules only after repository release readiness is independently verified.
-7. On release readiness, create or update verification tasks for `StegVerse-Labs/Site`, `GCAT-BCAT-Engine/Publisher`, `StegVerse-Labs/admissibility-wiki`, and `StegVerse-Labs/stegguardian-wiki`.
+1. Capture passing workflow evidence for the current StegCore and Governance states.
+2. Correct failures through repository commits without manual-only execution.
+3. Record the passing commit/run evidence in this handoff, the Governance handoff, and issue #22.
+4. Close issue #22 only after automated evidence passes.
+5. Perform release-readiness review and tagging only after all gates pass.
+6. At release readiness, verify required downstream updates for `StegVerse-Labs/Site`, `GCAT-BCAT-Engine/Publisher`, `StegVerse-Labs/admissibility-wiki`, and `StegVerse-Labs/stegguardian-wiki`.
 
 ## Definition of Done
 
-Runtime implementation is complete when:
+Runtime activation is complete when:
 
-- `src/stegcore/three_layer.py` remains aligned with the Governance contract;
-- automated tests prove all required DENY, FAIL-CLOSED, ALLOW, and replay behaviors;
-- automated validation passes;
-- result receipts preserve all three layers and do not mint Continuity receipts;
-- issue #22 and this handoff contain the passing evidence;
-- future continuation requires no chat context or manual-only action.
+- unit tests pass;
+- the Continuity mapping validator passes;
+- the live Governance fixture contract passes;
+- receipts preserve all three layers and do not mint Continuity receipts;
+- issue #22 and both handoffs contain passing evidence;
+- release authority is not claimed beyond verified scope;
+- continuation requires no chat context or manual-only action.
 
 ## Current Completion Assessment
 
 ```text
-Runtime contract: implemented
-Negative acceptance behavior: implemented
+Runtime evaluator: implemented
+Negative cases: implemented
 Positive control: implemented
-Replay test: implemented
-Receipt shape: implemented
-Automated validation workflow: implemented
-Passing workflow evidence: pending observation
+Replay contract: implemented
+Canonical Governance fixtures: implemented
+Live cross-repository verifier: implemented
+Push/PR/scheduled automation: implemented
+Passing workflow evidence: pending
 Production deployment authority: not claimed
 Manual validation dependency: none
 ```
 
-## Archive Readiness
+## Archive Status
 
 ```text
 thread_archive_ready: true
-archive_reason: all implementation decisions, code paths, tests, automation, authority boundaries, remaining work, and completion events are repository-resident.
+archive_reason: all implementation, fixture, automation, ownership, boundary, remaining-work, and completion information is repository-resident.
 ```
 
 ## Progress Snapshot
 
 ```text
-StegVerse-Labs - 88% complete
-StegCore - 84% complete
-StegCore - 96% complete TO GOAL ACTIVATION
-Fully developed files vs scaffolding and stubs: 84% developed / 16% pending validation evidence and future deployment surfaces
-Delta: the three-layer runtime, receipt contract, tests, and push-driven validation now exist; only automated run evidence, final cross-repo fixture alignment, and release-readiness evaluation remain.
+StegVerse-Labs - 91% complete
+StegCore - 91% complete
+StegCore - 98% complete TO GOAL ACTIVATION
+Fully developed files vs scaffolding and stubs: 91% developed / 9% pending automated evidence and release surfaces
+Delta: live Governance fixtures are now evaluated by StegCore on pushes, pull requests, and a daily schedule; only passing evidence and release-readiness gates remain.
 ```
