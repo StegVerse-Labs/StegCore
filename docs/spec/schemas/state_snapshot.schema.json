@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/state_snapshot.schema.json",
+  "title": "StegVerse State Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["state_id", "captured_at", "authority", "policy", "identity", "context", "execution_environment", "recoverability", "state_digest"],
+  "properties": {
+    "state_id": {"type": "string", "minLength": 1},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "authority": {"type": "object", "required": ["authority_id", "status"], "properties": {"authority_id": {"type": "string"}, "status": {"enum": ["active", "degraded", "revoked"]}}, "additionalProperties": true},
+    "policy": {"type": "object", "required": ["policy_id", "version"], "properties": {"policy_id": {"type": "string"}, "version": {"type": "string"}}, "additionalProperties": true},
+    "identity": {"type": "object", "required": ["actor_id", "binding_digest"], "properties": {"actor_id": {"type": "string"}, "binding_digest": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}}, "additionalProperties": true},
+    "context": {"type": "object"},
+    "execution_environment": {"type": "object"},
+    "recoverability": {"type": "object", "required": ["mode"], "properties": {"mode": {"enum": ["rollback", "compensation", "containment", "none"]}}, "additionalProperties": true},
+    "state_digest": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"}
+  }
+}
