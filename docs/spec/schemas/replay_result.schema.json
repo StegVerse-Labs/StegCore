@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/replay_result.schema.json",
+  "title": "StegVerse Replay Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["transition_id", "original_decision", "replayed_decision", "original_state_digest", "replay_state_digest", "evaluator_version", "matches_original", "divergence_codes", "replayed_at"],
+  "properties": {
+    "transition_id": {"type": "string", "minLength": 1},
+    "original_decision": {"enum": ["ALLOW", "DENY", "FAIL_CLOSED"]},
+    "replayed_decision": {"enum": ["ALLOW", "DENY", "FAIL_CLOSED"]},
+    "original_state_digest": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+    "replay_state_digest": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+    "evaluator_version": {"type": "string", "minLength": 1},
+    "matches_original": {"type": "boolean"},
+    "divergence_codes": {"type": "array", "items": {"type": "string"}},
+    "replayed_at": {"type": "string", "format": "date-time"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"matches_original": {"const": true}}},
+      "then": {"properties": {"divergence_codes": {"maxItems": 0}}}
+    },
+    {
+      "if": {"properties": {"matches_original": {"const": false}}},
+      "then": {"properties": {"divergence_codes": {"minItems": 1}}}
+    }
+  ]
+}
