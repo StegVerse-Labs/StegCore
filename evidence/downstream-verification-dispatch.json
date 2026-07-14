@@ -1,0 +1,50 @@
+{
+  "artifact_type": "stegcore.downstream_verification_dispatch",
+  "schema_version": "1.0",
+  "state": "queued_not_completed",
+  "authority_boundary": {
+    "deployment_authority_granted": false,
+    "execution_authority_granted": false,
+    "release_authority_granted": false,
+    "cross_repository_mutation_authority_granted": false
+  },
+  "destinations": [
+    {
+      "repository": "StegVerse-Labs/Site",
+      "issue_number": 14,
+      "issue_url": "https://github.com/StegVerse-Labs/Site/issues/14",
+      "handoff": "docs/SITE_MIRROR_HANDOFF.md",
+      "required": true,
+      "state": "queued",
+      "scope": "Evidence observation only; preserve PREPARED_NOT_DEPLOYED and activation-blocked state."
+    },
+    {
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "issue_number": 4,
+      "issue_url": "https://github.com/GCAT-BCAT-Engine/Publisher/issues/4",
+      "handoff": "PUBLISHER_MIRROR_HANDOFF.md",
+      "required": true,
+      "state": "queued",
+      "scope": "Publisher awareness only; preserve queue order and current activation authority."
+    },
+    {
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "issue_number": 19,
+      "issue_url": "https://github.com/StegVerse-Labs/admissibility-wiki/issues/19",
+      "handoff": "docs/ADMISSIBILITY_WIKI_MIRROR_HANDOFF.md",
+      "required": true,
+      "state": "queued",
+      "scope": "Documentation verification only; do not promote verification into execution authority."
+    },
+    {
+      "repository": "StegVerse-002/stegguardian-wiki",
+      "issue_number": 4,
+      "issue_url": "https://github.com/StegVerse-002/stegguardian-wiki/issues/4",
+      "handoff": "STEGGUARDIAN_WIKI_MIRROR_HANDOFF.md",
+      "required": true,
+      "state": "queued",
+      "scope": "Evidence awareness only; preserve ST-017, Pages, and Guardian authority boundaries."
+    }
+  ],
+  "completion_event": "Every required destination issue records verified evidence without crossing its repository handoff boundary."
+}
