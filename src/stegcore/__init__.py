@@ -7,6 +7,7 @@ This package currently includes:
 - state/audit substrate (NodeState, StateEvent, StateEngine)
 - minimal decision interface (docs-aligned)
 - fail-closed governed runtime binding
+- three-layer judgment, signal-state, and execution admissibility evaluator
 
 Continuity receipts and verification belong to StegID.
 """
@@ -23,6 +24,15 @@ from .decision import (
     decide,
 )
 from .runtime import ExecutionObservation, GovernedRuntime, governed_execute
+from .three_layer import (
+    JudgmentConditions,
+    SignalAdmission,
+    ExecutionBoundary,
+    ThreeLayerRequest,
+    LayerFinding,
+    ThreeLayerResult,
+    evaluate_three_layer,
+)
 
 __all__ = [
     "NodeState",
@@ -38,4 +48,11 @@ __all__ = [
     "ExecutionObservation",
     "GovernedRuntime",
     "governed_execute",
+    "JudgmentConditions",
+    "SignalAdmission",
+    "ExecutionBoundary",
+    "ThreeLayerRequest",
+    "LayerFinding",
+    "ThreeLayerResult",
+    "evaluate_three_layer",
 ]
