@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.check_stegverse_spec_conformance import (
+from stegcore.spec_conformance import (
     ConformanceError,
     validate_action_request,
     validate_commit_time,
@@ -62,16 +62,12 @@ class StegVerseSpecConformanceTests(unittest.TestCase):
             validate_action_request(request)
 
     def test_policy_drift_denies_commit(self):
-        valid, reasons = validate_commit_time(
-            self.action_request(), self.decision_receipt(), "2", DIGEST_A
-        )
+        valid, reasons = validate_commit_time(self.action_request(), self.decision_receipt(), "2", DIGEST_A)
         self.assertFalse(valid)
         self.assertIn("POLICY_DRIFT", reasons)
 
     def test_state_drift_denies_commit(self):
-        valid, reasons = validate_commit_time(
-            self.action_request(), self.decision_receipt(), "1", DIGEST_B
-        )
+        valid, reasons = validate_commit_time(self.action_request(), self.decision_receipt(), "1", DIGEST_B)
         self.assertFalse(valid)
         self.assertIn("STATE_DRIFT", reasons)
 
