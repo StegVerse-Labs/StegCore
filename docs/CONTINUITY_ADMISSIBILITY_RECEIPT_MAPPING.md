@@ -14,6 +14,8 @@ StegCore answers whether a proposed action is admissible at the time of action.
 
 Continuity records the handoff, receipt, schema, examples, and reconstructability basis.
 
+A continuation receipt grants neither production authority nor receipt-minting authority.
+
 The boundary is:
 
 ```text
