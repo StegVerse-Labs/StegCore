@@ -3,7 +3,13 @@ name: StegCore Tests
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "41 6 * * *"
   workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   tests:
@@ -26,5 +32,63 @@ jobs:
           pip install -e .
           pip install pytest
 
-      - name: Run tests
-        run: pytest
+      - name: Run tests and retain structured evidence
+        id: pytest
+        continue-on-error: true
+        run: |
+          mkdir -p evidence
+          pytest -q --junitxml=evidence/pytest-results.xml
+
+      - name: Build machine-readable failure status
+        if: always()
+        run: python scripts/reconcile_pytest_failure.py evidence/pytest-results.xml evidence/pytest-failure-status.json
+
+      - name: Upload structured test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stegcore-pytest-evidence-${{ github.run_id }}
+          path: |
+            evidence/pytest-results.xml
+            evidence/pytest-failure-status.json
+          if-no-files-found: error
+
+      - name: Reconcile machine-owned failure issue
+        if: always() && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          STATUS="$(python -c 'import json; print(json.load(open("evidence/pytest-failure-status.json"))["status"])')"
+          TITLE="[automation] StegCore full-suite test failure"
+          NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore full-suite test failure in:title" --json number --jq '.[0].number // empty')"
+          if [ "$STATUS" = "pass" ]; then
+            if [ -n "$NUMBER" ]; then
+              gh issue close "$NUMBER" --repo "$GITHUB_REPOSITORY" --reason completed --comment "Automatic full-suite validation recovered. Structured evidence is attached to workflow run ${GITHUB_RUN_ID}." || true
+            fi
+          else
+            FAILED="$(python -c 'import json; d=json.load(open("evidence/pytest-failure-status.json")); print("\n".join("- `"+x+"`" for x in d.get("failed_tests",[])+d.get("error_tests",[])) or "- No named case was recoverable; inspect the attached XML artifact.")')"
+            BODY=$(cat <<EOF
+          Automatic StegCore full-suite validation failed.
+
+          - Commit: ${GITHUB_SHA}
+          - Event: ${GITHUB_EVENT_NAME}
+          - Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          - Structured artifact: stegcore-pytest-evidence-${GITHUB_RUN_ID}
+
+          Failing cases:
+          ${FAILED}
+
+          Resolution remains machine-owned. A successful later run closes this issue automatically. No manual log transcription is required.
+          EOF
+            )
+            if [ -n "$NUMBER" ]; then
+              gh issue edit "$NUMBER" --repo "$GITHUB_REPOSITORY" --body "$BODY"
+              gh issue reopen "$NUMBER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
+            else
+              gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY"
+            fi
+          fi
+
+      - name: Preserve test result
+        if: steps.pytest.outcome != 'success'
+        run: exit 1
