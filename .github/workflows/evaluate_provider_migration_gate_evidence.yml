@@ -1,0 +1,88 @@
+name: Evaluate Provider Migration Gate Evidence
+
+on:
+  pull_request:
+  push:
+    branches: [main, agent/metered-platform-runtime]
+  schedule:
+    - cron: '29 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout StegCore
+        uses: actions/checkout@v4
+
+      - name: Checkout Governance source
+        id: source
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: StegVerse-Labs/Governance
+          ref: agent/metered-platform-replacement
+          path: governance-source
+          token: ${{ secrets.STEGVERSE_CROSS_REPO_TOKEN || github.token }}
+
+      - name: Evaluate registry
+        run: |
+          python scripts/evaluate_provider_migration_gate_evidence.py \
+            --source governance-source/data/provider_migration_gate_evidence.json \
+            --output evidence/provider-migration-gate-admissibility.json
+
+      - name: Verify deterministic replay
+        run: |
+          cp evidence/provider-migration-gate-admissibility.json /tmp/first.json
+          python scripts/evaluate_provider_migration_gate_evidence.py \
+            --source governance-source/data/provider_migration_gate_evidence.json \
+            --output /tmp/second.json
+          diff -u /tmp/first.json /tmp/second.json
+
+      - name: Enforce zero authority
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('evidence/provider-migration-gate-admissibility.json'))
+          forbidden=['manual_action_required','production_mutation_allowed','execution_authority','traffic_cutover_authority','cancellation_authority','provider_retirement_authority','continuity_receipt_minted']
+          assert all(p.get(k) is False for k in forbidden), p
+          assert p.get('decision') in {'ALLOW_EVIDENCE_REGISTRY_ONLY','DENY'}
+          PY
+
+      - name: Upload admissibility artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-migration-gate-admissibility
+          path: evidence/provider-migration-gate-admissibility.json
+
+      - name: Reconcile admissibility blocker issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          decision=$(python -c "import json; print(json.load(open('evidence/provider-migration-gate-admissibility.json'))['decision'])")
+          title='[automation] Provider migration gate admissibility blockers'
+          number=$(gh issue list --state all --search "$title in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -1)
+          if [ "$decision" = 'DENY' ]; then
+            reasons=$(python -c "import json; print('\\n'.join('- '+x for x in json.load(open('evidence/provider-migration-gate-admissibility.json')).get('reasons',[])))")
+            body="Independent StegCore evaluation denied the current provider migration gate registry. The workflow will retry automatically. No manual action or provider authority is created.\n\n$reasons"
+            if [ -z "$number" ]; then gh issue create --title "$title" --body "$body"; else gh issue reopen "$number" 2>/dev/null || true; gh issue edit "$number" --body "$body"; fi
+          elif [ -n "$number" ]; then
+            gh issue close "$number" --comment 'Independent registry admissibility recovered. This remains evidence-only and grants no provider retirement authority.' 2>/dev/null || true
+          fi
+
+      - name: Persist semantic admissibility changes on main
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          git config user.name 'stegverse-automation'
+          git config user.email 'automation@stegverse.invalid'
+          git add evidence/provider-migration-gate-admissibility.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record provider migration gate admissibility'
+            git push
+          fi
