@@ -1,0 +1,77 @@
+name: Evaluate Render Provider State
+
+on:
+  pull_request:
+  push:
+    branches: [main, agent/metered-platform-runtime]
+  schedule:
+    - cron: '47 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: src
+    steps:
+      - name: Checkout StegCore
+        uses: actions/checkout@v4
+      - name: Checkout Governance source
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: StegVerse-Labs/Governance
+          ref: agent/metered-platform-replacement
+          path: governance-source
+          token: ${{ secrets.STEGVERSE_CROSS_REPO_TOKEN || github.token }}
+      - name: Evaluate Render evidence
+        run: |
+          python scripts/evaluate_render_provider_state.py \
+            --source governance-source/evidence/render-provider-state.json \
+            --output evidence/render-provider-state-admissibility.json
+      - name: Verify deterministic replay
+        run: |
+          cp evidence/render-provider-state-admissibility.json /tmp/first.json
+          python scripts/evaluate_render_provider_state.py \
+            --source governance-source/evidence/render-provider-state.json \
+            --output /tmp/second.json
+          diff -u /tmp/first.json /tmp/second.json
+      - name: Enforce zero authority
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('evidence/render-provider-state-admissibility.json'))
+          for key in ['manual_action_required','production_mutation_allowed','execution_authority','traffic_cutover_authority','cancellation_authority','provider_retirement_authority','continuity_receipt_minted']:
+              assert p.get(key) is False, (key,p.get(key))
+          assert p.get('decision') in {'ALLOW_RENDER_PROVIDER_EVIDENCE_ONLY','DENY'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: render-provider-state-admissibility
+          path: evidence/render-provider-state-admissibility.json
+      - name: Reconcile Render admissibility blockers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          decision=$(python -c "import json; print(json.load(open('evidence/render-provider-state-admissibility.json'))['decision'])")
+          title='[automation] Render provider-state admissibility blockers'
+          number=$(gh issue list --state all --search "$title in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -1)
+          if [ "$decision" = 'DENY' ]; then
+            reasons=$(python -c "import json; print('\\n'.join('- '+x for x in json.load(open('evidence/render-provider-state-admissibility.json')).get('reasons',[])))")
+            body="Independent StegCore evaluation denied the Render provider-state report. The workflow retries automatically and creates no manual task.\n\n$reasons"
+            if [ -z "$number" ]; then gh issue create --title "$title" --body "$body"; else gh issue reopen "$number" 2>/dev/null || true; gh issue edit "$number" --body "$body"; fi
+          elif [ -n "$number" ]; then
+            gh issue close "$number" --comment 'Render evidence admissibility recovered. This remains evidence-only.' 2>/dev/null || true
+          fi
+      - name: Persist semantic evidence on main
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'stegverse-automation'
+          git config user.email 'automation@stegverse.invalid'
+          git add evidence/render-provider-state-admissibility.json
+          if ! git diff --cached --quiet; then git commit -m 'Record Render provider-state admissibility'; git push; fi
