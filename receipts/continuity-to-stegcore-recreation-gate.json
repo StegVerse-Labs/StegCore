@@ -1,0 +1,27 @@
+{
+  "receipt_id": "continuity-to-stegcore-recreation-gate-001",
+  "created_utc": "2026-07-22T03:55:00Z",
+  "source_repository": "StegVerse-Labs/Continuity",
+  "source_handoff_path": "docs/CONTINUITY_MIRROR_HANDOFF.md",
+  "source_protocol": "SV-CONTINUITY-109",
+  "source_artifacts": [
+    "docs/109_PERCENT_RECREATABLE_CONTINUITY_PROTOCOL.md",
+    "schemas/recreation-receipt.schema.json",
+    "schemas/divergence-report.schema.json",
+    "scripts/recreate_state.py",
+    "scripts/recover_state.py",
+    "scripts/generate_divergence_report.py"
+  ],
+  "target_repository": "StegVerse-Labs/StegCore",
+  "target_handoff_path": "docs/STEGCORE_RECREATION_GATE_MIRROR_HANDOFF.md",
+  "target_artifacts": [
+    "schemas/recreation-gate-request.schema.json",
+    "schemas/recreation-gate-receipt.schema.json",
+    "scripts/evaluate_recreation_gate.py",
+    ".github/workflows/validate-recreation-gate.yml"
+  ],
+  "standing_basis": "Continuity recreation, recovery, divergence, and verification-margin evidence is mapped into a fail-closed StegCore admissibility gate.",
+  "activation_state": "integration_candidate",
+  "next_action": "Confirm workflow success, then close Continuity activation and prepare release verification destinations.",
+  "thread_archive_ready": true
+}
