@@ -5,6 +5,9 @@ on:
   pull_request:
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -26,5 +29,30 @@ jobs:
           pip install -e .
           pip install pytest
 
-      - name: Run tests
-        run: pytest
+      - name: Run tests and persist diagnostics
+        id: pytest
+        shell: bash
+        run: |
+          set +e
+          mkdir -p build/test-diagnostics
+          pytest -q --tb=short 2>&1 | tee build/test-diagnostics/pytest.txt
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('build/test-diagnostics/pytest.txt').read_text(encoding='utf-8', errors='replace')
+          markers = ('FAILED ', 'ERROR ', 'E   ', 'short test summary info')
+          lines = text.splitlines()
+          selected = [line for line in lines if line.startswith(markers) or ' failed' in line or ' error' in line]
+          Path('build/test-diagnostics/failure-summary.txt').write_text('\n'.join(selected[-200:]) + '\n', encoding='utf-8')
+          PY
+          exit "$status"
+
+      - name: Upload pytest diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stegcore-pytest-diagnostics-${{ github.run_id }}
+          path: build/test-diagnostics/
+          if-no-files-found: error
+          retention-days: 14
