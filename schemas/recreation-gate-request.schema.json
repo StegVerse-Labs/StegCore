@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/recreation-gate-request.schema.json",
+  "title": "StegCore Recreation Gate Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_id",
+    "request_id",
+    "created_utc",
+    "trusted_pre_state_hash",
+    "recreated_state_hash",
+    "candidate_state_hash",
+    "recreation_complete",
+    "recovery_proof_complete",
+    "verification_margin_complete",
+    "external_exposures_complete",
+    "divergence_detected",
+    "divergence_resolution_status",
+    "authority_current",
+    "consent_current",
+    "policy_current",
+    "unresolved_conditions_evaluated",
+    "continuity_receipt_ref",
+    "recovery_receipt_ref",
+    "divergence_report_ref"
+  ],
+  "properties": {
+    "protocol_id": {"const": "SV-CONTINUITY-109"},
+    "request_id": {"type": "string", "minLength": 1},
+    "created_utc": {"type": "string", "format": "date-time"},
+    "trusted_pre_state_hash": {"$ref": "#/$defs/hash"},
+    "recreated_state_hash": {"$ref": "#/$defs/hash"},
+    "candidate_state_hash": {"$ref": "#/$defs/hash"},
+    "recreation_complete": {"type": "boolean"},
+    "recovery_proof_complete": {"type": "boolean"},
+    "verification_margin_complete": {"type": "boolean"},
+    "external_exposures_complete": {"type": "boolean"},
+    "divergence_detected": {"type": "boolean"},
+    "divergence_resolution_status": {"enum": ["not_required", "unresolved", "resolved_by_admissible_transition", "rejected"]},
+    "authority_current": {"type": "boolean"},
+    "consent_current": {"type": "boolean"},
+    "policy_current": {"type": "boolean"},
+    "unresolved_conditions_evaluated": {"type": "boolean"},
+    "continuity_receipt_ref": {"type": "string", "minLength": 1},
+    "recovery_receipt_ref": {"type": "string", "minLength": 1},
+    "divergence_report_ref": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}
+  }
+}
