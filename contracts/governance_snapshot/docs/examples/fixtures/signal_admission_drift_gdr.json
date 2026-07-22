@@ -1,0 +1,15 @@
+{
+  "gdr_version": "1.0",
+  "decision_id": "gdr-example-signal-drift-001",
+  "decision": "deny",
+  "policy": {"policy_id": "signal-admission-integrity-draft", "policy_version": "draft-0.1"},
+  "evaluated_inputs": {"source": "docs-example", "receipt_ids": ["signal-admission-receipt-001", "transform-receipt-001"], "bundle_hash": null},
+  "issued_at": 1784000200,
+  "rationale": "The state basis is not continuous with the authorized reference because a material signal was excluded and the transformation cannot be independently reconstructed.",
+  "judgment_conditions": {"workload_state": "supported", "time_pressure": "normal", "isolation_state": "review_available", "refusal_available": true, "operator_recoverability": "available", "condition_receipt_ids": []},
+  "signal_admission": {"admitted_signal_refs": ["signal-a", "signal-c"], "excluded_signal_refs": ["signal-b-material"], "transformations": [{"transformation_id": "transform-001", "type": "compression", "receipt_ref": "transform-receipt-001", "reconstructable": false}], "missing_inputs": ["signal-b-material"], "uncertainty_state": "material", "reference_state_hash": "sha256:shifted-example-reference-state", "authorized_reference_state_hash": "sha256:authorized-example-reference-state", "reconstruction_available": false},
+  "execution_boundary": {"actor_authority_ref": "delegation-example-002", "policy_ref": "signal-admission-integrity-draft@draft-0.1", "delegation_ref": "delegation-example-002", "evidence_refs": ["signal-admission-receipt-001", "transform-receipt-001"], "affected_entity_refs": [], "recoverability_profile": "recoverable", "validity_window": "2026-07-14T00:00:00Z/2026-07-15T00:00:00Z", "result": "DENY", "receipt_ref": "stegcore-three-layer:signal-drift-001"},
+  "runtime_expectation": {"result": "DENY", "reason_code": "signal.inputs_incomplete", "continuity_receipt_minted": false},
+  "expected_failure_class": "signal_admission_drift",
+  "trace": {"example_fixture": true, "source_doc": "docs/governance/judgment_signal_execution_architecture.md"}
+}
