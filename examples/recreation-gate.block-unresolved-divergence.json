@@ -1,0 +1,21 @@
+{
+  "protocol_id": "SV-CONTINUITY-109",
+  "request_id": "recreation-request-block-001",
+  "created_utc": "2026-07-21T21:01:00Z",
+  "trusted_pre_state_hash": "sha256:f48431fdeac8c143fd97b59d825b7f12748fb05e97d898f4197704fbb439a8c8",
+  "recreated_state_hash": "sha256:f48431fdeac8c143fd97b59d825b7f12748fb05e97d898f4197704fbb439a8c8",
+  "candidate_state_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "recreation_complete": true,
+  "recovery_proof_complete": true,
+  "verification_margin_complete": true,
+  "external_exposures_complete": true,
+  "divergence_detected": true,
+  "divergence_resolution_status": "unresolved",
+  "authority_current": true,
+  "consent_current": true,
+  "policy_current": true,
+  "unresolved_conditions_evaluated": true,
+  "continuity_receipt_ref": "StegVerse-Labs/Continuity:recreation-external-ai-roundtrip-001",
+  "recovery_receipt_ref": "StegVerse-Labs/Continuity:recovery-001",
+  "divergence_report_ref": "StegVerse-Labs/Continuity:divergence-example-001"
+}
