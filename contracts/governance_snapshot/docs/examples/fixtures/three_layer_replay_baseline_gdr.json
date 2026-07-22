@@ -1,0 +1,16 @@
+{
+  "gdr_version": "1.0",
+  "decision_id": "gdr-three-layer-replay-baseline-001",
+  "decision": "allow",
+  "policy": {"policy_id": "judgment-signal-execution-draft", "policy_version": "draft-0.2"},
+  "evaluated_inputs": {"source": "governance-replay-fixture", "receipt_ids": ["condition-receipt-replay-001", "signal-receipt-replay-001", "authority-receipt-replay-001"], "bundle_hash": "sha256:replay-baseline-bundle"},
+  "issued_at": 1794372060,
+  "rationale": "Baseline replay uses the authorized reference state and a reconstructable admitted signal set, so execution is allowed.",
+  "expected_failure_class": null,
+  "replay_case_id": "three-layer-replay-001",
+  "replay_position": "baseline",
+  "judgment_conditions": {"workload_state": "supported", "time_pressure": "normal", "isolation_state": "review_available", "refusal_available": true, "operator_recoverability": "available", "condition_receipt_ids": ["condition-receipt-replay-001"]},
+  "signal_admission": {"admitted_signal_refs": ["signal:request-v1", "signal:policy-v1", "signal:delegation-v1"], "excluded_signal_refs": [], "transformations": [], "missing_inputs": [], "uncertainty_state": "bounded", "reference_state_hash": "sha256:replay-authorized-state", "authorized_reference_state_hash": "sha256:replay-authorized-state", "reconstruction_available": true},
+  "execution_boundary": {"actor_authority_ref": "authority:replay-current", "policy_ref": "policy:judgment-signal-execution-draft@draft-0.2", "delegation_ref": "delegation:replay-current", "evidence_refs": ["condition-receipt-replay-001", "signal-receipt-replay-001", "authority-receipt-replay-001"], "affected_entity_refs": ["affected-entity:replay-primary"], "recoverability_profile": "recoverable", "validity_window": "2026-11-10T00:00:00Z/2026-11-11T00:00:00Z", "result": "ALLOW", "receipt_ref": "stegcore-three-layer:replay-baseline-001"},
+  "runtime_expectation": {"result": "ALLOW", "reason_code": "ok", "continuity_receipt_minted": false}
+}
