@@ -13,12 +13,23 @@ Goal: Map 109% recreatable continuity evidence into fail-closed StegCore admissi
 Repository: StegVerse-Labs/StegCore
 Source repository: StegVerse-Labs/Continuity
 Protocol: SV-CONTINUITY-109
-Activation state: implementation_candidate
+Activation state: executable_candidate
+```
+
+## Built Files
+
+```text
+docs/STEGCORE_RECREATION_GATE_MIRROR_HANDOFF.md
+schemas/recreation-gate-request.schema.json
+schemas/recreation-gate-receipt.schema.json
+examples/recreation-gate.allow.json
+examples/recreation-gate.block-unresolved-divergence.json
+examples/recreation-gate.block-stale-authority.json
+scripts/evaluate_recreation_gate.py
+.github/workflows/validate-recreation-gate.yml
 ```
 
 ## Required Inputs
-
-A recreation-gate request must carry:
 
 ```text
 trusted_pre_state_hash
@@ -41,26 +52,55 @@ divergence_report_ref
 
 ## Fail-Closed Rule
 
-The gate must return `BLOCK` when any required proof is absent or false, when trusted and recreated state hashes differ, when external exposure completeness is unknown or false, when current authority/consent/policy is not established, when unresolved conditions were not evaluated, or when divergence is unresolved.
+The gate returns `BLOCK` when any required proof is absent or false, trusted and recreated state hashes differ, exposure completeness is false, current authority/consent/policy is not established, unresolved conditions were not evaluated, or divergence remains unresolved.
 
 External AI output is never authoritative merely because it was returned to a governed node.
+
+## Executable Proof Path
+
+```text
+Continuity recreation evidence
+→ request schema validation
+→ hash equality check
+→ recreation and recovery proof checks
+→ external exposure completeness check
+→ divergence resolution check
+→ authority, consent, and policy freshness checks
+→ unresolved-condition evaluation check
+→ StegCore ALLOW or BLOCK receipt
+```
+
+The workflow proves:
+
+- complete evidence produces `ALLOW`;
+- unresolved divergence produces `BLOCK`;
+- stale authority produces `BLOCK`;
+- request and receipt schemas validate on Python 3.11 and 3.12.
 
 ## Build Queue
 
 ```text
 SC-RG-001 COMPLETE: repository-local mirror handoff
-SC-RG-002 PENDING: recreation-gate request schema
-SC-RG-003 PENDING: admissibility receipt schema
-SC-RG-004 PENDING: ALLOW example
-SC-RG-005 PENDING: BLOCK examples
-SC-RG-006 PENDING: fail-closed validator
-SC-RG-007 PENDING: workflow validation
-SC-RG-008 PENDING: Continuity transfer receipt
+SC-RG-002 COMPLETE: recreation-gate request schema
+SC-RG-003 COMPLETE: admissibility receipt schema
+SC-RG-004 COMPLETE: ALLOW example
+SC-RG-005 COMPLETE: BLOCK examples
+SC-RG-006 COMPLETE: fail-closed validator
+SC-RG-007 COMPLETE: workflow validation harness
+SC-RG-008 PENDING: durable Continuity-to-StegCore transfer receipt
+SC-RG-009 PENDING: workflow success evidence and release candidate
 ```
 
 ## Definition of Done
 
-The integration is complete when a machine-readable request can be validated, evaluated fail-closed, and converted into a StegCore admissibility receipt without relying on chat memory or cooperation from an ungoverned external entity.
+The integration is complete when a machine-readable request can be validated, evaluated fail-closed, and converted into a StegCore admissibility receipt without chat memory or cooperation from an ungoverned external entity, and the cross-repository transfer is durably receipted.
+
+## Next Actions
+
+1. Add a Continuity-to-StegCore transfer receipt naming exact source and destination artifacts.
+2. Confirm workflow success.
+3. Update the Continuity mirror handoff to mark StegCore integration complete.
+4. Prepare release and destination verification tasks for Site, Publisher, admissibility-wiki, and stegguardian-wiki.
 
 ## Non-Claims
 
@@ -69,9 +109,9 @@ This workstream does not claim third-party certification, external endorsement, 
 ## Progress Snapshot
 
 ```text
-StegVerse-Labs - 63% complete
-StegCore - 88% fully developed files vs scaffolding and stubs
-StegCore recreation gate - 10% complete TO GOAL ACTIVATION
-Delta: neutral repository-local handoff created; executable schemas, validator, examples, and workflow remain.
+StegVerse-Labs - 66% complete
+StegCore - 92% fully developed files vs scaffolding and stubs
+StegCore recreation gate - 88% complete TO GOAL ACTIVATION
+Delta: request/receipt schemas, ALLOW and BLOCK examples, fail-closed evaluator, and cross-version workflow are built. Transfer receipt and successful workflow evidence remain.
 Thread archive state: READY after repository artifacts preserve the task.
 ```
