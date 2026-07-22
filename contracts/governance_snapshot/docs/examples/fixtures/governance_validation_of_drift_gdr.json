@@ -1,0 +1,16 @@
+{
+  "gdr_version": "1.0",
+  "decision_id": "gdr-example-validates-drift-001",
+  "decision": "deny",
+  "policy": {"policy_id": "execution-admissibility-draft", "policy_version": "draft-0.1"},
+  "evaluated_inputs": {"source": "docs-example", "receipt_ids": ["state-construction-receipt-001", "authority-receipt-001"], "bundle_hash": null},
+  "issued_at": 1784000300,
+  "rationale": "Authority and policy checks pass, but the constructed state is based on a shifted reference. Allowing execution would validate drift, so the resolver fails closed.",
+  "judgment_conditions": {"workload_state": "supported", "time_pressure": "normal", "isolation_state": "review_available", "refusal_available": true, "operator_recoverability": "available", "condition_receipt_ids": []},
+  "signal_admission": {"admitted_signal_refs": ["shifted-signal-set-001"], "excluded_signal_refs": [], "transformations": [], "missing_inputs": [], "uncertainty_state": "bounded", "reference_state_hash": "sha256:shifted-state-001", "authorized_reference_state_hash": "sha256:authorized-state-001", "reconstruction_available": true},
+  "execution_boundary": {"actor_authority_ref": "authority-receipt-001", "policy_ref": "execution-admissibility-draft@draft-0.1", "delegation_ref": "delegation-example-003", "evidence_refs": ["state-construction-receipt-001", "authority-receipt-001"], "affected_entity_refs": ["affected-entity-example-002"], "recoverability_profile": "recoverable", "validity_window": "2026-07-14T00:00:00Z/2026-07-15T00:00:00Z", "result": "FAIL-CLOSED", "receipt_ref": "stegcore-three-layer:governance-drift-001"},
+  "control_assertions": {"authority_check": "pass", "policy_check": "pass", "reference_state_continuity": "fail", "execution_permitted": false},
+  "runtime_expectation": {"result": "FAIL-CLOSED", "reason_code": "signal.reference_state_discontinuous", "continuity_receipt_minted": false},
+  "expected_failure_class": "governance_validation_of_drift",
+  "trace": {"example_fixture": true, "source_doc": "docs/governance/judgment_signal_execution_architecture.md"}
+}
