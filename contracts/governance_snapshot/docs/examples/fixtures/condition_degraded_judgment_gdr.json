@@ -1,0 +1,15 @@
+{
+  "gdr_version": "1.0",
+  "decision_id": "gdr-example-condition-degraded-001",
+  "decision": "deny",
+  "policy": {"policy_id": "judgment-conditions-draft", "policy_version": "draft-0.1"},
+  "evaluated_inputs": {"source": "docs-example", "receipt_ids": ["judgment-condition-receipt-001"], "bundle_hash": null},
+  "issued_at": 1784000100,
+  "rationale": "The requested approval cannot serve as an admissibility basis because refusal was not practically available and operator recoverability was degraded.",
+  "judgment_conditions": {"workload_state": "overloaded", "time_pressure": "critical", "isolation_state": "isolated", "refusal_available": false, "operator_recoverability": "degraded", "condition_receipt_ids": ["judgment-condition-receipt-001"]},
+  "signal_admission": {"admitted_signal_refs": ["canonical-request-001"], "excluded_signal_refs": [], "transformations": [], "missing_inputs": [], "uncertainty_state": "bounded", "reference_state_hash": "sha256:example-condition-reference-state", "authorized_reference_state_hash": "sha256:example-condition-reference-state", "reconstruction_available": true},
+  "execution_boundary": {"actor_authority_ref": "delegation-example-001", "policy_ref": "judgment-conditions-draft@draft-0.1", "delegation_ref": "delegation-example-001", "evidence_refs": ["judgment-condition-receipt-001"], "affected_entity_refs": ["affected-entity-example-001"], "recoverability_profile": "degraded", "validity_window": "closed", "result": "DENY", "receipt_ref": "stegcore-three-layer:condition-degraded-001"},
+  "runtime_expectation": {"result": "DENY", "reason_code": "judgment.refusal_unavailable", "continuity_receipt_minted": false},
+  "expected_failure_class": "condition_degraded_judgment",
+  "trace": {"example_fixture": true, "source_doc": "docs/governance/judgment_signal_execution_architecture.md"}
+}
