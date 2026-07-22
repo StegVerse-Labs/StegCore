@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/recreation-gate-receipt.schema.json",
+  "title": "StegCore Recreation Gate Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gate_id", "request_id", "created_utc", "decision", "standing_basis", "checks", "reasons"],
+  "properties": {
+    "gate_id": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1},
+    "created_utc": {"type": "string", "format": "date-time"},
+    "decision": {"enum": ["ALLOW", "BLOCK", "ERROR"]},
+    "standing_basis": {"type": "string", "minLength": 1},
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recreation_complete",
+        "recovery_proof_complete",
+        "verification_margin_complete",
+        "external_exposures_complete",
+        "state_hash_match",
+        "divergence_resolved",
+        "authority_current",
+        "consent_current",
+        "policy_current",
+        "unresolved_conditions_evaluated"
+      ],
+      "properties": {
+        "recreation_complete": {"type": "boolean"},
+        "recovery_proof_complete": {"type": "boolean"},
+        "verification_margin_complete": {"type": "boolean"},
+        "external_exposures_complete": {"type": "boolean"},
+        "state_hash_match": {"type": "boolean"},
+        "divergence_resolved": {"type": "boolean"},
+        "authority_current": {"type": "boolean"},
+        "consent_current": {"type": "boolean"},
+        "policy_current": {"type": "boolean"},
+        "unresolved_conditions_evaluated": {"type": "boolean"}
+      }
+    },
+    "reasons": {"type": "array", "items": {"type": "string"}},
+    "source_refs": {"type": "array", "items": {"type": "string"}}
+  }
+}
