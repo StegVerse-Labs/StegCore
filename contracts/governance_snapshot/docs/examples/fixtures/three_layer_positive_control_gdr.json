@@ -1,0 +1,14 @@
+{
+  "gdr_version": "1.0",
+  "decision_id": "gdr-three-layer-positive-control-001",
+  "decision": "allow",
+  "policy": {"policy_id": "judgment-signal-execution-draft", "policy_version": "draft-0.2"},
+  "evaluated_inputs": {"source": "governance-fixture", "receipt_ids": ["condition-receipt-positive-001", "signal-receipt-positive-001", "authority-receipt-positive-001"], "bundle_hash": "sha256:positive-control-bundle"},
+  "issued_at": 1794372000,
+  "rationale": "Judgment conditions support meaningful refusal and recovery, the admitted signal set is complete and reconstructable, reference-state continuity holds, and current execution authority is valid.",
+  "expected_failure_class": null,
+  "judgment_conditions": {"workload_state": "supported", "time_pressure": "normal", "isolation_state": "review_available", "refusal_available": true, "operator_recoverability": "available", "condition_receipt_ids": ["condition-receipt-positive-001"]},
+  "signal_admission": {"admitted_signal_refs": ["signal:request", "signal:policy", "signal:delegation", "signal:affected-entity"], "excluded_signal_refs": [], "transformations": [{"type": "canonicalization", "reconstructable": true}], "missing_inputs": [], "uncertainty_state": "bounded", "reference_state_hash": "sha256:authorized-state-a", "authorized_reference_state_hash": "sha256:authorized-state-a", "reconstruction_available": true},
+  "execution_boundary": {"actor_authority_ref": "authority:actor-current", "policy_ref": "policy:judgment-signal-execution-draft@draft-0.2", "delegation_ref": "delegation:current", "evidence_refs": ["condition-receipt-positive-001", "signal-receipt-positive-001", "authority-receipt-positive-001"], "affected_entity_refs": ["affected-entity:primary"], "recoverability_profile": "recoverable", "validity_window": "2026-11-10T00:00:00Z/2026-11-11T00:00:00Z", "result": "ALLOW", "receipt_ref": "stegcore-three-layer:positive-control-001"},
+  "runtime_expectation": {"result": "ALLOW", "reason_code": "ok", "continuity_receipt_minted": false}
+}

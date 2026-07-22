@@ -1,0 +1,79 @@
+name: Validate Recreation Gate
+
+on:
+  push:
+    paths:
+      - "docs/STEGCORE_RECREATION_GATE_MIRROR_HANDOFF.md"
+      - "schemas/recreation-gate-*.schema.json"
+      - "examples/recreation-gate.*.json"
+      - "scripts/evaluate_recreation_gate.py"
+      - ".github/workflows/validate-recreation-gate.yml"
+  pull_request:
+    paths:
+      - "docs/STEGCORE_RECREATION_GATE_MIRROR_HANDOFF.md"
+      - "schemas/recreation-gate-*.schema.json"
+      - "examples/recreation-gate.*.json"
+      - "scripts/evaluate_recreation_gate.py"
+      - ".github/workflows/validate-recreation-gate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --disable-pip-version-check jsonschema
+      - name: Allow complete recreation evidence
+        run: |
+          python scripts/evaluate_recreation_gate.py \
+            examples/recreation-gate.allow.json \
+            --request-schema schemas/recreation-gate-request.schema.json \
+            --receipt-schema schemas/recreation-gate-receipt.schema.json \
+            --output build/recreation-gate.allow.receipt.json
+          python - <<'PY'
+          import json
+          receipt=json.load(open('build/recreation-gate.allow.receipt.json'))
+          assert receipt['decision'] == 'ALLOW'
+          assert all(receipt['checks'].values())
+          PY
+      - name: Block unresolved divergence
+        run: |
+          if python scripts/evaluate_recreation_gate.py \
+            examples/recreation-gate.block-unresolved-divergence.json \
+            --request-schema schemas/recreation-gate-request.schema.json \
+            --receipt-schema schemas/recreation-gate-receipt.schema.json \
+            --output build/recreation-gate.block-divergence.receipt.json; then
+            echo "Unresolved divergence was incorrectly allowed" >&2
+            exit 1
+          fi
+          python - <<'PY'
+          import json
+          receipt=json.load(open('build/recreation-gate.block-divergence.receipt.json'))
+          assert receipt['decision'] == 'BLOCK'
+          assert receipt['checks']['divergence_resolved'] is False
+          PY
+      - name: Block stale authority
+        run: |
+          if python scripts/evaluate_recreation_gate.py \
+            examples/recreation-gate.block-stale-authority.json \
+            --request-schema schemas/recreation-gate-request.schema.json \
+            --receipt-schema schemas/recreation-gate-receipt.schema.json \
+            --output build/recreation-gate.block-authority.receipt.json; then
+            echo "Stale authority was incorrectly allowed" >&2
+            exit 1
+          fi
+          python - <<'PY'
+          import json
+          receipt=json.load(open('build/recreation-gate.block-authority.receipt.json'))
+          assert receipt['decision'] == 'BLOCK'
+          assert receipt['checks']['authority_current'] is False
+          PY

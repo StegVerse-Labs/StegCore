@@ -1,0 +1,23 @@
+{
+  "snapshot_id": "governance-three-layer-fixtures-c07b7c6",
+  "source_repository": "StegVerse-Labs/Governance",
+  "source_commit": "c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6",
+  "captured_utc": "2026-07-22T05:22:00Z",
+  "purpose": "Pinned read-only fixture snapshot for StegCore PR validation when the current-repository GITHUB_TOKEN cannot clone the private Governance repository.",
+  "authoritative_status": "evidence_snapshot_not_governance_authority",
+  "refresh_required_before_release": true,
+  "fixtures": [
+    {"path": "docs/examples/fixtures/condition_degraded_judgment_gdr.json", "source_blob_sha": "2181829b925a98595c4d9dacf82827dfee8dd831"},
+    {"path": "docs/examples/fixtures/signal_admission_drift_gdr.json", "source_blob_sha": "908d32568223ed1c236190a025b15a46a13601df"},
+    {"path": "docs/examples/fixtures/governance_validation_of_drift_gdr.json", "source_blob_sha": "24a2bc3628c1bbde5b97b0aed5744e23309034c0"},
+    {"path": "docs/examples/fixtures/three_layer_positive_control_gdr.json", "source_blob_sha": "05c24d5d5a45afeb737741bf16c6d3efee2523f5"},
+    {"path": "docs/examples/fixtures/three_layer_replay_baseline_gdr.json", "source_blob_sha": "71dca6e0bd9fbe536384019c6683aec34cfc0270"},
+    {"path": "docs/examples/fixtures/three_layer_replay_mutated_gdr.json", "source_blob_sha": "50e54fb30e8dc2d8197714ea146283c4d7331ea0"}
+  ],
+  "non_claims": [
+    "The snapshot does not mint Continuity receipts.",
+    "The snapshot does not grant production or release authority.",
+    "The snapshot does not replace Governance as policy authority.",
+    "A release must record freshness against the current Governance commit."
+  ]
+}
