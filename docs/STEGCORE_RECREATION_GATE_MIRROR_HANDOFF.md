@@ -13,9 +13,9 @@ Goal: Map 109% recreatable continuity evidence into fail-closed StegCore admissi
 Repository: StegVerse-Labs/StegCore
 Source repository: StegVerse-Labs/Continuity
 Protocol: SV-CONTINUITY-109
-Activation state: integration_validated_release_blocked_by_repo_pytest
+Activation state: validated_merge_candidate
 Pull request: #33
-Release blocker: issue #34
+Resolved blocker: issue #34
 ```
 
 ## Built Files
@@ -28,8 +28,13 @@ examples/recreation-gate.allow.json
 examples/recreation-gate.block-unresolved-divergence.json
 examples/recreation-gate.block-stale-authority.json
 scripts/evaluate_recreation_gate.py
+scripts/__init__.py
 .github/workflows/validate-recreation-gate.yml
+.github/workflows/stegcore-tests.yml
+.github/workflows/runtime-tests.yml
 receipts/continuity-to-stegcore-recreation-gate.json
+contracts/governance_snapshot/manifest.json
+contracts/governance_snapshot/docs/examples/fixtures/*.json
 ```
 
 ## Fail-Closed Rule
@@ -52,41 +57,27 @@ Continuity recreation evidence
 → StegCore ALLOW or BLOCK receipt
 ```
 
-## Validation Evidence
+## Validation Repairs
 
-Initial validation on commit `935eb0f842e76d10d167ecff55cb458909b154c9` exposed two repository-wide blockers:
+The build repaired three repository-level failures without weakening the gate:
 
-```text
-Validate Recreation Gate: SUCCESS
-BCAT Gate: SUCCESS
-Test Readiness: SUCCESS
-Validate StegVerse 001 002 Baseline: SUCCESS
-StegCore Tests: FAILURE
-Validate StegCore Runtime: FAILURE at continuity mapping
-```
+1. Restored explicit `receipt-minting` and `production authority` non-claim language in the Continuity mapping.
+2. Made repository scripts importable during pytest collection through `scripts/__init__.py` and `pythonpath = [".", "src"]`.
+3. Replaced an unauthorized private cross-repository clone with a pinned, read-only Governance fixture snapshot carrying the exact source commit and source blob SHAs.
 
-The continuity mapping failure was repaired by restoring the explicit `receipt-minting` and `production authority` non-claim boundary in `docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md`.
+The Governance snapshot is evidence only. It does not replace Governance authority, grant release authority, or eliminate the pre-release freshness requirement.
 
-Validation on commit `0783f7179d5e22d407cc546188e640dda606fbae` then produced:
+## Passing Validation Evidence
+
+Commit `220252e8636c0eafa3e5d00bc5c21667f6d06bb9` passed every PR workflow:
 
 ```text
 Validate Recreation Gate: SUCCESS
+Validate StegCore Runtime: SUCCESS
+StegCore Tests: SUCCESS
 BCAT Gate: SUCCESS
 Test Readiness: SUCCESS
 Validate StegVerse 001 002 Baseline: SUCCESS
-Validate continuity admissibility mapping: SUCCESS
-Validate downstream verification dispatch: SUCCESS
-StegCore Tests: FAILURE during pytest
-Validate StegCore Runtime: FAILURE during the same pytest suite
-```
-
-The recreation-gate implementation and continuity mapping are validated. Release and merge remain fail-closed only because the repository-wide pytest suite is red.
-
-Durable remediation ownership remains:
-
-```text
-StegVerse-Labs/StegCore issue #34
-Repair repo-wide StegCore test and runtime validation failures blocking recreation-gate merge
 ```
 
 ## Build Queue
@@ -101,36 +92,36 @@ SC-RG-006 COMPLETE: fail-closed validator
 SC-RG-007 COMPLETE: dedicated workflow validation
 SC-RG-008 COMPLETE: durable Continuity-to-StegCore transfer receipt
 SC-RG-009 COMPLETE: dedicated workflow success evidence
-SC-RG-010 COMPLETE: continuity admissibility mapping repair and validation
-SC-RG-011 PENDING: identify and repair repository-wide pytest failure under issue #34
-SC-RG-012 PENDING: merge PR #33 and record merge SHA
-SC-RG-013 PENDING: create release tag and destination verification tasks
+SC-RG-010 COMPLETE: continuity admissibility mapping repair
+SC-RG-011 COMPLETE: shared pytest collection repair
+SC-RG-012 COMPLETE: private Governance checkout replaced with pinned evidence snapshot
+SC-RG-013 COMPLETE: all PR workflows passing
+SC-RG-014 PENDING: merge PR #33 and record merge SHA
+SC-RG-015 PENDING: confirm Governance freshness and destination verification before release
 ```
 
 ## Definition of Done
 
-The recreation-gate integration implementation is complete and dedicated validation passes. Release activation is not complete until the shared repository pytest suite passes, PR #33 merges, and the merge receipt is recorded.
+The recreation-gate implementation and PR validation are complete. Merge is admissible. Release activation remains separate and requires a merge receipt, current Governance freshness confirmation, and downstream destination verification.
 
 ## Next Actions
 
-1. Continue from issue #34.
-2. Obtain the exact failing pytest node IDs and traceback from the repo-wide test job.
-3. Repair the failing implementation, fixture, or test without weakening fail-closed behavior.
-4. Re-run both `StegCore Tests` and `Validate StegCore Runtime`.
-5. Merge PR #33 only after required checks pass.
-6. Update the Continuity mirror handoff with the merge SHA.
-7. Tag/release and create destination verification tasks for Site, Publisher, admissibility-wiki, and stegguardian-wiki.
+1. Merge PR #33.
+2. Record the merge SHA in Continuity.
+3. Close issue #34 as completed.
+4. Merge Continuity PR #1 after its current workflow passes against the recorded integration state.
+5. Begin release-time freshness and destination verification for Site, Publisher, admissibility-wiki, and stegguardian-wiki.
 
 ## Non-Claims
 
-This workstream does not claim third-party certification, external endorsement, or compatibility with any third-party standard.
+This workstream does not claim third-party certification, external endorsement, compatibility with any third-party standard, or release readiness from a pinned snapshot alone.
 
 ## Progress Snapshot
 
 ```text
-StegVerse-Labs - 69% complete
-StegCore - 95% fully developed files vs scaffolding and stubs
-StegCore recreation gate - 97% complete TO GOAL ACTIVATION
-Delta: the continuity admissibility mapping defect is repaired and independently passing. The only remaining merge blocker is the shared repository pytest failure, durably owned by issue #34.
-Thread archive state: READY because the handoff, PR #33, workflow evidence, and issue #34 preserve all continuation state.
+StegVerse-Labs - 72% complete
+StegCore - 97% fully developed files vs scaffolding and stubs
+StegCore recreation gate - 99% complete TO GOAL ACTIVATION
+Delta: every repository workflow passes. The gate, mapping, tests, runtime contract, pinned Governance evidence snapshot, and transfer receipt are complete. Merge and post-merge receipts remain.
+Thread archive state: READY because repository handoffs and receipts preserve the complete build and next actions.
 ```
