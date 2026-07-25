@@ -1,5 +1,16 @@
 # StegCore
 
+## Position in the StegVerse LLM Communications Stack
+
+- **Stack ID:** `STEGVERSE-LLM-COMMS-STACK-v1`
+- **Component ID:** `stegcore`
+- **Bounded role:** commit-time allow, deny, or defer decision engine
+- **Consumes:** verified continuity, action intent, policy, consent, and delegation evidence
+- **Produces:** constrained machine-readable permission decisions and reason codes
+- **Does not own:** model inference, provider brokerage, communication normalization, identity, continuity truth, receipt minting, execution, publication, or durable custody
+
+See [`docs/LLM_COMMUNICATIONS_STACK.md`](docs/LLM_COMMUNICATIONS_STACK.md) for the complete component boundary.
+
 StegCore decides what actions are permitted, given verified continuity.
 
 StegCore consumes verified continuity output (e.g., from StegID or the Continuity receipt-governance layer) and answers:
