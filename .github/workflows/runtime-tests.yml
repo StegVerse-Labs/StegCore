@@ -128,7 +128,16 @@ jobs:
           git config user.email "stegcore-validation-bot@users.noreply.github.com"
           git add evidence/runtime-validation.json evidence/release-readiness.json
           git commit -m "Record StegCore validation and release-readiness state [skip ci]"
-          git push origin HEAD:main
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "Unable to persist validation evidence after 3 synchronized push attempts" >&2
+              exit 1
+            fi
+            sleep $((attempt * 2))
+          done
 
       - name: Reconcile implementation and release-readiness issues
         if: github.event_name != 'pull_request'
