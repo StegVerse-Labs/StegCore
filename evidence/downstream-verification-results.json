@@ -1,0 +1,49 @@
+{
+  "artifact_type": "stegcore.downstream_verification_results",
+  "schema_version": "1.0",
+  "runtime_evidence_hash": "3657e5c64eb54e2c928fba81d3c8d35587d2b87747b9b225102b70339d942730",
+  "status": "pass",
+  "required_gate_count": 4,
+  "passed_gate_count": 4,
+  "gates": [
+    {
+      "repository": "StegVerse-Labs/Site",
+      "issue_number": 14,
+      "status": "pass",
+      "verification_path": "evidence/stegcore-three-layer-verification.json",
+      "verification_commit": "6cb67c0b7a36ed4e3be71dd1c4cc60548e5138e1"
+    },
+    {
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "issue_number": 4,
+      "status": "pass",
+      "verification_path": "evidence/stegcore-three-layer-verification.json",
+      "verification_commit": "fad5822df767128f1a3f11ab7235f95c3c260530"
+    },
+    {
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "issue_number": 19,
+      "status": "pass",
+      "verification_path": "evidence/stegcore-three-layer-verification.json",
+      "verification_commit": "799e188cc660aa6b22720de248c5e255ec2f0fb0"
+    },
+    {
+      "repository": "StegVerse-002/stegguardian-wiki",
+      "issue_number": 4,
+      "status": "pass",
+      "verification_path": "evidence/stegcore-three-layer-verification.json",
+      "verification_commit": "a23cb19937453369b30288909701b55d1e389cee"
+    }
+  ],
+  "authority_boundary": {
+    "release_authorized": false,
+    "tag_authorized": false,
+    "deployment_authorized": false,
+    "execution_authorized": false,
+    "continuity_authority_claimed": false
+  },
+  "remaining_gates": [
+    "governance_freshness",
+    "independent_release_policy"
+  ]
+}
