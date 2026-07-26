@@ -1,0 +1,19 @@
+{
+  "artifact_type": "stegcore.release_candidate_request",
+  "schema_version": "1.0",
+  "repository": "StegVerse-Labs/StegCore",
+  "version": "0.1.0",
+  "tag": "v0.1.0",
+  "stegcore_commit": "b2290a006cb23e0595388d0ddaa55e7874c16222",
+  "runtime_evidence_hash": "3657e5c64eb54e2c928fba81d3c8d35587d2b87747b9b225102b70339d942730",
+  "downstream_results_hash": "b6e9b65edaea39bad38f4850594b033e81b5dcff8bcf382a89b149b26d95b416",
+  "governance_freshness_hash": "7700d8aa723e898bc79b756fae026017aefe5ee2b4136ebe6f61493895b0dad4",
+  "requested_policy": "stegcore-release-policy-v1",
+  "requested_decision_owner": "StegVerse-Labs/Governance",
+  "authority_boundary": {
+    "request_is_release_authority": false,
+    "request_is_tag_authority": false,
+    "request_is_deployment_authority": false,
+    "request_is_continuity_authority": false
+  }
+}
