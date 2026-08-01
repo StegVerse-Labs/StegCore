@@ -29,6 +29,9 @@ jobs:
           pip install -e .
           pip install pytest
 
+      - name: Validate personal-data control decision boundary
+        run: python scripts/check_personal_data_control_decision.py
+
       - name: Run tests and persist diagnostics
         id: pytest
         shell: bash
