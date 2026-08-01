@@ -1,0 +1,35 @@
+name: Check TIDC Evidence-Chain Management
+
+on:
+  push:
+    paths:
+      - 'docs/TIDC_EVIDENCE_CHAIN_MIRROR_HANDOFF.md'
+      - 'ecosystem_management/tidc_evidence_chain_registry.json'
+      - 'scripts/check_tidc_evidence_chain_management.py'
+      - '.github/workflows/check-tidc-evidence-chain-management.yml'
+  pull_request:
+    paths:
+      - 'docs/TIDC_EVIDENCE_CHAIN_MIRROR_HANDOFF.md'
+      - 'ecosystem_management/tidc_evidence_chain_registry.json'
+      - 'scripts/check_tidc_evidence_chain_management.py'
+      - '.github/workflows/check-tidc-evidence-chain-management.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile management validator
+        run: python -m py_compile scripts/check_tidc_evidence_chain_management.py
+      - name: Validate TIDC ecosystem-management layer
+        run: python scripts/check_tidc_evidence_chain_management.py
