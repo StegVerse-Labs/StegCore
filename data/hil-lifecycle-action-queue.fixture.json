@@ -1,0 +1,46 @@
+{
+  "schema_version": "HIL-STEGVERSE-ACTION-QUEUE-v1",
+  "registry_id": "HIL-LIFECYCLE-ACTIVATION-001",
+  "generated_at": "2026-08-01T16:26:00Z",
+  "decision": "CONTINUE_INTERNAL_DEVELOPMENT",
+  "external_tasks": [],
+  "halted": false,
+  "action_count": 5,
+  "actions": [
+    {
+      "task_id": "HIL-SITE-RECEIVER-001",
+      "location": "https://github.com/StegVerse-Labs/Site/issues/81",
+      "state": "OPEN_INTERNAL_WORK",
+      "blocking": false,
+      "next_action": "Advance the managed hosted-receiver deployment and durable restart evidence defined in Site #81; while runtime execution is pending, continue validating the deployment profile, restart runner, evidence importer, and receiver configuration contract."
+    },
+    {
+      "task_id": "HIL-TVC-REVIEW-001",
+      "location": "https://github.com/StegVerse-Labs/TVC/issues/8",
+      "state": "OPEN_INTERNAL_WORK",
+      "blocking": false,
+      "next_action": "Implement the private-review lifecycle schema, write-once validator, fixture receipt, and negative tests in TVC #8 against the existing genuine reconstruction receipt."
+    },
+    {
+      "task_id": "HIL-MASTER-RECORD-001",
+      "location": "https://github.com/master-records/orchestration/issues/13",
+      "state": "OPEN_INTERNAL_WORK",
+      "blocking": false,
+      "next_action": "Implement HIL-MASTER-RECORD-CANDIDATE-v1 canonicalization and fail-closed validation in Master Records #13 without applying a final record."
+    },
+    {
+      "task_id": "HIL-SITE-PROJECTION-001",
+      "location": "https://github.com/StegVerse-Labs/Site/issues/67",
+      "state": "OPEN_INTERNAL_WORK",
+      "blocking": false,
+      "next_action": "Build fixture-driven private-review, Master Record candidate, and activation-state projections plus browser/accessibility checks in Site #67."
+    },
+    {
+      "task_id": "HIL-STEGCORE-ACTIVATION-001",
+      "location": "https://github.com/StegVerse-Labs/StegCore/issues/41",
+      "state": "OPEN_INTERNAL_WORK",
+      "blocking": false,
+      "next_action": "Implement the machine-readable lifecycle state contract, monotonic transition validator, contradiction detector, and activation-decision fixture in StegCore #41."
+    }
+  ]
+}
