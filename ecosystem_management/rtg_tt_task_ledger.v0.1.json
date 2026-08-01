@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "layer_id": "stegverse-rtg-tt-operational-layer",
   "policy": {
     "unlocated_tasks_forbidden": true,
@@ -13,11 +13,9 @@
       "repository": "StegVerse-Labs/StegCore",
       "issue": 38,
       "pull_request": 40,
-      "branch": "goal/rtg-tt-operational-layer",
-      "workflow": ".github/workflows/rtg-tt-operational-layer.yml",
-      "verification_command": "python tools/verify_rtg_tt_operational_layer.py",
-      "completion_evidence": "brain_reports/rtg_tt_operational_layer_report.json",
-      "current_action": "merge_when_all_required_checks_pass",
+      "merge_commit": "47cb26c513c9404017e650e025b8cc14eb02c41c",
+      "state": "COMPLETE",
+      "completion_evidence": "brain_reports/rtg_tt_activation_receipt.json",
       "successor_task": "RTGTT-SITE-INSTALL"
     },
     {
@@ -25,44 +23,58 @@
       "repository": "StegVerse-Labs/Site",
       "issue": 122,
       "pull_request": 125,
-      "branch": "goal/rtg-tt-downstream-projection",
-      "workflow": ".github/workflows/rtg-tt-public-mirror.yml",
-      "verification_command": "python scripts/check_rtg_tt_public_mirror.py",
+      "merge_commit": "50d417b2dbf29d3812bdae8c3d1942b1ce5a5162",
+      "state": "COMPLETE",
       "completion_evidence": "data/rtg-tt/rtg-tt-public-mirror.v0.1.json",
-      "current_action": "merge_when_mirror_bootstrap_and_orchestrator_checks_pass",
       "successor_task": "RTGTT-WIKI-ADMISSIBILITY"
     },
     {
       "task_id": "RTGTT-WIKI-ADMISSIBILITY",
       "repository": "StegVerse-Labs/admissibility-wiki",
       "issue": 51,
-      "depends_on": "StegVerse-Labs/Site#125",
-      "current_action": "install_exact_site_main_package_after_site_merge",
+      "pull_request": 54,
+      "branch": "goal/rtg-tt-formal-projection",
+      "workflow": ".github/workflows/rtg-tt-formal-boundary.yml",
+      "verification_command": "python tools/check_rtg_tt_formal_boundary.py",
+      "completion_evidence": "data/rtg-tt/formal-boundary.v0.1.json",
+      "state": "BUILDING",
+      "current_action": "inspect_all_PR_54_checks_then_merge_or_repair",
       "successor_task": "RTGTT-WIKI-GUARDIAN"
     },
     {
       "task_id": "RTGTT-WIKI-GUARDIAN",
       "repository": "StegVerse-002/stegguardian-wiki",
       "issue": 10,
-      "depends_on": "StegVerse-Labs/Site#125",
-      "current_action": "install_exact_guardian_projection_after_site_merge",
+      "pull_request": 11,
+      "branch": "goal/rtg-tt-guardian-projection",
+      "workflow": ".github/workflows/rtg-tt-guardian-boundary.yml",
+      "verification_command": "python tools/check_rtg_tt_guardian_boundary.py",
+      "completion_evidence": "data/rtg-tt/guardian-boundary.v0.1.json",
+      "state": "BUILDING",
+      "current_action": "inspect_all_PR_11_checks_then_merge_or_repair",
       "successor_task": "RTGTT-PUBLISHER-INSTALL"
     },
     {
       "task_id": "RTGTT-PUBLISHER-INSTALL",
       "repository": "GCAT-BCAT-Engine/Publisher",
       "issue": 20,
-      "depends_on": "StegVerse-Labs/Site#125",
-      "current_action": "ingest_exact_site_main_package_and_verify_hash_binding",
-      "successor_task": "RTGTT-ACTIVATION-RECEIPT"
+      "pull_request": 23,
+      "branch": "goal/rtg-tt-publication-ingestion",
+      "workflow": ".github/workflows/rtg-tt-publication-ingestion.yml",
+      "verification_command": "python tools/check_rtg_tt_publication_ingestion.py",
+      "completion_evidence": "data/rtg-tt/publication-ingestion.v0.1.json",
+      "state": "BUILDING",
+      "current_action": "inspect_all_PR_23_checks_then_merge_or_repair",
+      "successor_task": "RTGTT-CLOSURE-RECEIPT"
     },
     {
-      "task_id": "RTGTT-ACTIVATION-RECEIPT",
+      "task_id": "RTGTT-CLOSURE-RECEIPT",
       "repository": "StegVerse-Labs/StegCore",
       "issue": 38,
-      "path": "brain_reports/rtg_tt_activation_receipt.json",
-      "current_action": "emit_after_all_repository_bound tasks verify",
-      "terminal_state": "ACTIVE"
+      "path": "brain_reports/rtg_tt_downstream_closure_receipt.json",
+      "state": "WAITING_ON_REPOSITORY_TASKS",
+      "current_action": "emit_after_PR_54_PR_11_and_PR_23_merge_and_verify",
+      "terminal_state": "ACTIVE_AND_PROPAGATED"
     }
   ]
 }
