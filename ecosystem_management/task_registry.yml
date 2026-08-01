@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 goal: ecosystem_managed_task_handoff_and_completion
 
 assessment_rule: >-
@@ -23,6 +23,23 @@ active_chain:
   current_goal_activation: complete_when_bootstrap_and_verify_workflow_commits_report
   next_integration_candidate: stegfin-provider-acquisition-close
   parallel_session_overlap_status: no known overlapping session for provider-banking/acquisition-close chain
+
+parallel_chains:
+  - chain_id: rtg-tt-operational-layer
+    owner_repo: StegCore
+    status: building
+    issue: StegVerse-Labs/StegCore#38
+    handoff: docs/STEGVERSE_RTG_TT_OPERATIONAL_LAYER_HANDOFF.md
+    state: ecosystem_management/rtg_tt_operational_layer.v0.1.json
+    verification_command: python tools/verify_rtg_tt_operational_layer.py
+    report_artifact: brain_reports/rtg_tt_operational_layer_report.json
+    next_integration_candidate: StegVerse-Labs/Site#125
+    downstream_candidates:
+      - StegVerse-Labs/admissibility-wiki#51
+      - StegVerse-002/stegguardian-wiki#10
+      - GCAT-BCAT-Engine/Publisher#20
+    non_overlap: does-not-claim-stegfin-chain-site-hil-paths-or-ae-tt-authority
+    completion_criteria: verifier-green-site-main-verified-downstream-dependency-bound-activation-receipt-created
 
 managed_repos:
   - name: stegfin-provider-token-ledger-executor
@@ -51,8 +68,16 @@ managed_repos:
     next_candidate: source-hardening-only-when-new-metadata-arrives
     ownership: vawatchdog-evidence-and-accountability-workstream
     non_overlap: does-not-own-stegva-private-claim-service
+  - name: StegCore-RTG-TT
+    status: building-operational-coordination-layer
+    handoff: docs/STEGVERSE_RTG_TT_OPERATIONAL_LAYER_HANDOFF.md
+    next_candidate: StegVerse-Labs/Site#125
+    ownership: coordination-and-verification-only
+    non_overlap: no-formalism-allocation-execution-custody-publication-or-release-authority
 
 artifacts:
   management_report: brain_reports/stegverse_ecosystem_management_readiness_report.json
   stegva_interim_handoff: docs/STEGVA_MIRROR_HANDOFF.md
   stegva_vawatchdog_parallel_work_receipt: docs/STEGVA_VAWATCHDOG_PARALLEL_WORK_RECEIPT.md
+  rtg_tt_operational_state: ecosystem_management/rtg_tt_operational_layer.v0.1.json
+  rtg_tt_operational_report: brain_reports/rtg_tt_operational_layer_report.json
