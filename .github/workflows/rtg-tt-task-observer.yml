@@ -1,0 +1,44 @@
+name: RTG-TT Task Observer
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+  pull_request:
+    paths:
+      - ecosystem_management/rtg_tt_task_ledger.v0.1.json
+      - tools/observe_rtg_tt_task_chain.py
+      - .github/workflows/rtg-tt-task-observer.yml
+  push:
+    branches: [main]
+    paths:
+      - ecosystem_management/rtg_tt_task_ledger.v0.1.json
+      - tools/observe_rtg_tt_task_chain.py
+      - .github/workflows/rtg-tt-task-observer.yml
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Observe repository-bound task chain
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python tools/observe_rtg_tt_task_chain.py
+      - name: Upload task observation
+        uses: actions/upload-artifact@v4
+        with:
+          name: rtg-tt-task-observation
+          path: brain_reports/rtg_tt_task_observation.json
+          if-no-files-found: error
