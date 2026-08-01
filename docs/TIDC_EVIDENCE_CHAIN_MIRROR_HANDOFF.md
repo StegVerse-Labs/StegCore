@@ -10,9 +10,39 @@ layer: blinded second-coding evidence chain
 
 ## Determination
 
-The Site-level TIDC blinded-return layer is built and activated. Before this record, the StegVerse ecosystem-management layer did not contain a dedicated machine-readable handoff, verification contract, or task coordination surface for that evidence chain.
+The Site-level TIDC blinded-return layer and the StegCore management layer are built and activated. The prior management posture incorrectly allowed one missing serial artifact to appear as an external blocker capable of halting development.
 
-This handoff establishes the StegCore management mirror without transferring research, adjudication, publication, or proof authority away from `StegVerse-Labs/Site`.
+That posture is superseded.
+
+There are no unowned external tasks in this layer. Every task must have an owner repository, a concrete location, an observable completion condition, and either an active or conditionally executable state.
+
+## Active observer and advancement layer
+
+```text
+observer_script: scripts/observe_and_advance_tidc_evidence_chain.py
+observer_workflow: .github/workflows/observe-and-advance-tidc-evidence-chain.yml
+observation_receipt: brain_reports/tidc_evidence_chain_observation.json
+cadence: hourly and workflow_dispatch
+registry: ecosystem_management/tidc_evidence_chain_registry.json
+```
+
+The observer inspects the authoritative `StegVerse-Labs/Site` evidence-chain paths, identifies the first incomplete serial state, and emits the next executable tasks with their owner repositories and exact locations.
+
+## Non-halting rule
+
+```text
+missing serial-chain artifact
+!=
+permission to stop unrelated or preparatory development
+```
+
+A waiting serial state cannot suppress:
+
+- primary-source expansion in `StegVerse-Labs/Site/data/tidc/source-expansion/`;
+- negative controls in `StegVerse-Labs/Site/data/tidc/negative-controls/`;
+- tranche 02 preparation in `StegVerse-Labs/Site/data/tidc/tranche-02/`;
+- observer and verification hardening in `StegVerse-Labs/StegCore/scripts/` and `.github/workflows/`;
+- downstream verification preparation in `StegVerse-Labs/StegCore/ecosystem_management/`.
 
 ## Authoritative Site records
 
@@ -27,30 +57,12 @@ comparison_engine: scripts/compare_tidc_blinded_coding.py
 adjudication_protocol: docs/TIDC_BLINDED_CODING_ADJUDICATION_PROTOCOL.md
 ```
 
-## Ecosystem-management role
-
-StegCore may:
-
-- track the external-return dependency;
-- verify that required Site artifacts exist;
-- coordinate receipt, comparison, and adjudication tasks;
-- record downstream mirror-verification tasks;
-- determine archive readiness from committed evidence.
-
-StegCore may not:
-
-- invent or repair the blinded return;
-- adjudicate scientific classifications by management fiat;
-- convert AI coding into human replication;
-- promote a research note into proof;
-- grant publication, execution, or research authority.
-
 ## State machine
 
 ```text
 SITE_LAYER_BUILT
 -> SITE_LAYER_ACTIVATED
--> EXTERNAL_RETURN_PENDING
+-> OBSERVER_ACTIVE
 -> RETURN_PRESERVED
 -> STRUCTURAL_VALIDATION_PASSED
 -> RECEIPT_GENERATED
@@ -62,39 +74,34 @@ SITE_LAYER_BUILT
 -> ARCHIVE_READY
 ```
 
-The current state is:
+Current state:
 
 ```text
 SITE_LAYER_ACTIVATED
-EXTERNAL_RETURN_PENDING
+STEGCORE_MANAGEMENT_ACTIVATED
+OBSERVER_ACTIVE
+PARALLEL_ADVANCEMENT_ACTIVE
+DEVELOPMENT_HALTED=false
 ```
 
 ## Completion criteria
 
 The ecosystem layer is operationally complete when:
 
-1. the untouched return is committed in Site;
-2. Site CI validates it;
-3. receipt and comparison artifacts are preserved;
-4. every disagreement has a recorded status;
-5. Release 2 is advanced only under the declared boundary;
-6. downstream public mirrors are checked;
-7. an archive-readiness receipt is committed.
+1. the serial evidence state is observed automatically;
+2. no missing serial artifact halts parallel development;
+3. any produced return is preserved without repair;
+4. Site CI validates it;
+5. receipt and comparison artifacts are preserved;
+6. every disagreement has a recorded status;
+7. Release 2 is advanced only under the declared boundary;
+8. downstream public mirrors are checked;
+9. an archive-readiness receipt is committed.
 
-## Coordinated repositories
+## Authority boundary
 
-```text
-StegVerse-Labs/Site                   research source and public mirror
-StegVerse-Labs/StegCore               ecosystem task coordination
-GCAT-BCAT-Engine/Publisher             downstream publication verification
-admissibility-wiki                     downstream doctrine/mirror verification
-stegguardian-wiki                      downstream governance mirror verification
-```
-
-## Non-overlap
-
-This layer does not modify the TIDC seed event ledger, perform scientific adjudication, or interfere with unrelated StegCore provider, financial, HIL, or StegVA task chains.
+StegCore may observe, route, verify, and advance tasks. It may not invent evidence, adjudicate research classifications by management fiat, convert AI coding into human replication, or promote a research note into proof.
 
 ## Archive rule
 
-Do not announce archive readiness while the external return, comparison, adjudication, or downstream verification chain remains open.
+Archive readiness is determined from the committed observation and completion receipts, not from an idle-status label. Do not announce archive readiness until the serial chain and downstream checks are complete.
