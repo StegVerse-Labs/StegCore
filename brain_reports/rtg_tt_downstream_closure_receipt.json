@@ -1,0 +1,91 @@
+{
+  "schema_version": "0.1.0",
+  "receipt_type": "stegverse_rtg_tt_downstream_closure",
+  "layer_id": "stegverse-rtg-tt-operational-layer",
+  "contract_version": "rtg-tt-v0.1",
+  "state": "ACTIVE_AND_PROPAGATED",
+  "closed_at": "2026-08-01T15:50:00-05:00",
+  "canonical_sources": {
+    "rtg_tests": "2fd7099bb3b6d2d7aa8ce7d72f7f71f6dfd4566a",
+    "transition_table": "19720bae935ef9881ce5b239e0b66423fcd8bfab",
+    "validation_factory": "5ca6ac0442809c5902f9765d2f865e5fa03d9c60",
+    "factory_report_hash": "sha256:a11eea46242f3df6faa64c2c4174779abea08be9ca7ea93342317cdbcdf7aa56"
+  },
+  "stegverse_operational_layer": {
+    "repository": "StegVerse-Labs/StegCore",
+    "issue": 38,
+    "pull_request": 40,
+    "merge_commit": "47cb26c513c9404017e650e025b8cc14eb02c41c",
+    "state_path": "ecosystem_management/rtg_tt_operational_layer.v0.1.json",
+    "task_ledger_path": "ecosystem_management/rtg_tt_task_ledger.v0.1.json",
+    "observer_path": "tools/observe_rtg_tt_task_chain.py"
+  },
+  "downstream_installations": [
+    {
+      "repository": "StegVerse-Labs/Site",
+      "issue": 122,
+      "pull_request": 125,
+      "merge_commit": "50d417b2dbf29d3812bdae8c3d1942b1ce5a5162",
+      "evidence_path": "data/rtg-tt/rtg-tt-public-mirror.v0.1.json",
+      "state": "MERGED"
+    },
+    {
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "issue": 51,
+      "pull_request": 54,
+      "merge_commit": "4d1f4580999a2643816461cd595df956b695990b",
+      "evidence_path": "data/rtg-tt/formal-boundary.v0.1.json",
+      "validator_path": "tools/check_rtg_tt_formal_boundary.py",
+      "isolated_validator_run": 1,
+      "state": "MERGED",
+      "repository_baseline_note": "The RTG-TT validator passed. The repository-wide canonical validation remains red on pre-existing unrelated internal workstreams recorded by their exact validator paths. The branch-added standalone workflow was removed before merge to avoid increasing workflow sprawl."
+    },
+    {
+      "repository": "StegVerse-002/stegguardian-wiki",
+      "issue": 10,
+      "pull_request": 11,
+      "merge_commit": "6add824c51983944138990afaca5f439d1b551c4",
+      "evidence_path": "data/rtg-tt/guardian-boundary.v0.1.json",
+      "validator_path": "tools/check_rtg_tt_guardian_boundary.py",
+      "verified_runs": {
+        "rtg_tt_guardian_boundary": 1,
+        "wiki_readiness": 228,
+        "publish_wiki": 308
+      },
+      "state": "MERGED"
+    },
+    {
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "issue": 20,
+      "pull_request": 23,
+      "merge_commit": "0b564980d8caf85d4b4bfef64c5f47a8a181f848",
+      "evidence_path": "data/rtg-tt/publication-ingestion.v0.1.json",
+      "validator_path": "tools/check_rtg_tt_publication_ingestion.py",
+      "verified_runs": {
+        "rtg_tt_publication_ingestion": 1,
+        "publisher_readiness": 148,
+        "publisher_check": 151,
+        "architecture_guard": 669
+      },
+      "state": "MERGED"
+    }
+  ],
+  "bounded_result_mapping": {
+    "RESOLUTION_SATISFIED": "ALLOW",
+    "FAIL_CLOSED": "DENY",
+    "QUARANTINE": "DEFER"
+  },
+  "authority": {
+    "formalism": false,
+    "allocation": false,
+    "commitment": false,
+    "execution": false,
+    "custody": false,
+    "publication": false,
+    "release": false
+  },
+  "manual_user_tasks": [],
+  "external_tasks": [],
+  "remaining_rtg_tt_tasks": [],
+  "archive_ready": true
+}
