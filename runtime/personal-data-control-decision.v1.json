@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0.0",
+  "layer_id": "stegcore-personal-data-control-decision-boundary",
+  "state": "ACTIVATED_AND_CI_BOUND",
+  "external_tasks_required": false,
+  "manual_tasks_required": false,
+  "authority": {
+    "external_deletion": false,
+    "identity_verification": false,
+    "receipt_minting": false,
+    "legal_adjudication": false
+  },
+  "task": {
+    "task_id": "SC-PDCL-001",
+    "repository": "StegVerse-Labs/StegCore",
+    "implementation_paths": [
+      "docs/PERSONAL_DATA_CONTROL_DECISION_BOUNDARY.md",
+      "schemas/personal-data-control-decision.schema.json",
+      "runtime/personal-data-control-decision.v1.json"
+    ],
+    "verification_paths": [
+      "scripts/check_personal_data_control_decision.py",
+      "tests/test_personal_data_control_decision.py",
+      ".github/workflows/stegcore-tests.yml"
+    ],
+    "validator_command": "python scripts/check_personal_data_control_decision.py",
+    "success_marker": "STEGCORE_PERSONAL_DATA_CONTROL_DECISION=PASS",
+    "completion_predicate": "all required files exist, states and authority boundaries validate, completion cannot be asserted without receipt and appeal evidence",
+    "status": "COMPLETE",
+    "receipt_path": "runtime/personal-data-control-decision.v1.json"
+  },
+  "non_halting_states": [
+    "CHANNEL_FAILED",
+    "PROCESSOR_PROPAGATION_PENDING",
+    "DEFER"
+  ],
+  "next_goal": {
+    "task_id": "SC-PDCL-002",
+    "repository": "StegVerse-Labs/StegCore",
+    "implementation_paths": [
+      "src/stegcore/personal_data_control.py",
+      "tests/test_personal_data_control_runtime.py",
+      "evidence/personal-data-control-decision-receipts/"
+    ],
+    "completion_predicate": "deterministic transition evaluator produces hash-bound ALLOW, DENY, or DEFER receipts without claiming external deletion authority",
+    "status": "READY"
+  }
+}
