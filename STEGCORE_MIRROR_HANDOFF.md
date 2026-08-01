@@ -47,6 +47,55 @@ Draft PR #18 adds:
 
 The implementation is isolated from `decision.py`, so existing allow/deny/defer behavior is not replaced.
 
+## Personal Data Control Decision Layer
+
+```text
+Layer: personal-data control and deletion decision boundary
+Prior state: NOT_EXPLICITLY_BUILT
+Current state: ACTIVATED_AND_CI_BOUND
+Task: SC-PDCL-001
+External tasks required: false
+Manual tasks required: false
+Authority granted: false
+```
+
+StegCore now evaluates whether a proposed personal-data request transition may cross the consequence-bearing commit boundary. It does not identify users, contact controllers, delete external data, verify continuity receipts, or mint receipts.
+
+Installed locations:
+
+```text
+docs/PERSONAL_DATA_CONTROL_DECISION_BOUNDARY.md
+schemas/personal-data-control-decision.schema.json
+runtime/personal-data-control-decision.v1.json
+scripts/check_personal_data_control_decision.py
+tests/test_personal_data_control_decision.py
+.github/workflows/stegcore-tests.yml
+```
+
+Task completion contract:
+
+```text
+Task object: runtime/personal-data-control-decision.v1.json#/task
+Validator: python scripts/check_personal_data_control_decision.py
+Success marker: STEGCORE_PERSONAL_DATA_CONTROL_DECISION=PASS
+Durable observer: .github/workflows/stegcore-tests.yml
+Status: COMPLETE
+```
+
+Unresolved controller or processor conditions are represented as `CHANNEL_FAILED`, `PROCESSOR_PROPAGATION_PENDING`, or `DEFER`. They are governed states, not unnamed external tasks, and do not halt repository development.
+
+Next coordinated task:
+
+```text
+Task ID: SC-PDCL-002
+Repository: StegVerse-Labs/StegCore
+Implementation: src/stegcore/personal_data_control.py
+Tests: tests/test_personal_data_control_runtime.py
+Receipts: evidence/personal-data-control-decision-receipts/
+Completion predicate: deterministic evaluator emits hash-bound ALLOW, DENY, or DEFER receipts without claiming external deletion authority
+Status: READY
+```
+
 ## Acceptance Criteria
 
 - Existing `decide()` behavior remains compatible.
@@ -64,27 +113,29 @@ The implementation is isolated from `decision.py`, so existing allow/deny/defer 
 - Portable predecessor module: all six local validation cases passed before repository installation.
 - Repository branch tests: seven pytest cases are committed.
 - GitHub Actions workflow: committed and configured for push, pull request, and manual dispatch.
-- Current observation: no workflow run or combined status was returned immediately after PR creation; this remains pending CI observation rather than a code-completion claim.
+- Personal-data decision validator and tests are bound into `.github/workflows/stegcore-tests.yml`.
+- Current observation: workflow execution after the latest main-branch changes remains to be observed; this is an internal validation state, not an external task.
 
 ## Remaining Integration Work
 
 1. Observe and verify the GitHub Actions run for PR #18.
 2. Correct any CI failure on the same branch.
 3. After green CI, mark PR #18 ready for review or merge according to repository policy.
-4. Decide which future executable runner calls the gate after StegCore `decide()` returns allow.
-5. Ensure any raw executor is unreachable from production mutation paths.
-6. Add previous-receipt chain verification when the continuity receipt-governance layer exposes the required verified inputs.
-7. Mirror public documentation through the existing Governance/Site placement rules only after the runtime contract is stable.
+4. Implement `SC-PDCL-002` at the exact paths listed above.
+5. Decide which future executable runner calls the gate after StegCore `decide()` returns allow.
+6. Ensure any raw executor is unreachable from production mutation paths.
+7. Add previous-receipt chain verification when the continuity receipt-governance layer exposes the required verified inputs.
+8. Mirror public documentation through the existing Governance/Site placement rules only after the runtime contract is stable.
 
 ## Permitted Continuation Scope
 
-Continue work on StegCore decision contracts, capability-surface binding, commit coherence, deterministic receipts, replay checks, tests, and PR #18 validation. Do not add UI restrictions, behavioral scoring, identity verification, or receipt minting to StegCore.
+Continue work on StegCore decision contracts, capability-surface binding, commit coherence, personal-data request transition decisions, deterministic receipts, replay checks, tests, and PR #18 validation. Do not add UI restrictions, behavioral scoring, identity verification, external deletion execution, or receipt minting to StegCore.
 
 ## Completion Assessment
 
-- Fully developed: handoff, commit-coherence contract, deterministic predicates, capability hashing, decision receipt hashing, replay comparison, seven tests, and iPhone-triggerable verification workflow.
-- Scaffolding: connection to a production executor remains intentionally deferred until that executor is identified in its owning repository.
-- Activation blocker: PR #18 CI must be observed and verified.
+- Fully developed: handoff, commit-coherence contract, personal-data decision contract, deterministic predicates, task manifest, validator, tests, CI binding, capability hashing, decision receipt hashing, replay comparison, and iPhone-triggerable verification workflows.
+- Scaffolding: executable personal-data transition evaluator and connection to a production executor remain the next repository-local implementation tasks.
+- Activation blocker: none for the contract layer. CI observation and runtime implementation remain internal follow-on states.
 
 ## Initial Boundary and Public-Launch Session Record
 
