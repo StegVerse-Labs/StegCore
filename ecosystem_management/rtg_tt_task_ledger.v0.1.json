@@ -1,6 +1,7 @@
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "layer_id": "stegverse-rtg-tt-operational-layer",
+  "terminal_state": "ACTIVE_AND_PROPAGATED",
   "policy": {
     "unlocated_tasks_forbidden": true,
     "external_manual_tasks_forbidden": true,
@@ -15,8 +16,7 @@
       "pull_request": 40,
       "merge_commit": "47cb26c513c9404017e650e025b8cc14eb02c41c",
       "state": "COMPLETE",
-      "completion_evidence": "brain_reports/rtg_tt_activation_receipt.json",
-      "successor_task": "RTGTT-SITE-INSTALL"
+      "completion_evidence": "brain_reports/rtg_tt_activation_receipt.json"
     },
     {
       "task_id": "RTGTT-SITE-INSTALL",
@@ -25,56 +25,50 @@
       "pull_request": 125,
       "merge_commit": "50d417b2dbf29d3812bdae8c3d1942b1ce5a5162",
       "state": "COMPLETE",
-      "completion_evidence": "data/rtg-tt/rtg-tt-public-mirror.v0.1.json",
-      "successor_task": "RTGTT-WIKI-ADMISSIBILITY"
+      "completion_evidence": "data/rtg-tt/rtg-tt-public-mirror.v0.1.json"
     },
     {
       "task_id": "RTGTT-WIKI-ADMISSIBILITY",
       "repository": "StegVerse-Labs/admissibility-wiki",
       "issue": 51,
       "pull_request": 54,
-      "branch": "goal/rtg-tt-formal-projection",
-      "workflow": ".github/workflows/rtg-tt-formal-boundary.yml",
+      "merge_commit": "4d1f4580999a2643816461cd595df956b695990b",
       "verification_command": "python tools/check_rtg_tt_formal_boundary.py",
       "completion_evidence": "data/rtg-tt/formal-boundary.v0.1.json",
-      "state": "BUILDING",
-      "current_action": "inspect_all_PR_54_checks_then_merge_or_repair",
-      "successor_task": "RTGTT-WIKI-GUARDIAN"
+      "state": "COMPLETE",
+      "baseline_note": "RTG-TT isolated validator passed; unrelated repository-wide pre-existing failures remain owned by their reported validator paths."
     },
     {
       "task_id": "RTGTT-WIKI-GUARDIAN",
       "repository": "StegVerse-002/stegguardian-wiki",
       "issue": 10,
       "pull_request": 11,
-      "branch": "goal/rtg-tt-guardian-projection",
-      "workflow": ".github/workflows/rtg-tt-guardian-boundary.yml",
+      "merge_commit": "6add824c51983944138990afaca5f439d1b551c4",
       "verification_command": "python tools/check_rtg_tt_guardian_boundary.py",
       "completion_evidence": "data/rtg-tt/guardian-boundary.v0.1.json",
-      "state": "BUILDING",
-      "current_action": "inspect_all_PR_11_checks_then_merge_or_repair",
-      "successor_task": "RTGTT-PUBLISHER-INSTALL"
+      "state": "COMPLETE"
     },
     {
       "task_id": "RTGTT-PUBLISHER-INSTALL",
       "repository": "GCAT-BCAT-Engine/Publisher",
       "issue": 20,
       "pull_request": 23,
-      "branch": "goal/rtg-tt-publication-ingestion",
-      "workflow": ".github/workflows/rtg-tt-publication-ingestion.yml",
+      "merge_commit": "0b564980d8caf85d4b4bfef64c5f47a8a181f848",
       "verification_command": "python tools/check_rtg_tt_publication_ingestion.py",
       "completion_evidence": "data/rtg-tt/publication-ingestion.v0.1.json",
-      "state": "BUILDING",
-      "current_action": "inspect_all_PR_23_checks_then_merge_or_repair",
-      "successor_task": "RTGTT-CLOSURE-RECEIPT"
+      "state": "COMPLETE"
     },
     {
       "task_id": "RTGTT-CLOSURE-RECEIPT",
       "repository": "StegVerse-Labs/StegCore",
       "issue": 38,
       "path": "brain_reports/rtg_tt_downstream_closure_receipt.json",
-      "state": "WAITING_ON_REPOSITORY_TASKS",
-      "current_action": "emit_after_PR_54_PR_11_and_PR_23_merge_and_verify",
-      "terminal_state": "ACTIVE_AND_PROPAGATED"
+      "commit": "68edfe36b2e8b4cd2de4bff5c061edffb69de308",
+      "state": "COMPLETE"
     }
-  ]
+  ],
+  "remaining_tasks": [],
+  "manual_user_tasks": [],
+  "external_tasks": [],
+  "archive_ready": true
 }
