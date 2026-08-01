@@ -2,7 +2,7 @@
   "schema_version": "0.1.0",
   "layer_id": "stegverse-rtg-tt-operational-layer",
   "contract_version": "rtg-tt-v0.1",
-  "state": "BUILDING",
+  "state": "ACTIVE",
   "purpose": "Coordinate canonical RTG-TT evidence and downstream StegVerse projections without acquiring formalism, allocation, validation, commitment, execution, custody, publication, or release authority.",
   "canonical_sources": {
     "rtg_tests": {
@@ -36,18 +36,17 @@
   "coordination": {
     "stegcore_issue": "StegVerse-Labs/StegCore#38",
     "ae_public_index": "Admissible-Existence/AE#5",
-    "site_projection": "StegVerse-Labs/Site#125",
+    "site_projection": "StegVerse-Labs/Site@50d417b2dbf29d3812bdae8c3d1942b1ce5a5162",
     "admissibility_projection": "StegVerse-Labs/admissibility-wiki#51",
     "guardian_projection": "StegVerse-002/stegguardian-wiki#10",
     "publisher_projection": "GCAT-BCAT-Engine/Publisher#20"
   },
-  "activation_requirements": [
-    "canonical_source_bindings_match",
-    "authority_flags_all_false",
-    "bounded_result_mapping_exact",
-    "site_projection_verified_and_merged",
-    "downstream_consumers_dependency_bound",
-    "verification_report_pass"
-  ],
-  "activation_effect": false
+  "task_observation": {
+    "ledger": "ecosystem_management/rtg_tt_task_ledger.v0.1.json",
+    "observer": "tools/observe_rtg_tt_task_chain.py",
+    "workflow": ".github/workflows/rtg-tt-task-observer.yml",
+    "halt_allowed": false
+  },
+  "activation_receipt": "brain_reports/rtg_tt_activation_receipt.json",
+  "activation_effect": true
 }
