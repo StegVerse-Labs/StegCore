@@ -1,0 +1,86 @@
+{
+  "schema_version": "HIL-STEGVERSE-TASK-REGISTRY-v1",
+  "registry_id": "HIL-LIFECYCLE-ACTIVATION-001",
+  "owner": "StegVerse-Labs/StegCore",
+  "coordinator_issue": "https://github.com/StegVerse-Labs/StegCore/issues/41",
+  "policy": {
+    "all_tasks_are_internal": true,
+    "external_task_classification_prohibited": true,
+    "unobserved_does_not_mean_blocked": true,
+    "status_only_updates_do_not_satisfy_work": true,
+    "always_select_next_executable_internal_action": true,
+    "archive_only_when_no_open_or_actionable_tasks_exist": true
+  },
+  "tasks": [
+    {
+      "task_id": "HIL-SITE-RECEIVER-001",
+      "location": "https://github.com/StegVerse-Labs/Site/issues/81",
+      "repository": "StegVerse-Labs/Site",
+      "issue_number": 81,
+      "owner_role": "hosted receiver and durable controlled-cycle evidence",
+      "required_outputs": [
+        "verified public HTTPS readiness receipt",
+        "durable receiver receipt",
+        "restart persistence evidence",
+        "credential-separation evidence"
+      ],
+      "next_internal_action": "Execute or advance the first incomplete step in the issue runbook; never stop at a blocker description."
+    },
+    {
+      "task_id": "HIL-TVC-REVIEW-001",
+      "location": "https://github.com/StegVerse-Labs/TVC/issues/8",
+      "repository": "StegVerse-Labs/TVC",
+      "issue_number": 8,
+      "owner_role": "exact-byte lifecycle and private-review handoff",
+      "required_outputs": [
+        "validated lifecycle handoff",
+        "write-once private-review receipt",
+        "negative-test evidence",
+        "Site lifecycle projection receipt"
+      ],
+      "next_internal_action": "Build and test the contract against the existing genuine TVC receipt while hosted-receiver evidence is still pending."
+    },
+    {
+      "task_id": "HIL-MASTER-RECORD-001",
+      "location": "https://github.com/master-records/orchestration/issues/13",
+      "repository": "master-records/orchestration",
+      "issue_number": 13,
+      "owner_role": "validation-only Master Record candidate assembly",
+      "required_outputs": [
+        "HIL-MASTER-RECORD-CANDIDATE-v1 schema",
+        "deterministic candidate hash",
+        "fail-closed validator",
+        "validation-only result"
+      ],
+      "next_internal_action": "Build the schema, canonicalization, and negative tests now; defer only final application."
+    },
+    {
+      "task_id": "HIL-SITE-PROJECTION-001",
+      "location": "https://github.com/StegVerse-Labs/Site/issues/67",
+      "repository": "StegVerse-Labs/Site",
+      "issue_number": 67,
+      "owner_role": "participant-visible lifecycle projection and activation checks",
+      "required_outputs": [
+        "stable response identity",
+        "private-review projection",
+        "Master Record candidate projection",
+        "passing activation checks"
+      ],
+      "next_internal_action": "Implement projection contracts and validators against fixture receipts before final runtime evidence arrives."
+    },
+    {
+      "task_id": "HIL-STEGCORE-ACTIVATION-001",
+      "location": "https://github.com/StegVerse-Labs/StegCore/issues/41",
+      "repository": "StegVerse-Labs/StegCore",
+      "issue_number": 41,
+      "owner_role": "cross-repository lifecycle coordination and activation decision",
+      "required_outputs": [
+        "machine-readable lifecycle state contract",
+        "monotonic transition validator",
+        "contradiction detector",
+        "activation decision receipt"
+      ],
+      "next_internal_action": "Observe all registered tasks, emit an internal action queue, and implement the next missing StegCore contract instead of reporting WAITING."
+    }
+  ]
+}
