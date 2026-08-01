@@ -1,0 +1,50 @@
+name: Coordinate HIL Lifecycle
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "data/hil-lifecycle-task-registry.json"
+      - "scripts/coordinate_hil_lifecycle.py"
+      - ".github/workflows/coordinate-hil-lifecycle.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  coordinate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Observe tasks and select internal work
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/coordinate_hil_lifecycle.py
+      - name: Verify non-halting posture
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('data/hil-lifecycle-action-queue.json')
+          d = json.loads(p.read_text())
+          assert d['external_tasks'] == []
+          assert d['halted'] is False
+          assert d['decision'] in {'CONTINUE_INTERNAL_DEVELOPMENT', 'ARCHIVE_SESSION'}
+          for action in d['actions']:
+              assert action['location'].startswith('https://github.com/')
+              assert action['blocking'] is False
+              assert action['next_action']
+          print(d['decision'])
+          PY
+      - name: Upload coordination evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: hil-lifecycle-action-queue
+          path: data/hil-lifecycle-action-queue.json
+          if-no-files-found: error
