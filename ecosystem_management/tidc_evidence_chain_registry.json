@@ -1,45 +1,81 @@
 {
-  "schema": "stegverse.stegcore.tidc_evidence_chain_registry.v0.1",
+  "schema": "stegverse.stegcore.tidc_evidence_chain_registry.v0.2",
   "layer_id": "TIDC-BLINDED-EVIDENCE-CHAIN-001",
   "source_repo": "StegVerse-Labs/Site",
   "management_repo": "StegVerse-Labs/StegCore",
   "source_issue": 126,
+  "management_issue": 39,
   "source_activation_commit": "32f2e2111c5d49678659960a7a7ad1784c6a432f",
-  "build_state": "BUILT_IN_SITE",
-  "ecosystem_state": "MANAGEMENT_LAYER_STARTED",
-  "runtime_state": "IDLE_PENDING_EXTERNAL_RETURN",
-  "current_blocker": "untouched blinded AI JSON return not yet committed",
+  "management_activation_commit": "6080573f07cee99751440a72fdbdcaccae12762f",
+  "build_state": "BUILT_IN_SITE_AND_STEGCORE",
+  "ecosystem_state": "AUTONOMOUS_OBSERVER_ACTIVATED",
+  "runtime_state": "ACTIVE_OBSERVATION_AND_PARALLEL_ADVANCEMENT",
+  "development_halted": false,
+  "halt_prevention_rule": "A missing serial-chain artifact cannot suppress independent source expansion, negative controls, tranche preparation, verification hardening, or state observation.",
+  "observer": {
+    "script": "scripts/observe_and_advance_tidc_evidence_chain.py",
+    "workflow": ".github/workflows/observe-and-advance-tidc-evidence-chain.yml",
+    "receipt": "brain_reports/tidc_evidence_chain_observation.json",
+    "cadence": "hourly and workflow_dispatch",
+    "owner_repo": "StegVerse-Labs/StegCore"
+  },
   "authority_effect": "NONE",
   "tasks": [
     {
       "id": "TIDC-EC-001",
-      "task": "Preserve untouched blinded return in Site",
-      "owner_repo": "StegVerse-Labs/Site",
-      "status": "BLOCKED_EXTERNAL_INPUT"
+      "task": "Observe for a preserved blinded return and advance the serial evidence chain when present",
+      "owner_repo": "StegVerse-Labs/StegCore",
+      "location": "scripts/observe_and_advance_tidc_evidence_chain.py",
+      "status": "ACTIVE"
     },
     {
       "id": "TIDC-EC-002",
-      "task": "Verify structural validation and integrity receipt",
+      "task": "Validate any preserved return and generate its integrity receipt",
       "owner_repo": "StegVerse-Labs/Site",
-      "status": "WAITING_ON_TIDC-EC-001"
+      "location": "scripts/validate_tidc_blinded_return.py; scripts/create_tidc_blinded_return_receipt.py; data/tidc/blinded-coding/results/",
+      "status": "CONDITIONALLY_EXECUTABLE"
     },
     {
       "id": "TIDC-EC-003",
-      "task": "Verify descriptive comparison and disagreement publication",
+      "task": "Generate descriptive comparison and preserve all disagreements",
       "owner_repo": "StegVerse-Labs/Site",
-      "status": "WAITING_ON_TIDC-EC-002"
+      "location": "scripts/compare_tidc_blinded_coding.py; data/tidc/blinded-coding/results/",
+      "status": "CONDITIONALLY_EXECUTABLE"
     },
     {
       "id": "TIDC-EC-004",
-      "task": "Verify adjudication status for every disagreement",
+      "task": "Create an adjudication-status record for every disagreement",
       "owner_repo": "StegVerse-Labs/Site",
-      "status": "WAITING_ON_TIDC-EC-003"
+      "location": "docs/TIDC_BLINDED_CODING_ADJUDICATION_PROTOCOL.md; data/tidc/blinded-coding/results/",
+      "status": "CONDITIONALLY_EXECUTABLE"
+    },
+    {
+      "id": "TIDC-PAR-001",
+      "task": "Expand primary-source records for the ten seed events without recoding them",
+      "owner_repo": "StegVerse-Labs/Site",
+      "location": "data/tidc/source-expansion/",
+      "status": "READY"
+    },
+    {
+      "id": "TIDC-PAR-002",
+      "task": "Build negative-control and placebo-event records",
+      "owner_repo": "StegVerse-Labs/Site",
+      "location": "data/tidc/negative-controls/",
+      "status": "READY"
+    },
+    {
+      "id": "TIDC-PAR-003",
+      "task": "Prepare tranche 02 and split aggregate events while preserving tranche 01",
+      "owner_repo": "StegVerse-Labs/Site",
+      "location": "data/tidc/tranche-02/",
+      "status": "READY"
     },
     {
       "id": "TIDC-EC-005",
-      "task": "Verify Release 2 transition and downstream mirrors",
+      "task": "Verify Release 2 transition and dispatch downstream mirror checks",
       "owner_repo": "StegVerse-Labs/StegCore",
-      "status": "WAITING_ON_TIDC-EC-004",
+      "location": "ecosystem_management/tidc_evidence_chain_registry.json; brain_reports/tidc_evidence_chain_observation.json",
+      "status": "CONDITIONALLY_EXECUTABLE",
       "downstream_repos": [
         "GCAT-BCAT-Engine/Publisher",
         "admissibility-wiki",
@@ -48,7 +84,9 @@
     }
   ],
   "completion_criteria": [
-    "untouched return committed",
+    "serial evidence state observed automatically",
+    "no missing serial artifact halts parallel development",
+    "untouched return preserved when produced",
     "Site validation passed",
     "receipt preserved",
     "comparison preserved",
