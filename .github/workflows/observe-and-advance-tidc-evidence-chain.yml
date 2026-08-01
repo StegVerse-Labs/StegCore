@@ -45,10 +45,29 @@ jobs:
               assert task['location']
           print('TIDC_OBSERVER_OUTPUT_VALID')
           PY
+      - name: Suppress timestamp-only receipt changes
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+          path = Path('brain_reports/tidc_evidence_chain_observation.json')
+          try:
+              prior_text = subprocess.check_output(['git', 'show', f'HEAD:{path.as_posix()}'], text=True)
+          except subprocess.CalledProcessError:
+              raise SystemExit(0)
+          prior = json.loads(prior_text)
+          current = json.loads(path.read_text())
+          prior.pop('observed_at', None)
+          current.pop('observed_at', None)
+          if prior == current:
+              subprocess.check_call(['git', 'checkout', '--', path.as_posix()])
+              print('TIDC_OBSERVATION_SEMANTICALLY_UNCHANGED')
+          PY
       - name: Commit changed observation receipt
         run: |
           if git diff --quiet -- brain_reports/tidc_evidence_chain_observation.json; then
-            echo 'Observation receipt unchanged.'
+            echo 'Observation receipt semantically unchanged.'
             exit 0
           fi
           git config user.name 'stegverse-ecosystem-observer'
