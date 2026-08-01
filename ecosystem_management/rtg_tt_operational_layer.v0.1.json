@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1.0",
+  "layer_id": "stegverse-rtg-tt-operational-layer",
+  "contract_version": "rtg-tt-v0.1",
+  "state": "ACTIVE",
+  "purpose": "Coordinate canonical RTG-TT evidence and downstream StegVerse projections without acquiring formalism, allocation, validation, commitment, execution, custody, publication, or release authority.",
+  "canonical_sources": {
+    "rtg_tests": {
+      "repository": "Data-Continuation/RTG-Tests",
+      "commit": "2fd7099bb3b6d2d7aa8ce7d72f7f71f6dfd4566a"
+    },
+    "transition_table": {
+      "repository": "Admissible-Existence/TT",
+      "commit": "19720bae935ef9881ce5b239e0b66423fcd8bfab"
+    },
+    "validation_factory": {
+      "repository": "Admissible-Existence/ae-validation-factory",
+      "commit": "5ca6ac0442809c5902f9765d2f865e5fa03d9c60",
+      "report_hash": "sha256:a11eea46242f3df6faa64c2c4174779abea08be9ca7ea93342317cdbcdf7aa56"
+    }
+  },
+  "bounded_result_mapping": {
+    "RESOLUTION_SATISFIED": "ALLOW",
+    "FAIL_CLOSED": "DENY",
+    "QUARANTINE": "DEFER"
+  },
+  "authority": {
+    "formalism": false,
+    "allocation": false,
+    "commitment": false,
+    "execution": false,
+    "custody": false,
+    "publication": false,
+    "release": false
+  },
+  "coordination": {
+    "stegcore_issue": "StegVerse-Labs/StegCore#38",
+    "ae_public_index": "Admissible-Existence/AE#5",
+    "site_projection": "StegVerse-Labs/Site@50d417b2dbf29d3812bdae8c3d1942b1ce5a5162",
+    "admissibility_projection": "StegVerse-Labs/admissibility-wiki#51",
+    "guardian_projection": "StegVerse-002/stegguardian-wiki#10",
+    "publisher_projection": "GCAT-BCAT-Engine/Publisher#20"
+  },
+  "task_observation": {
+    "ledger": "ecosystem_management/rtg_tt_task_ledger.v0.1.json",
+    "observer": "tools/observe_rtg_tt_task_chain.py",
+    "workflow": ".github/workflows/rtg-tt-task-observer.yml",
+    "halt_allowed": false
+  },
+  "activation_receipt": "brain_reports/rtg_tt_activation_receipt.json",
+  "activation_effect": true
+}

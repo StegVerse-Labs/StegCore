@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "layer_id": "stegverse-rtg-tt-operational-layer",
+  "policy": {
+    "unlocated_tasks_forbidden": true,
+    "external_manual_tasks_forbidden": true,
+    "pending_without_next_action_forbidden": true,
+    "halt_on_observation_only_forbidden": true
+  },
+  "tasks": [
+    {
+      "task_id": "RTGTT-STEGCORE-ACTIVATE",
+      "repository": "StegVerse-Labs/StegCore",
+      "issue": 38,
+      "pull_request": 40,
+      "branch": "goal/rtg-tt-operational-layer",
+      "workflow": ".github/workflows/rtg-tt-operational-layer.yml",
+      "verification_command": "python tools/verify_rtg_tt_operational_layer.py",
+      "completion_evidence": "brain_reports/rtg_tt_operational_layer_report.json",
+      "current_action": "merge_when_all_required_checks_pass",
+      "successor_task": "RTGTT-SITE-INSTALL"
+    },
+    {
+      "task_id": "RTGTT-SITE-INSTALL",
+      "repository": "StegVerse-Labs/Site",
+      "issue": 122,
+      "pull_request": 125,
+      "branch": "goal/rtg-tt-downstream-projection",
+      "workflow": ".github/workflows/rtg-tt-public-mirror.yml",
+      "verification_command": "python scripts/check_rtg_tt_public_mirror.py",
+      "completion_evidence": "data/rtg-tt/rtg-tt-public-mirror.v0.1.json",
+      "current_action": "merge_when_mirror_bootstrap_and_orchestrator_checks_pass",
+      "successor_task": "RTGTT-WIKI-ADMISSIBILITY"
+    },
+    {
+      "task_id": "RTGTT-WIKI-ADMISSIBILITY",
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "issue": 51,
+      "depends_on": "StegVerse-Labs/Site#125",
+      "current_action": "install_exact_site_main_package_after_site_merge",
+      "successor_task": "RTGTT-WIKI-GUARDIAN"
+    },
+    {
+      "task_id": "RTGTT-WIKI-GUARDIAN",
+      "repository": "StegVerse-002/stegguardian-wiki",
+      "issue": 10,
+      "depends_on": "StegVerse-Labs/Site#125",
+      "current_action": "install_exact_guardian_projection_after_site_merge",
+      "successor_task": "RTGTT-PUBLISHER-INSTALL"
+    },
+    {
+      "task_id": "RTGTT-PUBLISHER-INSTALL",
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "issue": 20,
+      "depends_on": "StegVerse-Labs/Site#125",
+      "current_action": "ingest_exact_site_main_package_and_verify_hash_binding",
+      "successor_task": "RTGTT-ACTIVATION-RECEIPT"
+    },
+    {
+      "task_id": "RTGTT-ACTIVATION-RECEIPT",
+      "repository": "StegVerse-Labs/StegCore",
+      "issue": 38,
+      "path": "brain_reports/rtg_tt_activation_receipt.json",
+      "current_action": "emit_after_all_repository_bound tasks verify",
+      "terminal_state": "ACTIVE"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+name: RTG-TT Operational Layer
+
+on:
+  pull_request:
+    paths:
+      - ecosystem_management/rtg_tt_operational_layer.v0.1.json
+      - ecosystem_management/task_registry.yml
+      - tools/verify_rtg_tt_operational_layer.py
+      - docs/STEGVERSE_RTG_TT_OPERATIONAL_LAYER_HANDOFF.md
+      - .github/workflows/rtg-tt-operational-layer.yml
+  push:
+    branches: [main]
+    paths:
+      - ecosystem_management/rtg_tt_operational_layer.v0.1.json
+      - ecosystem_management/task_registry.yml
+      - tools/verify_rtg_tt_operational_layer.py
+      - docs/STEGVERSE_RTG_TT_OPERATIONAL_LAYER_HANDOFF.md
+      - .github/workflows/rtg-tt-operational-layer.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify StegVerse RTG-TT operational layer
+        run: python tools/verify_rtg_tt_operational_layer.py
+      - name: Upload coordination report
+        uses: actions/upload-artifact@v4
+        with:
+          name: rtg-tt-operational-layer-report
+          path: brain_reports/rtg_tt_operational_layer_report.json
+          if-no-files-found: error
