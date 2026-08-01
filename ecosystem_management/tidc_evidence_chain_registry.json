@@ -1,0 +1,66 @@
+{
+  "schema": "stegverse.stegcore.tidc_evidence_chain_registry.v0.1",
+  "layer_id": "TIDC-BLINDED-EVIDENCE-CHAIN-001",
+  "source_repo": "StegVerse-Labs/Site",
+  "management_repo": "StegVerse-Labs/StegCore",
+  "source_issue": 126,
+  "source_activation_commit": "32f2e2111c5d49678659960a7a7ad1784c6a432f",
+  "build_state": "BUILT_IN_SITE",
+  "ecosystem_state": "MANAGEMENT_LAYER_STARTED",
+  "runtime_state": "IDLE_PENDING_EXTERNAL_RETURN",
+  "current_blocker": "untouched blinded AI JSON return not yet committed",
+  "authority_effect": "NONE",
+  "tasks": [
+    {
+      "id": "TIDC-EC-001",
+      "task": "Preserve untouched blinded return in Site",
+      "owner_repo": "StegVerse-Labs/Site",
+      "status": "BLOCKED_EXTERNAL_INPUT"
+    },
+    {
+      "id": "TIDC-EC-002",
+      "task": "Verify structural validation and integrity receipt",
+      "owner_repo": "StegVerse-Labs/Site",
+      "status": "WAITING_ON_TIDC-EC-001"
+    },
+    {
+      "id": "TIDC-EC-003",
+      "task": "Verify descriptive comparison and disagreement publication",
+      "owner_repo": "StegVerse-Labs/Site",
+      "status": "WAITING_ON_TIDC-EC-002"
+    },
+    {
+      "id": "TIDC-EC-004",
+      "task": "Verify adjudication status for every disagreement",
+      "owner_repo": "StegVerse-Labs/Site",
+      "status": "WAITING_ON_TIDC-EC-003"
+    },
+    {
+      "id": "TIDC-EC-005",
+      "task": "Verify Release 2 transition and downstream mirrors",
+      "owner_repo": "StegVerse-Labs/StegCore",
+      "status": "WAITING_ON_TIDC-EC-004",
+      "downstream_repos": [
+        "GCAT-BCAT-Engine/Publisher",
+        "admissibility-wiki",
+        "stegguardian-wiki"
+      ]
+    }
+  ],
+  "completion_criteria": [
+    "untouched return committed",
+    "Site validation passed",
+    "receipt preserved",
+    "comparison preserved",
+    "all disagreements assigned status",
+    "Release 2 posture verified",
+    "downstream mirrors checked",
+    "archive-readiness receipt committed"
+  ],
+  "interpretation_boundary": [
+    "management coordination is not research authority",
+    "receipt is not reliability proof",
+    "AI second coding is not human replication",
+    "Site publication is not proof authority"
+  ]
+}
