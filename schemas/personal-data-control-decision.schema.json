@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/personal-data-control-decision.schema.json",
+  "title": "StegCore Personal Data Control Decision",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "decision_id",
+    "request_id",
+    "current_state",
+    "proposed_state",
+    "outcome",
+    "evidence_refs",
+    "authority"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "decision_id": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1},
+    "current_state": {"$ref": "#/$defs/state"},
+    "proposed_state": {"$ref": "#/$defs/state"},
+    "outcome": {"enum": ["ALLOW", "DENY", "DEFER"]},
+    "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "completion_receipt_ref": {"type": ["string", "null"]},
+    "appeal_reachable": {"type": "boolean"},
+    "authority": {
+      "type": "object",
+      "required": ["external_deletion", "identity_verification", "receipt_minting", "legal_adjudication"],
+      "properties": {
+        "external_deletion": {"const": false},
+        "identity_verification": {"const": false},
+        "receipt_minting": {"const": false},
+        "legal_adjudication": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "state": {
+      "enum": [
+        "NOT_REQUESTED",
+        "RECEIVED",
+        "IDENTITY_VERIFICATION_REQUIRED",
+        "VERIFIED",
+        "PROCESSING_RESTRICTED",
+        "INVENTORY_COMPLETE",
+        "DELETION_IN_PROGRESS",
+        "PROCESSOR_PROPAGATION_PENDING",
+        "COMPLETED",
+        "PARTIALLY_DENIED",
+        "DENIED",
+        "APPEAL_OPEN",
+        "CHANNEL_FAILED"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
