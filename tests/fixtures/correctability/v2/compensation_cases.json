@@ -19,10 +19,15 @@
       "evidence_references": ["evidence://comp-partial"],
       "compensation": {
         "receipt_id": "COMP-001",
+        "transition_id": "TRANSITION-001",
+        "correction_id": "CORR-V2-COMP-PARTIAL",
         "compensation_type": "restoration",
+        "authorized_by": "human:operator-001",
+        "authority_reference": "AUTH-HUMAN-001",
         "executed_at": "2026-08-02T06:40:15Z",
         "result": "PARTIAL",
         "residual_effects": ["external notification cannot be retracted"],
+        "superseding_transition_id": null,
         "evidence_references": ["evidence://comp-receipt-001"]
       }
     }
@@ -47,10 +52,15 @@
       "evidence_references": ["evidence://comp-impossible"],
       "compensation": {
         "receipt_id": "COMP-002",
+        "transition_id": "TRANSITION-001",
+        "correction_id": "CORR-V2-COMP-IMPOSSIBLE",
         "compensation_type": "containment",
+        "authorized_by": "human:operator-001",
+        "authority_reference": "AUTH-HUMAN-001",
         "executed_at": "2026-08-02T06:40:15Z",
         "result": "IMPOSSIBLE",
         "residual_effects": ["physical effect cannot be reversed"],
+        "superseding_transition_id": null,
         "evidence_references": ["evidence://comp-receipt-002"]
       }
     }
