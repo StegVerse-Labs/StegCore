@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/delegation_record.schema.json",
+  "title": "StegVerse Corrective Delegation Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["delegation_id", "delegator_identity", "delegate_identity", "authority_reference", "scope", "allowed_interventions", "not_before", "not_after", "status", "evidence_references"],
+  "properties": {
+    "delegation_id": {"type": "string", "minLength": 1},
+    "delegator_identity": {"type": "string", "minLength": 1},
+    "delegate_identity": {"type": "string", "minLength": 1},
+    "authority_reference": {"type": "string", "minLength": 1},
+    "scope": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "allowed_interventions": {"type": "array", "items": {"enum": ["pause", "deny", "revoke", "quarantine", "rollback", "redirect", "supersede", "compensate", "escalate"]}, "minItems": 1, "uniqueItems": true},
+    "not_before": {"type": "string", "format": "date-time"},
+    "not_after": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["active", "suspended", "revoked", "expired"]},
+    "supersedes": {"type": ["string", "null"]},
+    "evidence_references": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+  }
+}
