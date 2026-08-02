@@ -1,0 +1,105 @@
+{
+  "control_map_version": "1.0.0",
+  "goal_id": "STEGVA-BOOTSTRAP-001",
+  "owner_repository": "StegVerse-Labs/StegCore",
+  "intended_destination": "StegVerse-Labs/StegVA",
+  "as_of": "2026-08-02",
+  "production_authorization": false,
+  "review_status": "REVIEW_REQUIRED",
+  "scope_note": "This map records current official-source requirements and implementation gates. It is not legal advice and does not authorize representation, production data collection, or VA-facing submission.",
+  "controls": [
+    {
+      "control_id": "STEGVA-REP-001",
+      "topic": "Accredited representation",
+      "requirement": "Any StegVA service that represents a claimant or submits on a claimant's behalf must operate through a currently VA-accredited VSO representative, attorney, or claims agent and a VA-approved identity account associated with OGC records.",
+      "source_urls": [
+        "https://www.va.gov/representative",
+        "https://www.va.gov/get-help-from-accredited-representative/"
+      ],
+      "implementation_location": "stegva/policies/representation_authority.json",
+      "implementation_status": "MISSING",
+      "release_condition": "Qualified human authority, accreditation verification procedure, representation scope, and fail-closed expiry checks are committed and independently reviewed."
+    },
+    {
+      "control_id": "STEGVA-SUB-001",
+      "topic": "Authorized submission channels",
+      "requirement": "StegVA must use only an officially supported claimant or accredited-representative channel. It must not assume direct API, token-reassociation, or automated VA submission authority.",
+      "source_urls": [
+        "https://www.va.gov/disability/how-to-file-claim/",
+        "https://www.va.gov/representative/help",
+        "https://www.va.gov/disability/upload-supporting-evidence/"
+      ],
+      "implementation_location": "stegva/policies/submission_channel_registry.json",
+      "implementation_status": "MISSING",
+      "release_condition": "A current official channel is selected, identity and authority prerequisites are tested, and an approved operating procedure is committed."
+    },
+    {
+      "control_id": "STEGVA-SIGN-001",
+      "topic": "Signing for another person",
+      "requirement": "A person signing for a claimant must have an accepted authorization basis such as VA Form 21-0972, 21-22, or 21-22a, as applicable.",
+      "source_urls": [
+        "https://www.va.gov/supporting-forms-for-claims/intent-to-file-form-21-0966/preparer-identification",
+        "https://www.va.gov/get-help-from-accredited-representative/appoint-rep/"
+      ],
+      "implementation_location": "stegva/policies/signature_authority.json",
+      "implementation_status": "MISSING",
+      "release_condition": "Authorization document classes, validity checks, revocation handling, and human approval enforcement are implemented."
+    },
+    {
+      "control_id": "STEGVA-DATA-001",
+      "topic": "Case-minimum evidence collection",
+      "requirement": "Evidence intake must be limited to material needed for the selected claim path, and synthetic-only operation remains mandatory during bootstrap.",
+      "source_urls": [
+        "https://www.va.gov/disability/how-to-file-claim/evidence-needed/fully-developed-claims/",
+        "https://www.va.gov/disability/how-to-file-claim/evidence-needed/standard-claims/"
+      ],
+      "implementation_location": "stegva/contracts/synthetic_intake.schema.json",
+      "implementation_status": "IMPLEMENTED_UNVALIDATED",
+      "release_condition": "Hosted bootstrap verification succeeds and a later production schema receives privacy, legal, security, and records review."
+    },
+    {
+      "control_id": "STEGVA-RECORDS-001",
+      "topic": "Veteran access to personal records",
+      "requirement": "The architecture must preserve veteran access, export, correction, and request pathways for compensation, pension, benefit, and related personal records.",
+      "source_urls": [
+        "https://www.va.gov/records/request-personal-records-form-20-10206/introduction"
+      ],
+      "implementation_location": "stegva/policies/data_subject_rights.json",
+      "implementation_status": "MISSING",
+      "release_condition": "Access, export, correction, retention, deletion, legal-hold, and identity-verification procedures are committed and reviewed."
+    },
+    {
+      "control_id": "STEGVA-A11Y-001",
+      "topic": "Accessible veteran experience",
+      "requirement": "All claimant-facing workflows must support accessible, mobile, low-bandwidth, plain-language operation and must not make consequential decisions solely from AI output.",
+      "source_urls": [
+        "https://www.section508.gov/manage/laws-and-policies/",
+        "https://design.va.gov/"
+      ],
+      "implementation_location": "stegva/policies/accessibility_acceptance.json",
+      "implementation_status": "MISSING",
+      "release_condition": "Acceptance criteria, automated checks, manual assistive-technology review, and human appeal paths are committed."
+    },
+    {
+      "control_id": "STEGVA-CRYPTO-001",
+      "topic": "Cryptographic module boundary",
+      "requirement": "Production cryptographic implementation must identify applicable federal or contractual validation requirements and must not label an unvalidated library or design as FIPS validated.",
+      "source_urls": [
+        "https://csrc.nist.gov/pubs/fips/140-3/final",
+        "https://csrc.nist.gov/projects/cryptographic-module-validation-program"
+      ],
+      "implementation_location": "stegva/security/cryptographic_boundary.json",
+      "implementation_status": "MISSING",
+      "release_condition": "Deployment-specific cryptographic boundary, validated-module posture, key lifecycle, and evidence references are committed and independently tested."
+    }
+  ],
+  "required_human_reviews": [
+    "VA-accredited representation authority",
+    "privacy and records counsel",
+    "nonprofit and charity compliance",
+    "cybersecurity and cryptographic boundary",
+    "accessibility",
+    "independent accounting and reconciliation"
+  ],
+  "next_machine_task": "Validate map structure and fail closed while any production prerequisite remains MISSING or REVIEW_REQUIRED."
+}
