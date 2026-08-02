@@ -1,0 +1,72 @@
+name: Validate Marketplace Coinbase Session Consolidation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/marketplace-coinbase-session-consolidation.json'
+      - 'data/marketplace-coinbase-work-claims.json'
+      - 'data/execution-orchestrator-tasks.json'
+      - 'data/execution-orchestrator-state.json'
+      - 'scripts/validate_marketplace_coinbase_session_consolidation.py'
+      - 'tests/test_marketplace_coinbase_session_consolidation.py'
+      - '.github/workflows/validate-marketplace-coinbase-session-consolidation.yml'
+  schedule:
+    - cron: '17 9 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: marketplace-coinbase-session-consolidation
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical workstream
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install test dependency
+        run: pip install pytest
+
+      - name: Validate consolidation and claims
+        run: |
+          PYTHONPATH=. pytest -q tests/test_marketplace_coinbase_session_consolidation.py
+          python scripts/validate_marketplace_coinbase_session_consolidation.py
+
+      - name: Persist consolidation receipt
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/marketplace-coinbase-session-consolidation-receipt.json
+          if git diff --cached --quiet; then
+            echo "Consolidation receipt unchanged."
+          else
+            git commit -m "Record Marketplace Coinbase session consolidation receipt [skip ci]"
+            git pull --rebase
+            git push
+          fi
+
+      - name: Upload consolidation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: marketplace-coinbase-session-consolidation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            data/marketplace-coinbase-session-consolidation.json
+            data/marketplace-coinbase-work-claims.json
+            data/marketplace-coinbase-session-consolidation-receipt.json
+            data/execution-orchestrator-tasks.json
+            data/execution-orchestrator-state.json
+          if-no-files-found: error
+          retention-days: 90
