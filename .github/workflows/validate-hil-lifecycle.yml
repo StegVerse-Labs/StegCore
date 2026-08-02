@@ -1,0 +1,36 @@
+name: Validate HIL lifecycle
+
+on:
+  push:
+    paths:
+      - 'data/hil-lifecycle-*.json'
+      - 'scripts/validate_hil_lifecycle.py'
+      - 'tests/test_hil_lifecycle.py'
+      - '.github/workflows/validate-hil-lifecycle.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test dependency
+        run: python -m pip install pytest
+      - name: Validate current evidence and emit decision
+        run: |
+          python scripts/validate_hil_lifecycle.py \
+            data/hil-lifecycle-evidence.fixture.json \
+            --output data/hil-stegcore-activation-decision.json
+      - name: Run lifecycle tests
+        run: python -m pytest -q tests/test_hil_lifecycle.py
+      - name: Upload observation-only decision
+        uses: actions/upload-artifact@v4
+        with:
+          name: hil-stegcore-lifecycle-decision
+          path: data/hil-stegcore-activation-decision.json
