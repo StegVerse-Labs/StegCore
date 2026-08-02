@@ -1,11 +1,25 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "goal_id": "SV-PDCL-ECOSYSTEM-001",
-  "result": "PENDING_WORKFLOW_OBSERVATION",
+  "result": "PASS",
   "failures": [],
   "task_count": 8,
+  "tasks_transferred_or_complete": 8,
+  "unique_chat_only_requirements_remaining": 0,
   "external_tasks_allowed": false,
   "chat_session_ownership_allowed": false,
-  "next_executable_task": "PDCL-STEGTALK-001 validation observation",
-  "authority_effect": false
+  "duplicate_implementation_allowed": false,
+  "stegtalk_validation": {
+    "task_id": "ST-027",
+    "result": "PASS",
+    "tests_passed": 3,
+    "tests_failed": 0,
+    "evidence": "StegVerse-Labs/StegTalk/evidence/personal-data-control/ST-027-local-validation.json",
+    "boundary": "targeted deterministic local validation; hosted CI and deployment not claimed"
+  },
+  "canonical_continuation": "docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md",
+  "next_executable_task": "StegVerse-Labs/StegID#SID-PDCL-002 under STEGID_MIRROR_HANDOFF.md",
+  "archive_state": "READY_FOR_ARCHIVE",
+  "authority_effect": false,
+  "recorded_at": "2026-08-02T09:49:00Z"
 }
