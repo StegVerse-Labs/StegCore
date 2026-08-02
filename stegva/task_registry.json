@@ -1,5 +1,5 @@
 {
-  "registry_version": "1.0.1",
+  "registry_version": "1.1.0",
   "goal_id": "STEGVA-BOOTSTRAP-001",
   "owner_repository": "StegVerse-Labs/StegCore",
   "future_destination": "StegVerse-Labs/StegVA",
@@ -60,10 +60,39 @@
       "location": "stegva/compliance/current_law_control_map.json",
       "owner": "StegVA legal-compliance workstream",
       "status": "REVIEW_REQUIRED",
-      "release_condition": "current primary-source legal and VA interface research is reviewed and committed"
+      "release_condition": "qualified reviewers confirm the official-source control map and commit review evidence",
+      "implementation_evidence": "commit:4f8355efd66b13ecd2f82f7ac4184950c11f37db"
+    },
+    {
+      "id": "STEGVA-TASK-009",
+      "location": "stegva/docs/SPLIT_IDENTITY_THREAT_MODEL.md",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "completion_evidence": "commit:9716c26f70974e946e846f2475eaf918025baa53"
+    },
+    {
+      "id": "STEGVA-TASK-010",
+      "location": "stegva/docs/PUBLIC_FINANCE_LEDGER_SPEC.md",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "completion_evidence": "commit:cb1c2fd9f15d79ca81633dfc608e96925f08405c"
+    },
+    {
+      "id": "STEGVA-TASK-011",
+      "location": "stegva/examples/synthetic_intake.valid.json",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "completion_evidence": "commit:8e133c1bf219be19f722cfbc694474c4aee02b87"
+    },
+    {
+      "id": "STEGVA-TASK-012",
+      "location": "stegva/examples/synthetic_intake.invalid-production.json",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "completion_evidence": "commit:09cb62d6d141fc083c2d6a44bc38ca318f1e9d2a"
     }
   ],
   "next_executable_task": "STEGVA-TASK-006",
-  "duplicate_execution_key": "STEGVA-BOOTSTRAP-001:1.0.1",
+  "duplicate_execution_key": "STEGVA-BOOTSTRAP-001:1.1.0",
   "production_data_allowed": false
 }
