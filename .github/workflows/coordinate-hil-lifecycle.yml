@@ -8,11 +8,18 @@ on:
     branches: [main]
     paths:
       - "data/hil-lifecycle-task-registry.json"
+      - "data/hil-lifecycle-claim-registry.json"
+      - "data/hil-session-execution-inventory.json"
+      - "docs/HIL_SESSION_CONSOLIDATION_MIRROR_HANDOFF.md"
       - "scripts/coordinate_hil_lifecycle.py"
       - ".github/workflows/coordinate-hil-lifecycle.yml"
 
 permissions:
   contents: read
+  issues: read
+
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
 
 jobs:
   coordinate:
@@ -22,24 +29,43 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Validate registries are parseable
+        run: |
+          python -m json.tool data/hil-lifecycle-task-registry.json >/dev/null
+          python -m json.tool data/hil-lifecycle-claim-registry.json >/dev/null
+          python -m json.tool data/hil-session-execution-inventory.json >/dev/null
       - name: Observe tasks and select internal work
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/coordinate_hil_lifecycle.py
-      - name: Verify non-halting posture
+      - name: Verify non-halting posture and claim semantics
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          p = Path('data/hil-lifecycle-action-queue.json')
-          d = json.loads(p.read_text())
+
+          d = json.loads(Path('data/hil-lifecycle-action-queue.json').read_text())
+          allowed = {
+              'BLOCKED', 'RETRY', 'REVIEW_REQUIRED', 'FAILED', 'CLAIMED',
+              'VERIFY_COMPLETION_EVIDENCE', 'OPEN_INTERNAL_WORK', 'COMPLETE',
+              'SUPERSEDED', 'MERGED_INTO_CANONICAL_WORKSTREAM'
+          }
+          terminal = {'COMPLETE', 'SUPERSEDED', 'MERGED_INTO_CANONICAL_WORKSTREAM'}
+          assert d['schema_version'] == 'HIL-STEGVERSE-ACTION-QUEUE-v2'
           assert d['external_tasks'] == []
           assert d['halted'] is False
+          assert d['registry_valid'] is True
+          assert d['registry_errors'] == []
           assert d['decision'] in {'CONTINUE_INTERNAL_DEVELOPMENT', 'ARCHIVE_SESSION'}
           for action in d['actions']:
               assert action['location'].startswith('https://github.com/')
               assert action['blocking'] is False
-              assert action['next_action']
+              assert action['external'] is False
+              assert action['state'] in allowed
+              if action['state'] not in terminal:
+                  assert action['next_action']
+          if d['decision'] == 'ARCHIVE_SESSION':
+              assert d['action_count'] == 0
           print(d['decision'])
           PY
       - name: Upload coordination evidence
@@ -48,3 +74,4 @@ jobs:
           name: hil-lifecycle-action-queue
           path: data/hil-lifecycle-action-queue.json
           if-no-files-found: error
+          retention-days: 30
