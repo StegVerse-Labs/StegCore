@@ -1,0 +1,14 @@
+{
+  "correction_id": "CORR-AUTH-001",
+  "transition_id": "TRANSITION-003",
+  "authority": {"authority_id": "AUTH-EXPIRED", "valid": false, "not_before": "2026-08-02T05:00:00Z", "not_after": "2026-08-02T06:00:00Z"},
+  "intervention": "quarantine",
+  "detected_at": "2026-08-02T06:40:00Z",
+  "authorization_latency_ms": 1000,
+  "intervention_latency_ms": 1000,
+  "irreversible_at": "2026-08-02T06:40:10Z",
+  "pathway_reachable": true,
+  "intervention_enforceable": true,
+  "scope_valid": true,
+  "evidence_references": ["evidence://corr-auth-001"]
+}
