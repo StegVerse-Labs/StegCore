@@ -1,0 +1,7 @@
+{
+  "purpose": "Trigger a pull-request validation run so jobs, logs, and artifacts can be inspected through the connected GitHub control plane.",
+  "task_id": "OC-001-WORKFLOW-OBSERVATION",
+  "state": "CLAIMED_FOR_VALIDATION",
+  "release_condition": "Originating Choice Validation completes and its job logs and artifact receipts are inspected.",
+  "canonical_handoff": "docs/ORIGINATING_CHOICE_MIRROR_HANDOFF.md"
+}
