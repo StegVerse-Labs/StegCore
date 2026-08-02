@@ -36,11 +36,14 @@ jobs:
       - name: Validate StegVA bootstrap
         run: python3 stegva/automation/validate_bootstrap.py
 
-      - name: Upload verification receipt
+      - name: Validate session consolidation and claims
+        run: python3 stegva/automation/validate_session_consolidation.py
+
+      - name: Upload verification receipts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: stegva-bootstrap-verification-${{ github.run_id }}
-          path: stegva/receipts/bootstrap-verification.json
+          path: stegva/receipts/*.json
           if-no-files-found: error
           retention-days: 90
