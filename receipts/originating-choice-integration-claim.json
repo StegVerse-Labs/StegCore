@@ -1,0 +1,18 @@
+{
+  "task_id": "OC-001-INTEGRATION",
+  "state": "CLAIMED_FOR_VALIDATION",
+  "owner": "StegVerse-Labs/StegCore",
+  "branch": "originating-choice-integration-observation",
+  "head_sha": "0b45a6df69c2976a92002fe05b75ee9b19941384",
+  "claimant": "repository-native-pull-request-validation-lane",
+  "claim_created": "2026-08-02T05:08:49-05:00",
+  "claim_expiration": "2026-08-03T05:08:49-05:00",
+  "release_condition": "Originating Choice Validation succeeds for the integration observation head and all four artifact receipts are inspected.",
+  "collision_boundary": [
+    "spec/originating-choice-consumer-contract.json",
+    "tools/consume_originating_choice.py",
+    ".github/workflows/originating-choice-validate.yml",
+    "examples/originating-choice.integration-observation.json"
+  ],
+  "next_task_after_release": "OC-001-PROPAGATION-HANDOFF-INSPECTION"
+}
