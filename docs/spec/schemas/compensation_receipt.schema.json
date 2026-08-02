@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/compensation_receipt.schema.json",
+  "title": "StegVerse Compensation Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["receipt_id", "transition_id", "correction_id", "compensation_type", "authorized_by", "executed_at", "result", "residual_effects", "evidence_references"],
+  "properties": {
+    "receipt_id": {"type": "string", "minLength": 1},
+    "transition_id": {"type": "string", "minLength": 1},
+    "correction_id": {"type": "string", "minLength": 1},
+    "compensation_type": {"enum": ["rollback", "containment", "counteraction", "restoration", "financial", "notification", "other"]},
+    "authorized_by": {"type": "string", "minLength": 1},
+    "authority_reference": {"type": ["string", "null"]},
+    "executed_at": {"type": "string", "format": "date-time"},
+    "result": {"enum": ["complete", "partial", "failed", "not_possible"]},
+    "residual_effects": {"type": "array", "items": {"type": "string"}},
+    "superseding_transition_id": {"type": ["string", "null"]},
+    "evidence_references": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+  }
+}
