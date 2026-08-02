@@ -1,0 +1,58 @@
+[
+  {
+    "name": "post-irreversible-compensation-partial",
+    "expected": "COMPENSATE",
+    "record": {
+      "correction_id": "CORR-V2-COMP-PARTIAL",
+      "transition_id": "TRANSITION-001",
+      "subject_identity": "human:operator-001",
+      "authority_reference": "AUTH-HUMAN-001",
+      "delegation_reference": null,
+      "intervention": "compensate",
+      "requested_scope": ["transition:TRANSITION-001"],
+      "detected_at": "2026-08-02T06:40:11Z",
+      "authorization_latency_ms": 1000,
+      "intervention_latency_ms": 1000,
+      "irreversible_at": "2026-08-02T06:40:10Z",
+      "pathway_reachable": true,
+      "intervention_enforceable": true,
+      "evidence_references": ["evidence://comp-partial"],
+      "compensation": {
+        "receipt_id": "COMP-001",
+        "compensation_type": "restoration",
+        "executed_at": "2026-08-02T06:40:15Z",
+        "result": "PARTIAL",
+        "residual_effects": ["external notification cannot be retracted"],
+        "evidence_references": ["evidence://comp-receipt-001"]
+      }
+    }
+  },
+  {
+    "name": "post-irreversible-compensation-impossible",
+    "expected": "DENY",
+    "record": {
+      "correction_id": "CORR-V2-COMP-IMPOSSIBLE",
+      "transition_id": "TRANSITION-001",
+      "subject_identity": "human:operator-001",
+      "authority_reference": "AUTH-HUMAN-001",
+      "delegation_reference": null,
+      "intervention": "compensate",
+      "requested_scope": ["transition:TRANSITION-001"],
+      "detected_at": "2026-08-02T06:40:11Z",
+      "authorization_latency_ms": 1000,
+      "intervention_latency_ms": 1000,
+      "irreversible_at": "2026-08-02T06:40:10Z",
+      "pathway_reachable": true,
+      "intervention_enforceable": true,
+      "evidence_references": ["evidence://comp-impossible"],
+      "compensation": {
+        "receipt_id": "COMP-002",
+        "compensation_type": "containment",
+        "executed_at": "2026-08-02T06:40:15Z",
+        "result": "IMPOSSIBLE",
+        "residual_effects": ["physical effect cannot be reversed"],
+        "evidence_references": ["evidence://comp-receipt-002"]
+      }
+    }
+  }
+]
