@@ -161,6 +161,10 @@ Data-plane capability does not create control-plane authority.
 
 A boundary is not admissible merely because it can be maintained while the operator is fully coherent. The system must state how authority, consent, recovery, and safe degradation behave as operator capacity changes.
 
+### I11 — Correctability viability
+
+A governed system must preserve a machine-observable correction pathway while consequential execution remains alterable. Corrective authority, scope, reachability, enforceability, evidence, and timing must be independently evaluated rather than asserted by the correction request.
+
 ## 8. Trajectory Model
 
 A trajectory is:
@@ -218,7 +222,71 @@ A governance-constrained autonomy trajectory is a trajectory for which:
 
 This combines static admissibility with dynamic continuation requirements.
 
-## 11. Threat Model
+## 11. Correctability and Compensation
+
+Correctability is distinct from admissibility, reconstructability, replayability, recoverability, rollback, and compensation.
+
+- **Admissibility** determines whether an action may proceed under the represented state.
+- **Reconstructability** determines whether the basis and authority state can later be independently recovered.
+- **Replayability** determines whether evaluation can be rerun under declared historical inputs.
+- **Recoverability** describes the available path toward an acceptable post-failure state.
+- **Rollback** reverses a transition only where the effect surface is actually reversible.
+- **Correctability** is the continued operational ability of legitimate authority to alter, stop, redirect, or supersede execution before irreversible consequence.
+- **Compensation** is a separately authorized post-consequence action that remediates, contains, restores, counteracts, or records harm after timely correction is no longer possible.
+
+A correction request `c` is viable only when:
+
+```text
+corrective_authority_valid(c)
+scope_authorized(c)
+pathway_reachable(c)
+intervention_enforceable(c)
+evidence_present(c)
+completion_time(c) < irreversible_time(c)
+```
+
+with:
+
+```text
+completion_time(c) = detected_at(c)
+                   + authorization_latency(c)
+                   + intervention_latency(c)
+```
+
+The governed correction decision is:
+
+```text
+C(c, s) -> {ADMIT, DENY, FAIL_CLOSED}
+```
+
+A late request must not be mislabeled as a successful correction. Where the requested intervention is `compensate` and the irreversible boundary has already been reached, the system evaluates a compensation receipt instead. The receipt result is one of:
+
+```text
+COMPLETE
+PARTIAL
+FAILED
+IMPOSSIBLE
+```
+
+`PARTIAL`, `FAILED`, and `IMPOSSIBLE` require explicit residual-effect records. `FAILED` and `IMPOSSIBLE` do not establish successful remediation. Compensation never retroactively makes the original execution admissible or timely correctable.
+
+The permitted correction vocabulary is:
+
+```text
+pause
+deny
+revoke
+quarantine
+rollback
+redirect
+supersede
+compensate
+escalate
+```
+
+These values constrain repository-level conformance and do not themselves grant runtime authority.
+
+## 12. Threat Model
 
 The baseline adversary may attempt to:
 
@@ -231,11 +299,13 @@ The baseline adversary may attempt to:
 - suppress or fork receipts;
 - induce replay divergence;
 - exploit degraded human authority;
-- coordinate multiple entities whose local actions produce unsafe coupled behavior.
+- coordinate multiple entities whose local actions produce unsafe coupled behavior;
+- submit a late compensation attempt as if it were timely correction;
+- assert local authority booleans instead of resolving canonical authority records.
 
 No universal prevention guarantee is claimed. Each implementation must declare trust roots, cryptographic assumptions, failure domains, and monitored bypass surfaces.
 
-## 12. Failure Classes
+## 13. Failure Classes
 
 ```text
 F1 decision_input_unavailable
@@ -250,11 +320,15 @@ F9 irreversible_effect_without_compensation
 F10 authority_degradation_unhandled
 F11 multi_entity_coupling_violation
 F12 purpose_inverting_boundary
+F13 correction_pathway_unreachable
+F14 correction_intervention_unenforceable
+F15 correction_after_irreversibility
+F16 compensation_failed_or_impossible
 ```
 
 A purpose-inverting boundary is a boundary whose maintenance prevents convergence toward the system's declared legitimate purpose.
 
-## 13. Proposition and Proof-Obligation Framing
+## 14. Proposition and Proof-Obligation Framing
 
 ### P1 — Local admissibility enforcement
 
@@ -280,7 +354,13 @@ If the initial state is in a defined safe set, each admitted transition preserve
 
 **Proof obligation:** define the safe set and prove transition preservation. This draft does not supply that proof.
 
-## 14. Required Conformance Artifacts
+### P5 — Timely correctability
+
+If a canonical corrective authority is valid, the intervention is scoped, reachable and enforceable, required evidence is available, and completion precedes the irreversible boundary, then the governed path may admit the correction.
+
+**Proof obligation:** independently resolve authority, enumerate correction paths, measure or bound latencies, and test every irreversible-boundary case.
+
+## 15. Required Conformance Artifacts
 
 A conforming implementation should publish machine-readable schemas and tests for:
 
@@ -293,6 +373,7 @@ policy_record
 decision_receipt
 commit_time_check
 execution_receipt
+correction_request
 compensation_receipt
 replay_result
 drift_event
@@ -309,9 +390,13 @@ Minimum tests:
 7. bypass attempt -> blocked and evidenced;
 8. replay under original state -> matching result;
 9. replay under changed state -> explicit divergence;
-10. irreversible effect -> compensation semantics, not false rollback claim.
+10. irreversible effect -> compensation semantics, not false rollback claim;
+11. valid timely correction -> `ADMIT`;
+12. late ordinary correction -> `DENY`;
+13. authorized post-irreversibility partial compensation -> `COMPENSATE` with residual effects;
+14. impossible compensation -> `DENY` with `compensation_impossible` evidence.
 
-## 15. Non-Claims
+## 16. Non-Claims
 
 This specification does not claim:
 
@@ -322,10 +407,12 @@ This specification does not claim:
 - that visibility equals governance;
 - that approval equals continuity;
 - that execution equals admissibility;
+- that compensation makes an earlier action admissible;
+- that a late correction request was timely;
 - that the candidate stability measure is a proven Lyapunov function;
 - that current StegVerse runtime implementations satisfy this specification.
 
-## 16. Migration Target
+## 17. Migration Target
 
 This staged document should be split in `StegVerse-Labs/stegverse-spec` into:
 
@@ -337,6 +424,7 @@ STATE_AND_TRANSITIONS.md
 DECISION_SURFACES.md
 IDENTITY_AUTHORITY_AND_DELEGATION.md
 AUDIT_REPLAY_AND_RECOVERY.md
+CORRECTABILITY_AND_COMPENSATION.md
 TRAJECTORY_AND_STABILITY.md
 THREAT_MODEL.md
 FAILURE_MODES.md
