@@ -1,0 +1,41 @@
+name: Personal Data Control Session Consolidation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ecosystem_management/personal_data_control_session_consolidation.v1.json'
+      - 'ecosystem_management/task_registry.yml'
+      - 'docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md'
+      - 'tools/verify_personal_data_control_session_consolidation.py'
+      - '.github/workflows/personal-data-control-session-consolidation.yml'
+  pull_request:
+    paths:
+      - 'ecosystem_management/personal_data_control_session_consolidation.v1.json'
+      - 'ecosystem_management/task_registry.yml'
+      - 'docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md'
+      - 'tools/verify_personal_data_control_session_consolidation.py'
+  workflow_dispatch:
+  schedule:
+    - cron: '41 * * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify canonical inventory, claims, and archive conditions
+        run: python tools/verify_personal_data_control_session_consolidation.py
+      - name: Preserve consolidation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: personal-data-control-session-consolidation-report
+          path: brain_reports/personal_data_control_session_consolidation_report.json
+          if-no-files-found: error
