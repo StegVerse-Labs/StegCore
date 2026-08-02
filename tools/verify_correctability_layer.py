@@ -7,8 +7,10 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures" / "correctability"
 REPORT = ROOT / "brain_reports" / "correctability_layer_report.json"
 CASES = FIXTURES / "v2" / "cases.json"
+COMPENSATION_CASES = FIXTURES / "v2" / "compensation_cases.json"
 AUTHORITIES = FIXTURES / "authority_records.json"
 ALLOWED = {"pause", "deny", "revoke", "quarantine", "rollback", "redirect", "supersede", "compensate", "escalate"}
+COMPENSATION_RESULTS = {"COMPLETE", "PARTIAL", "FAILED", "IMPOSSIBLE"}
 
 
 def parse_time(value: str) -> datetime:
@@ -51,23 +53,50 @@ def evaluate(record: dict, authorities: dict) -> dict:
     predicates["evidence_present"] = bool(record["evidence_references"])
     predicates["before_irreversible_boundary"] = completion < irreversible
 
+    compensation = record.get("compensation")
+    compensation_mode = record["intervention"] == "compensate" and completion >= irreversible
+    if compensation_mode:
+        predicates["compensation_receipt_present"] = isinstance(compensation, dict)
+        if isinstance(compensation, dict):
+            required_comp = {"receipt_id", "compensation_type", "executed_at", "result", "residual_effects", "evidence_references"}
+            predicates["compensation_fields_present"] = required_comp.issubset(compensation)
+            predicates["compensation_result_valid"] = compensation.get("result") in COMPENSATION_RESULTS
+            predicates["compensation_evidence_present"] = bool(compensation.get("evidence_references"))
+            predicates["residual_effects_recorded"] = isinstance(compensation.get("residual_effects"), list)
+        else:
+            predicates["compensation_fields_present"] = False
+            predicates["compensation_result_valid"] = False
+            predicates["compensation_evidence_present"] = False
+            predicates["residual_effects_recorded"] = False
+
+    ignored_for_compensation = {"before_irreversible_boundary"} if compensation_mode else set()
     for name, value in predicates.items():
-        if not value:
+        if not value and name not in ignored_for_compensation:
             errors.append(name)
 
+    if compensation_mode and not errors:
+        result = compensation["result"]
+        decision = "COMPENSATE" if result in {"COMPLETE", "PARTIAL"} else "DENY"
+        if result in {"FAILED", "IMPOSSIBLE"}:
+            errors.append(f"compensation_{result.lower()}")
+    else:
+        decision = "ADMIT" if not errors else "DENY"
+
     return {
-        "decision": "ADMIT" if not errors else "DENY",
+        "decision": decision,
         "predicates": predicates,
         "errors": errors,
         "completion_at": completion.isoformat(),
         "irreversible_at": irreversible.isoformat(),
         "resolved_authority_id": authority["authority_id"],
+        "mode": "post_irreversibility_compensation" if compensation_mode else "timely_correction",
+        "compensation": compensation if compensation_mode else None,
     }
 
 
 def main() -> int:
     authorities = json.loads(AUTHORITIES.read_text())
-    case_specs = json.loads(CASES.read_text())
+    case_specs = json.loads(CASES.read_text()) + json.loads(COMPENSATION_CASES.read_text())
     results = []
     all_passed = True
     for case in case_specs:
@@ -81,11 +110,11 @@ def main() -> int:
         "state": "COMPLETE" if all_passed else "FAILED",
         "status": "pass" if all_passed else "fail",
         "verification_command": "python tools/verify_correctability_layer.py",
-        "inputs": [str(CASES.relative_to(ROOT)), str(AUTHORITIES.relative_to(ROOT))],
+        "inputs": [str(CASES.relative_to(ROOT)), str(COMPENSATION_CASES.relative_to(ROOT)), str(AUTHORITIES.relative_to(ROOT))],
         "fixture_count": len(results),
         "passed_count": sum(1 for item in results if item["passed"]),
-        "next_executable_task": "integrate-correctability-into-spec" if all_passed else "repair-failing-correctability-case",
-        "next_task_location": "docs/spec/STEGVERSE_SPEC_V1_3.md" if all_passed else "tests/fixtures/correctability/v2/cases.json",
+        "next_executable_task": "inspect-hosted-correctability-workflow" if all_passed else "repair-failing-correctability-case",
+        "next_task_location": ".github/workflows/correctability-layer.yml" if all_passed else "tests/fixtures/correctability/v2/",
         "cases": results,
     }
     REPORT.parent.mkdir(parents=True, exist_ok=True)
