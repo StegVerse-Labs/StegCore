@@ -6,6 +6,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures" / "correctability"
 REPORT = ROOT / "brain_reports" / "correctability_layer_report.json"
+CASES = FIXTURES / "v2" / "cases.json"
+AUTHORITIES = FIXTURES / "authority_records.json"
 ALLOWED = {"pause", "deny", "revoke", "quarantine", "rollback", "redirect", "supersede", "compensate", "escalate"}
 
 
@@ -13,92 +15,83 @@ def parse_time(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
 
 
-def evaluate(record: dict) -> dict:
+def evaluate(record: dict, authorities: dict) -> dict:
     required = {
-        "correction_id", "transition_id", "authority", "intervention", "detected_at",
-        "authorization_latency_ms", "intervention_latency_ms", "irreversible_at",
-        "pathway_reachable", "intervention_enforceable", "scope_valid", "evidence_references"
+        "correction_id", "transition_id", "subject_identity", "authority_reference",
+        "intervention", "requested_scope", "detected_at", "authorization_latency_ms",
+        "intervention_latency_ms", "irreversible_at", "pathway_reachable",
+        "intervention_enforceable", "evidence_references"
     }
+    predicates = {}
     errors = []
     missing = sorted(required - set(record))
+    predicates["required_fields_present"] = not missing
     if missing:
         errors.append(f"missing_required:{','.join(missing)}")
-        return {"admissible": False, "errors": errors}
+        return {"decision": "DENY", "predicates": predicates, "errors": errors}
 
-    authority = record.get("authority", {})
-    authority_required = {"authority_id", "valid", "not_before", "not_after"}
-    authority_missing = sorted(authority_required - set(authority))
-    if authority_missing:
-        errors.append(f"authority_missing_required:{','.join(authority_missing)}")
-        return {"admissible": False, "errors": errors}
+    authority = authorities.get(record["authority_reference"])
+    predicates["authority_resolved"] = authority is not None
+    if authority is None:
+        errors.append("authority_unresolved")
+        return {"decision": "DENY", "predicates": predicates, "errors": errors}
 
     detected = parse_time(record["detected_at"])
     irreversible = parse_time(record["irreversible_at"])
-    completion = detected + timedelta(
-        milliseconds=record["authorization_latency_ms"] + record["intervention_latency_ms"]
-    )
+    completion = detected + timedelta(milliseconds=record["authorization_latency_ms"] + record["intervention_latency_ms"])
 
-    if record["intervention"] not in ALLOWED:
-        errors.append("intervention_not_allowed")
-    if not authority.get("valid", False):
-        errors.append("authority_invalid")
-    if not (parse_time(authority["not_before"]) <= detected <= parse_time(authority["not_after"])):
-        errors.append("authority_outside_validity_window")
-    if not record["pathway_reachable"]:
-        errors.append("pathway_unreachable")
-    if not record["intervention_enforceable"]:
-        errors.append("intervention_unenforceable")
-    if not record["scope_valid"]:
-        errors.append("scope_invalid")
-    if not record["evidence_references"]:
-        errors.append("evidence_missing")
-    if completion >= irreversible:
-        errors.append("irreversible_boundary_reached")
+    predicates["subject_matches"] = authority["subject_identity"] == record["subject_identity"]
+    predicates["authority_active"] = authority["revocation_state"] == "active"
+    predicates["authority_time_valid"] = parse_time(authority["not_before"]) <= detected <= parse_time(authority["not_after"])
+    predicates["intervention_globally_allowed"] = record["intervention"] in ALLOWED
+    predicates["intervention_authorized"] = record["intervention"] in authority.get("allowed_interventions", [])
+    predicates["scope_authorized"] = set(record["requested_scope"]).issubset(set(authority.get("scope", [])))
+    predicates["pathway_reachable"] = record["pathway_reachable"] is True
+    predicates["intervention_enforceable"] = record["intervention_enforceable"] is True
+    predicates["evidence_present"] = bool(record["evidence_references"])
+    predicates["before_irreversible_boundary"] = completion < irreversible
+
+    for name, value in predicates.items():
+        if not value:
+            errors.append(name)
 
     return {
-        "admissible": not errors,
+        "decision": "ADMIT" if not errors else "DENY",
+        "predicates": predicates,
         "errors": errors,
         "completion_at": completion.isoformat(),
-        "irreversible_at": irreversible.isoformat()
+        "irreversible_at": irreversible.isoformat(),
+        "resolved_authority_id": authority["authority_id"],
     }
 
 
 def main() -> int:
-    expected = {
-        "valid.json": True,
-        "late.json": False,
-        "invalid_authority.json": False,
-        "unreachable.json": False,
-        "unenforceable.json": False,
-        "invalid_scope.json": False,
-        "missing_evidence.json": False,
-        "unsupported_intervention.json": False,
-    }
-    cases = []
-    ok = True
-    for name, expected_admissible in expected.items():
-        data = json.loads((FIXTURES / name).read_text())
-        result = evaluate(data)
-        passed = result["admissible"] == expected_admissible
-        ok = ok and passed
-        cases.append({
-            "fixture": name,
-            "expected_admissible": expected_admissible,
-            "passed": passed,
-            "result": result,
-        })
+    authorities = json.loads(AUTHORITIES.read_text())
+    case_specs = json.loads(CASES.read_text())
+    results = []
+    all_passed = True
+    for case in case_specs:
+        result = evaluate(case["record"], authorities)
+        passed = result["decision"] == case["expected"]
+        all_passed = all_passed and passed
+        results.append({"name": case["name"], "expected": case["expected"], "passed": passed, "result": result})
 
     report = {
         "layer": "governed_correctability",
-        "status": "pass" if ok else "fail",
+        "state": "COMPLETE" if all_passed else "FAILED",
+        "status": "pass" if all_passed else "fail",
         "verification_command": "python tools/verify_correctability_layer.py",
-        "fixture_count": len(cases),
-        "cases": cases,
+        "inputs": [str(CASES.relative_to(ROOT)), str(AUTHORITIES.relative_to(ROOT))],
+        "fixture_count": len(results),
+        "passed_count": sum(1 for item in results if item["passed"]),
+        "next_executable_task": "integrate-correctability-into-spec" if all_passed else "repair-failing-correctability-case",
+        "next_task_location": "docs/spec/STEGVERSE_SPEC_V1_3.md" if all_passed else "tests/fixtures/correctability/v2/cases.json",
+        "cases": results,
     }
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
-    return 0 if ok else 1
+    return 0 if all_passed else 1
 
 
 if __name__ == "__main__":
