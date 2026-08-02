@@ -5,15 +5,21 @@ on:
     branches: [main]
     paths:
       - "docs/ORIGINATING_CHOICE_MIRROR_HANDOFF.md"
+      - "receipts/originating-choice-validation-*.json"
       - "spec/originating-choice.schema.json"
+      - "spec/originating-choice-consumer-contract.json"
       - "tools/validate_originating_choice.py"
+      - "tools/consume_originating_choice.py"
       - "examples/originating-choice*.json"
       - ".github/workflows/originating-choice-validate.yml"
   pull_request:
     paths:
       - "docs/ORIGINATING_CHOICE_MIRROR_HANDOFF.md"
+      - "receipts/originating-choice-validation-*.json"
       - "spec/originating-choice.schema.json"
+      - "spec/originating-choice-consumer-contract.json"
       - "tools/validate_originating_choice.py"
+      - "tools/consume_originating_choice.py"
       - "examples/originating-choice*.json"
       - ".github/workflows/originating-choice-validate.yml"
   workflow_dispatch:
@@ -47,7 +53,20 @@ jobs:
             --self-test \
             --receipt-output artifacts/originating-choice/self-test-receipt.json
 
-      - name: Preserve validation receipts
+      - name: Route canonical receipt through consumer contract
+        run: |
+          python tools/consume_originating_choice.py \
+            spec/originating-choice.schema.json \
+            examples/originating-choice.valid.json \
+            --output artifacts/originating-choice/integration-receipt.json
+
+      - name: Run consumer routing self-tests
+        run: |
+          python tools/consume_originating_choice.py \
+            --self-test \
+            --output artifacts/originating-choice/integration-self-test-receipt.json
+
+      - name: Preserve validation and integration receipts
         if: always()
         uses: actions/upload-artifact@v4
         with:
