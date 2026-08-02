@@ -1,0 +1,95 @@
+{
+  "schema": "stegverse.session_consolidation.v1",
+  "consolidation_id": "MARKETPLACE-COINBASE-PAPER-ACCESSIBILITY-SESSION-001",
+  "goal_id": "MARKETPLACE-COINBASE-PAPER-ACCESSIBILITY-001",
+  "originating_session_goal": "Establish, activate, validate, and durably coordinate the governed Marketplace-Coinbase paper-accessibility and evidence-bound release path without granting live financial authority.",
+  "canonical_continuation": {
+    "repository": "StegVerse-Labs/StegCore",
+    "branch": "main",
+    "handoff": "docs/EXECUTION_ORCHESTRATOR_MIRROR_HANDOFF.md",
+    "task_registry": "data/execution-orchestrator-tasks.json",
+    "state_receipt": "data/execution-orchestrator-state.json",
+    "controller_issue": "StegVerse-Labs/StegCore#42",
+    "release_owner_repository": "StegVerse-Labs/crypto-bot",
+    "release_handoff": "docs/CRYPTO_BOT_MIRROR_HANDOFF.md",
+    "release_issue": "StegVerse-Labs/crypto-bot#6"
+  },
+  "session_role": "MERGED_INTO_CANONICAL_WORKSTREAM",
+  "session_specific_requirements": [
+    {
+      "id": "MC-SESSION-GOAL-001",
+      "requirement": "Crypto-bot first accessibility must be proven through a digest-valid paper-only receipt and observed workflow artifact.",
+      "destination": "StegVerse-Labs/crypto-bot/data/first-accessibility-mark-status.json and StegVerse-Labs/StegCore/data/execution-orchestrator-state.json#MC-01-CRYPTO-ACCESSIBILITY",
+      "state": "COMPLETE"
+    },
+    {
+      "id": "MC-SESSION-GOAL-002",
+      "requirement": "Marketplace must collect the exact outbound packet, preserve acknowledgement and sequence-2 transport evidence, and fail closed on missing evidence.",
+      "destination": "GCAT-BCAT-Engine/Marketplace/data/marketplace-coinbase-outbound-collection-status.json and StegVerse-Labs/StegCore/data/execution-orchestrator-state.json#MC-02-MARKETPLACE-COLLECTION",
+      "state": "COMPLETE"
+    },
+    {
+      "id": "MC-SESSION-GOAL-003",
+      "requirement": "Publisher must reconstruct the chain while retaining only bounded identities, digests, findings, and status rather than raw private upstream evidence.",
+      "destination": "GCAT-BCAT-Engine/Publisher/data/marketplace-coinbase-release-evidence-status.json and GCAT-BCAT-Engine/Publisher/docs/MARKETPLACE_COINBASE_PUBLICATION_MIRROR_HANDOFF.md",
+      "state": "COMPLETE"
+    },
+    {
+      "id": "MC-SESSION-GOAL-004",
+      "requirement": "Site must expose only governed paper accessibility and explicitly preserve live trading as inaccessible.",
+      "destination": "StegVerse-Labs/Site/data/marketplace-coinbase-accessibility-status.json and StegVerse-Labs/Site/docs/MARKETPLACE_COINBASE_ACCESSIBILITY_MIRROR_HANDOFF.md",
+      "state": "COMPLETE"
+    },
+    {
+      "id": "MC-SESSION-GOAL-005",
+      "requirement": "Final receipt and exact tag authorization must bind the original release-candidate commit and full cross-repository provenance without granting publication, release, execution, custody, withdrawal, or live authority.",
+      "destination": "StegVerse-Labs/crypto-bot/release_evidence/FINAL_PAPER_RELEASE_RECEIPT.json, release_evidence/FINAL_PAPER_RELEASE_TAG_AUTHORIZATION.json, and docs/CRYPTO_BOT_MIRROR_HANDOFF.md",
+      "state": "COMPLETE"
+    },
+    {
+      "id": "MC-SESSION-GOAL-006",
+      "requirement": "The remaining tag operation must be assigned to a named source-control authority boundary, observed automatically, retried repository-natively, and separated from final tag-receipt evidence.",
+      "destination": "StegVerse-Labs/crypto-bot/data/paper-release-tag-authority-status.json and StegVerse-Labs/StegCore/data/execution-orchestrator-state.json#MC-05-TAG-AUTHORITY,MC-06-FINALIZE-PAPER-RELEASE",
+      "state": "MERGED"
+    },
+    {
+      "id": "MC-SESSION-GOAL-007",
+      "requirement": "No live Coinbase, funded-order, financial, custody, transfer, withdrawal, publication, deployment, payment, entitlement, or execution authority may be inferred from repository readiness or tagging.",
+      "destination": "StegVerse-Labs/crypto-bot/docs/CRYPTO_BOT_MIRROR_HANDOFF.md and all committed finalization/status receipts",
+      "state": "MERGED"
+    },
+    {
+      "id": "MC-SESSION-GOAL-008",
+      "requirement": "Continuation must not depend on this chat and duplicate sessions must not create parallel finalizers, authority observers, or task graphs.",
+      "destination": "StegVerse-Labs/StegCore/data/marketplace-coinbase-work-claims.json and data/execution-orchestrator-tasks.json",
+      "state": "MERGED"
+    }
+  ],
+  "remaining_work": [
+    {
+      "task_id": "MC-05-TAG-AUTHORITY",
+      "owner": "StegVerse-Labs/crypto-bot GitHub Actions secret authority",
+      "location": "StegVerse-Labs/crypto-bot/data/paper-release-tag-authority-status.json",
+      "state": "BLOCKED",
+      "release_condition": "STEGVERSE_RELEASE_TAG_TOKEN is present with contents-write and workflow-write capability"
+    },
+    {
+      "task_id": "MC-06-FINALIZE-PAPER-RELEASE",
+      "owner": "StegVerse-Labs/crypto-bot/.github/workflows/finalize-paper-release.yml",
+      "location": "StegVerse-Labs/crypto-bot/release_evidence/FINAL_PAPER_RELEASE_TAG_RECEIPT.json",
+      "state": "MACHINE_OWNED",
+      "release_condition": "marketplace-coinbase-paper-v1.0.0 resolves to 73a0543ddb27a88fd4913e7dcfa2127132299baa and a digest-valid tag receipt is committed"
+    }
+  ],
+  "duplicate_execution_policy": "No ChatGPT session may implement a parallel Marketplace-Coinbase finalizer, tag-authority observer, or execution graph while these canonical records are current. Distinct sessions may inspect evidence or satisfy the named authority boundary only through the canonical locations.",
+  "archive_test": {
+    "unique_information_remaining_in_chat": false,
+    "unassigned_work_remaining": false,
+    "canonical_owner_recorded": true,
+    "machine_observers_installed": true,
+    "authority_boundary_recorded": true,
+    "deleting_session_impairs_execution": false
+  },
+  "consolidated_at": "2026-08-02T09:23:00Z",
+  "archival_state": "READY_AFTER_VALIDATION"
+}
