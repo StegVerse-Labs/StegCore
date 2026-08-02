@@ -48,6 +48,23 @@
       "stop_condition": {"state": "PAPER_ACCESSIBLE", "live_trading_accessible": false},
       "dependencies": ["MC-03-PUBLISHER-VERIFY"],
       "resolver": "repository_workflow",
+      "successor": "MC-05-FINALIZE-PAPER-RELEASE",
+      "retry_policy": "hourly"
+    },
+    {
+      "task_id": "MC-05-FINALIZE-PAPER-RELEASE",
+      "repository": "StegVerse-Labs/crypto-bot",
+      "issue": "StegVerse-Labs/crypto-bot#6",
+      "workflow": ".github/workflows/finalize-paper-release.yml",
+      "evidence_path": "release_evidence/FINAL_PAPER_RELEASE_TAG_RECEIPT.json",
+      "stop_condition": {
+        "tag_verified": true,
+        "tag_name": "marketplace-coinbase-paper-v1.0.0",
+        "target_commit_sha": "73a0543ddb27a88fd4913e7dcfa2127132299baa",
+        "live_authority": "NOT_GRANTED"
+      },
+      "dependencies": ["MC-04-SITE-PROJECTION"],
+      "resolver": "repository_workflow",
       "successor": null,
       "retry_policy": "hourly"
     }
