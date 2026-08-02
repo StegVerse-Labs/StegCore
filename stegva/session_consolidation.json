@@ -1,0 +1,90 @@
+{
+  "consolidation_version": "1.0.0",
+  "goal_id": "STEGVA-BOOTSTRAP-001",
+  "originating_session_goal": "Lock BCAT v1 constitutional governance, preserve StegVA architecture, coordinate VAwatchdog parallel work, and establish a synthetic-only verified StegVA continuation path.",
+  "canonical_continuation": {
+    "repository": "StegVerse-Labs/StegCore",
+    "branch": "main",
+    "handoff": "docs/STEGVA_MIRROR_HANDOFF.md",
+    "task_registry": "stegva/task_registry.json",
+    "transfer_issue": "issues/44",
+    "future_destination": "StegVerse-Labs/StegVA"
+  },
+  "session_role": "MERGED_INTO_CANONICAL_WORKSTREAM",
+  "session_specific_requirements": [
+    {
+      "id": "SESSION-GOAL-001",
+      "requirement": "BCAT v1 and the AI Entity Constitution remain the constitutional authority for StegVA.",
+      "destination": "ethics/ai_constitution.md and docs/STEGVA_MIRROR_HANDOFF.md",
+      "state": "MERGED"
+    },
+    {
+      "id": "SESSION-GOAL-002",
+      "requirement": "StegVA is a veteran-first nonprofit service with synthetic-only bootstrap operation and no production veteran data.",
+      "destination": "docs/STEGVA_MIRROR_HANDOFF.md and stegva/contracts/synthetic_intake.schema.json",
+      "state": "MERGED"
+    },
+    {
+      "id": "SESSION-GOAL-003",
+      "requirement": "StegVA and VAwatchdog must remain structurally separate, with no raw claim or protected identity data crossing the boundary.",
+      "destination": "docs/STEGVA_VAWATCHDOG_PARALLEL_WORK_RECEIPT.md and StegVerse-Labs/VAwatchdog/docs/STEGVA_INTEGRATION_BOUNDARY.md",
+      "state": "MERGED"
+    },
+    {
+      "id": "SESSION-GOAL-004",
+      "requirement": "Split-identity processing must fail closed and stop at local reconstruction until an authorized VA-facing channel is proven.",
+      "destination": "stegva/docs/SPLIT_IDENTITY_THREAT_MODEL.md",
+      "state": "MERGED"
+    },
+    {
+      "id": "SESSION-GOAL-005",
+      "requirement": "Public financial accountability must use a privacy-preserving projection while private books remain authoritative.",
+      "destination": "stegva/docs/PUBLIC_FINANCE_LEDGER_SPEC.md and stegva/contracts/public_finance_event.schema.json",
+      "state": "MERGED"
+    },
+    {
+      "id": "SESSION-GOAL-006",
+      "requirement": "Recurring validation and continuation must be repository-native, receipt-producing, fail closed, and distinguish COMPLETE, BLOCKED, RETRY, REVIEW_REQUIRED, and FAILED.",
+      "destination": ".github/workflows/stegva-bootstrap-verify.yml and stegva/task_registry.json",
+      "state": "MERGED"
+    },
+    {
+      "id": "SESSION-GOAL-007",
+      "requirement": "Dedicated StegVA repository creation and transfer must be durably owned rather than left in chat.",
+      "destination": "StegVerse-Labs/StegCore issue #44",
+      "state": "MERGED"
+    }
+  ],
+  "remaining_work": [
+    {
+      "task_id": "STEGVA-TASK-006",
+      "owner": "StegVerse-Labs/StegCore repository-native workflow",
+      "location": ".github/workflows/stegva-bootstrap-verify.yml",
+      "state": "MACHINE_OWNED",
+      "release_condition": "successful hosted run with inspected jobs, logs, artifact metadata, and bootstrap-verification.json"
+    },
+    {
+      "task_id": "STEGVA-TASK-007",
+      "owner": "StegVA nonprofit formation workstream",
+      "location": "StegVerse-Labs/StegCore issue #44",
+      "state": "BLOCKED",
+      "release_condition": "StegVerse-Labs/StegVA exists and connected mutation authority is available"
+    },
+    {
+      "task_id": "STEGVA-TASK-008",
+      "owner": "StegVA legal-compliance workstream",
+      "location": "stegva/compliance/current_law_control_map.json",
+      "state": "REVIEW_REQUIRED",
+      "release_condition": "qualified review evidence is committed"
+    }
+  ],
+  "duplicate_execution_policy": "No ChatGPT session may reimplement the canonical bootstrap while these records remain current. Distinct sessions may validate, integrate, or transfer only through the named task and claim records.",
+  "archive_test": {
+    "unique_information_remaining_in_chat": false,
+    "unassigned_work_remaining": false,
+    "canonical_owner_recorded": true,
+    "machine_observers_installed": true,
+    "deleting_session_impairs_execution": false
+  },
+  "archival_state": "READY_AFTER_COMMIT_VERIFICATION"
+}
