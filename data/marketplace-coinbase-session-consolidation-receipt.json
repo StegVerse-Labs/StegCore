@@ -1,0 +1,23 @@
+{
+  "canonical_location": "StegVerse-Labs/StegCore/docs/EXECUTION_ORCHESTRATOR_MIRROR_HANDOFF.md",
+  "canonical_tasks_recorded": 6,
+  "canonical_tasks_required": 6,
+  "claims_recorded": 6,
+  "claims_required": 6,
+  "consolidation_id": "MARKETPLACE-COINBASE-PAPER-ACCESSIBILITY-SESSION-001",
+  "deleting_session_impairs_execution": false,
+  "execution_authority": "NOT_GRANTED",
+  "findings": [],
+  "goal_id": "MARKETPLACE-COINBASE-PAPER-ACCESSIBILITY-001",
+  "live_authority": "NOT_GRANTED",
+  "next_task": "archive the originating ChatGPT session; continuation is repository-owned",
+  "publication_authority": "NOT_GRANTED",
+  "receipt_digest": "sha256:fcdfc69c81b2e22006472f09e53389f2cb4536da3341a6ef848a925100fde2c8",
+  "release_authority": "NOT_GRANTED",
+  "requirements_required": 8,
+  "requirements_transferred": 8,
+  "schema": "stegverse.session_consolidation_receipt.v1",
+  "session_role": "MERGED_INTO_CANONICAL_WORKSTREAM",
+  "state": "COMPLETE",
+  "unique_execution_responsibility_remaining": false
+}
