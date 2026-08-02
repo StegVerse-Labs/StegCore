@@ -48,11 +48,24 @@
       "stop_condition": {"state": "PAPER_ACCESSIBLE", "live_trading_accessible": false},
       "dependencies": ["MC-03-PUBLISHER-VERIFY"],
       "resolver": "repository_workflow",
-      "successor": "MC-05-FINALIZE-PAPER-RELEASE",
+      "successor": "MC-05-TAG-AUTHORITY",
       "retry_policy": "hourly"
     },
     {
-      "task_id": "MC-05-FINALIZE-PAPER-RELEASE",
+      "task_id": "MC-05-TAG-AUTHORITY",
+      "repository": "StegVerse-Labs/crypto-bot",
+      "issue": "StegVerse-Labs/crypto-bot#6",
+      "workflow": ".github/workflows/finalize-paper-release.yml",
+      "evidence_path": "data/paper-release-tag-authority-status.json",
+      "stop_condition": {"credential_present": true},
+      "dependencies": ["MC-04-SITE-PROJECTION"],
+      "resolver": "specific_human_authority_binding_with_scheduled_machine_observer",
+      "successor": "MC-06-FINALIZE-PAPER-RELEASE",
+      "retry_policy": "hourly",
+      "authority_required": true
+    },
+    {
+      "task_id": "MC-06-FINALIZE-PAPER-RELEASE",
       "repository": "StegVerse-Labs/crypto-bot",
       "issue": "StegVerse-Labs/crypto-bot#6",
       "workflow": ".github/workflows/finalize-paper-release.yml",
@@ -63,7 +76,7 @@
         "target_commit_sha": "73a0543ddb27a88fd4913e7dcfa2127132299baa",
         "live_authority": "NOT_GRANTED"
       },
-      "dependencies": ["MC-04-SITE-PROJECTION"],
+      "dependencies": ["MC-05-TAG-AUTHORITY"],
       "resolver": "repository_workflow",
       "successor": null,
       "retry_policy": "hourly"
