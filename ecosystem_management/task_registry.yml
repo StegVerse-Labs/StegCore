@@ -1,4 +1,4 @@
-version: 0.3
+version: 0.4
 goal: ecosystem_managed_task_handoff_and_completion
 
 assessment_rule: >-
@@ -25,6 +25,22 @@ active_chain:
   parallel_session_overlap_status: no known overlapping session for provider-banking/acquisition-close chain
 
 parallel_chains:
+  - chain_id: personal-data-control-session-consolidation
+    owner_repo: StegCore
+    status: implementation-complete-validation-observation-pending
+    handoff: docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md
+    state: ecosystem_management/personal_data_control_session_consolidation.v1.json
+    verification_command: python tools/verify_personal_data_control_session_consolidation.py
+    workflow: .github/workflows/personal-data-control-session-consolidation.yml
+    report_artifact: brain_reports/personal_data_control_session_consolidation_report.json
+    next_integration_candidate: StegVerse-Labs/StegTalk#PDCL-STEGTALK-001
+    downstream_candidates:
+      - StegVerse-Labs/StegID#SID-PDCL-002
+      - StegVerse-Labs/StegAgents#SA-PDCL-002
+      - StegVerse-Labs/Site#SITE-0001-PERSONAL-DATA-CONTROL
+      - StegVerse-Labs/admissibility-wiki#PDCL-POLICY-001
+    non_overlap: coordination-validation-and-session-consolidation-only-no-external-deletion-identity-legal-deployment-or-publication-authority
+    completion_criteria: consolidation-verifier-green-stegtalk-executable-tests-observed-all-chat-only-requirements-zero
   - chain_id: rtg-tt-operational-layer
     owner_repo: StegCore
     status: building
@@ -97,6 +113,12 @@ managed_repos:
     next_candidate: StegVerse-Labs/admissibility-wiki
     ownership: correction-request-semantics-and-conformance
     non_overlap: no-runtime-deployment-financial-legal-or-physical-authority
+  - name: StegCore-Personal-Data-Control-Consolidation
+    status: management-capable-pending-workflow-observation
+    handoff: docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md
+    next_candidate: StegVerse-Labs/StegTalk#PDCL-STEGTALK-001
+    ownership: session-consolidation-and-validation-observation
+    non_overlap: no-external-deletion-identity-verification-legal-or-deployment-authority
 
 artifacts:
   management_report: brain_reports/stegverse_ecosystem_management_readiness_report.json
@@ -106,3 +128,5 @@ artifacts:
   rtg_tt_operational_report: brain_reports/rtg_tt_operational_layer_report.json
   correctability_state: ecosystem_management/correctability_layer.v0.1.json
   correctability_report: brain_reports/correctability_layer_report.json
+  personal_data_control_consolidation_state: ecosystem_management/personal_data_control_session_consolidation.v1.json
+  personal_data_control_consolidation_report: brain_reports/personal_data_control_session_consolidation_report.json
