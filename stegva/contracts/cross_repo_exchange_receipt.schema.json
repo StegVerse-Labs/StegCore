@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/stegva/cross-repo-exchange-receipt-v1.json",
+  "title": "StegVA Cross-Repository Exchange Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "exchange_id", "source_repository", "destination_repository", "artifact_class", "source_tier", "authority_basis", "sanitization_profile", "reidentification_risk", "human_approval", "ai_approval", "content_commitment", "timestamp"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "exchange_id": {"type": "string", "pattern": "^STEGVA-XR-[A-Z0-9-]{8,64}$"},
+    "source_repository": {"type": "string", "minLength": 3},
+    "destination_repository": {"type": "string", "minLength": 3},
+    "artifact_class": {"enum": ["public_record", "sanitized_observation", "aggregate_pattern", "cryptographic_commitment"]},
+    "source_tier": {"enum": [0, 1, 2, 3, 4]},
+    "authority_basis": {"type": "string", "minLength": 1},
+    "sanitization_profile": {"type": "string", "minLength": 1},
+    "reidentification_risk": {"enum": ["LOW", "REVIEW_REQUIRED", "PROHIBITED"]},
+    "human_approval": {"type": "object", "required": ["approved", "actor"], "properties": {"approved": {"const": true}, "actor": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+    "ai_approval": {"type": "object", "required": ["approved", "entity_id", "charter"], "properties": {"approved": {"const": true}, "entity_id": {"type": "string", "minLength": 1}, "charter": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+    "content_commitment": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "supersedes": {"type": "string"}
+  }
+}
