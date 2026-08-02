@@ -1,0 +1,34 @@
+{
+  "schema_version": "HIL-STEGCORE-LIFECYCLE-EVIDENCE-v1",
+  "observed_states": [
+    "PARTICIPANT_RECORDED",
+    "RECEIVED_BY_STEGVERSE",
+    "RECEIVER_HASH_VERIFIED",
+    "RECONSTRUCTED_HASH_VERIFIED"
+  ],
+  "identities": {
+    "submission_id": "HIL-20260731-GPT56-001",
+    "primary_sha256": "a7b1c62e336b4e244ecf7fdcd10af195401f6c44328de32615b073d2a5c3c462",
+    "prompt_sha256": "cdff8d2266bb3eefbb6e5d28d9adc548e6c8dfc039debd72fe404f1d0249912c",
+    "response_sha256": "1442c8407e6de8c66d1aa6d5180779a4c58cb449a46338bc9dae07e5ddf99285",
+    "site_package_commit": "468e67e9155ef1d83ff624cdd12b16543ea38457",
+    "tvc_receipt_id": "HIL-TVC-1442c8407e6de8c6"
+  },
+  "receipts": [
+    {
+      "receipt_id": "HIL-TVC-1442c8407e6de8c6",
+      "identities": {
+        "submission_id": "HIL-20260731-GPT56-001",
+        "response_sha256": "1442c8407e6de8c66d1aa6d5180779a4c58cb449a46338bc9dae07e5ddf99285",
+        "tvc_receipt_id": "HIL-TVC-1442c8407e6de8c6"
+      }
+    }
+  ],
+  "authority": {
+    "publication_authorized": false,
+    "release_authorized": false,
+    "master_record_created": false
+  },
+  "publication_decision_receipt": null,
+  "release_decision_receipt": null
+}
