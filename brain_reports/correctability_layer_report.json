@@ -1,0 +1,28 @@
+{
+  "layer": "governed_correctability",
+  "state": "COMPLETE",
+  "status": "pass",
+  "verification_command": "python tools/verify_correctability_layer.py",
+  "execution_environment": "deterministic local execution of committed verifier and committed fixtures",
+  "verifier_commit": "7ab3099f045c775fa06c0a7ec7510d549efdc1cd",
+  "inputs": [
+    "tests/fixtures/correctability/v2/cases.json",
+    "tests/fixtures/correctability/authority_records.json"
+  ],
+  "fixture_count": 8,
+  "passed_count": 8,
+  "results": [
+    {"name":"valid","expected":"ADMIT","actual":"ADMIT","passed":true},
+    {"name":"late","expected":"DENY","actual":"DENY","passed":true,"reason":"before_irreversible_boundary"},
+    {"name":"revoked-authority","expected":"DENY","actual":"DENY","passed":true,"reason":"authority_active"},
+    {"name":"unknown-authority","expected":"DENY","actual":"DENY","passed":true,"reason":"authority_unresolved"},
+    {"name":"out-of-scope","expected":"DENY","actual":"DENY","passed":true,"reason":"scope_authorized"},
+    {"name":"unsupported-intervention","expected":"DENY","actual":"DENY","passed":true,"reason":"intervention_authorized"},
+    {"name":"unreachable","expected":"DENY","actual":"DENY","passed":true,"reason":"pathway_reachable"},
+    {"name":"missing-evidence","expected":"DENY","actual":"DENY","passed":true,"reason":"evidence_present"}
+  ],
+  "workflow_status": "UNVALIDATED",
+  "workflow_release_condition": "A GitHub Actions run of .github/workflows/correctability-layer.yml must complete successfully and expose its job logs and artifact.",
+  "next_executable_task": "integrate-correctability-into-spec",
+  "next_task_location": "docs/spec/STEGVERSE_SPEC_V1_3.md"
+}
