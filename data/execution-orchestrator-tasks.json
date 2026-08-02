@@ -1,0 +1,56 @@
+{
+  "schema": "stegverse.execution_orchestrator.tasks.v1",
+  "controller_issue": "StegVerse-Labs/StegCore#42",
+  "development_halt": false,
+  "tasks": [
+    {
+      "task_id": "MC-01-CRYPTO-ACCESSIBILITY",
+      "repository": "StegVerse-Labs/crypto-bot",
+      "issue": "StegVerse-Labs/crypto-bot#7",
+      "workflow": ".github/workflows/first-accessibility-mark.yml",
+      "evidence_path": "data/first-accessibility-mark-status.json",
+      "stop_condition": {"status": "PASS", "paper_trading_accessible": true},
+      "dependencies": [],
+      "resolver": "repository_workflow",
+      "successor": "MC-02-MARKETPLACE-COLLECTION",
+      "retry_policy": "hourly"
+    },
+    {
+      "task_id": "MC-02-MARKETPLACE-COLLECTION",
+      "repository": "GCAT-BCAT-Engine/Marketplace",
+      "issue": "GCAT-BCAT-Engine/Marketplace#1",
+      "workflow": ".github/workflows/import-marketplace-coinbase-settlements.yml",
+      "evidence_path": "data/marketplace-coinbase-outbound-collection-status.json",
+      "stop_condition": {"status": "COLLECTED"},
+      "dependencies": ["MC-01-CRYPTO-ACCESSIBILITY"],
+      "resolver": "repository_workflow_or_connected_github_relay",
+      "successor": "MC-03-PUBLISHER-VERIFY",
+      "retry_policy": "hourly"
+    },
+    {
+      "task_id": "MC-03-PUBLISHER-VERIFY",
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "issue": "GCAT-BCAT-Engine/Publisher#19",
+      "workflow": ".github/workflows/collect-marketplace-coinbase-release-evidence.yml",
+      "evidence_path": "data/marketplace-coinbase-release-evidence-status.json",
+      "stop_condition": {"status": "VERIFIED", "paper_release_verified": true},
+      "dependencies": ["MC-02-MARKETPLACE-COLLECTION"],
+      "resolver": "repository_workflow_or_connected_github_relay",
+      "successor": "MC-04-SITE-PROJECTION",
+      "retry_policy": "hourly"
+    },
+    {
+      "task_id": "MC-04-SITE-PROJECTION",
+      "repository": "StegVerse-Labs/Site",
+      "issue": "StegVerse-Labs/Site#131",
+      "workflow": ".github/workflows/import-marketplace-coinbase-accessibility.yml",
+      "evidence_path": "data/marketplace-coinbase-accessibility-status.json",
+      "stop_condition": {"state": "PAPER_ACCESSIBLE", "live_trading_accessible": false},
+      "dependencies": ["MC-03-PUBLISHER-VERIFY"],
+      "resolver": "repository_workflow",
+      "successor": null,
+      "retry_policy": "hourly"
+    }
+  ],
+  "authority": {"execution": false, "publication": false, "release": false, "live": false}
+}
