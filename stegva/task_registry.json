@@ -1,5 +1,5 @@
 {
-  "registry_version": "1.0.0",
+  "registry_version": "1.0.1",
   "goal_id": "STEGVA-BOOTSTRAP-001",
   "owner_repository": "StegVerse-Labs/StegCore",
   "future_destination": "StegVerse-Labs/StegVA",
@@ -18,28 +18,28 @@
       "location": "stegva/contracts/synthetic_intake.schema.json",
       "owner": "StegVerse-Labs/StegCore",
       "status": "COMPLETE",
-      "release_condition": "schema and validator installed"
+      "completion_evidence": "commit:9083372cbdf92b91f4ce897a6ff28dc9a9679532"
     },
     {
       "id": "STEGVA-TASK-003",
       "location": "stegva/contracts/cross_repo_exchange_receipt.schema.json",
       "owner": "StegVerse-Labs/StegCore",
       "status": "COMPLETE",
-      "release_condition": "schema and validator installed"
+      "completion_evidence": "commit:fd009f0a727d5b9f050945d4ff43e0cf48e4eb04"
     },
     {
       "id": "STEGVA-TASK-004",
       "location": "stegva/contracts/public_finance_event.schema.json",
       "owner": "StegVerse-Labs/StegCore",
       "status": "COMPLETE",
-      "release_condition": "schema and validator installed"
+      "completion_evidence": "commit:9d1259dd62db880f3a7256f023b0c3f633368b53"
     },
     {
       "id": "STEGVA-TASK-005",
       "location": "stegva/automation/validate_bootstrap.py",
       "owner": "StegVerse-Labs/StegCore",
-      "status": "COMPLETE",
-      "release_condition": "hosted workflow produces successful receipt"
+      "status": "RETRY",
+      "release_condition": "validator executes successfully in GitHub Actions and emits bootstrap-verification.json"
     },
     {
       "id": "STEGVA-TASK-006",
@@ -64,6 +64,6 @@
     }
   ],
   "next_executable_task": "STEGVA-TASK-006",
-  "duplicate_execution_key": "STEGVA-BOOTSTRAP-001:1.0.0",
+  "duplicate_execution_key": "STEGVA-BOOTSTRAP-001:1.0.1",
   "production_data_allowed": false
 }
