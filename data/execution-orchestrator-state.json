@@ -1,0 +1,99 @@
+{
+  "authority": {
+    "execution": false,
+    "live": false,
+    "publication": false,
+    "release": false
+  },
+  "continuation_mode": "ADVANCE_INDEPENDENT_RUNNABLE_BRANCHES",
+  "controller_issue": "StegVerse-Labs/StegCore#42",
+  "development_halt": false,
+  "generated_at": "2026-08-02T07:56:35Z",
+  "generation_method": "DIRECT_EVIDENCE_RECONCILIATION_BOOTSTRAP",
+  "hosted_workflow_validation": "NOT_YET_OBSERVED",
+  "local_state_machine_validation": {
+    "command": "PYTHONPATH=src python -m pytest -q tests/test_execution_orchestrator.py",
+    "result": "PASS",
+    "tests_passed": 5
+  },
+  "observation_failure_is_task_failure": false,
+  "schema": "stegverse.execution_orchestrator.state.v1",
+  "state": "ACTIVE",
+  "tasks": [
+    {
+      "dependencies": [],
+      "development_halt": false,
+      "evidence_path": "data/first-accessibility-mark-status.json",
+      "evidence_reference": "StegVerse-Labs/crypto-bot@11a4277112e6941eb0d40fd763297fd36970b0a3",
+      "issue": "StegVerse-Labs/crypto-bot#7",
+      "repository": "StegVerse-Labs/crypto-bot",
+      "resolver": "repository_workflow",
+      "retry_policy": "hourly",
+      "state": "COMPLETE",
+      "stop_condition": {
+        "paper_trading_accessible": true,
+        "status": "PASS"
+      },
+      "successor": "MC-02-MARKETPLACE-COLLECTION",
+      "task_id": "MC-01-CRYPTO-ACCESSIBILITY",
+      "workflow": ".github/workflows/first-accessibility-mark.yml"
+    },
+    {
+      "dependencies": [
+        "MC-01-CRYPTO-ACCESSIBILITY"
+      ],
+      "development_halt": false,
+      "evidence_path": "data/marketplace-coinbase-outbound-collection-status.json",
+      "evidence_reference": "GCAT-BCAT-Engine/Marketplace@7bad3827613cfc3e882fb3b121567bfa689c581c",
+      "issue": "GCAT-BCAT-Engine/Marketplace#1",
+      "repository": "GCAT-BCAT-Engine/Marketplace",
+      "resolver": "repository_workflow_or_connected_github_relay",
+      "retry_policy": "hourly",
+      "state": "COMPLETE",
+      "stop_condition": {
+        "status": "COLLECTED"
+      },
+      "successor": "MC-03-PUBLISHER-VERIFY",
+      "task_id": "MC-02-MARKETPLACE-COLLECTION",
+      "workflow": ".github/workflows/import-marketplace-coinbase-settlements.yml"
+    },
+    {
+      "dependencies": [
+        "MC-02-MARKETPLACE-COLLECTION"
+      ],
+      "development_halt": false,
+      "evidence_path": "data/marketplace-coinbase-release-evidence-status.json",
+      "issue": "GCAT-BCAT-Engine/Publisher#19",
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "resolver": "repository_workflow_or_connected_github_relay",
+      "retry_policy": "hourly",
+      "state": "RESOLVING",
+      "stop_condition": {
+        "paper_release_verified": true,
+        "status": "VERIFIED"
+      },
+      "successor": "MC-04-SITE-PROJECTION",
+      "task_id": "MC-03-PUBLISHER-VERIFY",
+      "workflow": ".github/workflows/collect-marketplace-coinbase-release-evidence.yml"
+    },
+    {
+      "dependencies": [
+        "MC-03-PUBLISHER-VERIFY"
+      ],
+      "development_halt": false,
+      "evidence_path": "data/marketplace-coinbase-accessibility-status.json",
+      "issue": "StegVerse-Labs/Site#131",
+      "repository": "StegVerse-Labs/Site",
+      "resolver": "repository_workflow",
+      "retry_policy": "hourly",
+      "state": "WAITING_FOR_EVIDENCE",
+      "stop_condition": {
+        "live_trading_accessible": false,
+        "state": "PAPER_ACCESSIBLE"
+      },
+      "successor": null,
+      "task_id": "MC-04-SITE-PROJECTION",
+      "workflow": ".github/workflows/import-marketplace-coinbase-accessibility.yml"
+    }
+  ]
+}
