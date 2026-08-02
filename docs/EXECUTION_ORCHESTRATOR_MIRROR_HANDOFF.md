@@ -3,10 +3,10 @@
 ## Active goal
 
 - Goal ID: `STEGCORE-EXECUTION-ORCHESTRATOR-001`
-- Goal: convert unfinished StegVerse work into governed execution states with exact locations, observers, resolvers, successors, retry policies, durable receipts, and non-halting continuation.
 - Repository: `StegVerse-Labs/StegCore`
 - Branch: `main`
 - Controller issue: `StegVerse-Labs/StegCore#42`
+- Goal: convert unfinished StegVerse work into governed execution states with exact locations, observers, resolvers, successors, retry policies, durable receipts, and non-halting continuation.
 
 ## Authoritative files
 
@@ -21,24 +21,23 @@
 ## Current decision
 
 ```text
-EXECUTION_GRAPH_ACTIVE_FOUR_TASKS_COMPLETE_FINAL_TAG_TASK_RESOLVING
+EXECUTION_GRAPH_ACTIVE_FOUR_TASKS_COMPLETE_TAG_AUTHORITY_WAITING_FINAL_TAG_DEPENDENCY_BLOCKED
 ```
 
-Generic `PENDING` is prohibited. Observation failure is not task failure. Waiting work stops only its dependent branch; independent admissible work continues with `development_halt=false`.
+Generic `PENDING` is prohibited. Observation failure is not task failure. A waiting task stops only its dependent branch; independent admissible work continues with `development_halt=false`.
 
-## Completed implementation
+## Completed implementation and validation
 
-- core task-state engine: `8ef61279852be35a1496ac54d35e86cb263dada2`
+- task-state engine: `8ef61279852be35a1496ac54d35e86cb263dada2`
 - initial graph: `052e32287ab57c50380a0e039b0731ada056ca4e`
 - runner: `1f88e5758873651662a6316b7ab51d58ced5627a`
 - scheduled workflow: `a6a010792a549b1eed422057ef01e78b226b2358`
-- five deterministic tests: `360862b4efcd1a640f141fd20d25bd5bb1ddf81d`
+- deterministic tests: `360862b4efcd1a640f141fd20d25bd5bb1ddf81d`
 - workflow test binding: `13022ac989190f7c625ff6345b469e93422a50e5`
-- first inspectable state: `e3718e5165c11f5729200b98f6f4bdfe1c8005f5`
-- finalization task added to graph: `5e6e38903a9fad625d263347b4b1a525dde2a030`
-- state reconciled through Publisher and Site completion: `88373f8db36a0a5fde84742ebc6604c9a8c2eb28`
+- tag-authority task split: `c2c25630f9958a3181527c34544b81a362cefa6f`
+- authority-aware execution state: `f3d2edf1d83dc61ba24757db295ed58788367c5d`
 
-Local validation:
+Validation command:
 
 ```bash
 PYTHONPATH=src python -m pytest -q tests/test_execution_orchestrator.py
@@ -53,91 +52,96 @@ Result: `5 passed`.
 - Repository: `StegVerse-Labs/crypto-bot`
 - Issue: `StegVerse-Labs/crypto-bot#7`
 - Workflow: `.github/workflows/first-accessibility-mark.yml`
-- Evidence: `data/first-accessibility-mark-status.json`
-- Evidence reference: `StegVerse-Labs/crypto-bot@11a4277112e6941eb0d40fd763297fd36970b0a3`
+- Evidence: `StegVerse-Labs/crypto-bot@11a4277112e6941eb0d40fd763297fd36970b0a3`
 
 ### MC-02 — COMPLETE
 
 - Repository: `GCAT-BCAT-Engine/Marketplace`
 - Issue: `GCAT-BCAT-Engine/Marketplace#1` — closed completed
 - Workflow: `.github/workflows/import-marketplace-coinbase-settlements.yml`
-- Evidence: `data/marketplace-coinbase-outbound-collection-status.json`
-- Evidence reference: `GCAT-BCAT-Engine/Marketplace@7bad3827613cfc3e882fb3b121567bfa689c581c`
-- acknowledgement: `sha256:c76c0decad6b82f9356a58598ef5e217f92802dc657e9f5ed95cae9b8f77f0a3`
-- sequence 2: `sha256:805000ab776b00863f5962514bcb8f843ccaa27ab9e0ac7821b92499b2e347f1`
+- Evidence: `GCAT-BCAT-Engine/Marketplace@7bad3827613cfc3e882fb3b121567bfa689c581c`
 
 ### MC-03 — COMPLETE
 
 - Repository: `GCAT-BCAT-Engine/Publisher`
 - Issue: `GCAT-BCAT-Engine/Publisher#19` — credential path closed superseded
 - Workflow: `.github/workflows/collect-marketplace-coinbase-release-evidence.yml`
-- Evidence: `data/marketplace-coinbase-release-evidence-status.json`
-- Evidence reference: `GCAT-BCAT-Engine/Publisher@913a89d0ec867c3c9b570ec8352be554790a45f0`
-- status: `VERIFIED`
-- status digest: `sha256:36a2f6da4b5af18375fd798ef954ec703ea719beefbab2d5949954b79ca1e477`
+- Evidence: `GCAT-BCAT-Engine/Publisher@913a89d0ec867c3c9b570ec8352be554790a45f0`
+- Result: `VERIFIED`
 
 ### MC-04 — COMPLETE
 
 - Repository: `StegVerse-Labs/Site`
 - Issue: `StegVerse-Labs/Site#131`
 - Workflow: `.github/workflows/import-marketplace-coinbase-accessibility.yml`
-- Evidence: `data/marketplace-coinbase-accessibility-status.json`
-- Evidence reference: `StegVerse-Labs/Site@99eeb59f757e4bdbaf020817b6ece5267349e93b`
-- state: `PAPER_ACCESSIBLE`
-- paper trading accessible: `true`
-- live trading accessible: `false`
+- Evidence: `StegVerse-Labs/Site@99eeb59f757e4bdbaf020817b6ece5267349e93b`
+- Result: `PAPER_ACCESSIBLE`, live trading false
 
-### MC-05 — RESOLVING
+### MC-05 — WAITING_FOR_AUTHORITY
+
+- Repository/control plane: `StegVerse-Labs/crypto-bot` GitHub Actions secrets
+- Issue: `StegVerse-Labs/crypto-bot#6`
+- Workflow: `.github/workflows/finalize-paper-release.yml`
+- Evidence: `data/paper-release-tag-authority-status.json`
+- Evidence commit: `5341db0caafa4ec32a54096c1e672de6b93c47f1`
+- Status digest: `sha256:d2bd73b5aa3ccdf94038107bae920cdd8e728f5c4550066c3d4e5a78523d0498`
+- Credential: `STEGVERSE_RELEASE_TAG_TOKEN`
+- Observed state: credential absent
+- Required capabilities: `contents:write`, `workflows:write`
+- Resolver: specific human-authority binding with scheduled machine observer
+- Retry: hourly
+- Development halt: false
+
+Hosted evidence:
+
+- controller run: `30740247498`
+- finalizer run: `30740257469`
+- finalizer job: `91476262033`
+- tests: `22 passed`
+- artifact ID: `8831029041`
+- artifact digest: `sha256:add14f349864fbd40c6d8f8663c3bd9e04d712227091f004e81d61019864de2f`
+
+### MC-06 — WAITING_FOR_EVIDENCE
 
 - Repository: `StegVerse-Labs/crypto-bot`
 - Issue: `StegVerse-Labs/crypto-bot#6`
 - Workflow: `.github/workflows/finalize-paper-release.yml`
-- Evidence path: `release_evidence/FINAL_PAPER_RELEASE_TAG_RECEIPT.json`
+- Dependency: MC-05
+- Required evidence: `release_evidence/FINAL_PAPER_RELEASE_TAG_RECEIPT.json`
 - Required tag: `marketplace-coinbase-paper-v1.0.0`
 - Required target: `73a0543ddb27a88fd4913e7dcfa2127132299baa`
-- Stop condition: committed tag receipt with `tag_verified=true`, exact tag and target, and `live_authority=NOT_GRANTED`.
+- Stop condition: digest-valid receipt with `tag_verified=true` and all authority fields `NOT_GRANTED`.
 
-## Finalization automation installed
+## Machine-owned continuation
 
-Crypto-bot now owns durable finalization evidence through:
+Crypto-bot owns:
 
-- `scripts/build_final_paper_release_receipt.py`
-- `scripts/verify_final_paper_release_tag.py`
-- `scripts/build_final_paper_release_tag_receipt.py`
-- `tests/test_final_paper_release_receipt.py`
-- `tests/test_final_paper_release_tag.py`
-- `tests/test_final_paper_release_tag_receipt.py`
-- `.github/workflows/finalize-paper-release.yml`
+- authority observer: `scripts/check_paper_release_tag_authority.py`
+- canonical finalizer: `.github/workflows/finalize-paper-release.yml`
+- dispatch/run observer: `.github/workflows/paper-release-finalization-controller.yml`
+- controller synchronizer: `scripts/sync_paper_release_finalization_state.py`
+- scheduled state sync: `.github/workflows/sync-paper-release-finalization-state.yml`
+- durable authority state and controller state.
 
-The workflow validates, generates the final receipt and authorization, creates or verifies the exact tag, writes a tag-observation receipt, commits all three receipts, closes crypto-bot issues `#5` and `#6`, and uploads retained evidence. Missing or invalid evidence cannot become success.
+When the named credential is bound, the hourly finalizer automatically retries the exact authorized tag, records the push result, creates and commits the tag receipt, closes crypto-bot issues `#5` and `#6`, and uploads retained evidence. Missing authority cannot become false success and does not stop unrelated work.
 
-## Incomplete work
+## Authority boundary
 
-1. Final tag receipt has not yet appeared.
-   - Location: `StegVerse-Labs/crypto-bot#6`
-   - Workflow: `StegVerse-Labs/crypto-bot/.github/workflows/finalize-paper-release.yml`
-   - Evidence: `StegVerse-Labs/crypto-bot/release_evidence/FINAL_PAPER_RELEASE_TAG_RECEIPT.json`
-   - Machine-observable release condition: exact committed tag receipt and resolvable tag at the required target commit.
-2. StegCore hosted orchestrator run metadata remains unobserved.
-   - Location: `StegVerse-Labs/StegCore#42`
-   - Workflow: `.github/workflows/execution-orchestrator.yml`
-   - Evidence required: run ID, job/steps/logs, and retained state artifact.
-3. Marketplace binary SQLite ledger and named hosted import artifact remain unobserved, although the exact packet/ack/sequence chain is committed and accepted.
-   - Location: closed Marketplace issue `#1` and `.github/workflows/import-marketplace-coinbase-settlements.yml`
-   - This does not reopen the completed logical collection task; it remains a hosted-evidence completeness item.
+The credential is a specific GitHub source-control capability for writing the exact authorized tag to a workflow-containing commit. It grants no Coinbase, financial, publication, release, execution, custody, withdrawal, payment, deployment, or live authority.
 
-## Continuation and authority boundary
+## Other evidence-completeness items
 
-The orchestrator schedules and observes work but grants no execution, publication, release, custody, withdrawal, financial, or live Coinbase authority. Repository tagging is source-control evidence and does not grant those authorities.
+- StegCore hosted orchestrator run metadata remains unobserved at `StegVerse-Labs/StegCore#42` and `.github/workflows/execution-orchestrator.yml`.
+- Marketplace hosted SQLite ledger/artifact identity remains unobserved at `.github/workflows/import-marketplace-coinbase-settlements.yml`; the logical packet/acknowledgement/transport task is complete and issue `#1` remains closed.
 
 ## Archive conditions
 
-Archive only after MC-05 is complete, the exact tag target and committed receipts are verified, issue closure is observed, and remaining hosted-evidence gaps have durable receipts or are formally superseded. Active work remains.
+Archive only after MC-05 and MC-06 complete, the exact tag and committed receipt are verified, issues `#5` and `#6` close by evidence, and remaining hosted-evidence gaps are preserved or formally superseded. Active work remains.
 
 ## Percentages
 
-- developed files: 6/6 core orchestrator files = 100%
-- task graph completion: 4/5 = 80%
-- deterministic validation: 100% for the current state engine
-- integration completion: Publisher and Site complete; final tag pending
-- goal activation: 88%
+- developed core orchestrator files: 6/6 = 100%
+- task graph completion: 4/6 = 66.7%
+- deterministic state-engine validation: 100%
+- integration completion: Marketplace, Publisher, and Site complete; source-control authority and exact tag remain
+- goal activation: 90%
