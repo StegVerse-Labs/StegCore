@@ -75,9 +75,17 @@ def main() -> int:
             failures.append(f"{task_id}:invalid claim_state")
         if not item["location"] or not item["owner"] or not item["next_action"]:
             failures.append(f"{task_id}:unaddressable task")
-        if item["claim_state"] in {"CLAIMED_FOR_IMPLEMENTATION", "CLAIMED_FOR_VALIDATION", "CLAIMED_FOR_INTEGRATION", "BLOCKED", "MACHINE_OWNED"}:
+        active_claim = item["claim_state"] in {
+            "CLAIMED_FOR_IMPLEMENTATION",
+            "CLAIMED_FOR_VALIDATION",
+            "CLAIMED_FOR_INTEGRATION",
+            "BLOCKED",
+            "MACHINE_OWNED",
+        }
+        unresolved = item.get("completion_state") not in {"COMPLETE", "CONTRACT_COMPLETE", "BOUNDARY_COMPLETE"}
+        if active_claim and (item.get("archival_dependency") is True or unresolved):
             if not item.get("release_condition"):
-                failures.append(f"{task_id}:active claim missing release_condition")
+                failures.append(f"{task_id}:active unresolved claim missing release_condition")
 
     consolidation = state.get("session_consolidation", {})
     if consolidation.get("unique_chat_only_requirements_remaining") != 0:
