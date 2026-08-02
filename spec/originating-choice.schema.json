@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/originating-choice.schema.json",
+  "title": "Originating Choice Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_id",
+    "goal_id",
+    "mode",
+    "current_state_evidence",
+    "insufficiency_statement",
+    "candidates",
+    "prospective_admissibility",
+    "standing_refs",
+    "consequence_assessment",
+    "reversibility",
+    "decision",
+    "realization_boundary"
+  ],
+  "properties": {
+    "receipt_id": {"type": "string", "minLength": 8},
+    "goal_id": {"type": "string", "pattern": "^OC-[0-9]{3,}$"},
+    "mode": {"enum": ["DISCOVERY", "INVENTION", "IMAGINATION", "CHOICE"]},
+    "current_state_evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "insufficiency_statement": {"type": "string", "minLength": 20},
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "description", "novelty_basis", "expected_advance"],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 20},
+          "novelty_basis": {"type": "string", "minLength": 20},
+          "expected_advance": {"type": "string", "minLength": 20}
+        }
+      }
+    },
+    "prospective_admissibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "basis"],
+      "properties": {
+        "status": {"enum": ["ADMIT", "DENY", "REVIEW_REQUIRED"]},
+        "basis": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "standing_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "consequence_assessment": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "reversibility": {"enum": ["REVERSIBLE", "PARTIALLY_REVERSIBLE", "IRREVERSIBLE", "UNKNOWN"]},
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "reason"],
+      "properties": {
+        "outcome": {"enum": ["SELECT", "REFUSE", "DEFER"]},
+        "candidate_id": {"type": ["string", "null"]},
+        "reason": {"type": "string", "minLength": 20}
+      }
+    },
+    "realization_boundary": {"type": "string", "minLength": 20}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"decision": {"properties": {"outcome": {"const": "SELECT"}}}}},
+      "then": {"properties": {"decision": {"required": ["candidate_id"]}}}
+    }
+  ]
+}
