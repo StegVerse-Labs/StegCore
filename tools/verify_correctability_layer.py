@@ -26,9 +26,17 @@ def evaluate(record: dict) -> dict:
         return {"admissible": False, "errors": errors}
 
     authority = record.get("authority", {})
+    authority_required = {"authority_id", "valid", "not_before", "not_after"}
+    authority_missing = sorted(authority_required - set(authority))
+    if authority_missing:
+        errors.append(f"authority_missing_required:{','.join(authority_missing)}")
+        return {"admissible": False, "errors": errors}
+
     detected = parse_time(record["detected_at"])
     irreversible = parse_time(record["irreversible_at"])
-    completion = detected + timedelta(milliseconds=record["authorization_latency_ms"] + record["intervention_latency_ms"])
+    completion = detected + timedelta(
+        milliseconds=record["authorization_latency_ms"] + record["intervention_latency_ms"]
+    )
 
     if record["intervention"] not in ALLOWED:
         errors.append("intervention_not_allowed")
@@ -56,7 +64,16 @@ def evaluate(record: dict) -> dict:
 
 
 def main() -> int:
-    expected = {"valid.json": True, "late.json": False, "invalid_authority.json": False}
+    expected = {
+        "valid.json": True,
+        "late.json": False,
+        "invalid_authority.json": False,
+        "unreachable.json": False,
+        "unenforceable.json": False,
+        "invalid_scope.json": False,
+        "missing_evidence.json": False,
+        "unsupported_intervention.json": False,
+    }
     cases = []
     ok = True
     for name, expected_admissible in expected.items():
@@ -64,13 +81,19 @@ def main() -> int:
         result = evaluate(data)
         passed = result["admissible"] == expected_admissible
         ok = ok and passed
-        cases.append({"fixture": name, "expected_admissible": expected_admissible, "passed": passed, "result": result})
+        cases.append({
+            "fixture": name,
+            "expected_admissible": expected_admissible,
+            "passed": passed,
+            "result": result,
+        })
 
     report = {
         "layer": "governed_correctability",
         "status": "pass" if ok else "fail",
         "verification_command": "python tools/verify_correctability_layer.py",
-        "cases": cases
+        "fixture_count": len(cases),
+        "cases": cases,
     }
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.write_text(json.dumps(report, indent=2) + "\n")
