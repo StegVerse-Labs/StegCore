@@ -1,0 +1,37 @@
+{
+  "schema_version": "HIL-STEGCORE-LIFECYCLE-CONTRACT-v1",
+  "contract_id": "HIL-STEGCORE-LIFECYCLE-001",
+  "states": [
+    "PARTICIPANT_RECORDED",
+    "RECEIVED_BY_STEGVERSE",
+    "RECEIVER_HASH_VERIFIED",
+    "RECONSTRUCTED_HASH_VERIFIED",
+    "PRIVATE_REVIEW_ACCEPTED",
+    "MASTER_RECORD_CANDIDATE_VALIDATED",
+    "STEGCORE_ACTIVATED"
+  ],
+  "terminal_non_success_states": ["QUARANTINED", "REJECTED"],
+  "required_identity_fields": [
+    "submission_id",
+    "primary_sha256",
+    "prompt_sha256",
+    "response_sha256",
+    "site_package_commit",
+    "tvc_receipt_id"
+  ],
+  "authority_fields": [
+    "publication_authorized",
+    "release_authorized",
+    "master_record_created"
+  ],
+  "rules": {
+    "monotonic_progression_required": true,
+    "skipped_states_prohibited": true,
+    "identity_drift_prohibited": true,
+    "publication_requires_separate_decision": true,
+    "release_requires_separate_decision": true,
+    "activation_does_not_grant_publication_or_release": true,
+    "unobserved_dependency_becomes_internal_action": true,
+    "external_task_classification_prohibited": true
+  }
+}
