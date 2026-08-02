@@ -1,0 +1,69 @@
+{
+  "registry_version": "1.0.0",
+  "goal_id": "STEGVA-BOOTSTRAP-001",
+  "owner_repository": "StegVerse-Labs/StegCore",
+  "future_destination": "StegVerse-Labs/StegVA",
+  "active_goal": "Establish a synthetic-only, fail-closed StegVA architecture and verification lane without collecting production veteran data.",
+  "states": ["COMPLETE", "BLOCKED", "RETRY", "REVIEW_REQUIRED", "FAILED"],
+  "tasks": [
+    {
+      "id": "STEGVA-TASK-001",
+      "location": "docs/STEGVA_MIRROR_HANDOFF.md",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "completion_evidence": "commit:fd4b31ad0585399c6e276059082c0d7d7761f633"
+    },
+    {
+      "id": "STEGVA-TASK-002",
+      "location": "stegva/contracts/synthetic_intake.schema.json",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "release_condition": "schema and validator installed"
+    },
+    {
+      "id": "STEGVA-TASK-003",
+      "location": "stegva/contracts/cross_repo_exchange_receipt.schema.json",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "release_condition": "schema and validator installed"
+    },
+    {
+      "id": "STEGVA-TASK-004",
+      "location": "stegva/contracts/public_finance_event.schema.json",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "release_condition": "schema and validator installed"
+    },
+    {
+      "id": "STEGVA-TASK-005",
+      "location": "stegva/automation/validate_bootstrap.py",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "COMPLETE",
+      "release_condition": "hosted workflow produces successful receipt"
+    },
+    {
+      "id": "STEGVA-TASK-006",
+      "location": ".github/workflows/stegva-bootstrap-verify.yml",
+      "owner": "StegVerse-Labs/StegCore",
+      "status": "RETRY",
+      "release_condition": "GitHub Actions run concludes success and receipt artifact is inspectable"
+    },
+    {
+      "id": "STEGVA-TASK-007",
+      "location": "StegVerse-Labs/StegVA",
+      "owner": "StegVA nonprofit formation workstream",
+      "status": "BLOCKED",
+      "release_condition": "dedicated repository exists and grants repository mutation authority"
+    },
+    {
+      "id": "STEGVA-TASK-008",
+      "location": "stegva/compliance/current_law_control_map.json",
+      "owner": "StegVA legal-compliance workstream",
+      "status": "REVIEW_REQUIRED",
+      "release_condition": "current primary-source legal and VA interface research is reviewed and committed"
+    }
+  ],
+  "next_executable_task": "STEGVA-TASK-006",
+  "duplicate_execution_key": "STEGVA-BOOTSTRAP-001:1.0.0",
+  "production_data_allowed": false
+}
