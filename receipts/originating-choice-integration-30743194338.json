@@ -1,0 +1,42 @@
+{
+  "task_id": "OC-001-INTEGRATION",
+  "status": "COMPLETE",
+  "workflow": "Originating Choice Validation",
+  "run_id": 30743194338,
+  "run_number": 5,
+  "head_sha": "0b45a6df69c2976a92002fe05b75ee9b19941384",
+  "job_id": 91484141795,
+  "job_name": "validate",
+  "job_conclusion": "success",
+  "validation_receipt": {
+    "status": "COMPLETE",
+    "validator": "originating-choice-v1",
+    "decision": "SELECT",
+    "receipt_id": "oc-receipt-0001"
+  },
+  "semantic_self_test": {
+    "status": "COMPLETE",
+    "positive_cases": 1,
+    "negative_cases": 4
+  },
+  "integration_receipt": {
+    "integration_receipt_id": "integration-oc-receipt-0001",
+    "validation_status": "COMPLETE",
+    "route": "GOVERNED_REVIEW",
+    "execution_authority": false,
+    "next_executable_task": "ASSIGN_EXISTING_GOVERNED_REVIEW_BOUNDARY"
+  },
+  "integration_self_test": {
+    "status": "COMPLETE",
+    "positive_routes": 5,
+    "execution_authority": false
+  },
+  "artifact": {
+    "id": 8831984779,
+    "name": "originating-choice-validation-30743194338",
+    "size_in_bytes": 1162,
+    "digest": "sha256:fa3b34c961f84183ae9968e322cda6158a10a6132f2d76d409c09c665f1af46b",
+    "expires_at": "2026-09-01T10:09:50Z"
+  },
+  "next_executable_task": "OC-001-PROPAGATION-HANDOFF-INSPECTION"
+}
