@@ -1,0 +1,57 @@
+name: Originating Choice Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/ORIGINATING_CHOICE_MIRROR_HANDOFF.md"
+      - "spec/originating-choice.schema.json"
+      - "tools/validate_originating_choice.py"
+      - "examples/originating-choice*.json"
+      - ".github/workflows/originating-choice-validate.yml"
+  pull_request:
+    paths:
+      - "docs/ORIGINATING_CHOICE_MIRROR_HANDOFF.md"
+      - "spec/originating-choice.schema.json"
+      - "tools/validate_originating_choice.py"
+      - "examples/originating-choice*.json"
+      - ".github/workflows/originating-choice-validate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: originating-choice-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate canonical receipt
+        run: |
+          mkdir -p artifacts/originating-choice
+          python tools/validate_originating_choice.py \
+            spec/originating-choice.schema.json \
+            examples/originating-choice.valid.json \
+            --receipt-output artifacts/originating-choice/validation-receipt.json
+
+      - name: Run fail-closed semantic self-tests
+        run: |
+          python tools/validate_originating_choice.py \
+            --self-test \
+            --receipt-output artifacts/originating-choice/self-test-receipt.json
+
+      - name: Preserve validation receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: originating-choice-validation-${{ github.run_id }}
+          path: artifacts/originating-choice/
+          if-no-files-found: error
+          retention-days: 30
