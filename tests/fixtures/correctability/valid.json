@@ -1,0 +1,14 @@
+{
+  "correction_id": "CORR-VALID-001",
+  "transition_id": "TRANSITION-001",
+  "authority": {"authority_id": "AUTH-001", "valid": true, "not_before": "2026-08-02T06:00:00Z", "not_after": "2026-08-02T07:00:00Z"},
+  "intervention": "pause",
+  "detected_at": "2026-08-02T06:40:00Z",
+  "authorization_latency_ms": 1000,
+  "intervention_latency_ms": 2000,
+  "irreversible_at": "2026-08-02T06:40:10Z",
+  "pathway_reachable": true,
+  "intervention_enforceable": true,
+  "scope_valid": true,
+  "evidence_references": ["evidence://corr-valid-001"]
+}
