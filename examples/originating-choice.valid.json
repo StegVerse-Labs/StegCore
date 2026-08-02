@@ -1,0 +1,28 @@
+{
+  "receipt_id": "oc-receipt-0001",
+  "goal_id": "OC-001",
+  "mode": "CHOICE",
+  "current_state_evidence": ["docs/ORIGINATING_CHOICE_MIRROR_HANDOFF.md"],
+  "insufficiency_statement": "Existing task selection can continue known work but cannot originate and govern a previously unavailable future state.",
+  "candidates": [
+    {
+      "candidate_id": "candidate-a",
+      "description": "Create a prospective-admissibility receipt that separates origination from execution authority.",
+      "novelty_basis": "No existing StegCore artifact defines a durable choice-space construction receipt with explicit refusal support.",
+      "expected_advance": "StegCore can preserve newly generated possibilities without treating imagination as authorization to execute."
+    }
+  ],
+  "prospective_admissibility": {
+    "status": "REVIEW_REQUIRED",
+    "basis": ["Candidate generation is permitted; realization requires an existing governed execution authority."]
+  },
+  "standing_refs": ["docs/STEGVERSE_ECOSYSTEM_MANAGEMENT_MIRROR_HANDOFF.md"],
+  "consequence_assessment": ["Adds a new pre-execution governance record without changing deployed runtime behavior."],
+  "reversibility": "REVERSIBLE",
+  "decision": {
+    "outcome": "SELECT",
+    "candidate_id": "candidate-a",
+    "reason": "The candidate establishes the missing durable boundary while preserving explicit human and governed execution controls."
+  },
+  "realization_boundary": "This receipt authorizes specification and validation only; it does not authorize deployment or irreversible action."
+}
