@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/authority_record.schema.json",
+  "title": "StegVerse Corrective Authority Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["authority_id", "subject_identity", "authority_class", "scope", "not_before", "not_after", "revocation_state", "evidence_references"],
+  "properties": {
+    "authority_id": {"type": "string", "minLength": 1},
+    "subject_identity": {"type": "string", "minLength": 1},
+    "authority_class": {"enum": ["human", "guardian", "council", "policy", "emergency", "delegated"]},
+    "scope": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "allowed_interventions": {"type": "array", "items": {"enum": ["pause", "deny", "revoke", "quarantine", "rollback", "redirect", "supersede", "compensate", "escalate"]}, "minItems": 1, "uniqueItems": true},
+    "not_before": {"type": "string", "format": "date-time"},
+    "not_after": {"type": "string", "format": "date-time"},
+    "revocation_state": {"enum": ["active", "suspended", "revoked", "expired"]},
+    "issuer_identity": {"type": ["string", "null"]},
+    "delegation_reference": {"type": ["string", "null"]},
+    "evidence_references": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+  }
+}
