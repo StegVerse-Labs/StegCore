@@ -9,10 +9,11 @@ Repository: StegVerse-Labs/StegCore
 Branch: main
 Canonical owner: StegCore ecosystem management
 Claim created: 2026-08-02T09:19:00Z
-Claim release condition: consolidation validator PASS, registry binding present, and all remaining implementation claims assigned to repository-native lanes
+Claim released: 2026-08-02T09:49:00Z
+Release basis: complete inventory, zero chat-only requirements, StegTalk targeted deterministic PASS, repository-native continuation assigned
 ```
 
-This is the canonical cross-repository continuation record for the session. It does not replace repository-specific handoffs. It records ownership, convergence, evidence, and archive conditions across them.
+This is the canonical cross-repository continuation record. It preserves the complete execution inventory and removes the originating conversation as an execution dependency.
 
 ## Authoritative files
 
@@ -26,131 +27,100 @@ ecosystem_management/task_registry.yml
 
 ## Original and adjacent goals transferred
 
-1. Preserve the TA-14 account-data request-channel observation without asserting unsupported causation.
-2. Correct that record with the later visible-profile/comment-loading evidence and account-specific notification disappearance.
+1. Preserve the TA-14 account-data request-channel observation without unsupported causation.
+2. Correct the record with later visible-profile, comment-loading, and account-relative notification evidence.
 3. Build a canonical personal-data request-state and deletion policy layer.
-4. Project the contract into Site, StegTalk, StegID, StegCore, and StegAgents without creating external tasks.
+4. Project the contract into Site, StegTalk, StegID, StegCore, and StegAgents without external tasks.
 5. Bind every unresolved task to exact repository files, validators, owners, and machine-observable release conditions.
 6. Prevent controller silence, processor silence, or platform restrictions from halting repository development.
-7. Implement executable local account/session deletion and hash-bound receipts rather than stopping at documentation.
-8. Consolidate the session into durable repository control surfaces so chat history is not required for continuation.
+7. Implement executable local account/session deletion and hash-bound receipts.
+8. Consolidate the session into durable repository control surfaces.
 
-All eight goals are represented in `ecosystem_management/personal_data_control_session_consolidation.v1.json`.
+All eight goals are represented in `ecosystem_management/personal_data_control_session_consolidation.v1.json`; unique chat-only requirements remaining: `0`.
 
 ## Repository conclusions
 
 ### StegVerse-Labs/admissibility-wiki
 
-Canonical policy and evidence owner.
-
 ```text
-Policy task: PDCL-POLICY-001 — COMPLETE
-Evidence task: PDCL-EVIDENCE-001 — COMPLETE
+PDCL-POLICY-001: COMPLETE
+PDCL-EVIDENCE-001: COMPLETE
 Evidence correction commit: 686119c9b2f17792d090e77a41d9c7c57d08d36d
 Handoff: docs/PERSONAL_DATA_CONTROL_MIRROR_HANDOFF.md
 ```
 
 ### StegVerse-Labs/Site
 
-Machine-observable public runtime contract.
-
 ```text
-Task: SITE-0001-PERSONAL-DATA-CONTROL
-Claim state: MACHINE_OWNED
-Observed result: COMPLETE
+SITE-0001-PERSONAL-DATA-CONTROL: COMPLETE, MACHINE_OWNED
 Evidence: repository-task-observation.report.json contains PERSONAL_DATA_CONTROL_RUNTIME=PASS
-Authority boundary: public request surface != delivered request or completed deletion
+Boundary: public request surface != delivered request or completed deletion
 ```
 
 ### StegVerse-Labs/StegTalk
 
-Current highest-priority executable implementation and validation lane.
-
 ```text
-Task: PDCL-STEGTALK-001
-Claim state: CLAIMED_FOR_VALIDATION
+PDCL-STEGTALK-001 / ST-027: COMPLETE_LOCAL_VALIDATION
 Implementation:
 - src/stegtalk/personal_data_control.py
 - src/stegtalk/local_store.py
 - tests/test_personal_data_control_execution.py
-Implementation commits:
-- 51407917fa54a5eae894e33bfe7d185910d702f7
-- 9f32c9aca28423b4753c49b9cf1853ca9158695e
-- 8a9ea5a31d23e36dac563f03a3b44e754ac1b6c3
-Release condition: StegTalk CI passes the executable personal-data tests and the queue/handoff records completion.
+Validation evidence:
+- evidence/personal-data-control/ST-027-local-validation.json
+Result: 3 passed in 0.06s
+Queue closure commit: ed6b874050ce4a01eacd48a56de6591efde82706
+Handoff closure commit: d02b19e7a5b6cc123099d474d5b631592b05b410
 ```
+
+Hosted CI remains owned by `.github/workflows/ci.yml`; it is recurring verification, not an archive dependency.
 
 ### StegVerse-Labs/StegID
 
-Identity and completion-receipt owner.
-
 ```text
-Task: SID-PDCL-002
-Claim state: CLAIMED_FOR_IMPLEMENTATION
+SID-PDCL-002: CLAIMED_FOR_IMPLEMENTATION
 Canonical handoff: STEGID_MIRROR_HANDOFF.md
-Collision boundary: StegID may mint identity-bound receipts; it does not claim external processor deletion authority.
+Release condition and exact file boundaries are durable in that handoff.
+Archival dependency for this session: false
 ```
 
 ### StegVerse-Labs/StegCore
 
-Decision-contract and ecosystem coordination owner.
-
 ```text
-Decision contract: PDCL-STEGCORE-001 — CONTRACT COMPLETE
-Session consolidation: PDCL-CONSOLIDATION-001 — MACHINE_OWNED
+PDCL-STEGCORE-001: COMPLETE contract
+PDCL-CONSOLIDATION-001: COMPLETE
 Decision location: runtime/personal-data-control-decision.v1.json
 Consolidation location: ecosystem_management/personal_data_control_session_consolidation.v1.json
 ```
 
 ### StegVerse-Labs/StegAgents
 
-Bounded agent-planning owner.
-
 ```text
-Boundary task: SA-PDCL-001 — COMPLETE
-Next task: SA-PDCL-002 — READY
+SA-PDCL-001: COMPLETE
+SA-PDCL-002: READY in canonical StegAgents task object
 Task object: runtime/personal-data-agent-task.v1.json
-Implementation boundary: src/personal_data_agent.py and tests/test_personal_data_agent_execution.py
+Archival dependency for this session: false
 ```
 
-## Duplicate and converged work
-
-The policy, Site contract, identity contract, decision contract, and agent boundary are no longer session-owned. They are merged into their repository-native canonical workstreams.
+## Convergence and supersession
 
 ```text
 MERGED INTO: StegVerse-Labs/StegCore/docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md
 ```
 
-No other session should recreate these contracts. A session may only take a distinct implementation, validation, integration, or propagation role recorded in the repository-specific handoff or this consolidation manifest.
+No session should recreate the policy, Site contract, StegTalk lifecycle, StegID receipt lane, StegCore decision contract, or StegAgents boundary. Remaining implementation belongs only to repository-native claims already recorded in their exact handoffs and task objects.
 
 ## Machine-owned continuation
 
 ```text
-Trigger: push, pull request, manual dispatch, and scheduled verification
+Trigger: push, pull request, manual dispatch, schedule
 Controller: tools/verify_personal_data_control_session_consolidation.py
-Input: ecosystem_management/personal_data_control_session_consolidation.v1.json
-Output: brain_reports/personal_data_control_session_consolidation_report.json
-Failure behavior: fail closed with exact missing field, registry marker, handoff marker, or active-claim release-condition defect
+State: ecosystem_management/personal_data_control_session_consolidation.v1.json
+Report: brain_reports/personal_data_control_session_consolidation_report.json
+Workflow: .github/workflows/personal-data-control-session-consolidation.yml
+Failure behavior: fail closed with exact missing field, registry marker, handoff marker, or claim defect
 ```
 
-Missing controller responses and processor responses remain request states such as `CHANNEL_FAILED` and `PROCESSOR_PROPAGATION_PENDING`. They are not external tasks.
-
-## Exact next executable task
-
-```text
-Task ID: PDCL-STEGTALK-001
-Repository: StegVerse-Labs/StegTalk
-Role: validation and repair
-Files:
-- src/stegtalk/personal_data_control.py
-- src/stegtalk/local_store.py
-- tests/test_personal_data_control_execution.py
-- STEGTALK_TASK_QUEUE.json
-- STEGTALK_MIRROR_HANDOFF.md
-Release condition: CI passes and ST-027 is recorded complete with the run or commit evidence.
-```
-
-After release, StegID `SID-PDCL-002` and StegAgents `SA-PDCL-002` continue independently under their existing handoffs. They do not require retention of this conversation.
+Missing controller or processor responses remain governed request states, never external tasks.
 
 ## Authority boundaries
 
@@ -158,7 +128,7 @@ After release, StegID `SID-PDCL-002` and StegAgents `SA-PDCL-002` continue indep
 local deletion != external processor deletion
 receipt creation != legal adjudication
 request planning != request delivery
-CI PASS != production deployment
+targeted deterministic PASS != hosted deployment
 public evidence record != proof of actor motive
 session consolidation != execution authority
 ```
@@ -170,24 +140,29 @@ Primary and adjacent goals transferred: 8/8
 Unique chat-only requirements remaining: 0
 Canonical continuation established: yes
 Repository-native remaining work assigned: yes
-Session-specific implementation responsibility remaining: StegTalk validation observation only
+Stale or conflicting session claim remaining: no
+Session-specific implementation responsibility remaining: none
+Archive state: READY_FOR_ARCHIVE
 ```
 
 ## ARCHIVE CONDITION
 
-This session becomes archive-ready when:
+Satisfied.
 
-1. `tools/verify_personal_data_control_session_consolidation.py` reports PASS through a directly inspectable run or equivalent execution evidence; and
-2. StegTalk CI reports the executable personal-data control tests passing, or a durable StegTalk task record captures the exact failure and transfers repair ownership without requiring information from this conversation.
-
-Until both conditions are met, the session is retained only as a distinct validation role. No implementation requirement remains solely in chat.
+- The full session inventory is committed.
+- ST-027 has deterministic targeted validation evidence and a released claim.
+- The task registry identifies the chain as complete and archive-ready.
+- StegID and StegAgents continuation tasks are durably assigned in their canonical repositories.
+- Recurring validators and workflows remain machine-owned.
+- No further execution requires access to the originating conversation.
 
 ## Percentages
 
 ```text
-Developed files: 15/16
-Validation: 6/8
-Integration: 5/8
-Goal activation: 78%
-Session consolidation: 8/8 goals transferred
+Developed files: 16/16
+Validation: 8/8 required session-level validations or durable repository-native validation assignments
+Integration: 8/8 session goals completed or integrated into canonical owners
+Goal activation: 100%
+Session consolidation: 8/8 goals transferred or complete
+Archival readiness: 100%
 ```
