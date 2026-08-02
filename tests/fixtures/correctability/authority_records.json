@@ -1,0 +1,28 @@
+{
+  "AUTH-HUMAN-001": {
+    "authority_id": "AUTH-HUMAN-001",
+    "subject_identity": "human:operator-001",
+    "authority_class": "human",
+    "scope": ["transition:TRANSITION-001"],
+    "allowed_interventions": ["pause", "deny", "rollback", "compensate", "escalate"],
+    "not_before": "2026-08-02T06:00:00Z",
+    "not_after": "2026-08-02T07:00:00Z",
+    "revocation_state": "active",
+    "issuer_identity": "council:stegverse",
+    "delegation_reference": null,
+    "evidence_references": ["evidence://authority-human-001"]
+  },
+  "AUTH-REVOKED-001": {
+    "authority_id": "AUTH-REVOKED-001",
+    "subject_identity": "human:operator-002",
+    "authority_class": "human",
+    "scope": ["transition:TRANSITION-001"],
+    "allowed_interventions": ["pause"],
+    "not_before": "2026-08-02T06:00:00Z",
+    "not_after": "2026-08-02T07:00:00Z",
+    "revocation_state": "revoked",
+    "issuer_identity": "council:stegverse",
+    "delegation_reference": null,
+    "evidence_references": ["evidence://authority-revoked-001"]
+  }
+}
