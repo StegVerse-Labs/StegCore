@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "goal_id": "SV-PDCL-ECOSYSTEM-001",
+  "result": "PENDING_WORKFLOW_OBSERVATION",
+  "failures": [],
+  "task_count": 8,
+  "external_tasks_allowed": false,
+  "chat_session_ownership_allowed": false,
+  "next_executable_task": "PDCL-STEGTALK-001 validation observation",
+  "authority_effect": false
+}
