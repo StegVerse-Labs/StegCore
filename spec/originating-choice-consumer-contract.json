@@ -1,0 +1,45 @@
+{
+  "contract_id": "OC-CONSUMER-001",
+  "version": "1.0.0",
+  "source_schema": "spec/originating-choice.schema.json",
+  "validator": "tools/validate_originating_choice.py",
+  "authority_boundary": "This contract routes validated choice receipts for governed handling and never grants execution authority.",
+  "routes": [
+    {
+      "when": {"prospective_admissibility.status": "DENY", "decision.outcome": "REFUSE"},
+      "route": "CLOSED_REFUSAL",
+      "terminal": true
+    },
+    {
+      "when": {"prospective_admissibility.status": "REVIEW_REQUIRED"},
+      "route": "GOVERNED_REVIEW",
+      "terminal": false
+    },
+    {
+      "when": {"reversibility": ["IRREVERSIBLE", "PARTIALLY_REVERSIBLE", "UNKNOWN"]},
+      "route": "GOVERNED_REVIEW",
+      "terminal": false
+    },
+    {
+      "when": {"prospective_admissibility.status": "ADMIT", "decision.outcome": "SELECT", "reversibility": "REVERSIBLE"},
+      "route": "REALIZATION_REVIEW",
+      "terminal": false
+    },
+    {
+      "when": {"decision.outcome": "DEFER"},
+      "route": "DEFERRED_REVIEW",
+      "terminal": false
+    }
+  ],
+  "required_output": [
+    "integration_receipt_id",
+    "goal_id",
+    "source_receipt_id",
+    "validation_status",
+    "route",
+    "execution_authority",
+    "next_executable_task"
+  ],
+  "execution_authority": false,
+  "fail_closed_route": "REVIEW_REQUIRED"
+}
