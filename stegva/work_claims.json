@@ -1,0 +1,58 @@
+{
+  "claim_registry_version": "1.0.0",
+  "goal_id": "STEGVA-BOOTSTRAP-001",
+  "allowed_states": ["UNCLAIMED", "CLAIMED_FOR_IMPLEMENTATION", "CLAIMED_FOR_VALIDATION", "CLAIMED_FOR_INTEGRATION", "MACHINE_OWNED", "BLOCKED", "COMPLETE", "SUPERSEDED", "MERGED_INTO_CANONICAL_WORKSTREAM"],
+  "claims": [
+    {
+      "task_id": "STEGVA-TASK-006",
+      "originating_goal": "Verify the synthetic-only StegVA bootstrap lane.",
+      "repository": "StegVerse-Labs/StegCore",
+      "branch": "main",
+      "surfaces": [".github/workflows/stegva-bootstrap-verify.yml", "stegva/automation/validate_bootstrap.py", "stegva/receipts/bootstrap-verification.json"],
+      "claimant": "StegVA Bootstrap Verify GitHub Actions lane",
+      "role": "CLAIMED_FOR_VALIDATION",
+      "claim_timestamp": "2026-08-02T08:18:00Z",
+      "claim_expiration": "P2D",
+      "release_condition": "A successful workflow run and artifact are inspected and referenced in the handoff, or the claim is renewed with a run or failure receipt.",
+      "expected_evidence": ["workflow run ID", "job and step conclusions", "logs", "artifact ID", "bootstrap-verification.json"],
+      "collision_boundary": "Other sessions may inspect evidence but must not create a parallel validator or workflow for this goal.",
+      "next_task_after_release": "STEGVA-TASK-007"
+    },
+    {
+      "task_id": "STEGVA-TASK-007",
+      "originating_goal": "Transfer the verified bootstrap to a dedicated StegVA repository.",
+      "repository": "StegVerse-Labs/StegCore",
+      "branch": "main",
+      "surfaces": ["issues/44", "StegVerse-Labs/StegVA"],
+      "claimant": "StegVA nonprofit formation workstream",
+      "role": "BLOCKED",
+      "claim_timestamp": "2026-08-02T07:56:56Z",
+      "claim_expiration": "P30D",
+      "release_condition": "The dedicated repository exists and connected mutation authority is available; otherwise the issue must be renewed with current blocking evidence.",
+      "expected_evidence": ["repository metadata", "installed destination files", "successful destination workflow", "StegCore transfer receipt"],
+      "collision_boundary": "No session may create a competing StegVA bootstrap destination or copy VAwatchdog evidence records.",
+      "next_task_after_release": "destination validation and StegCore transfer closure"
+    },
+    {
+      "task_id": "STEGVA-TASK-008",
+      "originating_goal": "Review legal, privacy, security, accessibility, accounting, representation, and official-channel controls.",
+      "repository": "StegVerse-Labs/StegCore",
+      "branch": "main",
+      "surfaces": ["stegva/compliance/current_law_control_map.json"],
+      "claimant": "StegVA legal-compliance workstream",
+      "role": "CLAIMED_FOR_VALIDATION",
+      "claim_timestamp": "2026-08-02T08:07:09Z",
+      "claim_expiration": "P30D",
+      "release_condition": "Qualified review evidence is committed, or the claim is renewed with named reviewer status and unresolved control IDs.",
+      "expected_evidence": ["review receipt", "reviewer role", "control dispositions", "source-version dates", "approved residual risks"],
+      "collision_boundary": "Research may be improved, but no session may convert REVIEW_REQUIRED controls to production authority without qualified evidence.",
+      "next_task_after_release": "controlled pilot eligibility review"
+    }
+  ],
+  "stale_claim_rule": "At expiration, a claim must be released, renewed with current evidence, or changed to BLOCKED with a machine-observable release condition.",
+  "session_claim": {
+    "role": "MERGED_INTO_CANONICAL_WORKSTREAM",
+    "canonical_location": "StegVerse-Labs/StegCore/docs/STEGVA_MIRROR_HANDOFF.md",
+    "unique_execution_responsibility_remaining": false
+  }
+}
