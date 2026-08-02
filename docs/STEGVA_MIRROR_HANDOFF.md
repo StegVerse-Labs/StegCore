@@ -1,17 +1,22 @@
 # StegVA Mirror Handoff
 
-## Target
+## Active goal
+
+```text
+Goal ID: STEGVA-BOOTSTRAP-001
+Goal: Establish a synthetic-only, fail-closed StegVA architecture and verification lane without collecting production veteran data.
+```
+
+## Repository and branch
 
 ```text
 Interim authority: StegVerse-Labs/StegCore
-Future destination: dedicated StegVA repository and StegVA.org public service
+Branch: main
+Future destination: StegVerse-Labs/StegVA
+Public service target: StegVA.org
 ```
 
-## Purpose
-
-StegVA is a proposed veteran-first nonprofit digital service intended to help United States military veterans prepare, review, and submit disability-benefit claims and related evidence through the simplest practicable workflow while preserving veteran agency, privacy, accessibility, and legal accountability.
-
-This document is the durable continuation record for StegVA until a dedicated repository contains an equivalent or superseding `*_MIRROR_HANDOFF.md`.
+This is the authoritative StegVA continuation record until a dedicated StegVA repository contains a verified superseding handoff and StegCore records the transfer receipt.
 
 ## Constitutional relationship
 
@@ -23,241 +28,254 @@ Consequential actions require:
 2. an accountable human approval;
 3. an immutable decision and execution record.
 
-A persistent Companion or Steward AI may help a veteran understand options and maintain consented continuity, but it may not hold regulated authority over that veteran. Regulated execution must remain structurally separated.
+A Companion or Steward AI may support a veteran but may not hold regulated authority over that veteran. Regulated execution must use a separate identity, charter, memory boundary, credential scope, and audit namespace.
 
-## AI Entity roles
+## Authoritative files
 
-### Class I — Companion / Steward
+```text
+docs/STEGVA_MIRROR_HANDOFF.md
+docs/STEGVA_VAWATCHDOG_PARALLEL_WORK_RECEIPT.md
+stegva/task_registry.json
+stegva/receipts/implementation-2026-08-02.md
+stegva/contracts/synthetic_intake.schema.json
+stegva/contracts/cross_repo_exchange_receipt.schema.json
+stegva/contracts/public_finance_event.schema.json
+stegva/compliance/current_law_control_map.json
+stegva/docs/SPLIT_IDENTITY_THREAT_MODEL.md
+stegva/docs/PUBLIC_FINANCE_LEDGER_SPEC.md
+stegva/examples/synthetic_intake.valid.json
+stegva/examples/synthetic_intake.invalid-production.json
+stegva/automation/validate_bootstrap.py
+.github/workflows/stegva-bootstrap-verify.yml
+StegVerse-Labs/StegCore issue #44
+StegVerse-Labs/VAwatchdog/docs/STEGVA_INTEGRATION_BOUNDARY.md
+```
 
-May:
+## Completed work
 
-- explain claims concepts and process steps in plain language;
-- help the veteran organize questions and documents;
-- maintain long-term continuity within consent boundaries.
+### Continuity and parallel ownership
 
-May not:
+- Interim StegVA architecture handoff committed at `fd4b31ad0585399c6e276059082c0d7d7761f633`.
+- VAwatchdog integration boundary committed in VAwatchdog at `74d93735ef5414cb3539464a4cb0685a94f07ee6`.
+- VAwatchdog handoff updated at `b03aac11d6987172a473f615200853fbd8aa534f`.
+- StegCore parallel-work receipt committed at `9b5ae5fdf0ddd1f7be7535ff443d500ea83edc49`.
+- Ecosystem registry integration committed at `6ba6d402e68938613d503cecaf19412708449aa5`.
 
-- access raw regulated identifiers without mediation;
-- re-identify protected records;
-- submit claims or act as a compliance authority.
+### Contracts
 
-### Class II — Professional / Domain
+- Synthetic-only intake schema committed at `9083372cbdf92b91f4ce897a6ff28dc9a9679532`.
+- Cross-repository exchange receipt schema committed at `fd009f0a727d5b9f050945d4ff43e0cf48e4eb04`.
+- Public finance event schema committed at `9d1259dd62db880f3a7256f023b0c3f633368b53`.
 
-May:
+### Architecture and policy specifications
 
-- structure claim narratives;
-- compare evidence against declared checklists;
-- prepare anonymized or tokenized draft packets;
-- identify missing evidence and request review.
+- Official-source control map committed at `4f8355efd66b13ecd2f82f7ac4184950c11f37db`.
+- Split-identity threat model committed at `9716c26f70974e946e846f2475eaf918025baa53`.
+- Public finance ledger operating specification committed at `cb1c2fd9f15d79ca81633dfc608e96925f08405c`.
 
-May not perform final regulated submission.
+### Verification implementation
 
-### Class III — Regulated Civic
+- Valid synthetic fixture committed at `8e133c1bf219be19f722cfbc694474c4aee02b87`.
+- Production-data rejection fixture committed at `09cb62d6d141fc083c2d6a44bc38ca318f1e9d2a`.
+- Fail-closed validator installed and expanded at `3fff50c107aa2f8c13e0ca3bea0f3f5a4907874d`.
+- Hosted verification workflow installed at `b4a87470979cc283eeda690950187118702c59df`.
+- Machine task registry updated at `45772094e9cc949b19a454c2fb2ff4dc1cb0527f`.
+- Implementation receipt committed at `bf6b7c1e5491daba12d0d108e387e7923fa44d49`.
+- Dedicated-repository transfer is durably assigned in StegCore issue `#44`.
 
-May interact with regulated systems only within a certified charter and only after human co-signature. It must use case-minimum data, immutable audit logging, explicit authority expiry, and fail-closed behavior.
+## Actual capability classification
 
-Class mobility is governed by the StegVerse AI Entity Constitution. Direct Class I to Class III transition remains prohibited.
+| Component | State | Evidence boundary |
+|---|---|---|
+| Interim handoff | complete and committed | current file and commit history |
+| VAwatchdog non-overlap boundary | complete and committed | VAwatchdog boundary and parallel-work receipt |
+| Synthetic intake contract | implemented but hosted validation pending | schema committed; validator and fixtures installed |
+| Cross-repository exchange contract | implemented but hosted validation pending | schema committed; no destination integration yet |
+| Public finance event contract | implemented but hosted validation pending | schema committed; no publication runtime |
+| Current-law control map | implemented, REVIEW_REQUIRED | official sources recorded; qualified review absent |
+| Split-identity threat model | complete for bootstrap scope | production integration remains blocked |
+| Public finance ledger specification | complete for bootstrap scope | accounting runtime and Site publication absent |
+| Validator | implemented but hosted execution unverified | no inspected successful workflow evidence yet |
+| Workflow | installed but run/artifact unverified | no inspected jobs, logs, or artifact yet |
+| Dedicated StegVA repository | blocked/missing | repository not available through connected authority |
+| Production service | prohibited | no legal, security, nonprofit, interface, or deployment authorization |
+| Site/Publisher/wiki propagation | not authorized and not performed | requires later validated public manifest |
 
-## Veteran rights and service guarantees
+## Veteran protections
 
-StegVA must provide protections exceeding minimum legal thresholds where technically and financially sustainable:
+StegVA must preserve:
 
 - veteran control over collection, processing, disclosure, amendment, export, and retention;
-- plain-language notices before data collection;
+- plain-language notice and accessible mobile/low-bandwidth operation;
 - no sale, advertising use, or unrelated monetization of veteran data;
-- collection limited to the declared purpose and case-minimum fields;
-- accessible operation on mobile devices, low bandwidth, and assistive technologies;
-- an understandable explanation for every AI recommendation, refusal, escalation, and submission action;
-- a human appeal and correction path;
-- separation between supportive companion relationships and regulated authority;
-- no adverse action solely from an AI output;
-- refusal-as-success when authority, consent, provenance, or applicable rules are uncertain.
+- case-minimum collection;
+- understandable explanations for AI recommendations, refusals, escalations, and actions;
+- human appeal and correction;
+- no adverse action solely from AI output;
+- refusal-as-success when consent, authority, provenance, policy, or custody evidence is unavailable.
 
-## Data architecture direction
+## Split-identity boundary
 
-### Preferred design posture
+The candidate architecture separates direct identity data from claim-working data using a high-entropy, case-, purpose-, recipient-, and expiry-bound token.
 
-Design for high assurance from the beginning, accepting additional compute and latency rather than reducing protection.
+This does **not** represent that VA supports StegTV token retrieval, post-submission identity reattachment, or a direct StegVA API. Bootstrap operation stops at a locally reconstructed, human-reviewable package. Any VA-facing execution remains blocked until an officially supported channel and current authority are proven.
 
-The target architecture combines:
+## VAwatchdog boundary
 
-- client-side protection of critical identifiers where feasible;
-- object- or record-scoped encryption;
-- mediated, time-limited access grants;
-- purpose-bound and case-bound authorization;
-- append-only consent, disclosure, decision, and execution receipts;
-- data minimization and compartmentalization;
-- separation of identity data from claim-working data;
-- human and AI dual approval for re-identification and regulated submission.
+VAwatchdog owns:
 
-### Split-identity submission proposal
+- source-tier separation;
+- verified/unverified labeling;
+- sanitized observation and evidence records;
+- FOIA, oversight, audit, and legal-review preparation;
+- reconstructable public-source timelines.
 
-A candidate protocol may separate:
+StegVA owns:
 
-1. an identity compartment held under StegTV-mediated protection; and
-2. a working claim compartment using a high-entropy correlation token.
+- consented veteran assistance;
+- private claim preparation;
+- Companion, Domain, and Regulated AI role separation;
+- private consent, disclosure, decision, and submission receipts;
+- any later authorized claim-submission workflow.
 
-Re-association may occur only for the authorized recipient and declared purpose.
+No raw claim packet, medical record, financial record, identity record, credential, protected token, or case identifier may cross into VAwatchdog.
 
-This is a design proposal, not a representation that the Department of Veterans Affairs currently supports token retrieval or post-submission reattachment. No production implementation may depend on direct VA token retrieval, automated reattachment, or a VA-facing API until the relevant VA interface, authorization, accreditation, security, records-management, consent, and legal requirements are verified in current primary sources and, where necessary, accepted through an agreement with VA.
+## Machine-owned tasks
 
-A compliant fallback must allow the veteran or an authorized human representative to receive a complete, locally reconstructed and reviewable submission package without exposing data to unrelated AI or infrastructure services.
+The current task source is `stegva/task_registry.json`.
 
-## StegTV responsibilities
-
-StegTV is the intended trust and custody service for:
-
-- key generation, wrapping, rotation, revocation, and recovery;
-- purpose-bound capability issuance;
-- identity-compartment custody;
-- consent and disclosure receipts;
-- AI Entity compensation accounts;
-- public-finance ledger signing and proof anchoring.
-
-StegTV must not become an unrestricted universal secrets database. Root keys must remain unavailable to human or AI application users, and services should receive only short-lived capabilities scoped to a recipient, case, purpose, data subset, action, and expiry.
-
-External platforms may still require credentials at their trust boundary. StegTV should minimize exposure through workload identity, short-lived tokens, outbound mediation, and external-secret minimization; it must not claim that third-party credentials can always be eliminated where the external provider requires them.
-
-## Public financial accountability
-
-StegVA.org should publish a privacy-preserving, publicly reviewable financial ledger covering funds received and funds spent.
-
-The public ledger should include:
-
-- event identifier;
-- posting and effective dates;
-- inflow or outflow classification;
-- amount and currency;
-- category and restricted-purpose designation;
-- recipient or donor class rather than identity unless lawful consent exists;
-- approval receipt references;
-- source-record commitment or hash;
-- correction and supersession relationships;
-- reconciliation status;
-- links to required public filings and independent review reports.
-
-The public mirror must exclude donor PII, veteran information, account and routing information, private wallet data, security-sensitive vendor details, and information whose disclosure would create a safety or legal risk.
-
-The private accounting system remains the authoritative books-and-records system. The public ledger supplements, but does not replace, statutory accounting, tax, charity-registration, audit, restricted-fund, and reporting obligations.
-
-## Regulatory and professional review gates
-
-Before collecting production veteran data or representing veterans, the project must verify current primary-source requirements for at least:
-
-- claims submission and electronic-signature procedures;
-- accreditation, representation, assistance, fee, and power-of-attorney rules;
-- privacy, confidentiality, consent, disclosure, and specially protected health records;
-- HIPAA applicability and business-associate relationships where applicable;
-- federal and state breach-notification obligations;
-- nonprofit formation, charity solicitation, donor privacy, restricted gifts, financial controls, and public filings;
-- records retention, legal holds, amendment, deletion, and evidentiary integrity;
-- NIST, FIPS, VA security, identity, accessibility, and interface requirements applicable to the actual deployment and relationship;
-- restrictions on automated determinations and non-delegable government authority;
-- model-provider and processor data-use terms.
-
-Earlier conversational regulatory summaries are research leads only. Production controls must be mapped to current statutes, regulations, official VA material, executed agreements, and qualified legal and compliance review.
-
-## Prohibited claims and actions
-
-Until verified and authorized, StegVA must not claim that:
-
-- it is part of, endorsed by, or acting for the Department of Veterans Affairs;
-- an AI Entity is a federal employee or federal officer;
-- it can make a benefits determination;
-- it can directly submit through or retrieve from a VA interface that has not been approved;
-- de-identification automatically removes all privacy, confidentiality, or records obligations;
-- StegVerse internal ethical standing creates external legal personhood for an AI Entity.
-
-An AI Entity may serve as an internal liaison, compliance worker, or contractor-operated system under accountable human supervision. Its StegVerse compensation, identity, standing, and due process remain internal governance matters unless external law later recognizes otherwise.
-
-## Initial delivery stages
-
-### Stage 0 — Legal and architecture packet
-
-- current-law and current-VA-interface research using primary sources;
-- data-flow and threat model;
-- nonprofit and representation posture;
-- consent, disclosure, retention, amendment, and incident policies;
-- accessibility and veteran-experience requirements;
-- public-ledger redaction and reconciliation specification.
-
-### Stage 1 — Zero-production-data demonstrator
-
-- synthetic veteran profiles only;
-- form and evidence organization;
-- Companion, Domain, and Regulated role separation;
-- refusal and escalation contracts;
-- dual-approval receipts;
-- public-ledger demonstration using synthetic transactions.
-
-### Stage 2 — Limited controlled pilot
-
-May begin only after the applicable legal, security, privacy, nonprofit, insurance, professional-oversight, and interface gates are satisfied and documented.
-
-### Stage 3 — Authorized submission integration
-
-Requires the actual authorized submission channel, formal operating procedures, incident response, independent testing, and evidence that veteran consent and human review remain effective.
-
-## Completion criteria for the architecture phase
-
-The StegVA architecture phase is complete when:
-
-- a dedicated repository contains a superseding mirror handoff;
-- a machine-readable task registry exists;
-- current primary-source legal and VA requirements are mapped to controls;
-- data-flow and threat models are reviewed;
-- the split-identity proposal has an authorized integration path or is formally limited to local reconstruction;
-- public and private financial-ledger specifications are reconciled;
-- AI Entity charters and class boundaries are testable;
-- synthetic end-to-end tests pass without production veteran data;
-- ownership, verification commands, evidence artifacts, and archive readiness are declared.
-
-## Current blockers
-
-- dedicated StegVA repository and nonprofit entity are not yet confirmed as established;
-- no verified VA submission or token-reassociation integration agreement is recorded here;
-- current-law control mapping has not yet been committed;
-- qualified legal, privacy, cybersecurity, nonprofit-accounting, and representation review remains required;
-- StegTV production-grade custody and capability services are not yet established for this use;
-- public-ledger implementation and independent reconciliation procedure remain unbuilt.
-
-## Current ownership
+### Active executable task
 
 ```text
-Constitutional authority: StegVerse-Labs/StegCore
-Program owner: StegVA nonprofit formation workstream
-Data custody dependency: TV / StegTV
-Public surface dependency: StegVerse-Labs/Site and StegVA.org
-AI governance dependency: StegCore ethics and registry controls
-Human regulated-action owner: designated, qualified, and authorized human role to be established
+Task: STEGVA-TASK-006
+Location: .github/workflows/stegva-bootstrap-verify.yml
+Owner: StegVerse-Labs/StegCore
+State: RETRY
+Release condition: GitHub Actions concludes successfully and the job, logs, and bootstrap-verification artifact are directly inspected.
 ```
 
-## Next integration candidate
+### Blocked transfer task
 
 ```text
-Create the dedicated StegVA repository with:
-- STEGVA_MIRROR_HANDOFF.md
-- machine-readable task registry
-- current-law control-map scaffold
-- synthetic-only intake and split-identity threat-model specifications
-- public-finance-ledger specification
+Task: STEGVA-TASK-007
+Location: StegVerse-Labs/StegVA and StegCore issue #44
+Owner: StegVA nonprofit formation workstream
+State: BLOCKED
+Release condition: the dedicated repository exists and connected mutation authority is available.
 ```
 
-## Verification
+### Human review task
 
-Until the dedicated repository exists, verify this interim record with:
+```text
+Task: STEGVA-TASK-008
+Location: stegva/compliance/current_law_control_map.json
+Owner: StegVA legal-compliance workstream
+State: REVIEW_REQUIRED
+Release condition: qualified reviewers verify representation, privacy, nonprofit, security, accessibility, accounting, and official-channel controls and commit review evidence.
+```
+
+## Cross-repository dependencies
+
+```text
+StegVerse-Labs/VAwatchdog
+  Source-tier and accountability boundary only.
+
+TV / StegTV
+  Future key custody, capability issuance, consent/disclosure receipts, and proof anchoring.
+
+StegVerse-Labs/Site and StegVA.org
+  Future public service and privacy-preserving finance display; not yet authorized.
+
+GCAT-BCAT-Engine/Publisher
+admissibility-wiki
+stegguardian-wiki
+master-records
+  No propagation performed. Future propagation requires commit-pinned manifests, import validation, publication authority, and receipts.
+```
+
+## Validation commands
 
 ```bash
-test -f docs/STEGVA_MIRROR_HANDOFF.md
-grep -q "Split-identity submission proposal" docs/STEGVA_MIRROR_HANDOFF.md
-grep -q "Earlier conversational regulatory summaries are research leads only" docs/STEGVA_MIRROR_HANDOFF.md
-grep -q "publicly reviewable financial ledger" docs/STEGVA_MIRROR_HANDOFF.md
+python3 stegva/automation/validate_bootstrap.py
+
+test -f stegva/receipts/bootstrap-verification.json
+python3 -m json.tool stegva/receipts/bootstrap-verification.json
+
+grep -q '"status": "COMPLETE"' stegva/receipts/bootstrap-verification.json
+grep -q '"production_data_processed": false' stegva/receipts/bootstrap-verification.json
+grep -q '"production_authorization": false' stegva/receipts/bootstrap-verification.json
 ```
 
-## Parallel-session boundary
+Hosted validation also requires inspection of:
 
-This handoff records StegVA architecture and does not claim ownership of the active StegFin provider chain, Site activation closure, StegTalk implementation, or other repository work already assigned elsewhere.
+```text
+workflow run
+job and step conclusions
+job logs
+stegva-bootstrap-verification-<run-id> artifact
+bootstrap-verification.json inside the artifact
+```
 
-## Archive readiness
+## Incomplete work
 
-A session that contributed the decisions recorded here may be archived after this file is committed and verified, provided no additional session-specific mutation remains unrecorded.
+1. Inspect a successful hosted workflow run, job steps, logs, and artifact for `.github/workflows/stegva-bootstrap-verify.yml`.
+2. Transfer the verified bootstrap into `StegVerse-Labs/StegVA` under StegCore issue `#44` when repository authority becomes available.
+3. Commit qualified-review evidence for `stegva/compliance/current_law_control_map.json`.
+4. Implement production-grade representation, signature-authority, submission-channel, data-subject-rights, accessibility, cryptographic-boundary, incident-response, retention, and accounting controls in the future dedicated repository.
+5. Build synthetic end-to-end claim preparation and local reconstruction; do not use production veteran data.
+6. Build a synthetic public-ledger projector, reconciliation receipt, and publication manifest before any Site work.
+7. Create source and consumer contracts before any Site, Publisher, wiki, or master-records propagation.
+
+## Blockers and release conditions
+
+| Blocker | Owner | Machine-observable release condition |
+|---|---|---|
+| Hosted validation not inspected | StegCore workflow | successful run plus inspectable job/log/artifact evidence |
+| Dedicated repository unavailable | StegVA nonprofit formation workstream | `StegVerse-Labs/StegVA` exists and connected mutation authority is confirmed |
+| Qualified control review absent | named human review workstreams | signed or committed review evidence references every control-map topic |
+| VA submission authority absent | regulated human authority boundary | current official channel, accreditation/authorization, identity, operating procedure, and test evidence are committed |
+| StegTV production custody absent | TV / StegTV | production-grade custody contract, implementation, tests, and receipts are verified |
+| Public ledger runtime absent | StegVA accounting workstream | synthetic projector and reconciliation path pass, then qualified accounting/privacy review occurs |
+
+## Completion criteria
+
+The bootstrap goal is complete only when:
+
+- the validator succeeds in a directly inspected hosted workflow;
+- job logs and receipt artifact are inspected;
+- all required bootstrap files are present and non-stub;
+- machine task state matches the observed evidence;
+- the dedicated StegVA repository contains a verified superseding handoff and implementation;
+- StegCore contains a transfer receipt;
+- no production veteran data has been processed;
+- remaining production boundaries are durably assigned with machine-observable release conditions.
+
+## Percentages and denominator
+
+Required bootstrap deliverables: 14.
+
+Developed and committed: 13.
+
+Missing required destination repository: 1.
+
+Hosted validation deliverables required: 4.
+
+Hosted validation directly verified: 0.
+
+Cross-repository integration deliverables required for bootstrap closure: 2 — dedicated repository transfer and StegCore transfer receipt.
+
+Cross-repository integration completed: 0.
+
+```text
+Task completion: 9/12 = 75%
+Developed-file completion: 13/14 = 93%
+Validation completion: 0/4 = 0%
+Integration completion: 0/2 = 0%
+Goal activation: 55%
+```
+
+## Archive conditions
+
+Do not archive while this session still owns an unverified workflow observation or any unique implementation state absent from this handoff and its receipts.
+
+The session becomes archivable when all session-specific mutations are represented here, workflow observation is durably recorded or assigned to an active machine observer, and no continuation action requires the conversation.
