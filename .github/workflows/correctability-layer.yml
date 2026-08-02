@@ -4,16 +4,26 @@ on:
   push:
     paths:
       - 'docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md'
+      - 'docs/CORRECTABILITY_SESSION_CONSOLIDATION_2026-08-02.md'
+      - 'docs/spec/STEGVERSE_SPEC_V1_3.md'
       - 'docs/spec/schemas/correction_request.schema.json'
+      - 'docs/spec/schemas/authority_record.schema.json'
+      - 'docs/spec/schemas/delegation_record.schema.json'
+      - 'docs/spec/schemas/commit_time_check.schema.json'
+      - 'docs/spec/schemas/compensation_receipt.schema.json'
       - 'ecosystem_management/correctability_layer.v0.1.json'
+      - 'ecosystem_management/correctability_claim.v0.1.json'
       - 'tools/verify_correctability_layer.py'
       - 'tests/fixtures/correctability/**'
       - '.github/workflows/correctability-layer.yml'
   pull_request:
     paths:
       - 'docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md'
-      - 'docs/spec/schemas/correction_request.schema.json'
+      - 'docs/CORRECTABILITY_SESSION_CONSOLIDATION_2026-08-02.md'
+      - 'docs/spec/STEGVERSE_SPEC_V1_3.md'
+      - 'docs/spec/schemas/**'
       - 'ecosystem_management/correctability_layer.v0.1.json'
+      - 'ecosystem_management/correctability_claim.v0.1.json'
       - 'tools/verify_correctability_layer.py'
       - 'tests/fixtures/correctability/**'
       - '.github/workflows/correctability-layer.yml'
@@ -21,6 +31,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: correctability-layer-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   verify:
@@ -33,7 +47,9 @@ jobs:
       - name: Verify governed correctability
         run: python tools/verify_correctability_layer.py
       - name: Upload correctability report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: correctability-layer-report
           path: brain_reports/correctability_layer_report.json
+          if-no-files-found: error
