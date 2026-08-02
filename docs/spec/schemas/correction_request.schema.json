@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/correction_request.schema.json",
+  "title": "StegVerse Correction Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "correction_id",
+    "transition_id",
+    "authority",
+    "intervention",
+    "detected_at",
+    "authorization_latency_ms",
+    "intervention_latency_ms",
+    "irreversible_at",
+    "pathway_reachable",
+    "intervention_enforceable",
+    "scope_valid",
+    "evidence_references"
+  ],
+  "properties": {
+    "correction_id": {"type": "string", "minLength": 1},
+    "transition_id": {"type": "string", "minLength": 1},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_id", "valid", "not_before", "not_after"],
+      "properties": {
+        "authority_id": {"type": "string", "minLength": 1},
+        "valid": {"type": "boolean"},
+        "not_before": {"type": "string", "format": "date-time"},
+        "not_after": {"type": "string", "format": "date-time"}
+      }
+    },
+    "intervention": {
+      "enum": ["pause", "deny", "revoke", "quarantine", "rollback", "redirect", "supersede", "compensate", "escalate"]
+    },
+    "detected_at": {"type": "string", "format": "date-time"},
+    "authorization_latency_ms": {"type": "integer", "minimum": 0},
+    "intervention_latency_ms": {"type": "integer", "minimum": 0},
+    "irreversible_at": {"type": "string", "format": "date-time"},
+    "pathway_reachable": {"type": "boolean"},
+    "intervention_enforceable": {"type": "boolean"},
+    "scope_valid": {"type": "boolean"},
+    "evidence_references": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  }
+}
