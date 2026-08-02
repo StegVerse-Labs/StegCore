@@ -1,0 +1,38 @@
+{
+  "task_id": "CORRECTABILITY-LAYER-001",
+  "originating_goal": "Build a governed correctability layer distinct from reconstructability and preserve all session-specific requirements in a canonical workstream.",
+  "organization": "StegVerse-Labs",
+  "repository": "StegCore",
+  "branch": "main",
+  "claim_state": "MACHINE_OWNED",
+  "claimant": "StegVerse-Labs/StegCore:.github/workflows/correctability-layer.yml",
+  "role": "hosted_validation_then_downstream_propagation",
+  "claimed_surfaces": [
+    "tools/verify_correctability_layer.py",
+    "tests/fixtures/correctability/",
+    "docs/spec/STEGVERSE_SPEC_V1_3.md",
+    "docs/spec/schemas/correction_request.schema.json",
+    "docs/spec/schemas/authority_record.schema.json",
+    "docs/spec/schemas/compensation_receipt.schema.json",
+    "brain_reports/correctability_layer_report.json"
+  ],
+  "claim_created_at": "2026-08-02T08:42:00Z",
+  "claim_expiration_or_release_condition": "Release after an inspected green workflow run with artifact followed by committed propagation receipts in all four destinations.",
+  "expected_evidence": [
+    "workflow run",
+    "job and step results",
+    "workflow logs",
+    "correctability-layer-report artifact",
+    "destination propagation receipts"
+  ],
+  "collision_boundaries": [
+    "No second canonical correction semantics implementation.",
+    "Validation sessions may inspect but must not fork canonical schemas or verifier behavior.",
+    "Downstream repositories consume the StegCore contract after the hosted gate is green."
+  ],
+  "states": ["COMPLETE", "BLOCKED", "RETRY", "REVIEW_REQUIRED", "FAILED", "CLAIMED", "SUPERSEDED", "MERGED"],
+  "current_state": "BLOCKED",
+  "blocked_release_condition": "A workflow run for the compensation-aware verifier becomes observable and can be inspected.",
+  "next_executable_task": "Inspect .github/workflows/correctability-layer.yml run, jobs, logs and artifact.",
+  "next_task_after_release": "Propagate canonical semantics to StegVerse-Labs/admissibility-wiki."
+}
