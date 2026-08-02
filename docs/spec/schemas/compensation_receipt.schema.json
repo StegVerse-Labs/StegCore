@@ -4,17 +4,17 @@
   "title": "StegVerse Compensation Receipt",
   "type": "object",
   "additionalProperties": false,
-  "required": ["receipt_id", "transition_id", "correction_id", "compensation_type", "authorized_by", "executed_at", "result", "residual_effects", "evidence_references"],
+  "required": ["receipt_id", "transition_id", "correction_id", "compensation_type", "authorized_by", "authority_reference", "executed_at", "result", "residual_effects", "evidence_references"],
   "properties": {
     "receipt_id": {"type": "string", "minLength": 1},
     "transition_id": {"type": "string", "minLength": 1},
     "correction_id": {"type": "string", "minLength": 1},
     "compensation_type": {"enum": ["rollback", "containment", "counteraction", "restoration", "financial", "notification", "other"]},
     "authorized_by": {"type": "string", "minLength": 1},
-    "authority_reference": {"type": ["string", "null"]},
+    "authority_reference": {"type": "string", "minLength": 1},
     "executed_at": {"type": "string", "format": "date-time"},
-    "result": {"enum": ["complete", "partial", "failed", "not_possible"]},
-    "residual_effects": {"type": "array", "items": {"type": "string"}},
+    "result": {"enum": ["COMPLETE", "PARTIAL", "FAILED", "IMPOSSIBLE"]},
+    "residual_effects": {"type": "array", "items": {"type": "string", "minLength": 1}},
     "superseding_transition_id": {"type": ["string", "null"]},
     "evidence_references": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
   }
