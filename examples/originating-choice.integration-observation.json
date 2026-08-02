@@ -1,0 +1,12 @@
+{
+  "purpose": "Trigger pull-request validation of the Originating Choice consumer contract and routing implementation.",
+  "authoritative": false,
+  "merge_required": false,
+  "expected_workflow": "Originating Choice Validation",
+  "expected_artifacts": [
+    "validation-receipt.json",
+    "self-test-receipt.json",
+    "integration-receipt.json",
+    "integration-self-test-receipt.json"
+  ]
+}
