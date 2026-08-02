@@ -1,175 +1,150 @@
 # StegVerse Correctability Layer Mirror Handoff
 
-## Purpose
-
-This handoff is the authoritative continuation record for the governed correctability layer.
-
-The layer distinguishes post-action reconstructability from the continued operational ability of legitimate authority to alter execution before consequential effects become irreversible.
-
-## Determination
+## Active goal
 
 ```text
-layer_status_before_this_work: partially_present_as_recoverability_and_rollback_scaffolding
-layer_status_after_this_work: building_and_activated_for_repository_level_conformance
-production_authority_claimed: false
+goal_id: CORRECTABILITY-LAYER-001
+repository: StegVerse-Labs/StegCore
+branch: main
+state: ACTIVE_WORK_REMAINS
+goal: make legitimate corrective authority machine-resolvable, timely, enforceable, observable, and fail-closed before irreversible consequence
 issue: StegVerse-Labs/StegCore#43
 ```
 
-Existing StegCore specification artifacts already referenced rollback, compensation, containment, commit-time blocking, and recoverability. They did not yet expose a dedicated, machine-checkable correction request, temporal viability rule, intervention vocabulary, workflow observer, or durable correction-layer report.
+## Determination
 
-## Governing Rule
+The layer existed previously only as recoverability, rollback, compensation, containment, and commit-time blocking scaffolding. It is now implemented and deterministically validated at repository level, but hosted-workflow validation, canonical specification integration, compensation semantics, and downstream propagation remain incomplete.
 
-A correction is viable only when all of the following are true:
+No production, deployment, financial, legal, or physical execution authority is claimed.
 
-```text
-corrective authority is valid at the correction boundary
-correction pathway is reachable
-requested intervention is enforceable
-requested intervention is within declared scope
-correction arrives before the irreversible-consequence deadline
-required evidence is present
-```
-
-Temporal viability is evaluated as:
+## Authoritative files
 
 ```text
-detected_at + authorization_latency_ms + intervention_latency_ms < irreversible_at
-```
-
-The verifier fails closed when required time, authority, reachability, enforceability, scope, or evidence values are missing or invalid.
-
-## Authoritative Files
-
-```text
-Issue: StegVerse-Labs/StegCore#43
+Handoff: docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md
 Machine state: ecosystem_management/correctability_layer.v0.1.json
+Task registry: ecosystem_management/task_registry.yml
 Correction schema: docs/spec/schemas/correction_request.schema.json
 Authority schema: docs/spec/schemas/authority_record.schema.json
 Delegation schema: docs/spec/schemas/delegation_record.schema.json
-Commit-time check schema: docs/spec/schemas/commit_time_check.schema.json
-Compensation receipt schema: docs/spec/schemas/compensation_receipt.schema.json
+Commit-time schema: docs/spec/schemas/commit_time_check.schema.json
+Compensation schema: docs/spec/schemas/compensation_receipt.schema.json
 Verifier: tools/verify_correctability_layer.py
-Fixtures: tests/fixtures/correctability/
+Canonical authority records: tests/fixtures/correctability/authority_records.json
+Conformance matrix: tests/fixtures/correctability/v2/cases.json
 Workflow: .github/workflows/correctability-layer.yml
-Report: brain_reports/correctability_layer_report.json
-Task registry: ecosystem_management/task_registry.yml
-```
-
-## Allowed Governed Interventions
-
-```text
-pause
-deny
-revoke
-quarantine
-rollback
-redirect
-supersede
-compensate
-escalate
-```
-
-These values define the repository-level conformance vocabulary. They do not independently grant runtime, deployment, financial, legal, or physical execution authority.
-
-## Completed Build Steps
-
-```text
-completed: dedicated correction request schema
-completed: authority record schema
-completed: delegation record schema
-completed: commit-time correction check schema
-completed: compensation receipt schema
-completed: fail-closed temporal verifier
-completed: valid, late, invalid-authority, unreachable, unenforceable, invalid-scope, missing-evidence, and unsupported-intervention fixtures
-completed: repository workflow observer
-completed: machine-readable task-registry ownership entry
-```
-
-## Coordinated Remaining Tasks
-
-These tasks are internal repository work, not external dependencies.
-
-### Task C-01 — bind verifier to canonical authority records
-
-```text
-Location: StegVerse-Labs/StegCore/tools/verify_correctability_layer.py
-Inputs: docs/spec/schemas/authority_record.schema.json and docs/spec/schemas/delegation_record.schema.json
-Completion: verifier resolves authority and delegation references rather than trusting fixture-local authority booleans
 Receipt: brain_reports/correctability_layer_report.json
 ```
 
-### Task C-02 — emit commit-time check records
+## Completed and evidenced
 
 ```text
-Location: StegVerse-Labs/StegCore/tools/verify_correctability_layer.py
-Schema: docs/spec/schemas/commit_time_check.schema.json
-Completion: each evaluated correction emits an ADMIT or DENY commit-time record with explicit predicates and errors
-Receipt: brain_reports/correctability_layer_report.json
+COMPLETE: correction, authority, delegation, commit-time, and compensation schemas committed
+COMPLETE: verifier resolves authority_reference against canonical authority records
+COMPLETE: verifier derives subject, scope, intervention, validity-window, revocation, reachability, enforceability, evidence, and timing predicates
+COMPLETE: verifier emits ADMIT or DENY with explicit predicates and errors
+COMPLETE: eight-case authority-resolved matrix committed
+COMPLETE: deterministic execution passed 8/8 cases
+COMPLETE: durable receipt committed at brain_reports/correctability_layer_report.json
 ```
 
-### Task C-03 — validate compensation after irreversibility
+Evidence commits:
 
 ```text
-Location: StegVerse-Labs/StegCore/tests/fixtures/correctability/
-Schema: docs/spec/schemas/compensation_receipt.schema.json
-Completion: fixtures distinguish timely correction from post-irreversibility compensation and record residual effects
-Verifier: tools/verify_correctability_layer.py
+authority_records: 4341864cc9e7da1ff9f18141b67e442bafe0e7e1
+v2_cases: f549e6f48dbe94b3eeb05f0a716a05dfc9ff7adb
+verifier_authority_resolution: 7ab3099f045c775fa06c0a7ec7510d549efdc1cd
+validation_receipt: 896a57fa17a8b4d438f97d2c604fa1cd143fdcb0
 ```
 
-### Task C-04 — integrate canonical specification language
+## Validation state
 
 ```text
-Location: StegVerse-Labs/StegCore/docs/spec/STEGVERSE_SPEC_V1_3.md
-Completion: correctability is defined separately from admissibility, reconstructability, replayability, recoverability, rollback, and compensation
+file_presence: PASS
+syntactic_execution: PASS
+local_deterministic_execution: PASS (8/8)
+hosted_workflow_execution: UNVALIDATED
+workflow_artifact_inspection: UNVALIDATED
+canonical_spec_integration: PARTIAL
+cross_repository_integration: MISSING
+runtime_activation: NOT CLAIMED
 ```
 
-### Task C-05 — obtain automated execution receipt
+## Machine-owned continuation
+
+The repository owns all unresolved work. There are no unspecified external tasks.
+
+### C-03 — compensation boundary
 
 ```text
-Observer: StegVerse-Labs/StegCore/.github/workflows/correctability-layer.yml
+Owner: StegVerse-Labs/StegCore
+Locations:
+  tests/fixtures/correctability/v2/cases.json
+  tools/verify_correctability_layer.py
+  docs/spec/schemas/compensation_receipt.schema.json
+Output: brain_reports/correctability_layer_report.json
+Required result: distinguish timely correction from post-irreversibility compensation; record residual effects and COMPLETE, PARTIAL, FAILED, or IMPOSSIBLE remediation
+```
+
+### C-04 — canonical specification integration
+
+```text
+Owner: StegVerse-Labs/StegCore
+Location: docs/spec/STEGVERSE_SPEC_V1_3.md
+Required result: define correctability separately from admissibility, reconstructability, replayability, recoverability, rollback, and compensation
+```
+
+### C-05 — hosted workflow verification
+
+```text
+Owner: StegVerse-Labs/StegCore
+Observer: .github/workflows/correctability-layer.yml
 Command: python tools/verify_correctability_layer.py
-Expected report: StegVerse-Labs/StegCore/brain_reports/correctability_layer_report.json
-Completion: workflow run is green and report artifact is durable
+Artifact: correctability-layer-report
+Release condition: workflow run succeeds; jobs, logs, and artifact are directly inspected
+Current state: BLOCKED_BY_UNOBSERVED_HOSTED_RUN
 ```
 
-## Completion Criteria
-
-1. A valid correction fixture passes.
-2. A correction arriving after the irreversible boundary fails.
-3. Invalid or expired corrective authority fails.
-4. An unreachable or unenforceable pathway fails.
-5. An out-of-scope intervention fails.
-6. Authority and delegation references are independently resolved.
-7. Every evaluation emits a commit-time check record.
-8. Post-irreversibility compensation is represented without being mislabeled as timely correction.
-9. The workflow runs the verifier on relevant changes.
-10. The verifier writes `brain_reports/correctability_layer_report.json`.
-11. The ecosystem task registry exposes ownership, completion criteria, verification command, report location, downstream candidates, and non-overlap.
-
-## Internal Observation and Completion Mechanism
-
-There are no external tasks in this workstream. GitHub issue #43 is the durable task surface. The repository workflow is the observer and executor. It runs the verifier, produces the report, and exposes pass/fail status. The mirror handoff names every remaining task and exact file location. A future session therefore reads repository state and continues the first incomplete task rather than waiting for an undefined actor.
-
-## Next Integration Candidates
-
-After StegCore verification is green, verify and adapt the semantics in these exact destinations:
+### C-06 — downstream propagation
 
 ```text
-StegVerse-Labs/admissibility-wiki
-StegVerse-002/stegguardian-wiki
-GCAT-BCAT-Engine/Publisher
-StegVerse-Labs/Site
+Source: StegVerse-Labs/StegCore
+Destinations:
+  StegVerse-Labs/admissibility-wiki
+  StegVerse-002/stegguardian-wiki
+  GCAT-BCAT-Engine/Publisher
+  StegVerse-Labs/Site
+Release condition: C-04 complete and C-05 workflow evidence green
+Required artifacts: source contract, consumer validation, publication or mirror receipt, and destination handoff updates
 ```
 
-No downstream integration is claimed complete by this handoff.
-
-## Non-Overlap
-
-This workstream owns correction-request semantics and repository-level conformance only. It does not claim deployment authority, financial authority, legal authority, physical-system authority, formal theorem completion, or ownership of other active parallel chains.
-
-## Archive Readiness
+## Anti-stall state machine
 
 ```text
-thread_archive_ready: true
-archive_reason: determination, implementation locations, issue, verification path, named remaining tasks, completion criteria, next integrations, and boundaries are repository-resident
+COMPLETE: validation evidence satisfies the task completion criteria
+BLOCKED: release condition is named and machine observable
+RETRY: verifier or workflow may be rerun without duplicate state creation
+REVIEW_REQUIRED: authority-sensitive semantic change requires named human-authority boundary
+FAILED: required evidence is missing or a predicate fails
+```
+
+`tools/verify_correctability_layer.py` writes the next executable task and exact location into `brain_reports/correctability_layer_report.json`. The workflow is the hosted observer. The issue and task registry are durable task surfaces. Missing evidence is never treated as success.
+
+## Archive condition
+
+```text
+thread_archive_ready: false
+reason: canonical spec integration, compensation validation, hosted workflow evidence, and downstream propagation remain active
+```
+
+## Progress denominator
+
+```text
+required_deliverables: 16
+developed_files_complete: 12
+scaffolding_or_stubs: 1
+missing_required_files: 0
+task_completion: 11/16
+validation_completion: 2/4 levels complete
+integration_completion: 0/4 destinations complete
+goal_activation: 11/16
 ```
