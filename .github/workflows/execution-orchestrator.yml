@@ -9,6 +9,7 @@ on:
     paths:
       - 'src/stegcore/execution_orchestrator.py'
       - 'scripts/run_execution_orchestrator.py'
+      - 'tests/test_execution_orchestrator.py'
       - 'data/execution-orchestrator-tasks.json'
       - 'docs/EXECUTION_ORCHESTRATOR_MIRROR_HANDOFF.md'
       - '.github/workflows/execution-orchestrator.yml'
@@ -29,6 +30,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install validation dependency
+        run: python -m pip install pytest
+      - name: Validate execution state machine
+        run: PYTHONPATH=src python -m pytest -q tests/test_execution_orchestrator.py
       - name: Run execution graph
         env:
           GITHUB_TOKEN: ${{ github.token }}
