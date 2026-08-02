@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/spec/v1.3/commit_time_check.schema.json",
+  "title": "StegVerse Correctability Commit-Time Check",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["check_id", "transition_id", "correction_id", "checked_at", "authority_valid", "scope_valid", "pathway_reachable", "intervention_enforceable", "evidence_complete", "completion_before_irreversibility", "decision", "errors"],
+  "properties": {
+    "check_id": {"type": "string", "minLength": 1},
+    "transition_id": {"type": "string", "minLength": 1},
+    "correction_id": {"type": "string", "minLength": 1},
+    "checked_at": {"type": "string", "format": "date-time"},
+    "authority_valid": {"type": "boolean"},
+    "scope_valid": {"type": "boolean"},
+    "pathway_reachable": {"type": "boolean"},
+    "intervention_enforceable": {"type": "boolean"},
+    "evidence_complete": {"type": "boolean"},
+    "completion_before_irreversibility": {"type": "boolean"},
+    "computed_completion_at": {"type": ["string", "null"], "format": "date-time"},
+    "irreversible_at": {"type": ["string", "null"], "format": "date-time"},
+    "decision": {"enum": ["ADMIT", "DENY"]},
+    "errors": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  }
+}
