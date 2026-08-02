@@ -1,0 +1,36 @@
+{
+  "goal_id": "OC-001",
+  "status": "COMPLETE",
+  "workflow": "Originating Choice Validation",
+  "run_id": 30741707524,
+  "run_number": 2,
+  "head_sha": "4f9494bbb629fdc10d065fa3e6d8d71dad2dcc52",
+  "job_id": 91480192375,
+  "job_name": "validate",
+  "job_conclusion": "success",
+  "steps": {
+    "validate_canonical_receipt": "success",
+    "fail_closed_semantic_self_tests": "success",
+    "preserve_validation_receipts": "success"
+  },
+  "validation_receipt": {
+    "status": "COMPLETE",
+    "validator": "originating-choice-v1",
+    "decision": "SELECT",
+    "receipt_id": "oc-receipt-0001"
+  },
+  "self_test_receipt": {
+    "status": "COMPLETE",
+    "validator": "originating-choice-v1",
+    "positive_cases": 1,
+    "negative_cases": 4
+  },
+  "artifact": {
+    "id": 8831500581,
+    "name": "originating-choice-validation-30741707524",
+    "size_in_bytes": 600,
+    "digest": "sha256:c1368edbd4f6ea4080c8e7329ecbb562a910a6a390d85bcccefc7ca258593f44",
+    "expires_at": "2026-09-01T09:24:39Z"
+  },
+  "next_executable_task": "OC-001-INTEGRATION"
+}
