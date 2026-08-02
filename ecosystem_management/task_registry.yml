@@ -1,4 +1,4 @@
-version: 0.4
+version: 0.5
 goal: ecosystem_managed_task_handoff_and_completion
 
 assessment_rule: >-
@@ -27,20 +27,21 @@ active_chain:
 parallel_chains:
   - chain_id: personal-data-control-session-consolidation
     owner_repo: StegCore
-    status: implementation-complete-validation-observation-pending
+    status: complete-archive-ready
     handoff: docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md
     state: ecosystem_management/personal_data_control_session_consolidation.v1.json
     verification_command: python tools/verify_personal_data_control_session_consolidation.py
     workflow: .github/workflows/personal-data-control-session-consolidation.yml
     report_artifact: brain_reports/personal_data_control_session_consolidation_report.json
-    next_integration_candidate: StegVerse-Labs/StegTalk#PDCL-STEGTALK-001
+    next_integration_candidate: StegVerse-Labs/StegID#SID-PDCL-002
     downstream_candidates:
       - StegVerse-Labs/StegID#SID-PDCL-002
       - StegVerse-Labs/StegAgents#SA-PDCL-002
       - StegVerse-Labs/Site#SITE-0001-PERSONAL-DATA-CONTROL
       - StegVerse-Labs/admissibility-wiki#PDCL-POLICY-001
     non_overlap: coordination-validation-and-session-consolidation-only-no-external-deletion-identity-legal-deployment-or-publication-authority
-    completion_criteria: consolidation-verifier-green-stegtalk-executable-tests-observed-all-chat-only-requirements-zero
+    completion_criteria: satisfied-by-complete-inventory-zero-chat-only-requirements-stegtalk-targeted-pass-and-repository-native-continuation
+    archive_readiness: ready
   - chain_id: rtg-tt-operational-layer
     owner_repo: StegCore
     status: building
@@ -114,10 +115,10 @@ managed_repos:
     ownership: correction-request-semantics-and-conformance
     non_overlap: no-runtime-deployment-financial-legal-or-physical-authority
   - name: StegCore-Personal-Data-Control-Consolidation
-    status: management-capable-pending-workflow-observation
+    status: complete-archive-ready
     handoff: docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md
-    next_candidate: StegVerse-Labs/StegTalk#PDCL-STEGTALK-001
-    ownership: session-consolidation-and-validation-observation
+    next_candidate: StegVerse-Labs/StegID#SID-PDCL-002
+    ownership: repository-native-session-consolidation
     non_overlap: no-external-deletion-identity-verification-legal-or-deployment-authority
 
 artifacts:
