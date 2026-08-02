@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/stegva/synthetic-intake-v1.json",
+  "title": "StegVA Synthetic Intake Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_id", "synthetic", "consent", "claim_context", "evidence_items"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "record_id": {"type": "string", "pattern": "^SYN-[A-Z0-9-]{8,64}$"},
+    "synthetic": {"const": true},
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose", "granted", "expires_at"],
+      "properties": {
+        "purpose": {"const": "stegva_synthetic_demonstration"},
+        "granted": {"const": true},
+        "expires_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "claim_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["benefit_type", "stage"],
+      "properties": {
+        "benefit_type": {"type": "string", "minLength": 1},
+        "stage": {"enum": ["education", "preparation", "review"]}
+      }
+    },
+    "evidence_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "category", "synthetic"],
+        "properties": {
+          "evidence_id": {"type": "string", "minLength": 1},
+          "category": {"type": "string", "minLength": 1},
+          "synthetic": {"const": true}
+        }
+      }
+    }
+  }
+}
