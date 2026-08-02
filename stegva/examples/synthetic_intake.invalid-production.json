@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "record_id": "SYN-DEMO-REJECT-0001",
+  "synthetic": false,
+  "consent": {
+    "purpose": "stegva_synthetic_demonstration",
+    "granted": true,
+    "expires_at": "2027-01-01T00:00:00Z"
+  },
+  "claim_context": {
+    "benefit_type": "production-disability-compensation",
+    "stage": "preparation"
+  },
+  "evidence_items": [
+    {
+      "evidence_id": "EVID-PROD-001",
+      "category": "medical-record",
+      "synthetic": false
+    }
+  ]
+}
