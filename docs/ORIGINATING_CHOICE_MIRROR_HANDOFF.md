@@ -7,21 +7,18 @@ Canonical owner: StegVerse-Labs/StegCore
 Implementation claim: RELEASED
 Validation claim: RELEASED
 Integration implementation claim: RELEASED
-Integration validation claim: CLAIMED_FOR_VALIDATION
-Integration validation claimant: PR #46 / `originating-choice-integration-observation`
-Claim created: 2026-08-02T05:09:39-05:00
-Claim expiration: 2026-08-03T05:09:39-05:00
-Claim release condition: Originating Choice Validation succeeds for PR #46 and all four validation/integration artifact receipts are inspected.
+Integration validation claim: RELEASED
+Propagation claim: UNCLAIMED
 
 ## Originating goal
 
 Move beyond reconstruction and autonomy into governed discovery, invention, imagination, and choice-space construction while preserving a strict separation between origination and execution authority.
 
-MERGED INTO CANONICAL WORKSTREAM: all session-specific concepts and remaining execution state are preserved in this handoff, its authoritative files, durable receipts, and PR #46.
+MERGED INTO CANONICAL WORKSTREAM: all session-specific concepts and execution state are preserved in this handoff, authoritative files, durable receipts, and repository-native workflows.
 
 ## Canonical relationship and authority boundary
 
-`docs/STEGVERSE_ECOSYSTEM_MANAGEMENT_MIRROR_HANDOFF.md` remains canonical for ecosystem task selection. Originating Choice records and routes possible future states; they never grant deployment, financial, legal, irreversible, or other execution authority.
+`docs/STEGVERSE_ECOSYSTEM_MANAGEMENT_MIRROR_HANDOFF.md` remains canonical for ecosystem task selection. Originating Choice records and routes possible future states; it never grants deployment, financial, legal, irreversible, or other execution authority.
 
 ## Authoritative files
 
@@ -33,27 +30,51 @@ MERGED INTO CANONICAL WORKSTREAM: all session-specific concepts and remaining ex
 - `tools/consume_originating_choice.py`
 - `.github/workflows/originating-choice-validate.yml`
 - `receipts/originating-choice-validation-30741707524.json`
+- `receipts/originating-choice-integration-30743194338.json`
 - `receipts/originating-choice-integration-claim.json`
 - `receipts/originating-choice-integration-state.json`
 
+## Required distinctions
+
+- reconstruction recovers a prior state;
+- discovery reveals an existing but previously unknown state;
+- invention creates a previously unavailable mechanism;
+- imagination generates candidate states not presently available;
+- choice explicitly selects, refuses, or defers a candidate for attempted realization.
+
 ## Completed hosted validation
 
-- Workflow: `Originating Choice Validation`
-- Run: `30741707524`, conclusion `success`
-- Job: `91480192375`, conclusion `success`
-- Canonical receipt: `COMPLETE`
-- Semantic self-test: `COMPLETE`, 1 positive case and 4 rejected negative cases
-- Artifact: `8831500581`
-- Artifact digest: `sha256:c1368edbd4f6ea4080c8e7329ecbb562a910a6a390d85bcccefc7ca258593f44`
-- Artifact contents inspected: `validation-receipt.json`, `self-test-receipt.json`
-- Durable evidence: `receipts/originating-choice-validation-30741707524.json`
-- PR #45: closed without merge after successful observation.
+### Core receipt validation
 
-## Implemented integration
+- Workflow run: `30741707524`, success
+- Job: `91480192375`, success
+- Artifact: `8831500581`
+- Digest: `sha256:c1368edbd4f6ea4080c8e7329ecbb562a910a6a390d85bcccefc7ca258593f44`
+- Canonical receipt: `COMPLETE`
+- Self-test: `COMPLETE`, 1 positive and 4 rejected negative cases
+- Evidence: `receipts/originating-choice-validation-30741707524.json`
+- PR #45: closed without merge.
+
+### Consumer integration validation
+
+- Workflow run: `30743194338`, success
+- Job: `91484141795`, success
+- Artifact: `8831984779`
+- Digest: `sha256:fa3b34c961f84183ae9968e322cda6158a10a6132f2d76d409c09c665f1af46b`
+- Canonical validation: `COMPLETE`
+- Semantic self-test: `COMPLETE`, 1 positive and 4 rejected negative cases
+- Integration route: `GOVERNED_REVIEW`
+- Integration validation status: `COMPLETE`
+- Consumer self-test: `COMPLETE`, 5 routes
+- `execution_authority`: `false` in both integration receipts
+- Evidence: `receipts/originating-choice-integration-30743194338.json`
+- PR #46: closed without merge.
+
+## Integrated consumer behavior
 
 Contract: `spec/originating-choice-consumer-contract.json`
 Consumer: `tools/consume_originating_choice.py`
-Workflow integration commit: `1ce28a7450b11f2613c329f54c9b80cf16a69912`
+Workflow: `.github/workflows/originating-choice-validate.yml`
 
 Routes:
 
@@ -63,63 +84,45 @@ Routes:
 - `REALIZATION_REVIEW`
 - fail-closed `REVIEW_REQUIRED`
 
-Every integration receipt sets `execution_authority: false`. A reversible admitted selection is routed only to realization review and must request separate execution authority.
-
-## Active validation lane
-
-Pull request: `StegVerse-Labs/StegCore#46`
-Branch: `originating-choice-integration-observation`
-Head: `0b45a6df69c2976a92002fe05b75ee9b19941384`
-Observation marker: `examples/originating-choice.integration-observation.json`
-
-Release condition:
-
-1. `Originating Choice Validation` run exists for PR #46 head;
-2. validate job succeeds;
-3. logs show canonical validation, semantic self-tests, consumer routing, and consumer self-tests succeed;
-4. artifact contains four receipts;
-5. all four receipts are inspected and report `COMPLETE` or a valid integration route with `execution_authority: false`;
-6. evidence is committed under `receipts/`;
-7. PR #46 is closed without merging the observation-only marker;
-8. this handoff releases the integration validation claim.
-
-If no run exists by claim expiration, release the claim and mark the task BLOCKED on Actions configuration with release condition: a relevant PR-triggered workflow run becomes visible.
+A reversible admitted selection is routed only to realization review and must request separate execution authority. No Originating Choice receipt directly authorizes execution.
 
 ## Task inventory
 
 | Task | State | Location |
 |---|---|---|
 | OC-001-HANDOFF | COMPLETE | this file |
-| OC-001-SCHEMA | COMPLETE | `spec/originating-choice.schema.json` |
+| OC-001-SCHEMA | COMPLETE_AND_VALIDATED | `spec/originating-choice.schema.json` |
 | OC-001-VALIDATOR | COMPLETE_AND_HOSTED_VALIDATED | `tools/validate_originating_choice.py` |
-| OC-001-FIXTURE | COMPLETE | `examples/originating-choice.valid.json` |
+| OC-001-FIXTURE | COMPLETE_AND_VALIDATED | `examples/originating-choice.valid.json` |
 | OC-001-WORKFLOW | COMPLETE_AND_HOSTED_VALIDATED | `.github/workflows/originating-choice-validate.yml` |
-| OC-001-INTEGRATION-CONTRACT | IMPLEMENTED_PENDING_HOSTED_VALIDATION | `spec/originating-choice-consumer-contract.json` |
-| OC-001-INTEGRATION-CONSUMER | IMPLEMENTED_PENDING_HOSTED_VALIDATION | `tools/consume_originating_choice.py` |
-| OC-001-INTEGRATION-OBSERVATION | CLAIMED_FOR_VALIDATION | PR #46 |
-| OC-001-PROPAGATION | BLOCKED | release after PR #46 evidence is complete |
+| OC-001-INTEGRATION-CONTRACT | COMPLETE_AND_HOSTED_VALIDATED | `spec/originating-choice-consumer-contract.json` |
+| OC-001-INTEGRATION-CONSUMER | COMPLETE_AND_HOSTED_VALIDATED | `tools/consume_originating_choice.py` |
+| OC-001-INTEGRATION-OBSERVATION | COMPLETE | PR #46 and integration evidence receipt |
+| OC-001-PROPAGATION-HANDOFF-INSPECTION | UNCLAIMED | target repositories below |
 
 ## Propagation obligation
 
-After integration validation completes, inspect the live canonical handoff before any mutation in:
+Before any target mutation, inspect the newest applicable `*_MIRROR_HANDOFF.md` and active claims in:
 
 - `StegVerse-Labs/Site`
 - `GCAT-BCAT-Engine/Publisher`
 - `admissibility-wiki`
 - `stegguardian-wiki`
 
-Publish only the governed-choice boundary and verified contracts. Do not imply runtime execution authority or deployment activation.
+Publish only the governed-choice boundary, schema, validated routing behavior, and evidence references. Do not imply runtime execution authority or deployment activation.
+
+Expected next action: claim a nonconflicting propagation-handoff-inspection lane, identify each target's canonical publication path, and install source-to-destination propagation records.
 
 ## Session consolidation and archive condition
 
-All originating and adjacent session requirements are durable. Remaining work is repository-owned through this handoff, the claim/state receipts, and PR #46. Conversational history is not required for continuation.
+All originating and adjacent session requirements are durable. Core implementation, deterministic validation, hosted validation, and consumer integration are complete. Remaining propagation is explicitly assigned to repository handoff inspection and does not require conversational history.
 
 ## Current completion
 
 - Task completion: 8/9 = 89%.
 - Developed files: 7/7 = 100%.
-- Validation: 5/7 = 71%.
-- Integration: implemented 1/1; hosted validation pending.
+- Validation: 7/7 = 100%.
+- Integration: 1/1 = 100%.
 - Propagation: 0/4.
-- Goal activation: 70%.
+- Goal activation: 80%.
 - Session consolidation: 1/1 = 100%.
