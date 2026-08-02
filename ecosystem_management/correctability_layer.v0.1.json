@@ -1,0 +1,44 @@
+{
+  "version": "0.1",
+  "layer": "governed_correctability",
+  "issue": "StegVerse-Labs/StegCore#43",
+  "status": "building_activated_repository_conformance",
+  "determination": {
+    "prior_state": "partial_recoverability_and_rollback_scaffolding",
+    "missing_before_activation": [
+      "dedicated_correction_request_schema",
+      "temporal_viability_verifier",
+      "correction_intervention_vocabulary",
+      "workflow_observer",
+      "durable_report"
+    ]
+  },
+  "allowed_interventions": [
+    "pause",
+    "deny",
+    "revoke",
+    "quarantine",
+    "rollback",
+    "redirect",
+    "supersede",
+    "compensate",
+    "escalate"
+  ],
+  "verification_command": "python tools/verify_correctability_layer.py",
+  "report_artifact": "brain_reports/correctability_layer_report.json",
+  "completion_criteria": [
+    "valid_fixture_passes",
+    "late_fixture_fails_closed",
+    "invalid_authority_fixture_fails_closed",
+    "unreachable_or_unenforceable_path_fails_closed",
+    "workflow_executes_verifier",
+    "durable_report_is_written"
+  ],
+  "next_integration_candidates": [
+    "StegVerse-Labs/admissibility-wiki",
+    "StegVerse-002/stegguardian-wiki",
+    "GCAT-BCAT-Engine/Publisher",
+    "StegVerse-Labs/Site"
+  ],
+  "non_overlap": "correction-semantics-and-repository-conformance-only"
+}
