@@ -1,0 +1,46 @@
+name: StegVA Bootstrap Verify
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 5 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "stegva/**"
+      - "docs/STEGVA_MIRROR_HANDOFF.md"
+      - "docs/STEGVA_VAWATCHDOG_PARALLEL_WORK_RECEIPT.md"
+      - ".github/workflows/stegva-bootstrap-verify.yml"
+  pull_request:
+    paths:
+      - "stegva/**"
+      - "docs/STEGVA_MIRROR_HANDOFF.md"
+      - "docs/STEGVA_VAWATCHDOG_PARALLEL_WORK_RECEIPT.md"
+      - ".github/workflows/stegva-bootstrap-verify.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stegva-bootstrap-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate StegVA bootstrap
+        run: python3 stegva/automation/validate_bootstrap.py
+
+      - name: Upload verification receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stegva-bootstrap-verification-${{ github.run_id }}
+          path: stegva/receipts/bootstrap-verification.json
+          if-no-files-found: error
+          retention-days: 90
