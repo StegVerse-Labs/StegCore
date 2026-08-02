@@ -1,0 +1,15 @@
+{
+  "task_id": "OC-001-INTEGRATION",
+  "implementation_state": "IMPLEMENTED_PENDING_HOSTED_VALIDATION",
+  "contract": "spec/originating-choice-consumer-contract.json",
+  "consumer": "tools/consume_originating_choice.py",
+  "workflow": ".github/workflows/originating-choice-validate.yml",
+  "commits": [
+    "81d72f531de1ab5954c028fd66b6d7a5e51aaf1d",
+    "6abd6cb1ed9e0603383efbc03a0c7273c37be62e",
+    "1ce28a7450b11f2613c329f54c9b80cf16a69912"
+  ],
+  "authority_boundary": "Routing outcomes do not grant execution authority.",
+  "routes": ["CLOSED_REFUSAL", "DEFERRED_REVIEW", "GOVERNED_REVIEW", "REALIZATION_REVIEW", "REVIEW_REQUIRED"],
+  "next_executable_task": "OPEN_INTEGRATION_VALIDATION_PR"
+}
