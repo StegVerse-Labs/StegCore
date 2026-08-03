@@ -1,0 +1,103 @@
+{
+  "inventory_version": "1.0",
+  "goal_id": "STEGCORE-EXT-EVIDENCE-INTEROP-001",
+  "originating_session_goal": "Collaborate with complementary accountability stacks by mapping external telemetry, attestation, and verification evidence into StegVerse commit-time admissibility without collapsing proof into authority.",
+  "canonical_repository": "StegVerse-Labs/StegCore",
+  "branch": "main",
+  "canonical_handoff": "docs/STEGCORE_MIRROR_HANDOFF.md",
+  "canonical_issue": 25,
+  "claim": {
+    "state": "CLAIMED_FOR_VALIDATION",
+    "implementation_lane": "repository-main-installed",
+    "validation_lane": ".github/workflows/external-evidence-interop.yml",
+    "claimed_at": "2026-08-02T22:31:00-05:00",
+    "release_condition": "successful hosted workflow run closes issue 25 and records exact StegCore and Governance commits",
+    "collision_boundary": [
+      "src/stegcore/external_evidence.py",
+      "tests/test_external_evidence.py",
+      "scripts/verify_governance_external_evidence_contract.py",
+      ".github/workflows/external-evidence-interop.yml"
+    ]
+  },
+  "tasks": [
+    {
+      "task_id": "EXT-EVID-01",
+      "destination": "StegVerse-Labs/Governance",
+      "location": "docs/examples/EXTERNAL_EVIDENCE_PROVIDER_INTERFACE.md and docs/examples/interop/",
+      "owner": "StegVerse-Labs/Governance",
+      "claim_state": "COMPLETE",
+      "completion_state": "complete_and_validated",
+      "validation_state": "Governance validator and CI installed",
+      "integration_state": "source contract",
+      "archival_dependency": false,
+      "next_executable_action": "none"
+    },
+    {
+      "task_id": "EXT-EVID-02",
+      "destination": "StegVerse-Labs/StegCore",
+      "location": "src/stegcore/external_evidence.py",
+      "owner": "StegVerse-Labs/StegCore",
+      "claim_state": "COMPLETE",
+      "completion_state": "implemented",
+      "validation_state": "focused tests installed; hosted validation pending",
+      "integration_state": "maps to src/stegcore/three_layer.py",
+      "archival_dependency": false,
+      "next_executable_action": "run hosted validation"
+    },
+    {
+      "task_id": "EXT-EVID-03",
+      "destination": "StegVerse-Labs/StegCore",
+      "location": "tests/test_external_evidence.py",
+      "owner": "StegVerse-Labs/StegCore",
+      "claim_state": "COMPLETE",
+      "completion_state": "implemented",
+      "validation_state": "hosted execution pending",
+      "integration_state": "five canonical outcome classes plus authority boundary",
+      "archival_dependency": false,
+      "next_executable_action": "workflow pytest"
+    },
+    {
+      "task_id": "EXT-EVID-04",
+      "destination": "StegVerse-Labs/StegCore",
+      "location": "scripts/verify_governance_external_evidence_contract.py",
+      "owner": "StegVerse-Labs/StegCore",
+      "claim_state": "COMPLETE",
+      "completion_state": "implemented",
+      "validation_state": "hosted execution pending",
+      "integration_state": "live Governance fixture consumption",
+      "archival_dependency": false,
+      "next_executable_action": "workflow contract verification"
+    },
+    {
+      "task_id": "EXT-EVID-05",
+      "destination": "StegVerse-Labs/StegCore",
+      "location": ".github/workflows/external-evidence-interop.yml",
+      "owner": "repository-native automation",
+      "claim_state": "MACHINE_OWNED",
+      "completion_state": "installed",
+      "validation_state": "first run pending",
+      "integration_state": "closes issue 25 on pass; records failure on fail",
+      "archival_dependency": false,
+      "next_executable_action": "observe run and repair exact failure through repository commit"
+    },
+    {
+      "task_id": "EXT-EVID-06",
+      "destination": "StegVerse-Labs/Site; GCAT-BCAT-Engine/Publisher; StegVerse-Labs/admissibility-wiki; StegVerse-002/stegguardian-wiki",
+      "location": "destination handoffs and existing downstream verification issues",
+      "owner": "destination repositories",
+      "claim_state": "BLOCKED",
+      "completion_state": "not_started_for_this_contract",
+      "validation_state": "requires passing StegCore evidence",
+      "integration_state": "downstream release review only",
+      "archival_dependency": false,
+      "next_executable_action": "destination-owned review after issue 25 closes"
+    }
+  ],
+  "session_goal_transfer": {
+    "collaboration_posture": "StegVerse-Labs/Governance/docs/governance/ACCOUNTABILITY_STACK_INTEROP_POSITION.md",
+    "source_contract": "StegVerse-Labs/Governance/docs/examples/EXTERNAL_EVIDENCE_PROVIDER_INTERFACE.md",
+    "runtime_continuation": "StegVerse-Labs/StegCore/issues/25",
+    "execution_inventory": "StegVerse-Labs/StegCore/data/external-evidence-session-execution-inventory.json"
+  },
+  "archive_condition": "All unique session requirements are durable. Hosted validation and downstream review are machine- or destination-owned and do not require this conversation."
+}
