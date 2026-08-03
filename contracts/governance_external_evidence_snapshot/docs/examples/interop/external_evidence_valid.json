@@ -1,0 +1,16 @@
+{
+  "external_evidence_envelope_version": "1.0",
+  "envelope_id": "ext-evidence-valid-001",
+  "provider": {"provider_id": "provider.demo.telemetry", "provider_type": "composite", "public_key_ref": "keys/provider-demo-ed25519", "declared_scope": ["runtime.telemetry", "gate.verification"]},
+  "subject": {"actor_ref": "actor/alice", "target_ref": "runtime/service-a", "workload_ref": "run/2026-07-14-001"},
+  "capture": {"started_at": 1784044800, "ended_at": 1784044860, "execution_context": "prod-us-central-1", "reference_state_hash": "sha256:state-authorized"},
+  "claims": [{"claim_id": "claim-001", "claim_type": "runtime.policy_conformance", "value": true, "evidence_digest": "sha256:evidence-valid"}],
+  "integrity": {"content_digest": "sha256:envelope-valid", "signature_algorithm": "Ed25519", "signature": "base64url:demo-valid", "chain_valid": true},
+  "authorization": {"provider_authorized": true, "authorization_ref": "provider-auth/v1", "scope_match": true},
+  "freshness": {"valid_from": 1784044800, "valid_until": 1784048400, "evaluated_at": 1784044920, "is_current": true},
+  "evidence_refs": ["evidence/runtime-valid-001"],
+  "prior_hash": "sha256:prior-valid",
+  "issued_at": 1784044861,
+  "commitment_candidate": {"candidate_id": "candidate-valid-001", "actor_ref": "actor/alice", "target_ref": "runtime/service-a", "scope": "runtime.execute", "action": "apply_config", "execution_context": "prod-us-central-1", "policy_ref": "policy/runtime/v1", "delegation_ref": "delegation/alice/v1", "consent_ref": "consent/owner/v1", "identity_ref": "identity/alice/v3", "evidence_refs": ["evidence/runtime-valid-001"], "evidence_digests": ["sha256:evidence-valid"], "capture_interval": {"started_at": 1784044800, "ended_at": 1784044860}, "prior_hash": "sha256:prior-valid", "validity_window": {"valid_from": 1784044800, "valid_until": 1784048400}, "reference_state_hash": "sha256:state-authorized", "authorized_reference_state_hash": "sha256:state-authorized", "recoverability_profile": "operator_recoverable", "provider_authorization_ref": "provider-auth/v1", "evidence_provider_execution_authority": false},
+  "runtime_expectation": {"result": "ALLOW", "reason_code": "ok", "continuity_receipt_minted": false}
+}
