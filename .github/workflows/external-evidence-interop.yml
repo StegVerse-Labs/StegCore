@@ -1,0 +1,86 @@
+name: Validate External Evidence Interoperability
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/stegcore/external_evidence.py'
+      - 'src/stegcore/three_layer.py'
+      - 'tests/test_external_evidence.py'
+      - 'scripts/verify_governance_external_evidence_contract.py'
+      - '.github/workflows/external-evidence-interop.yml'
+      - 'docs/STEGCORE_MIRROR_HANDOFF.md'
+  pull_request:
+    paths:
+      - 'src/stegcore/external_evidence.py'
+      - 'src/stegcore/three_layer.py'
+      - 'tests/test_external_evidence.py'
+      - 'scripts/verify_governance_external_evidence_contract.py'
+      - '.github/workflows/external-evidence-interop.yml'
+  schedule:
+    - cron: '41 5 * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: stegcore-external-evidence-interop
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out StegCore
+        uses: actions/checkout@v4
+        with:
+          path: stegcore
+
+      - name: Check out canonical Governance
+        uses: actions/checkout@v4
+        with:
+          repository: StegVerse-Labs/Governance
+          path: governance
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: stegcore/pyproject.toml
+
+      - name: Install StegCore and test dependencies
+        working-directory: stegcore
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+
+      - name: Run complete StegCore tests
+        working-directory: stegcore
+        run: pytest -q
+
+      - name: Validate canonical Governance interop fixtures through StegCore
+        working-directory: stegcore
+        run: python scripts/verify_governance_external_evidence_contract.py ../governance
+
+      - name: Reconcile issue 25 on success
+        if: success() && github.event_name != 'pull_request'
+        working-directory: stegcore
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BODY="External evidence interoperability passed for StegCore ${GITHUB_SHA} against Governance $(git -C ../governance rev-parse HEAD). All five canonical cases passed through the actual runtime; provider execution authority and Continuity receipt minting remained false. Workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
+          gh issue comment 25 --repo "$GITHUB_REPOSITORY" --body "$BODY"
+          gh issue close 25 --repo "$GITHUB_REPOSITORY" --reason completed
+
+      - name: Record machine-observable failure
+        if: failure() && github.event_name != 'pull_request'
+        working-directory: stegcore
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BODY="External evidence interoperability validation failed for ${GITHUB_SHA}. Machine-observable release condition: a later successful run of this workflow. Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
+          gh issue comment 25 --repo "$GITHUB_REPOSITORY" --body "$BODY"
