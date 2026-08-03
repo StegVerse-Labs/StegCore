@@ -8,6 +8,7 @@ This package currently includes:
 - minimal decision interface (docs-aligned)
 - fail-closed governed runtime binding
 - three-layer judgment, signal-state, and execution admissibility evaluator
+- immutable proof-anchor binding and refusal-preserving downstream execution
 
 Continuity receipts and verification belong to StegID.
 """
@@ -33,6 +34,14 @@ from .three_layer import (
     ThreeLayerResult,
     evaluate_three_layer,
 )
+from .proof_anchor import (
+    ProofAnchorBinding,
+    BoundProofDecision,
+    BoundExecutionObservation,
+    evaluate_bound_proof,
+    verify_bound_proof,
+    execute_bound_proof,
+)
 
 __all__ = [
     "NodeState",
@@ -55,4 +64,10 @@ __all__ = [
     "LayerFinding",
     "ThreeLayerResult",
     "evaluate_three_layer",
+    "ProofAnchorBinding",
+    "BoundProofDecision",
+    "BoundExecutionObservation",
+    "evaluate_bound_proof",
+    "verify_bound_proof",
+    "execute_bound_proof",
 ]
