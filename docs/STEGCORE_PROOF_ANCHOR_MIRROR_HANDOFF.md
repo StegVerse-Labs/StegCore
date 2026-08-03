@@ -2,134 +2,128 @@
 
 ## Purpose
 
-This handoff preserves the decision that StegCore is the single technical proof anchor for StegVerse's governance-first, operator-independent, fraud-resistant, censorship-resistant, and intermediary-minimized model.
+This is the canonical continuation source for hardening StegCore as the StegVerse technical proof anchor. It preserves the boundary between verified continuity, governance evaluation, and execution while ensuring refusal remains enforceable and decisions remain independently reproducible.
 
-It records the bounded continuation scope arising from public discussion of durable applications that remain functional and verifiable despite maintainer, operator, provider, or infrastructure disappearance. This is an alignment and hardening workstream, not a pivot or broad documentation campaign.
-
-## Repository and Goal
+## Active Goal and Claim
 
 ```text
-Organization: StegVerse-Labs
-Repository: StegCore
-Goal: maintain and harden StegCore as the StegVerse proof anchor while moving outward through demonstrable technology
-Status: invariant_mapping_complete_hardening_queue_defined
+goal_id: STEGCORE-PROOF-ANCHOR-001
+organization: StegVerse-Labs
+repository: StegCore
+branch: stegops/proof-anchor-invariant-map
+pull_request: 24
+status: bound_proof_implementation_installed_hosted_validation_pending
+canonical_task_owner: PR #24 implementation lane
+active_implementation_claim: docs/STEGCORE_PROOF_ANCHOR_IMPLEMENTATION_RECEIPT.md
+active_validation_owner: .github/workflows/runtime-tests.yml
+claim_created_at: 2026-08-02T22:31:00-05:00
+claim_release_condition: PR #24 merged, explicitly superseded, or transferred through the implementation receipt
 ```
+
+## Authority Boundary
+
+StegCore evaluates already-resolved continuity, policy, delegation, authority, evidence, state-integrity, validity, and recoverability facts.
+
+StegCore does not verify or mint Continuity receipts, fetch authority from mutable services, create execution authority, activate another repository, publish, release, tag, deploy, or grant cross-repository mutation authority.
 
 ## Durable Decisions
 
-1. StegCore is the single proof anchor because it is the earliest layer at which authority, admissibility, and governance-before-execution claims can be technically evaluated rather than merely asserted.
-2. The alignment does not justify a rebrand, architectural pivot, token-first effort, broad manifesto, or extended documentation campaign.
-3. Documentation augmentation should remain surgical and should touch only public-facing, stable, or near-review artifacts where it improves technical legibility.
-4. Product and developed-technology demonstrations remain the priority for establishing a foothold in governance, records integrity, identity continuity, auditability, and related sectors.
-5. StegCore should remain declarative, deterministic, independently reviewable, forkable, and operable without dependence on a single maintainer, operator, service endpoint, hosting provider, token, or privileged administrator.
+1. StegCore is the single technical proof anchor for governance-before-execution claims.
+2. Verified identity or continuity evidence does not independently confer authority.
+3. Missing, stale, conflicting, ambiguous, unreconstructable, or discontinuous required inputs fail closed.
+4. Refusal is a valid result and must not be negotiable by downstream callbacks or consumer state.
+5. Proof decisions must bind canonical requests to explicit policy and delegation versions, immutable artifact hashes, and a decision epoch.
+6. GitHub and CI may build and validate proof artifacts but are not the legitimacy source required to verify them.
+7. Broad documentation expansion, token-first work, third-party association, or unsupported guarantee claims are outside this workstream.
 
-## Proof-Anchor Invariants to Preserve
-
-- Governance precedes execution.
-- Identity and credentials do not alone confer authority.
-- Authority is evaluated against explicit policy, delegation, evidence, scope, validity, and recoverability constraints.
-- Missing, conflicting, stale, or ambiguous required inputs fail closed.
-- Decisions are bound to explicit versions, epochs, state references, and canonical inputs rather than an implicitly trusted concept of "now" or "latest."
-- A third party with repository read access and the declared inputs can reproduce or independently verify the decision.
-- StegCore evaluates declared authority; it does not fetch authority from mutable external services.
-- Governance changes are at least as constrained and reviewable as the governed actions they affect.
-- Downstream modules consume StegCore decisions but do not receive implicit override, callback, or negotiation authority over those decisions.
-- Human-readable reasons remain available alongside machine-readable results.
-
-## Hostile-Assumption Review Matrix
-
-The hardening review should test at least these conditions:
-
-1. Founder or maintainer disappearance.
-2. Hosting, CI, endpoint, or infrastructure loss or censorship.
-3. Credential compromise without valid bounded authority.
-4. Clock skew, stale state, replay, reordering, and rule-version substitution.
-5. Gradual governance capture through convenience overrides, emergency flags, trusted-operator shortcuts, or silent privilege expansion.
-6. Missing, contradictory, partial, or externally unavailable evidence.
-7. Downstream integration pressure that attempts to turn StegCore into a negotiable service or authority source.
-8. Hostile or divergent forks attempting to preserve the name while weakening the invariants.
-
-## Completed Hardening Review Step
-
-The current repository has been mapped against the proof-anchor invariants in:
+## Authoritative Files
 
 ```text
+src/stegcore/three_layer.py
+src/stegcore/proof_anchor.py
+src/stegcore/runtime.py
+src/stegcore/__init__.py
+tests/test_three_layer.py
+tests/test_proof_anchor.py
 docs/STEGCORE_PROOF_ANCHOR_INVARIANT_MATRIX.md
+docs/STEGCORE_PROOF_ANCHOR_IMPLEMENTATION_RECEIPT.md
+.github/workflows/runtime-tests.yml
 ```
 
-The matrix classifies each invariant as `implemented_and_testable`, `implemented_partial`, `documented_only`, or `absent`, links it to current repository evidence, assigns material gaps, and defines one bounded outward demonstration candidate.
+## Installed Work on PR #24
 
-The review found that the three-layer fail-closed evaluation boundary is implemented. The principal remaining proof-anchor gaps are:
+- Proof-anchor invariant mapping and hostile-assumption gap classification.
+- `ProofAnchorBinding` requiring policy version/hash, delegation version/hash, decision epoch, and declared evaluation time.
+- Deterministic bound proof hashing over canonical request, immutable binding, and result surface while excluding runtime observation time.
+- Local bound-proof re-evaluation.
+- Refusal-preserving downstream execution: callbacks run only after `ALLOW`.
+- Tests covering stale delegation despite valid contextual evidence, reference-state mutation, repeatable proof hashes, version/epoch substitution, callback non-invocation after refusal, allowed execution, and missing binding failure.
+- A durable implementation receipt containing the session execution inventory, claim state, validation state, remaining work, and release condition.
 
-1. immutable policy/delegation version and decision-epoch binding;
-2. offline, content-addressed proof portability;
-3. machine-enforced constitutional change classification and invariant-diff review;
-4. downstream non-override and refusal-preservation tests; and
-5. fork identity and conformance-claim rules.
-
-## Selected Bounded Demonstration Candidate
+## Validation State
 
 ```text
-Candidate: Offline Replay Discontinuity Proof
-Purpose: reproduce an ALLOW baseline and deterministic FAIL-CLOSED mutated-state result from one exported proof packet without GitHub, network access, hosted endpoints, or privileged credentials.
-Acceptance criteria source: docs/STEGCORE_PROOF_ANCHOR_INVARIANT_MATRIX.md
+repository_file_installation: complete_on_PR_24_branch
+local_reconstructed_subset_test: pass
+hosted_PR_workflow: not_observed
+full_repository_tests: not_proven_for_current_head
+Governance_fixture_integration: not_proven_for_current_head
+merge_review: pending
 ```
 
-Selection does not authorize release, deployment, publication, external association, or a guarantee claim. Implementation and validation evidence are still required.
+The local subset result is supporting evidence only. The canonical hosted validator remains `.github/workflows/runtime-tests.yml`.
 
-## Documentation Candidate
+## Remaining Work
 
-Only after checking the current public-review boundary and existing documentation structure, consider a concise statement equivalent to:
+1. Obtain and inspect a hosted workflow run for the current PR head; correct failures on the same branch.
+2. Export a self-contained offline replay proof packet under `proof_packets/offline_replay_v1/`.
+3. Add a dependency-free packet verifier and expected `ALLOW`/`FAIL-CLOSED` outputs.
+4. Add authoritative schemas for bound proof decisions and packet manifests.
+5. Add machine-enforced constitutional semantic-change classification and invariant-diff review.
+6. Add exhaustive fail-closed reason-code regression coverage.
+7. Add fork identity and StegCore conformance-claim rules.
+8. Add bounded downstream consumer fixtures without granting consumer override or mutation authority.
 
-> StegCore is designed so that governance decisions remain independently verifiable and reproducible even when original operators, service providers, or maintainers are unavailable.
-
-A compact non-goals section may also be appropriate if not already expressed elsewhere:
-
-- StegCore is not an execution engine.
-- StegCore is not a privileged administration service.
-- StegCore does not infer authority from identity, possession, popularity, or convenience.
-- StegCore does not silently permit action when required governance inputs are absent or ambiguous.
-
-Do not name or imply endorsement by an external person, project, protocol, or standard without the applicable review and association boundary being satisfied.
-
-## Remaining Durable Tasks
-
-1. Convert identity-without-authority, replay/version substitution, and downstream refusal-override gaps into deterministic hostile-assumption fixtures and tests.
-2. Bind decisions and proof packets to immutable policy/delegation versions or artifact hashes and an explicit decision epoch.
-3. Produce the self-contained offline replay proof packet and dependency-free verifier.
-4. Install or verify a machine-enforced constitutional change gate for governance-semantic changes.
-5. Define fork identity and StegCore conformance-claim rules.
-6. Validate the bounded demonstration against every acceptance criterion before making any implementation guarantee.
-7. Keep public-review and third-party naming constraints synchronized with `docs/STEGCORE_BOUNDARY_REVIEW_MIRROR_HANDOFF.md`.
-
-## Blockers and Constraints
-
-- No external endorsement, compatibility, certification, or completed-review claim is authorized by this handoff.
-- Existing private-review-first and neutral-naming-first rules remain controlling for any third-party association or named comparison.
-- A claim must not be promoted from architectural intent to implemented guarantee until repository evidence and repeatable validation support it.
-- Documentation work must remain subordinate to demonstrable product and technical proof.
-- GitHub and CI may build or validate proof artifacts, but neither may become the legitimacy source required to verify them.
-
-## Ownership and Continuation
+## Machine-Owned Tasks
 
 ```text
-Current owner: StegVerse-Labs/StegCore continuation workflow or an explicitly assigned implementation session
-This archived conversation: no continuing mutation or validation claim after this handoff is committed
-Permitted continuation: hostile-assumption fixtures/tests, immutable version/epoch binding, offline proof packet/verifier, governance-change enforcement, fork/conformance rules, and validation of the selected bounded demonstration
-Prohibited continuation: broad narrative rewrite, unreviewed third-party association, unsupported guarantee claims, speculative token integration, or expansion unrelated to proof-anchor hardening
+validation_owner: .github/workflows/runtime-tests.yml
+trigger: pull_request synchronization, relevant push to main, schedule, or authorized workflow dispatch
+expected_outputs: test result, Governance contract result, workflow jobs and logs
+failure_state: repository correction commit on PR #24
+release_condition: passing hosted run with inspectable evidence
 ```
 
-## Validation and Completion Event
+## Cross-Repository Dependencies
 
-This workstream is ready for its next transition when:
+- `StegVerse-Labs/Governance`: canonical three-layer fixtures consumed read-only by runtime validation.
+- `StegVerse-Labs/Site`: downstream evidence observation only through its existing bounded issue and handoff.
+- `GCAT-BCAT-Engine/Publisher`: awareness only through existing queue and authority boundaries.
+- `StegVerse-Labs/admissibility-wiki`: documentation verification only.
+- `StegVerse-002/stegguardian-wiki`: evidence awareness only.
 
-1. material gaps have committed deterministic tests or assigned durable tasks;
-2. the exported proof packet verifies offline and reproduces the declared baseline/mutated outcomes;
-3. governance-semantic changes are machine-classified and review-gated;
-4. downstream refusal cannot be converted into execution through callback, provider status, health state, or executor output;
-5. fork identity and conformance claims are explicit; and
-6. any public wording change has passed the applicable review boundary.
+No new propagation claim is made by PR #24.
 
-## Archive Readiness
+## Convergence and Session Consolidation
 
-This handoff and the invariant matrix preserve the decisions, evidence classification, remaining tasks, selected demonstration, ownership, blockers, and permitted continuation scope. The originating conversation is not required for continuation after the branch and pull request are durably recorded.
+Earlier session proposals for a separate constitutional-document bundle, BCAT checklist stack, policy-shape hardening, lifecycle hardening, and deployment gates converged with the live three-layer runtime and proof-anchor workstream. Their unique requirements are preserved here, in the invariant matrix, and in the implementation receipt rather than being rebuilt as a competing stack.
+
+```text
+MERGED INTO: StegVerse-Labs/StegCore/pull/24
+MERGED INTO: docs/STEGCORE_PROOF_ANCHOR_INVARIANT_MATRIX.md
+MERGED INTO: docs/STEGCORE_PROOF_ANCHOR_IMPLEMENTATION_RECEIPT.md
+```
+
+## Completion and Archive Conditions
+
+This implementation workstream can release its active claim when PR #24 is merged or explicitly superseded after hosted validation. The originating chat session is not required to continue implementation because its unique goal inventory, decisions, installed work, unresolved tasks, ownership, validation boundary, and next executable actions are repository-resident.
+
+## Percentages
+
+```text
+developed_files: 5/8 required proof-anchor deliverables
+validation: 1/4 levels evidenced (installation/local subset; hosted suite, Governance integration, and merge validation pending)
+integration: 1/3 (package export installed; offline packet and downstream consumer fixtures pending)
+goal_activation: 62%
+session_consolidation: 10/10 session goals durably transferred or merged
+```
