@@ -31,6 +31,61 @@ Determine whether StegVerse had a governed correctability layer distinct from re
 | CORR-06 | Integrate correctability into canonical staged specification | `docs/spec/STEGVERSE_SPEC_V1_3.md` | COMPLETE |
 | CORR-07 | Observe hosted verification and artifact | `.github/workflows/correctability-layer.yml`; `brain_reports/correctability_layer_report.json` | MACHINE_OWNED / BLOCKED UNTIL RUN OBSERVED |
 | CORR-08 | Propagate semantics downstream | `admissibility-wiki`, `stegguardian-wiki`, `GCAT-BCAT-Engine/Publisher`, `StegVerse-Labs/Site` | MACHINE-OWNED AFTER CORR-07 |
+| CORR-09 | Preserve the governance-interval notation and reconstructability/correctability/admissibility separation introduced in the originating discussion | this consolidation record; canonical handoff | COMPLETE |
+
+## Canonical conceptual separation
+
+```text
+Reconstructability governs examination of what occurred.
+Correctability governs timely, authorized, reachable and enforceable intervention while the future remains alterable.
+Admissibility governs whether a proposed transition may cross the execution boundary at all.
+```
+
+The properties are independent:
+
+```text
+Auditability does not imply governability.
+Reconstructability does not imply correctability.
+Correctability does not imply admissibility.
+```
+
+## Governance interval formalization
+
+Let the governance interval for a consequential transition be:
+
+```text
+I_G = [t_0, t_irr)
+```
+
+where `t_0` is the earliest time the transition becomes detectable and `t_irr` is the point after which the relevant consequence can no longer be recalled, redirected, superseded, or repaired through timely correction.
+
+Define:
+
+```text
+tau_D = detection latency
+tau_A = authorization latency
+tau_I = intervention latency
+```
+
+A necessary timing condition for effective correctability is:
+
+```text
+tau_D + tau_A + tau_I < |I_G|
+```
+
+Timing alone is insufficient. Effective correctability additionally requires valid correcting authority, operational reachability of execution, and enforceability of the intervention:
+
+```text
+C(x,t) = timing_viable AND valid_authority AND execution_reachable AND intervention_enforceable
+```
+
+The correctability invariant applies from commit until irreversibility unless the governing policy explicitly authorizes an irreversible transition:
+
+```text
+for every t in [t_commit, t_irr): C(x,t) = true
+```
+
+This notation is explanatory and must remain aligned with the canonical schemas, verifier predicates, and staged specification. Where notation and executable predicates diverge, the schemas, verifier, committed fixtures, and resulting receipts are authoritative.
 
 ## Implementation evidence
 
@@ -81,7 +136,7 @@ next_task_after_release: propagate to StegVerse-Labs/admissibility-wiki
 
 ```text
 MERGED INTO: StegVerse-Labs/StegCore/docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md
-Transferred: original correctability distinction, temporal viability rule, correction vocabulary, canonical authority resolution, compensation boundary, anti-stall observer, exact downstream obligations, and session archive conditions.
+Transferred: original correctability distinction, temporal viability rule, governance-interval notation, reconstructability/correctability/admissibility separation, correction vocabulary, canonical authority resolution, compensation boundary, anti-stall observer, exact downstream obligations, and session archive conditions.
 Continuation owner: StegVerse-Labs/StegCore repository-native workflow and issue #43.
 Session-specific untransferred information: none.
 ```
