@@ -1,0 +1,30 @@
+{
+  "record_type": "custody_chain_reopening_transition",
+  "record_id": "STEGCORE-CMG-CUSTODY-SEMANTICS-REOPEN-001",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "fix/custody-chain-record-envelope",
+  "originating_goal": "make Curiosity/Motive Governance evidence independently verifiable",
+  "prior_state": {
+    "archive_state": "COMPLETE",
+    "evidence_commit": "b9956dd3b9300f84468bcff91b2bbc295a19d568"
+  },
+  "reopening_trigger": "release-readiness and runtime-validation self-hashes lack inline convention, record type, and fully qualified repository endpoints",
+  "claim_state": "CLAIMED_FOR_INTEGRATION",
+  "claimant": "cross-repository custody-chain integration lane",
+  "claimed_at": "2026-08-06T20:26:00Z",
+  "release_condition": "both evidence records migrated and rehashed; dependencies updated; tests and workflow pass; CURIOSITY_AFFECTIVE_GOVERNANCE handoff appends transition; exact-main evidence inspected",
+  "owned_paths": [
+    "evidence/release-readiness.json",
+    "evidence/runtime-validation.json",
+    "docs/CURIOSITY_AFFECTIVE_GOVERNANCE_MIRROR_HANDOFF.md",
+    "evidence/custody-chain-semantics-reopening-001.json"
+  ],
+  "collision_boundary": {
+    "motive_governance_runtime": "UNCHANGED",
+    "execution_authority": false,
+    "runtime_activation": false,
+    "occurrence_claim": false,
+    "phenomenal_status_claim": false
+  },
+  "next_executable_action": "migrate evidence/release-readiness.json and evidence/runtime-validation.json in one dependency-safe push"
+}
