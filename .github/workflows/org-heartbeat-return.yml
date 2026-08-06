@@ -1,0 +1,31 @@
+name: StegCore organization heartbeat return
+on:
+  workflow_dispatch:
+    inputs:
+      assertion_json:
+        description: Organization heartbeat assertion JSON
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  return-heartbeat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Write assertion
+        env:
+          ASSERTION_JSON: ${{ inputs.assertion_json }}
+        run: |
+          mkdir -p data/org-heartbeat/inbound data/org-heartbeat/returns
+          printf '%s' "$ASSERTION_JSON" > data/org-heartbeat/inbound/assertion.json
+      - name: Produce counter-assertion
+        run: python scripts/produce_org_heartbeat_return.py data/org-heartbeat/inbound/assertion.json data/org-heartbeat/returns/return.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stegcore-org-heartbeat-return
+          path: data/org-heartbeat/returns/return.json
+          if-no-files-found: error
