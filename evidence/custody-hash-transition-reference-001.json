@@ -1,0 +1,33 @@
+{
+  "schema": "stegverse.stegcore.custody_hash_transition_reference.v1",
+  "record_type": "custody_hash_transition_reference",
+  "transition_reference_id": "STEGCORE-CUSTODY-HASH-TRANSITION-REF-001",
+  "source_repository": "StegVerse-Labs/StegCore",
+  "canonical_registry": {
+    "repository": "master-records/core-lite",
+    "path": "records/custody_chain_hash_transition_registry_001.json",
+    "branch": "fix/custody-chain-digest-semantics",
+    "pull_request": 27,
+    "commit": "e20e6a7cf08c9690506c82ec1cae581ed9437350"
+  },
+  "historical_references": {
+    "master_records_custody_record_hash": "f7db74f1a2caafab593f2beacc203901ac5a72d5d0fd44b7e0f9b209170a528f",
+    "master_records_acknowledgement_hash": "0a98789be976aad5c18936fe823f9732d683f4e149051e34976eb4743678eb24",
+    "gcat_acknowledgement_import_hash": "1d65230536d7cc7db60cc544c84d42d9d25fc3c9382b66d703476ac34b88813e"
+  },
+  "current_migrated_references": {
+    "master_records_custody_record_hash": "216e2c43a572e11109165b5237ef82162b10dc6262b36156e3783dd6879d3103",
+    "master_records_acknowledgement_hash": "b5b26eb34c731c7d195d4a5279cf4239086398bd9032ef9029807834abd11276",
+    "gcat_acknowledgement_import_hash": "ed597ecde9b7736a610f273774820d662c5bec066bdad5e3980f33bc7ed87996"
+  },
+  "resolution_rule": "preserve historical identifiers; resolve current records through the canonical append-only transition registry",
+  "authority_boundary": {
+    "execution_authority_granted": false,
+    "runtime_activation": false,
+    "repository_binding_granted": false,
+    "policy_published": false,
+    "public_publication_authorized": false,
+    "occurrence_proven": false,
+    "phenomenal_status_inferred": false
+  }
+}
