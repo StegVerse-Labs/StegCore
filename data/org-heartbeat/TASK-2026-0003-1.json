@@ -1,0 +1,63 @@
+{
+  "assertion_file": "TASK-2026-0003-1.json",
+  "authority_effect": "none",
+  "claimant_id": "TASK-2026-0003",
+  "claims": [
+    {
+      "claim_generation": 1,
+      "fencing_token": 1,
+      "last_evidence_pointer": "StegVerse-Labs/StegCore@df5ff834fad2785bbb0a63fae91b2d51b7a91786",
+      "lease": {
+        "expires_at": "2026-08-07T20:07:00Z",
+        "fencing_token": 1,
+        "heartbeat_due_at": "2026-08-07T04:07:00Z",
+        "service_class": "low_contention"
+      },
+      "mode": "scoped_exclusive",
+      "preemptible": false,
+      "repository": {
+        "default_branch": "main",
+        "full_name": "StegVerse-Labs/StegCore",
+        "host": "github.com",
+        "name": "StegCore",
+        "owner": "StegVerse-Labs"
+      },
+      "scope": {
+        "capabilities": ["organization-heartbeat-claimant"],
+        "contracts": ["stegverse.org-heartbeat/v1"],
+        "paths": [
+          "scripts/produce_org_heartbeat_return.py",
+          ".github/workflows/org-heartbeat-return.yml",
+          "data/org-heartbeat/**",
+          "docs/STEGCORE_ORG_HEARTBEAT_MIRROR_HANDOFF.md"
+        ],
+        "release_surfaces": [],
+        "workflows": ["org-heartbeat-return"]
+      },
+      "task_id": "TASK-2026-0003"
+    }
+  ],
+  "continuity_receipt_minted": false,
+  "epoch": 1,
+  "evidence_pointer": "df5ff834fad2785bbb0a63fae91b2d51b7a91786",
+  "execution_authority": false,
+  "fencing_token": 1,
+  "nonce": "7c3ca3c29d8f4ab5a2ab78e45a945d01",
+  "policy_version": "stegverse.org-state/v0.2",
+  "release_authority": false,
+  "repository": "StegVerse-Labs/StegCore",
+  "repository_commit": "df5ff834fad2785bbb0a63fae91b2d51b7a91786",
+  "schema": "stegverse.org-heartbeat-return/v1",
+  "scope": {
+    "capabilities": ["organization-heartbeat-claimant"],
+    "contracts": ["stegverse.org-heartbeat/v1"],
+    "paths": [
+      "scripts/produce_org_heartbeat_return.py",
+      ".github/workflows/org-heartbeat-return.yml",
+      "data/org-heartbeat/**",
+      "docs/STEGCORE_ORG_HEARTBEAT_MIRROR_HANDOFF.md"
+    ],
+    "release_surfaces": [],
+    "workflows": ["org-heartbeat-return"]
+  }
+}
