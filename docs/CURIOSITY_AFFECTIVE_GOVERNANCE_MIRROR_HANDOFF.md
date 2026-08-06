@@ -117,3 +117,51 @@ session consolidation: 6/6
 ## Archive condition
 
 The StegCore portion is archive-safe. Its implementation, merge identity, downstream custody, runtime intake, admission, acknowledgement, and final import are all represented in durable repository state. No unique chat-only state remains.
+
+## Custody evidence semantics reopening transition — 2026-08-06
+
+The preceding source-contract completion remains historical evidence. This transition reopens only record-envelope verification for two existing evidence records.
+
+```text
+transition_id: STEGCORE-CUSTODY-EVIDENCE-REOPEN-001
+reopening_trigger: independent reconciliation identified self-hashed evidence without declared excluded-field and repository semantics
+prior_claim_state: RELEASED / COMPLETE
+new_claim_state: CLAIMED_FOR_INTEGRATION
+repository: StegVerse-Labs/StegCore
+branch: fix/custody-chain-record-envelope
+pull_request: 53
+canonical_dependency: master-records/core-lite#27
+active_implementation_claim: evidence record envelope migration complete on branch
+active_validation_claim: exact-head hosted workflow pending
+claim_release_condition: PR-head workflow success, job and log inspection, artifact inspection, merge, and exact-main workflow success
+collision_boundary: motive-governance implementation and runtime authority are unchanged
+```
+
+Installed reopening surfaces:
+
+```text
+evidence/custody-chain-semantics-reopening-001.json
+evidence/release-readiness.json
+evidence/runtime-validation.json
+tests/test_custody_evidence_envelopes.py
+.github/workflows/curiosity-motive-governance.yml
+docs/CURIOSITY_AFFECTIVE_GOVERNANCE_MIRROR_HANDOFF.md
+```
+
+Current migrated hashes:
+
+```text
+release-readiness assessment_hash: 69869582fc30d22efc2d3c558d7378c99f80c65e6f620fd4e5911977e87c2911
+runtime-validation evidence_hash: 1d9b0184a2626f7a3ca2b90c6a0449069427f710b1e9758f0493668d380672fa
+```
+
+Both records now declare `record_type`, fully qualified source and destination repositories, and their exact self-hash convention. The hosted workflow owns both records, the test, the reopening record, and this handoff; it uses immutable action commits, emits an exact-head execution receipt, uploads the evidence, and fails closed on test or evidence absence.
+
+```text
+next executable task: inspect the exact PR-head workflow run, jobs, logs, and artifact
+MERGED INTO: master-records/core-lite#27
+integration lane: StegVerse-Labs/StegCore#53
+archive_state_for_reopening: BLOCKED_PENDING_HOSTED_VALIDATION_AND_MERGE
+```
+
+No execution authority, runtime activation, repository binding, policy publication, occurrence claim, or phenomenal inference is created by this transition.
