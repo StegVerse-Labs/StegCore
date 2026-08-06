@@ -1,5 +1,18 @@
 {
   "artifact_type": "stegcore.runtime_validation_evidence",
+  "record_type": "runtime_validation_evidence",
+  "source_repository": "StegVerse-Labs/StegCore",
+  "destination_repository": "StegVerse-Labs/StegCore",
+  "hash_convention": {
+    "algorithm": "SHA-256",
+    "excluded_field": "evidence_hash",
+    "serialization": {
+      "encoding": "UTF-8",
+      "format": "JSON",
+      "separators": [",", ":"],
+      "sort_keys": true
+    }
+  },
   "authority_boundary": {
     "continuity_authority_claimed": false,
     "cross_repository_mutation_authority_claimed": false,
@@ -18,45 +31,12 @@
   "downstream_dispatch_hash": "fab290ecee54b444da72fd84ec7e3fc3d385c8e11c430557d71d7e4d923623a9",
   "downstream_dispatch_path": "evidence/downstream-verification-dispatch.json",
   "downstream_verification": [
-    {
-      "handoff": "docs/SITE_MIRROR_HANDOFF.md",
-      "issue_number": 14,
-      "issue_url": "https://github.com/StegVerse-Labs/Site/issues/14",
-      "repository": "StegVerse-Labs/Site",
-      "required": true,
-      "scope": "Evidence observation only; preserve PREPARED_NOT_DEPLOYED and activation-blocked state.",
-      "state": "queued"
-    },
-    {
-      "handoff": "PUBLISHER_MIRROR_HANDOFF.md",
-      "issue_number": 4,
-      "issue_url": "https://github.com/GCAT-BCAT-Engine/Publisher/issues/4",
-      "repository": "GCAT-BCAT-Engine/Publisher",
-      "required": true,
-      "scope": "Publisher awareness only; preserve queue order and current activation authority.",
-      "state": "queued"
-    },
-    {
-      "handoff": "docs/ADMISSIBILITY_WIKI_MIRROR_HANDOFF.md",
-      "issue_number": 19,
-      "issue_url": "https://github.com/StegVerse-Labs/admissibility-wiki/issues/19",
-      "repository": "StegVerse-Labs/admissibility-wiki",
-      "required": true,
-      "scope": "Documentation verification only; do not promote verification into execution authority.",
-      "state": "queued"
-    },
-    {
-      "handoff": "STEGGUARDIAN_WIKI_MIRROR_HANDOFF.md",
-      "issue_number": 4,
-      "issue_url": "https://github.com/StegVerse-002/stegguardian-wiki/issues/4",
-      "repository": "StegVerse-002/stegguardian-wiki",
-      "required": true,
-      "scope": "Evidence awareness only; preserve ST-017, Pages, and Guardian authority boundaries.",
-      "state": "queued"
-    }
+    {"handoff": "docs/SITE_MIRROR_HANDOFF.md", "issue_number": 14, "issue_url": "https://github.com/StegVerse-Labs/Site/issues/14", "repository": "StegVerse-Labs/Site", "required": true, "scope": "Evidence observation only; preserve PREPARED_NOT_DEPLOYED and activation-blocked state.", "state": "queued"},
+    {"handoff": "PUBLISHER_MIRROR_HANDOFF.md", "issue_number": 4, "issue_url": "https://github.com/GCAT-BCAT-Engine/Publisher/issues/4", "repository": "GCAT-BCAT-Engine/Publisher", "required": true, "scope": "Publisher awareness only; preserve queue order and current activation authority.", "state": "queued"},
+    {"handoff": "docs/ADMISSIBILITY_WIKI_MIRROR_HANDOFF.md", "issue_number": 19, "issue_url": "https://github.com/StegVerse-Labs/admissibility-wiki/issues/19", "repository": "StegVerse-Labs/admissibility-wiki", "required": true, "scope": "Documentation verification only; do not promote verification into execution authority.", "state": "queued"},
+    {"handoff": "STEGGUARDIAN_WIKI_MIRROR_HANDOFF.md", "issue_number": 4, "issue_url": "https://github.com/StegVerse-002/stegguardian-wiki/issues/4", "repository": "StegVerse-002/stegguardian-wiki", "required": true, "scope": "Evidence awareness only; preserve ST-017, Pages, and Guardian authority boundaries.", "state": "queued"}
   ],
   "event": "push",
-  "evidence_hash": "3657e5c64eb54e2c928fba81d3c8d35587d2b87747b9b225102b70339d942730",
   "governance_commit": "c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6",
   "governance_repository": "StegVerse-Labs/Governance",
   "issue": 22,
@@ -69,5 +49,6 @@
   "status": "pass",
   "stegcore_commit": "b2290a006cb23e0595388d0ddaa55e7874c16222",
   "validated_at": "2026-07-25T23:45:30.582786+00:00",
-  "workflow": "Validate StegCore Runtime"
+  "workflow": "Validate StegCore Runtime",
+  "evidence_hash": "1d9b0184a2626f7a3ca2b90c6a0449069427f710b1e9758f0493668d380672fa"
 }
