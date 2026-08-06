@@ -13,6 +13,7 @@ on:
       - "evidence/custody-hash-transition-reference-001.json"
       - "tests/test_custody_evidence_envelopes.py"
       - "docs/CURIOSITY_AFFECTIVE_GOVERNANCE_MIRROR_HANDOFF.md"
+      - "docs/CURIOSITY_AFFECTIVE_GOVERNANCE_HASH_TRANSITION_ADDENDUM.md"
       - ".github/workflows/curiosity-motive-governance.yml"
   push:
     branches: [main]
@@ -26,6 +27,7 @@ on:
       - "evidence/custody-hash-transition-reference-001.json"
       - "tests/test_custody_evidence_envelopes.py"
       - "docs/CURIOSITY_AFFECTIVE_GOVERNANCE_MIRROR_HANDOFF.md"
+      - "docs/CURIOSITY_AFFECTIVE_GOVERNANCE_HASH_TRANSITION_ADDENDUM.md"
       - ".github/workflows/curiosity-motive-governance.yml"
 
 permissions:
@@ -43,7 +45,7 @@ jobs:
         run: python -m pip install -e . pytest
       - name: Validate motive governance and custody evidence envelopes
         run: python -m pytest -q tests/test_motive_governance.py tests/test_custody_evidence_envelopes.py
-      - name: Verify hash-transition reference is present
+      - name: Validate hash transition reference
         run: python -m json.tool evidence/custody-hash-transition-reference-001.json >/dev/null
       - name: Emit exact-head execution receipt
         run: |
@@ -63,5 +65,6 @@ jobs:
             evidence/custody-chain-semantics-reopening-001.json
             evidence/custody-hash-transition-reference-001.json
             docs/CURIOSITY_AFFECTIVE_GOVERNANCE_MIRROR_HANDOFF.md
+            docs/CURIOSITY_AFFECTIVE_GOVERNANCE_HASH_TRANSITION_ADDENDUM.md
           if-no-files-found: error
           retention-days: 30
