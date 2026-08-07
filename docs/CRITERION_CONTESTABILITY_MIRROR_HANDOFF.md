@@ -2,119 +2,169 @@
 
 ## Source of Truth
 
-This is the goal-specific continuation record for `CCB-001` inside the repository-wide authority of `STEGCORE_MIRROR_HANDOFF.md`. It must not supersede unrelated StegCore workstreams. The adjacent completed `PA-001` permission/admissibility lane is a dependency and semantic predecessor, not a competing implementation.
+This is the goal-specific canonical continuation record for `CCB-001` inside the repository-wide authority of `STEGCORE_MIRROR_HANDOFF.md`. It does not supersede unrelated StegCore workstreams. The completed `PA-001` permission/admissibility lane is the semantic predecessor and remains independently authoritative for its files.
 
 ```text
 goal_id: CCB-001
-session_state: ACTIVE — UNIQUE WORK REMAINS
+session_state: COMPLETE — ARCHIVE READY
 repository: StegVerse-Labs/StegCore
 branch: main
 canonical_owner: StegVerse-Labs/StegCore
-implementation_claim: CLAIMED_FOR_IMPLEMENTATION
-validation_claim: CLAIMED_FOR_VALIDATION
-integration_claim: CLAIMED_FOR_INTEGRATION
+implementation_claim: RELEASED
+validation_claim: RELEASED
+integration_claim: RELEASED
+propagation_claim: MACHINE_OWNED
 claim_created: 2026-08-07T17:05:00-05:00
-claim_release_condition: criterion-contestability contract, evaluator, semantic tests, CI validation, deterministic evidence, repository handoff reconciliation, and propagation obligation are complete or durably machine-owned
+claim_release_condition: SATISFIED
 ```
 
 ## Originating session goal
 
 Formalize the pre-execution insight that agency begins after an upstream selection has already occurred: a possibility is selected as relevant, a criterion acquires force, and a frame becomes actionable. Preserve trajectory plurality while preventing a relevance criterion, frame, or orientation from silently acquiring consequential authority merely because it precedes planning.
 
-## Canonical distinctions transferred from the session
+## Canonical distinctions transferred and implemented
 
-1. **Orientation is not authority.** An orientation, model frame, or selected criterion cannot authorize execution merely by shaping a plan.
-2. **Contestability is not admissibility.** A criterion may be visible, provenance-bound, and contestable while the resulting transition remains inadmissible.
-3. **Parallelity is not authorization.** Multiple independent trajectories may remain visible without any of them acquiring execution authority.
-4. **Pre-selection must remain contestable.** A criterion that hardens into unchallengeable infrastructure before consequence creates an invisible authority path.
-5. **Relation is a governed transition.** Mutual legibility among distinct trajectories is insufficient; a consequence-bearing relation requires the same present-tense admissibility discipline as other commits.
-6. **Successful planning or execution is not evidence of legitimate framing.** Downstream coherence cannot repair an inadmissible upstream criterion.
-7. **Commit-time validity remains decisive.** Criterion provenance, contestability, delegation/authority, consent or standing when applicable, continuity, and governing conditions must survive to the consequence boundary.
+1. **Orientation is not authority.**
+2. **Contestability is not admissibility.**
+3. **Parallelity is not authorization.**
+4. **Pre-selection must remain contestable through the consequence boundary.**
+5. **Relation among consequence-bearing trajectories is a governed transition.**
+6. **Successful planning or execution cannot repair an inadmissible upstream criterion.**
+7. **Commit-time validity remains decisive for criterion provenance, contestability, authority/delegation, consent or standing where applicable, continuity, governing conditions, attribution, and reconstructability.**
 
-## Convergence assessment
+All seven requirements are now durable in the contract, runtime, tests, CI, evidence, this handoff, and propagation task. No unique requirement from the originating conversation remains chat-only.
 
-`PA-001` already implements the repository invariant that permission is not admissibility and that current authority/continuity/governing-condition evidence is required for consequence-bearing transitions. `CCB-001` extends rather than duplicates that work by adding the missing upstream predicate family: whether the criterion/frame that shaped the proposed action remained provenance-bound and contestable and whether it ever possessed separately established consequential authority.
+## Convergence and collision assessment
 
-`CCB-001` must not modify the completed `contracts/permission-admissibility-boundary.v1.json` or its validator/tests. It composes with that boundary through deterministic test fixtures and explicit authority separation.
+`PA-001` already separates positional permission from present-tense consequence-bound admissibility. `CCB-001` extends rather than duplicates that lane by adding the missing upstream predicate family for criterion provenance, criterion contestability at commit, criterion authority, and governed relation among trajectories.
 
-## Authoritative target files
+The integration test loads both contracts and proves that every PA-001 required consequence predicate remains present in the CCB boundary while CCB adds upstream requirements. No PA-001 file was modified.
+
+The repository-wide root handoff still contains historical/stale wording for earlier PR #18 state; this goal-specific handoff is authoritative for CCB-001 only and does not claim unrelated repository-wide ownership.
+
+## Installed implementation
 
 ```text
 docs/CRITERION_CONTESTABILITY_MIRROR_HANDOFF.md
 contracts/criterion-contestability-boundary.v1.json
 src/stegcore/criterion_contestability.py
+scripts/validate_criterion_contestability_boundary.py
 tests/test_criterion_contestability.py
 .github/workflows/criterion-contestability-validate.yml
 evidence/criterion-contestability-validation.json
 receipts/criterion-contestability-propagation-task.json
 ```
 
-## Task inventory
+## Completed task inventory
 
-| Task ID | State | Location | Next executable action |
-|---|---|---|---|
-| CCB-001-HANDOFF | COMPLETE | this file | install contract |
-| CCB-001-CONTRACT | CLAIMED_FOR_IMPLEMENTATION | `contracts/criterion-contestability-boundary.v1.json` | install deterministic contract and adversarial cases |
-| CCB-001-RUNTIME | CLAIMED_FOR_IMPLEMENTATION | `src/stegcore/criterion_contestability.py` | implement fail-closed evaluator |
-| CCB-001-TESTS | CLAIMED_FOR_VALIDATION | `tests/test_criterion_contestability.py` | bind contract cases to runtime |
-| CCB-001-CI | CLAIMED_FOR_VALIDATION | `.github/workflows/criterion-contestability-validate.yml` | automate validator/test execution |
-| CCB-001-EVIDENCE | BLOCKED | `evidence/criterion-contestability-validation.json` | release condition: successful hosted or deterministic validation evidence |
-| CCB-001-INTEGRATION | CLAIMED_FOR_INTEGRATION | PA-001 semantic boundary + CCB runtime composition | prove independent trajectories can still DENY at criterion/admissibility boundary |
-| CCB-001-PROPAGATION | UNCLAIMED | `receipts/criterion-contestability-propagation-task.json` | inspect destination handoffs and activate bounded propagation review after validation |
+| Task ID | State | Location |
+|---|---|---|
+| CCB-001-HANDOFF | COMPLETE | this file |
+| CCB-001-CONTRACT | COMPLETE_AND_VALIDATED | `contracts/criterion-contestability-boundary.v1.json` |
+| CCB-001-RUNTIME | COMPLETE_AND_VALIDATED | `src/stegcore/criterion_contestability.py` |
+| CCB-001-VALIDATOR | COMPLETE_AND_HOSTED_VALIDATED | `scripts/validate_criterion_contestability_boundary.py` |
+| CCB-001-TESTS | COMPLETE_AND_HOSTED_VALIDATED | `tests/test_criterion_contestability.py` |
+| CCB-001-CI | COMPLETE_AND_HOSTED_VALIDATED | `.github/workflows/criterion-contestability-validate.yml` |
+| CCB-001-EVIDENCE | COMPLETE | `evidence/criterion-contestability-validation.json` |
+| CCB-001-INTEGRATION | COMPLETE_AND_HOSTED_VALIDATED | PA-001 composition test in `tests/test_criterion_contestability.py` |
+| CCB-001-PROPAGATION | MACHINE_OWNED | `receipts/criterion-contestability-propagation-task.json` |
 
-## Required adversarial cases
+## Runtime semantics
 
-1. Two or more trajectories remain independent and visible, but the selected criterion has no authoritative provenance: `DENY`.
-2. Criterion provenance is known but contestability is disabled before consequence: `DENY`.
-3. Criterion is contestable but its authority is stale at commit time: `DENY`.
-4. Criterion is contestable and provenance-bound but required consent/standing is absent: `DENY`.
-5. One trajectory contests another and no criterion has established consequential authority: `DEFER`, not synthetic consensus.
-6. All required criterion and PA-001 predicates are current: `ALLOW`.
-7. A non-consequence-bearing orientation/coordination step may proceed without being represented as execution authority.
+For consequence-bearing candidates, CCB-001 fails closed when criterion provenance is unbound, contestability is lost, criterion authority is stale, the trajectory relation is ungoverned, required consent/standing is absent, or any PA-001 present-tense predicate is false. Missing required evidence yields `DEFER`. A non-consequence-bearing orientation step may `ALLOW` while still reporting `execution_authority_conferred=false`.
 
-## Collision boundaries
+Parallel trajectories remain visible and are never collapsed into synthetic consensus as a substitute for authority.
 
-Do not modify or claim ownership of:
+## Hosted validation evidence
 
-- completed PA-001 implementation files;
-- commit-governance runtime files owned by the commit-coherence lane;
-- Child Mode authority runtime files;
-- StegGate network-governance review files;
-- custody/continuity receipt minting or verification authority;
-- external legal, financial, deployment, Guardian, or publication authority.
-
-## Validation target
+Canonical final validation run:
 
 ```text
-python -m pytest -q tests/test_criterion_contestability.py
+workflow: Criterion Contestability Boundary
+run_id: 31222860356
+run_number: 2
+head_sha: bf7e13e5e56bd79ed1c9c31c1cdeb2ce7a09ebe6
+job_id: 93010949660
+job: validate
+status: completed
+conclusion: success
 ```
 
-Hosted validation must record the exact head SHA, job conclusion, semantic case count, and deterministic PASS marker before implementation/validation claims are released.
-
-## Propagation candidates
-
-After validation, inspect and obey each destination's canonical handoff before mutation:
+Observed job-log evidence:
 
 ```text
-StegVerse-Labs/Site/docs/SITE_MIRROR_HANDOFF.md
-GCAT-BCAT-Engine/Publisher/PUBLISHER_MIRROR_HANDOFF.md
-StegVerse-Labs/admissibility-wiki/ADMISSIBILITY_WIKI_MIRROR_HANDOFF.md
-StegVerse-002/stegguardian-wiki/STEGGUARDIAN_WIKI_MIRROR_HANDOFF.md
+CRITERION_CONTESTABILITY_BOUNDARY=PASS
+cases=7
+........ [100%]
+8 passed in 0.04s
+CRITERION_CONTESTABILITY_TESTS=PASS
 ```
 
-## Archive condition
+The eighth test is the explicit PA-001/CCB-001 composition test.
 
-The originating conversation is archive-safe only after all seven session distinctions above are either implemented/validated or durably merged into this canonical lane, no active CCB implementation/validation claim remains dependent on chat history, and any downstream propagation is complete or machine-owned with an inspectable release condition.
+Canonical persisted evidence: `evidence/criterion-contestability-validation.json`.
 
-## Completeness snapshot
+## Commits
 
 ```text
-task_completion: 1/8
-required_developed_files: 1/7
+76d66c6473108803637c894837e5ca62bc2ca812  create CCB handoff
+07ba96fdcc4bcc745e47510fadf44119e4a3a095  implement runtime evaluator
+434c29760a1748d0f6009173f7550de5079e25ca  install contract
+ec43390505fc1b0716a4ecbb3ffb99114c97fb03  install deterministic validator
+9397aaddb21cc9c27abeddf392afd22787e5b0b4  install semantic tests
+3b629371a034fda04fc6b137c8af99377faa9072  install CI validation
+214d6d063debbacbcfccd03eb0d06bf579d27e85  persist initial hosted evidence
+3d6008bf01cc0fc97dc6fbfcf68c963cd1d909f6  activate propagation task
+bf7e13e5e56bd79ed1c9c31c1cdeb2ce7a09ebe6  bind explicit PA-001 composition test
+2437e8b7942d08cb36793c1d9ff28e53ccdd210f  persist final hosted evidence
+```
+
+## Downstream propagation ownership
+
+Current target handoffs were inspected before activating propagation:
+
+- `StegVerse-Labs/Site/docs/SITE_MIRROR_HANDOFF.md` — active HIL/heartbeat/deployment workloads; Site orchestration must admit any CCB projection.
+- `GCAT-BCAT-Engine/Publisher/PUBLISHER_MIRROR_HANDOFF.md` — active Site import and adjacent-construction automation; CCB may be propagated only as bounded publication semantics.
+- `StegVerse-Labs/admissibility-wiki/ADMISSIBILITY_WIKI_MIRROR_HANDOFF.md` — canonical validation remains fail-closed and issue #50 owns remaining validation; CCB must merge into that mesh rather than form a competing lane.
+- `StegVerse-002/stegguardian-wiki/STEGGUARDIAN_WIKI_MIRROR_HANDOFF.md` — Guardian projection remains dependency-blocked until the ordered upstream admissibility chain is verified.
+
+The exact owners, required actions, duplicate-prevention rule, allowed task states, and machine-observable release conditions are installed in `receipts/criterion-contestability-propagation-task.json`. Propagation does not depend on this conversation.
+
+## Release posture
+
+No StegCore tag/release is created by CCB-001. The source goal is implementation-complete and hosted-validated, but repository-wide release authorization is explicitly outside this lane and downstream targets retain their own active/blocking states.
+
+## Session consolidation
+
+```text
+MERGED INTO: StegVerse-Labs/StegCore/docs/CRITERION_CONTESTABILITY_MIRROR_HANDOFF.md
+source implementation: complete
+source validation: complete
+PA-001 integration: complete
+remaining downstream propagation: machine-owned
+session_dependency: false
+thread_archive_ready: true
+```
+
+## Current completion assessment
+
+```text
+task_completion: 9/9
+required_developed_files: 8/8
 scaffolding_or_stubs: 0
-missing_required_files: 6
-validation: 0/3
-integration: 0/2
-session_consolidation: 7/7 requirements transferred
-archival_readiness: false
+missing_required_files: 0
+validation: 3/3
+integration: 2/2
+propagation: 0/4 target-native completions; 4/4 have durable named owners and machine-observable release conditions
+session_consolidation: 7/7 session requirements transferred
+archival_readiness: true
+```
+
+## Archive status
+
+```text
+COMPLETE — ARCHIVE
+canonical_continuation: docs/CRITERION_CONTESTABILITY_MIRROR_HANDOFF.md
+machine_continuation: receipts/criterion-contestability-propagation-task.json
+complete_thread_required_for_continuation: false
 ```
