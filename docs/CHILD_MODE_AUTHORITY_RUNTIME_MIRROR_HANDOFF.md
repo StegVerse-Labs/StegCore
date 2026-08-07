@@ -9,11 +9,12 @@ repository: StegVerse-Labs/StegCore
 branch: main
 source_projection: StegVerse-Labs/Site/docs/CHILD_SAFE_NETWORKING_MIRROR_HANDOFF.md
 canonical_owner: StegCore ecosystem management
-claim_state: CLAIMED_FOR_INTEGRATION
-claim_role: canonical runtime-contract continuation owner
+claim_state: MACHINE_OWNED_PROPAGATION_REVIEW
+claim_role: destination propagation and production-activation review only
 claim_created: 2026-08-07T11:04:00-05:00
-claim_release_condition: production runtime contract, deterministic verifier, receipt/evidence schema mapping, and downstream propagation obligations are installed and validated or explicitly superseded
-claim_expiration: release or renewal required when the release condition is evaluated; no indefinite chat-session claim
+integration_claim_released: 2026-08-07T11:12:32-05:00
+integration_release_evidence: hosted workflow run 31196424044 PASS at commit 60bf60c920d498452ac49caf74066550a550b434
+claim_release_condition: destination handoff reviews are complete or explicitly superseded; production pilot remains disabled absent lawful regulator authority
 ```
 
 This handoff is the canonical continuation location for the production Child Mode authority runtime. It does not duplicate the completed Site public/pilot surfaces.
@@ -33,58 +34,27 @@ This handoff is the canonical continuation location for the production Child Mod
 11. Keep regulatory pilot admission distinct from legal self-exemption.
 12. Preserve jurisdiction-specific legal semantics without encoding a universal claim that all minors lack all consent capacity.
 
-Unique chat-only requirements after this transfer: `0`.
+Unique chat-only requirements after transfer: `0`.
 
 ## Authority boundary
 
-StegCore may own the runtime decision contract and deterministic evaluation semantics. It does not itself:
+StegCore owns deterministic runtime-contract evaluation semantics for this lane. It does not mint legal age identity, create guardian legal authority, adjudicate law, approve a regulatory pilot, authorize deployment, or turn a validator PASS into execution authority.
 
-```text
-mint legal age identity
-create guardian legal authority
-adjudicate law
-approve a regulatory pilot
-authorize deployment
-collect child content for compliance surveillance
-turn a validator PASS into execution authority
-```
-
-External/lawful age, guardian, policy, and pilot-authority evidence must be consumed as bounded evidence, not silently manufactured by StegCore.
-
-## Installed continuation surfaces
+## Installed and validated continuation surfaces
 
 ```text
 docs/CHILD_MODE_AUTHORITY_RUNTIME_MIRROR_HANDOFF.md
 ecosystem_management/child_mode_authority_runtime.v0.1.json
 tools/verify_child_mode_authority_runtime.py
 .github/workflows/child-mode-authority-runtime.yml
+ecosystem_management/task_registry.yml
 canonical receipt mapping: docs/stegverse_admissibility_receipt_v1.md
-runtime report output: brain_reports/child_mode_authority_runtime_report.json
+runtime report artifact: child-mode-authority-runtime-report
 ```
 
 The existing `stegverse.admissibility_receipt.v1` envelope is reused as the canonical receipt foundation rather than creating a competing receipt authority. Child Mode-specific evidence fields are declared as required extensions in the machine-readable runtime state.
 
-## Required runtime inputs
-
-```text
-subject/account reference
-verified age-band / eligibility assertion
-jurisdiction
-policy version
-device class / device policy
-active authenticated account state
-guardian authority reference when applicable
-known-contact relationship evidence when applicable
-requested capability OR requested data access
-purpose
-recipient
-retention window
-pilot authority reference when pilot-only behavior is requested
-```
-
-Raw identity evidence should not be required when a privacy-preserving eligibility assertion is sufficient.
-
-## Required deterministic outcomes
+## Baseline runtime contract
 
 ```text
 ALLOW
@@ -93,16 +63,11 @@ REVIEW_REQUIRED
 SUSPENDED
 ```
 
-For the same authoritative inputs and policy version, the result must be stable until a recorded policy revision changes the boundary.
-
-## Required baseline decisions
-
-Protected age/account state:
+Protected baseline decisions include:
 
 ```text
 UNKNOWN_PERSON_DM -> DENY
 PUBLIC_DISCOVERY -> DENY where protected policy applies
-PUBLIC_SELF_LIVESTREAM -> DENY where protected policy applies
 ENGAGEMENT_RECOMMENDER -> DENY
 BEHAVIORAL_AD_PROFILE -> DENY
 PRECISE_LOCATION_DISCLOSURE -> DENY
@@ -112,16 +77,7 @@ APPROVED_COLLABORATION -> ALLOW when purpose/contact boundary established
 REPORT_BLOCK -> ALLOW
 ```
 
-Data authority:
-
-```text
-OPTIONAL_DATA_HARVESTING = DENY_BY_DEFAULT
-UNDECLARED_DATA_EGRESS = NONE
-child-visible click/tap/toggle != harvesting authority
-authorized guardian/adult approval = exact data + exact purpose + exact recipient + retention only
-```
-
-Validator terminal compatibility markers:
+Data authority terminal markers:
 
 ```text
 OPTIONAL_DATA_HARVESTING=DENY_BY_DEFAULT
@@ -131,7 +87,7 @@ FAIL_CLOSED=true
 AUTHORITY_GRANTED=false
 ```
 
-## Delivery precedence
+Delivery precedence:
 
 ```text
 LAW / JURISDICTION FLOOR
@@ -143,48 +99,41 @@ LAW / JURISDICTION FLOOR
 => EFFECTIVE_CAPABILITY_AND_DATA_BOUNDARY
 ```
 
-Stricter controls may add restrictions; optional controls may not weaken a mandatory floor.
+Optional controls may add restrictions; they may not weaken mandatory restrictions.
 
 ## Receipt/evidence requirements
 
-Each sensitive decision must be reconstructable from a receipt containing at minimum:
-
-```text
-decision_id
-timestamp
-subject/account pseudonymous reference
-policy version
-jurisdiction
-age/eligibility evidence reference
-device/account state reference
-guardian/known-contact evidence reference when used
-requested capability or data class
-purpose
-recipient
-retention window
-decision
-reason code
-released amount for data decisions
-pilot authority reference when used
-input/evidence hashes
-```
+Each sensitive decision must remain reconstructable using the canonical receipt envelope plus Child Mode extensions for subject reference, jurisdiction, eligibility evidence, device/account state, guardian/known-contact evidence when used, requested capability/data class, purpose, recipient, retention, released amount, and pilot authority reference where applicable.
 
 A receipt records a decision; it does not itself create legal authority.
 
 ## Fail-closed behavior
 
 ```text
-age assurance unavailable -> no new protected-user admission / REVIEW_REQUIRED or DENY according to policy
+age assurance unavailable -> no new protected-user admission / DENY or REVIEW_REQUIRED
 policy evidence missing -> sensitive transition DENY
 receipt/evidence chain unavailable -> sensitive transition DENY
 unknown data egress -> affected data authority DENY + incident
-mandatory regulator test fails during pilot -> affected cohort/capability SUSPENDED
-pilot termination condition -> pilot-only admission disabled
+mandatory regulator test failure -> affected cohort/capability SUSPENDED
+pilot termination -> pilot-only admission disabled
 ```
 
-## Public/projection source
+## Hosted validation evidence
 
-Canonical Site evidence and public semantics remain in:
+```text
+workflow: .github/workflows/child-mode-authority-runtime.yml
+run: 31196424044
+head_sha: 60bf60c920d498452ac49caf74066550a550b434
+conclusion: success
+verify step: success
+report upload step: success
+artifact: 9000969422
+artifact digest: sha256:fa569a2add88250ef4047b7fd8568a3f6d0168746f1ab0110d0c3872581e45bd
+```
+
+A prior successful run `31196376424` also validated the contract before central registry registration. Run `31196424044` proves the same verifier remained green after registration in `ecosystem_management/task_registry.yml`.
+
+## Public/projection source
 
 ```text
 StegVerse-Labs/Site/docs/CHILD_SAFE_NETWORKING_MIRROR_HANDOFF.md
@@ -193,93 +142,25 @@ StegVerse-Labs/Site/docs/CHILD_MODE_DATA_AUTHORITY.md
 StegVerse-Labs/Site/docs/CHILD_SAFETY_REGULATORY_PILOT.md
 ```
 
-StegCore must not silently rewrite the public/legal projection. Normative runtime changes that affect public boundaries create a propagation obligation back to Site and applicable policy/guardian/Publisher surfaces.
+StegCore must not silently rewrite the public/legal projection. Normative runtime changes create a propagation obligation to destination owners.
 
-## Canonical task owner and claim boundaries
+## Canonical ownership after hosted PASS
 
 ```text
-owner: StegCore ecosystem management
-role: runtime contract integration + deterministic verifier + receipt semantics
+implementation: COMPLETE for local runtime contract/state/verifier/workflow
+validation: COMPLETE hosted PASS
+integration claim: RELEASED
+remaining role: MACHINE_OWNED_PROPAGATION_REVIEW
 collision boundaries:
   - do not modify active STEGCORE-EXT-EVIDENCE-INTEROP-001 files
   - do not claim legal/pilot/deployment authority
   - do not duplicate Site public pages
   - do not supersede personal-data-control canonical contracts without explicit reconciliation
-expected evidence:
-  - committed runtime contract/state
-  - deterministic validator/test suite
-  - canonical receipt mapping
-  - repository-native verification report artifact
-  - propagation manifest/obligations
-next task after release: destination-owned propagation/activation review
 ```
 
-## Completed work in this transfer
+## Remaining work and machine-owned continuation
 
-```text
-canonical child-mode runtime handoff: installed
-machine-readable runtime state/decision vectors: installed
-deterministic verifier: installed
-canonical admissibility receipt mapping: reconciled
-repository-native verification workflow: installed
-Site -> StegCore continuation transfer: complete
-source session requirements transferred: 12/12
-```
-
-Key commits:
-
-```text
-b422b0206dce9c594888f357cbdd28ab4611e2c3  canonical handoff
-a254c3268ca44218882fcda00649fbdf7d978c32  runtime state contract
-9f9ea79fe30d64d62669e931d460028a60773674  deterministic verifier
-b359a2974b992b92d52e8f769d6407cc0080486b  repository-native workflow
-```
-
-## Remaining work and ownership
-
-```text
-StegCore repository automation
-  -> execute child-mode-authority-runtime.yml
-  -> upload brain_reports/child_mode_authority_runtime_report.json
-  -> preserve PASS/FAIL as hosted validation evidence
-
-StegCore ecosystem management
-  -> register this chain in ecosystem_management/task_registry.yml
-  -> after hosted PASS, release integration claim or renew with exact downstream propagation work
-
-Destination-owned propagation after PASS
-  -> Site
-  -> Publisher
-  -> admissibility-wiki
-  -> stegguardian-wiki
-  -> master-records
-  -> StegID when identity/guardian receipt semantics require it
-```
-
-No legal/pilot authority is required to build and validate the local deterministic runtime contract.
-
-Production pilot activation remains blocked until a lawful/regulator authorization exists. Machine-observable release condition: a committed authority reference satisfying the pilot contract; absence keeps pilot admission disabled.
-
-## Validation target
-
-```text
-python tools/verify_child_mode_authority_runtime.py
-```
-
-Required terminal markers:
-
-```text
-CHILD_MODE_AUTHORITY_RUNTIME=PASS
-OPTIONAL_DATA_HARVESTING=DENY_BY_DEFAULT
-NORMAL_MODE_BYPASS=DENY
-UNDECLARED_DATA_EGRESS=NONE
-FAIL_CLOSED=true
-AUTHORITY_GRANTED=false
-```
-
-## Integration and propagation obligations
-
-Evaluate destination handoffs before mutation. Candidate consumers:
+Destination reviews must inspect their own applicable `*_MIRROR_HANDOFF.md` before mutation:
 
 ```text
 StegVerse-Labs/Site
@@ -287,10 +168,18 @@ GCAT-BCAT-Engine/Publisher
 StegVerse-Labs/admissibility-wiki
 StegVerse-002/stegguardian-wiki
 master-records canonical repository
-StegVerse-Labs/StegID if age/guardian/identity receipt semantics require it
+StegVerse-Labs/StegID when age/guardian/identity receipt semantics require it
 ```
 
-Do not claim propagation until directly installed and verified in each destination.
+This is propagation/review work, not an originating-session dependency. Do not claim propagation until directly installed and verified in each destination.
+
+Production pilot activation remains blocked until a lawful/regulator authorization exists. Machine-observable release condition: a committed authority reference satisfying the pilot contract; absence keeps pilot admission disabled.
+
+## Validation command
+
+```text
+python tools/verify_child_mode_authority_runtime.py
+```
 
 ## Session consolidation
 
@@ -302,30 +191,31 @@ source_site_handoff: StegVerse-Labs/Site/docs/CHILD_SAFE_NETWORKING_MIRROR_HANDO
 originating_chat_archive_dependency: false
 ```
 
-The originating child-safety conversation is not required to implement the runtime from this handoff.
-
 ## Archive conditions
 
-For the originating Site/child-safety session:
+For the originating child-safety session:
 
 ```text
 all unique requirements durably transferred: yes
 canonical continuation established: yes
-remaining validation machine-owned: yes
-remaining production pilot authorization externally lawful and explicitly fail-closed: yes
+local runtime contract installed: yes
+hosted runtime contract validation: PASS
+central task registry registration: yes
+remaining propagation destination-owned/machine-owned: yes
+production pilot authority absent and fail-closed: yes
 chat-only implementation responsibility: none
 archive_dependency_on_originating_chat: false
 ```
 
-## Completeness after transfer implementation
+## Completeness
 
 ```text
 developed_files: 4/4 minimum runtime-continuation control files
 scaffolding_or_stubs: 0
 missing_required_files: 0
-validation: 0/1 hosted workflow pass pending
-integration: 2/2 Site -> StegCore transfer and StegCore automation installation complete
-goal_activation: 75% for local runtime-contract activation; hosted PASS pending
+validation: 1/1 hosted PASS
+integration: 2/2 Site -> StegCore transfer and StegCore registry/workflow integration complete
+goal_activation: 100% for local CHILD-MODE-AUTHORITY-RUNTIME contract activation
 session_consolidation: 12/12 source goals transferred
-archive_dependency_on_originating_chat: false
+archival_readiness_of_originating_session: 100%
 ```
