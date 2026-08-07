@@ -76,13 +76,16 @@ parallel_chains:
     completion_criteria: verifier-green-workflow-green-report-artifact-present-downstream-semantics-reviewed
   - chain_id: child-mode-authority-runtime
     owner_repo: StegCore
-    status: validation-machine-owned
+    status: machine-owned-propagation-review
     handoff: docs/CHILD_MODE_AUTHORITY_RUNTIME_MIRROR_HANDOFF.md
     state: ecosystem_management/child_mode_authority_runtime.v0.1.json
     verification_command: python tools/verify_child_mode_authority_runtime.py
     workflow: .github/workflows/child-mode-authority-runtime.yml
     report_artifact: brain_reports/child_mode_authority_runtime_report.json
-    next_integration_candidate: destination-owned-child-mode-propagation-after-hosted-pass
+    hosted_validation_run: 31196424044
+    hosted_validation_result: success
+    integration_claim: released
+    next_integration_candidate: destination-owned-child-mode-propagation-review
     downstream_candidates:
       - StegVerse-Labs/Site
       - GCAT-BCAT-Engine/Publisher
@@ -90,8 +93,8 @@ parallel_chains:
       - StegVerse-002/stegguardian-wiki
       - master-records
       - StegVerse-Labs/StegID
-    non_overlap: runtime-contract-validation-only-no-legal-pilot-deployment-age-identity-or-site-publication-authority
-    completion_criteria: hosted-verifier-pass-report-artifact-present-then-destination-handoffs-reviewed
+    non_overlap: propagation-review-only-no-legal-pilot-deployment-age-identity-or-site-publication-authority
+    completion_criteria: hosted-verifier-pass-and-report-artifact-satisfied; remaining-destination-reviews-owned-by-destination-handoffs
     archive_readiness: originating-child-safety-chat-independent
 
 managed_repos:
