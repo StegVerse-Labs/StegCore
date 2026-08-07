@@ -1,0 +1,74 @@
+{
+  "task_id": "CCB-001-PROPAGATION",
+  "originating_goal": "Preserve criterion contestability before consequence while keeping orientation, contestability, admissibility, and execution authority distinct.",
+  "state": "MACHINE_OWNED",
+  "owner_repository": "StegVerse-Labs/StegCore",
+  "owner_component": "ecosystem-management",
+  "trigger": "CCB-001 hosted validation is COMPLETE and source implementation/validation claims are released.",
+  "trigger_state": "SATISFIED",
+  "source_handoff": "docs/CRITERION_CONTESTABILITY_MIRROR_HANDOFF.md",
+  "source_evidence": [
+    "evidence/criterion-contestability-validation.json",
+    "contracts/criterion-contestability-boundary.v1.json",
+    "src/stegcore/criterion_contestability.py"
+  ],
+  "targets": [
+    {
+      "repository": "StegVerse-Labs/Site",
+      "canonical_handoff": "docs/SITE_MIRROR_HANDOFF.md",
+      "inspection_state": "INSPECTED_2026-08-07",
+      "collision_state": "ACTIVE_HIL_HEARTBEAT_AND_DEPLOYMENT_WORKLOADS_PRESENT",
+      "owner": "StegVerse-Labs/Site repository orchestrator",
+      "required_action": "Admit CCB-001 only through Site orchestration as a bounded governed-transition semantic requirement; do not bypass current HIL/heartbeat claims.",
+      "release_condition": "Site orchestrator admits a nonconflicting CCB projection task and target-native validation records the resulting state."
+    },
+    {
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "canonical_handoff": "PUBLISHER_MIRROR_HANDOFF.md",
+      "inspection_state": "INSPECTED_2026-08-07",
+      "collision_state": "ACTIVE_AUTOMATED_SITE_IMPORT_AND_ADJACENT_CONSTRUCTION",
+      "owner": "GCAT-BCAT-Engine/Publisher repository automation",
+      "required_action": "Preserve the CCB distinction as bounded publication semantics only; Publisher projection must not convert orientation, contestability, or transport into publication or execution authority.",
+      "release_condition": "Publisher records a target-native bounded propagation result after its active source-chain requirements admit the change."
+    },
+    {
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "canonical_handoff": "ADMISSIBILITY_WIKI_MIRROR_HANDOFF.md",
+      "inspection_state": "INSPECTED_2026-08-07",
+      "collision_state": "CANONICAL_VALIDATION_REMAINS_FAIL_CLOSED_AND_ISSUE_50_OWNS_REMAINING_VALIDATION",
+      "owner": "StegVerse-Labs/admissibility-wiki canonical validation task mesh",
+      "required_action": "Merge the missing criterion-contestability distinction into canonical admissibility work rather than creating a competing validation lane; preserve failure-closed status until target-native checks pass.",
+      "release_condition": "The admissibility-wiki canonical task mesh records CCB-001 ingestion or a specific dependency blocker and validation outcome."
+    },
+    {
+      "repository": "StegVerse-002/stegguardian-wiki",
+      "canonical_handoff": "STEGGUARDIAN_WIKI_MIRROR_HANDOFF.md",
+      "inspection_state": "INSPECTED_2026-08-07",
+      "collision_state": "DEPENDENCY_BLOCKED_GUARDIAN_PROJECTION",
+      "owner": "StegVerse-002/stegguardian-wiki orchestration",
+      "required_action": "Queue only a bounded Guardian interpretation after upstream admissibility evidence exists; criterion visibility or contestability must not imply Guardian enforcement authority.",
+      "release_condition": "The ordered upstream HIL/admissibility chain admits Guardian projection and Guardian target-native validation succeeds."
+    }
+  ],
+  "required_outputs": [
+    "exact target integration or publication destination",
+    "source-to-destination propagation record",
+    "target-native validation result or machine-observable blocker",
+    "updated source handoff propagation status"
+  ],
+  "publication_boundary": "State only that upstream criteria must remain provenance-bound and contestable and that these properties do not themselves create admissibility or execution authority. Do not claim deployment, legal authority, Guardian authority, custody, publication authority, or universal validity from CCB-001.",
+  "allowed_states": [
+    "COMPLETE",
+    "BLOCKED",
+    "RETRY",
+    "REVIEW_REQUIRED",
+    "FAILED",
+    "CLAIMED",
+    "SUPERSEDED",
+    "MERGED"
+  ],
+  "duplicate_prevention": "Do not mutate a target when its canonical handoff or orchestrator reports an active overlapping claim; merge only the missing CCB-001 requirement into the admitted target-native workstream.",
+  "release_condition": "All four targets have either verified target-native propagation evidence or a durable blocker with named owner and machine-observable release condition.",
+  "next_executable_task": "TARGET_NATIVE_ORCHESTRATORS_EVALUATE_CCB_001_IN_ORDER_SITE_PUBLISHER_ADMISSIBILITY_GUARDIAN_WITHOUT_DUPLICATE_CLAIMS",
+  "session_dependency": false
+}
