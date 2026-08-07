@@ -1,0 +1,40 @@
+name: Criterion Contestability Boundary
+
+on:
+  push:
+    paths:
+      - 'contracts/criterion-contestability-boundary.v1.json'
+      - 'src/stegcore/criterion_contestability.py'
+      - 'scripts/validate_criterion_contestability_boundary.py'
+      - 'tests/test_criterion_contestability.py'
+      - 'docs/CRITERION_CONTESTABILITY_MIRROR_HANDOFF.md'
+      - '.github/workflows/criterion-contestability-validate.yml'
+  pull_request:
+    paths:
+      - 'contracts/criterion-contestability-boundary.v1.json'
+      - 'src/stegcore/criterion_contestability.py'
+      - 'scripts/validate_criterion_contestability_boundary.py'
+      - 'tests/test_criterion_contestability.py'
+      - 'docs/CRITERION_CONTESTABILITY_MIRROR_HANDOFF.md'
+      - '.github/workflows/criterion-contestability-validate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install package and pytest
+        run: python -m pip install -e . pytest
+      - name: Validate contract and deterministic cases
+        run: python scripts/validate_criterion_contestability_boundary.py
+      - name: Run semantic tests
+        run: python -m pytest -q tests/test_criterion_contestability.py
+      - name: Emit success marker
+        run: echo 'CRITERION_CONTESTABILITY_TESTS=PASS'
