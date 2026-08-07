@@ -1,0 +1,45 @@
+name: Child Mode Authority Runtime
+
+on:
+  push:
+    paths:
+      - 'docs/CHILD_MODE_AUTHORITY_RUNTIME_MIRROR_HANDOFF.md'
+      - 'docs/stegverse_admissibility_receipt_v1.md'
+      - 'ecosystem_management/child_mode_authority_runtime.v0.1.json'
+      - 'ecosystem_management/task_registry.yml'
+      - 'tools/verify_child_mode_authority_runtime.py'
+      - '.github/workflows/child-mode-authority-runtime.yml'
+  pull_request:
+    paths:
+      - 'docs/CHILD_MODE_AUTHORITY_RUNTIME_MIRROR_HANDOFF.md'
+      - 'docs/stegverse_admissibility_receipt_v1.md'
+      - 'ecosystem_management/child_mode_authority_runtime.v0.1.json'
+      - 'ecosystem_management/task_registry.yml'
+      - 'tools/verify_child_mode_authority_runtime.py'
+      - '.github/workflows/child-mode-authority-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: child-mode-authority-runtime-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify Child Mode authority runtime contract
+        run: python tools/verify_child_mode_authority_runtime.py
+      - name: Upload Child Mode authority runtime report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: child-mode-authority-runtime-report
+          path: brain_reports/child_mode_authority_runtime_report.json
+          if-no-files-found: error
