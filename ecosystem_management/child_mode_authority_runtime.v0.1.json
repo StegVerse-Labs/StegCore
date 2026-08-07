@@ -1,0 +1,119 @@
+{
+  "schema_version": "0.1.0",
+  "goal_id": "STEGCORE-CHILD-MODE-AUTHORITY-RUNTIME-001",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "main",
+  "source_handoff": "StegVerse-Labs/Site/docs/CHILD_SAFE_NETWORKING_MIRROR_HANDOFF.md",
+  "canonical_handoff": "docs/CHILD_MODE_AUTHORITY_RUNTIME_MIRROR_HANDOFF.md",
+  "owner": "StegCore ecosystem management",
+  "claim_state": "CLAIMED_FOR_INTEGRATION",
+  "authority_effect": false,
+  "pilot_activation": false,
+  "baseline": {
+    "optional_data_harvesting": "DENY_BY_DEFAULT",
+    "undeclared_data_egress": "NONE",
+    "normal_mode_bypass": "DENY",
+    "child_ui_consent_harvesting_authority": false,
+    "mandatory_age_floor_overridable": false,
+    "fail_closed": true
+  },
+  "delivery_models": [
+    "CHILD_DEDICATED_DEVICE",
+    "SHARED_AGE_GOVERNED_ACCOUNT",
+    "GUARDIAN_CONTROLLED_TEMPORARY_CHILD_MODE"
+  ],
+  "required_inputs": [
+    "subject_reference",
+    "verified_age_or_eligibility_assertion",
+    "jurisdiction",
+    "policy_version",
+    "device_policy",
+    "active_account_state",
+    "requested_capability_or_data_class",
+    "purpose",
+    "recipient",
+    "retention_window"
+  ],
+  "conditional_inputs": [
+    "guardian_authority_reference",
+    "known_contact_evidence_reference",
+    "pilot_authority_reference"
+  ],
+  "outcomes": [
+    "ALLOW",
+    "DENY",
+    "REVIEW_REQUIRED",
+    "SUSPENDED"
+  ],
+  "decision_vectors": [
+    {"id":"unknown_person_dm","request":"UNKNOWN_PERSON_DM","protected":true,"expected":"DENY"},
+    {"id":"public_discovery","request":"PUBLIC_DISCOVERY","protected":true,"expected":"DENY"},
+    {"id":"engagement_recommender","request":"ENGAGEMENT_RECOMMENDER","protected":true,"expected":"DENY"},
+    {"id":"behavioral_ad_profile","request":"BEHAVIORAL_AD_PROFILE","protected":true,"expected":"DENY"},
+    {"id":"precise_location","request":"PRECISE_LOCATION_DISCLOSURE","protected":true,"expected":"DENY"},
+    {"id":"normal_mode_bypass","request":"NORMAL_MODE_REQUEST_BY_INELIGIBLE_USER","protected":true,"expected":"DENY"},
+    {"id":"known_contact","request":"KNOWN_CONTACT_MESSAGE","protected":true,"relationship_boundary":true,"expected":"ALLOW"},
+    {"id":"approved_collaboration","request":"APPROVED_COLLABORATION","protected":true,"relationship_boundary":true,"expected":"ALLOW"},
+    {"id":"report_block","request":"REPORT_BLOCK","protected":true,"expected":"ALLOW"}
+  ],
+  "data_authority": {
+    "default": "DENY",
+    "authorization_scope_fields": ["data_class","purpose","recipient","retention_window","authority_reference"],
+    "protected_classes": [
+      "contacts",
+      "photos_videos_files",
+      "precise_background_location",
+      "microphone_camera_derived_nonessential",
+      "clipboard",
+      "browsing_application_activity",
+      "advertising_identifiers",
+      "cross_app_cross_service_identifiers",
+      "behavioral_profiles_inferred_interests",
+      "nonessential_telemetry"
+    ]
+  },
+  "receipt_mapping": {
+    "canonical_receipt_reference": "docs/stegverse_admissibility_receipt_v1.md",
+    "required_child_mode_extensions": [
+      "subject_reference",
+      "jurisdiction",
+      "age_eligibility_evidence_reference",
+      "device_account_state_reference",
+      "guardian_known_contact_evidence_reference",
+      "requested_capability_or_data_class",
+      "purpose",
+      "recipient",
+      "retention_window",
+      "released_amount",
+      "pilot_authority_reference"
+    ],
+    "receipt_creates_authority": false
+  },
+  "fail_closed_rules": [
+    {"condition":"age_assurance_unavailable","result":"DENY_OR_REVIEW_REQUIRED"},
+    {"condition":"policy_evidence_missing","result":"DENY"},
+    {"condition":"receipt_chain_unavailable","result":"DENY"},
+    {"condition":"unknown_data_egress","result":"DENY_AND_INCIDENT"},
+    {"condition":"mandatory_pilot_test_failure","result":"SUSPENDED"},
+    {"condition":"pilot_termination","result":"PILOT_DISABLED"}
+  ],
+  "pilot": {
+    "requires_lawful_regulator_authority": true,
+    "self_exemption_allowed": false,
+    "evidence_layers": ["ELIGIBILITY","CAPABILITY","DATA_EGRESS","BOUNDARY_CHANGE","OUTCOME_INCIDENT"]
+  },
+  "propagation_candidates": [
+    "StegVerse-Labs/Site",
+    "GCAT-BCAT-Engine/Publisher",
+    "StegVerse-Labs/admissibility-wiki",
+    "StegVerse-002/stegguardian-wiki",
+    "master-records",
+    "StegVerse-Labs/StegID"
+  ],
+  "session_consolidation": {
+    "source_goals_transferred": 12,
+    "source_goals_total": 12,
+    "unique_chat_only_requirements_remaining": 0,
+    "originating_chat_archive_dependency": false
+  }
+}
