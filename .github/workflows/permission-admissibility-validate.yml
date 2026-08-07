@@ -1,0 +1,38 @@
+name: Permission Admissibility Boundary
+
+on:
+  push:
+    paths:
+      - 'contracts/permission-admissibility-boundary.v1.json'
+      - 'scripts/validate_permission_admissibility_boundary.py'
+      - 'tests/test_permission_admissibility_boundary.py'
+      - 'docs/PERMISSION_ADMISSIBILITY_MIRROR_HANDOFF.md'
+      - '.github/workflows/permission-admissibility-validate.yml'
+  pull_request:
+    paths:
+      - 'contracts/permission-admissibility-boundary.v1.json'
+      - 'scripts/validate_permission_admissibility_boundary.py'
+      - 'tests/test_permission_admissibility_boundary.py'
+      - 'docs/PERMISSION_ADMISSIBILITY_MIRROR_HANDOFF.md'
+      - '.github/workflows/permission-admissibility-validate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate contract
+        run: python scripts/validate_permission_admissibility_boundary.py
+      - name: Install pytest
+        run: python -m pip install pytest
+      - name: Run semantic tests
+        run: python -m pytest -q tests/test_permission_admissibility_boundary.py
+      - name: Emit success marker
+        run: echo 'PERMISSION_ADMISSIBILITY_TESTS=PASS'
