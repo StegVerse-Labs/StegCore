@@ -1,0 +1,37 @@
+{
+  "schema": "stegcore.criterion_contestability_validation.v1",
+  "goal_id": "CCB-001",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "main",
+  "workflow": ".github/workflows/criterion-contestability-validate.yml",
+  "run_id": 31222755310,
+  "run_number": 1,
+  "head_sha": "3b629371a034fda04fc6b137c8af99377faa9072",
+  "job_id": 93010634968,
+  "job_name": "validate",
+  "status": "completed",
+  "conclusion": "success",
+  "observed_markers": {
+    "contract": "CRITERION_CONTESTABILITY_BOUNDARY=PASS",
+    "cases": 7,
+    "tests": "7 passed in 0.04s",
+    "workflow": "CRITERION_CONTESTABILITY_TESTS=PASS"
+  },
+  "validated_properties": [
+    "parallel trajectories remain visible without synthetic consensus",
+    "unbound criterion provenance denies",
+    "lost contestability denies",
+    "stale criterion authority denies",
+    "missing required consent or standing denies",
+    "unresolved criterion authority defers",
+    "all current predicates allow",
+    "orientation-only work does not confer execution authority"
+  ],
+  "authority_effect": {
+    "execution_authority_granted": false,
+    "publication_authority_granted": false,
+    "release_authority_granted": false,
+    "guardian_authority_granted": false,
+    "custody_granted": false
+  }
+}
