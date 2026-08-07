@@ -4,17 +4,17 @@
   "repository": "StegVerse-Labs/StegCore",
   "branch": "main",
   "workflow": ".github/workflows/criterion-contestability-validate.yml",
-  "run_id": 31222755310,
-  "run_number": 1,
-  "head_sha": "3b629371a034fda04fc6b137c8af99377faa9072",
-  "job_id": 93010634968,
+  "run_id": 31222860356,
+  "run_number": 2,
+  "head_sha": "bf7e13e5e56bd79ed1c9c31c1cdeb2ce7a09ebe6",
+  "job_id": 93010949660,
   "job_name": "validate",
   "status": "completed",
   "conclusion": "success",
   "observed_markers": {
     "contract": "CRITERION_CONTESTABILITY_BOUNDARY=PASS",
-    "cases": 7,
-    "tests": "7 passed in 0.04s",
+    "deterministic_cases": 7,
+    "tests": "8 passed in 0.04s",
     "workflow": "CRITERION_CONTESTABILITY_TESTS=PASS"
   },
   "validated_properties": [
@@ -25,7 +25,8 @@
     "missing required consent or standing denies",
     "unresolved criterion authority defers",
     "all current predicates allow",
-    "orientation-only work does not confer execution authority"
+    "orientation-only work does not confer execution authority",
+    "CCB-001 composes with PA-001 required predicates without redefining permission as authority"
   ],
   "authority_effect": {
     "execution_authority_granted": false,
