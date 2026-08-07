@@ -1,0 +1,53 @@
+{
+  "contract_id": "CCB-001",
+  "version": "1.0.0",
+  "name": "criterion-contestability-boundary",
+  "owner": "StegVerse-Labs/StegCore",
+  "execution_authority": false,
+  "purpose": "Prevent upstream relevance selection, framing, orientation, or trajectory construction from silently acquiring consequence-bearing authority.",
+  "definitions": {
+    "orientation": "A source-bound frame, criterion, distinction, or trajectory that shapes what becomes actionable.",
+    "contestability": "The property that a criterion remains visible and challengeable through the consequence boundary.",
+    "admissibility": "A separate present-tense determination that a consequence-bearing transition may cross the commit boundary."
+  },
+  "invariants": [
+    "orientation MUST NOT be treated as execution authority",
+    "contestability MUST NOT be treated as admissibility",
+    "parallel trajectories MUST NOT be collapsed into synthetic consensus as a substitute for authority",
+    "criterion provenance MUST remain bound for consequence-bearing transitions",
+    "criterion contestability MUST remain available at the consequence boundary",
+    "criterion authority MUST be independently current at the consequence boundary",
+    "relations among consequence-bearing trajectories MUST be governed",
+    "successful planning or execution MUST NOT repair an inadmissible upstream criterion",
+    "unresolved required evidence MUST defer rather than invent authority"
+  ],
+  "required_current_predicates": [
+    "criterion_provenance_bound",
+    "criterion_contestable_at_commit",
+    "criterion_authority_current",
+    "relation_governed",
+    "authority_current",
+    "continuity_current",
+    "governing_conditions_current",
+    "consequence_attributable",
+    "consequence_reconstructable"
+  ],
+  "conditional_predicates": {
+    "consent_or_standing_current": "required when consent_or_standing_required=true"
+  },
+  "decision_states": ["ALLOW", "DENY", "DEFER"],
+  "fail_closed": true,
+  "semantic_cases": [
+    "parallel-visible-unbound-provenance-deny",
+    "contestability-disabled-deny",
+    "stale-criterion-authority-deny",
+    "missing-required-consent-deny",
+    "parallel-contest-with-unresolved-authority-defer",
+    "all-current-allow",
+    "orientation-only-no-execution-authority"
+  ],
+  "composition": {
+    "semantic_predecessor": "contracts/permission-admissibility-boundary.v1.json",
+    "rule": "CCB-001 adds upstream criterion/frame predicates without modifying PA-001 or treating PA-001 permission as authority."
+  }
+}
