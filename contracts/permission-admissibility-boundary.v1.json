@@ -1,0 +1,127 @@
+{
+  "contract_id": "PA-001",
+  "version": "1.0.0",
+  "name": "permission-admissibility-boundary",
+  "owner": "StegVerse-Labs/StegCore",
+  "execution_authority": false,
+  "purpose": "Keep positional permission independent from present-tense consequence-bound admissibility.",
+  "definitions": {
+    "permission": "An approval or allowance issued by a person, institution, role, policy process, or other authority surface.",
+    "admissibility": "A present-tense determination that a proposed consequence-bearing transition may legitimately cross the commit boundary under the evidence and governing conditions that actually hold now."
+  },
+  "invariants": [
+    "permission_present MUST NOT be sufficient for admissible=true",
+    "permission_present=false MUST NOT by itself force admissible=false",
+    "successful_execution MUST NOT be accepted as evidence of authority or admissibility",
+    "consequence-bearing transitions MUST fail closed when any required present-tense predicate is false or unavailable",
+    "non-consequence-bearing coordination MUST NOT be represented as execution authority"
+  ],
+  "required_predicates_for_consequence_bearing_transition": [
+    "authority_current",
+    "continuity_current",
+    "governing_conditions_current",
+    "consequence_attributable",
+    "consequence_reconstructable"
+  ],
+  "conditional_predicates": {
+    "consent_or_standing_current": "required when consent_or_standing_required=true"
+  },
+  "decision_states": [
+    "ALLOW",
+    "DENY",
+    "DEFER"
+  ],
+  "fail_closed": true,
+  "cases": [
+    {
+      "id": "permission-present-but-stale-authority",
+      "input": {
+        "consequence_bearing": true,
+        "permission_present": true,
+        "authority_current": false,
+        "consent_or_standing_required": false,
+        "consent_or_standing_current": null,
+        "continuity_current": true,
+        "governing_conditions_current": true,
+        "consequence_attributable": true,
+        "consequence_reconstructable": true
+      },
+      "expected": {"decision": "DENY", "admissible": false}
+    },
+    {
+      "id": "no-positional-permission-but-admissible",
+      "input": {
+        "consequence_bearing": true,
+        "permission_present": false,
+        "authority_current": true,
+        "consent_or_standing_required": false,
+        "consent_or_standing_current": null,
+        "continuity_current": true,
+        "governing_conditions_current": true,
+        "consequence_attributable": true,
+        "consequence_reconstructable": true
+      },
+      "expected": {"decision": "ALLOW", "admissible": true}
+    },
+    {
+      "id": "consent-required-but-missing",
+      "input": {
+        "consequence_bearing": true,
+        "permission_present": true,
+        "authority_current": true,
+        "consent_or_standing_required": true,
+        "consent_or_standing_current": false,
+        "continuity_current": true,
+        "governing_conditions_current": true,
+        "consequence_attributable": true,
+        "consequence_reconstructable": true
+      },
+      "expected": {"decision": "DENY", "admissible": false}
+    },
+    {
+      "id": "current-evidence-allows",
+      "input": {
+        "consequence_bearing": true,
+        "permission_present": true,
+        "authority_current": true,
+        "consent_or_standing_required": true,
+        "consent_or_standing_current": true,
+        "continuity_current": true,
+        "governing_conditions_current": true,
+        "consequence_attributable": true,
+        "consequence_reconstructable": true
+      },
+      "expected": {"decision": "ALLOW", "admissible": true}
+    },
+    {
+      "id": "coordination-is-not-execution-authority",
+      "input": {
+        "consequence_bearing": false,
+        "permission_present": false,
+        "authority_current": null,
+        "consent_or_standing_required": false,
+        "consent_or_standing_current": null,
+        "continuity_current": null,
+        "governing_conditions_current": null,
+        "consequence_attributable": null,
+        "consequence_reconstructable": null
+      },
+      "expected": {"decision": "ALLOW", "admissible": true, "execution_authority": false}
+    },
+    {
+      "id": "unavailable-current-evidence-defers",
+      "input": {
+        "consequence_bearing": true,
+        "permission_present": true,
+        "authority_current": true,
+        "consent_or_standing_required": false,
+        "consent_or_standing_current": null,
+        "continuity_current": null,
+        "governing_conditions_current": true,
+        "consequence_attributable": true,
+        "consequence_reconstructable": true
+      },
+      "expected": {"decision": "DEFER", "admissible": false}
+    }
+  ]
+}
