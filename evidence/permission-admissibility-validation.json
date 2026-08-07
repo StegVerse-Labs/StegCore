@@ -1,0 +1,28 @@
+{
+  "evidence_id": "PA-001-VALIDATION-31213611342",
+  "goal_id": "PA-001",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "main",
+  "workflow": ".github/workflows/permission-admissibility-validate.yml",
+  "workflow_run_id": 31213611342,
+  "workflow_run_number": 1,
+  "workflow_head_sha": "11d2c50786204089ef0d764a33a3e1e7da04617e",
+  "job_id": 92981925794,
+  "job_name": "validate",
+  "status": "COMPLETE",
+  "conclusion": "success",
+  "observed_at": "2026-08-07T19:56:07Z",
+  "validation": {
+    "contract_validator": "PASS",
+    "contract_success_marker": "PERMISSION_ADMISSIBILITY_BOUNDARY=PASS",
+    "semantic_cases": 6,
+    "pytest": "PASS",
+    "pytest_result": "6 passed in 0.01s",
+    "test_success_marker": "PERMISSION_ADMISSIBILITY_TESTS=PASS"
+  },
+  "verified_in_job_log": true,
+  "execution_authority": false,
+  "publication_authority": false,
+  "release_authority": false,
+  "claim_effect": "implementation and validation claims may be released after source handoff reconciliation"
+}
