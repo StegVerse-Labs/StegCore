@@ -1,4 +1,10 @@
+import json
+from pathlib import Path
+
 from stegcore.criterion_contestability import evaluate_criterion_contestability
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def base_candidate(**overrides):
@@ -97,3 +103,29 @@ def test_orientation_only_can_proceed_but_is_not_execution_authority():
     assert result["admissible"] is True
     assert result["execution_authority_conferred"] is False
     assert result["reasons"] == ["orientation_or_coordination_only"]
+
+
+def test_ccb_composes_with_permission_admissibility_without_redefining_it():
+    pa = json.loads(
+        (ROOT / "contracts" / "permission-admissibility-boundary.v1.json").read_text()
+    )
+    ccb = json.loads(
+        (ROOT / "contracts" / "criterion-contestability-boundary.v1.json").read_text()
+    )
+
+    assert ccb["composition"]["semantic_predecessor"] == (
+        "contracts/permission-admissibility-boundary.v1.json"
+    )
+    assert pa["execution_authority"] is False
+    assert ccb["execution_authority"] is False
+    assert set(pa["required_predicates_for_consequence_bearing_transition"]).issubset(
+        set(ccb["required_current_predicates"])
+    )
+
+    result = evaluate_criterion_contestability(
+        base_candidate(criterion_contestable_at_commit=False)
+    )
+    assert result["decision"] == "DENY"
+    assert result["trajectory_parallelity_preserved"] is True
+    assert result["orientation_used_as_authority"] is False
+    assert result["contestability_used_as_admissibility"] is False
