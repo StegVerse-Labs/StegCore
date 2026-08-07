@@ -1,0 +1,52 @@
+{
+  "task_id": "PA-001-PROPAGATION",
+  "originating_goal": "Preserve the distinction between positional permission and present-tense consequence-bound admissibility, including contribution without capture.",
+  "state": "MACHINE_OWNED",
+  "owner_repository": "StegVerse-Labs/StegCore",
+  "owner_component": "ecosystem-management",
+  "trigger": "PA-001 hosted validation is COMPLETE and the source handoff releases implementation/validation claims.",
+  "source_handoff": "docs/PERMISSION_ADMISSIBILITY_MIRROR_HANDOFF.md",
+  "source_evidence": [
+    "evidence/permission-admissibility-validation.json"
+  ],
+  "targets": [
+    {
+      "repository": "StegVerse-Labs/Site",
+      "required_first_action": "Locate and read newest applicable *_MIRROR_HANDOFF.md before mutation."
+    },
+    {
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "required_first_action": "Locate and read newest applicable *_MIRROR_HANDOFF.md before mutation."
+    },
+    {
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "required_first_action": "Locate and read newest applicable *_MIRROR_HANDOFF.md before mutation."
+    },
+    {
+      "repository": "StegVerse-Labs/stegguardian-wiki",
+      "required_first_action": "Locate and read newest applicable *_MIRROR_HANDOFF.md before mutation."
+    }
+  ],
+  "required_outputs": [
+    "canonical target handoff path",
+    "active claim and collision assessment",
+    "exact publication or integration destination",
+    "source-to-destination propagation record",
+    "validation result or machine-observable blocker",
+    "updated source handoff propagation status"
+  ],
+  "publication_boundary": "State only that permission and admissibility are distinct. Do not claim permission is universally unnecessary. Do not imply execution authority, deployment, legal authority, or runtime activation from PA-001.",
+  "allowed_states": [
+    "COMPLETE",
+    "BLOCKED",
+    "RETRY",
+    "REVIEW_REQUIRED",
+    "FAILED",
+    "CLAIMED",
+    "SUPERSEDED",
+    "MERGED"
+  ],
+  "duplicate_prevention": "Do not mutate a target when an active claimant already owns the same publication path; merge the missing PA-001 requirement into that target's canonical workstream instead.",
+  "release_condition": "All four targets have an inspected canonical handoff and either verified propagation evidence or a durable blocker with named owner and machine-observable release condition.",
+  "next_executable_task": "WAIT_FOR_PA_001_VALIDATION_THEN_INSPECT_TARGET_HANDOFFS"
+}
