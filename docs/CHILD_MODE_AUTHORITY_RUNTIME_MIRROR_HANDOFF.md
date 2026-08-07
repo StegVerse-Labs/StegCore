@@ -14,6 +14,9 @@ claim_role: destination propagation and production-activation review only
 claim_created: 2026-08-07T11:04:00-05:00
 integration_claim_released: 2026-08-07T11:12:32-05:00
 integration_release_evidence: hosted workflow run 31196424044 PASS at commit 60bf60c920d498452ac49caf74066550a550b434
+latest_registry_reconciliation: bed923a421e60d563f003deee7880a43eceac002
+latest_revalidation_run: 31213545103 PASS
+latest_revalidation_artifact: 9007608479
 claim_release_condition: destination handoff reviews are complete or explicitly superseded; production pilot remains disabled absent lawful regulator authority
 ```
 
@@ -120,6 +123,8 @@ pilot termination -> pilot-only admission disabled
 
 ## Hosted validation evidence
 
+Primary activation validation:
+
 ```text
 workflow: .github/workflows/child-mode-authority-runtime.yml
 run: 31196424044
@@ -131,7 +136,19 @@ artifact: 9000969422
 artifact digest: sha256:fa569a2add88250ef4047b7fd8568a3f6d0168746f1ab0110d0c3872581e45bd
 ```
 
-A prior successful run `31196376424` also validated the contract before central registry registration. Run `31196424044` proves the same verifier remained green after registration in `ecosystem_management/task_registry.yml`.
+Post-claim/registry reconciliation validation:
+
+```text
+registry reconciliation commit: bed923a421e60d563f003deee7880a43eceac002
+run: 31213545103
+conclusion: success
+verify step: success
+report upload step: success
+artifact: 9007608479
+artifact digest: sha256:e1f7ebe12006e75ab4cf06dab4b889e38dff18639150ef507d2715cce4b6ca82
+```
+
+A prior successful run `31196376424` also validated the contract before central registry registration. The latest run proves the verifier remains green after the registry was reconciled from stale `validation-machine-owned` state to `machine-owned-propagation-review`.
 
 ## Public/projection source
 
@@ -148,9 +165,10 @@ StegCore must not silently rewrite the public/legal projection. Normative runtim
 
 ```text
 implementation: COMPLETE for local runtime contract/state/verifier/workflow
-validation: COMPLETE hosted PASS
+validation: COMPLETE hosted PASS and post-registry revalidation PASS
 integration claim: RELEASED
 remaining role: MACHINE_OWNED_PROPAGATION_REVIEW
+stale child-mode claims: none
 collision boundaries:
   - do not modify active STEGCORE-EXT-EVIDENCE-INTEROP-001 files
   - do not claim legal/pilot/deployment authority
@@ -200,7 +218,8 @@ all unique requirements durably transferred: yes
 canonical continuation established: yes
 local runtime contract installed: yes
 hosted runtime contract validation: PASS
-central task registry registration: yes
+post-registry reconciliation validation: PASS
+central task registry reconciled: yes
 remaining propagation destination-owned/machine-owned: yes
 production pilot authority absent and fail-closed: yes
 chat-only implementation responsibility: none
@@ -213,7 +232,7 @@ archive_dependency_on_originating_chat: false
 developed_files: 4/4 minimum runtime-continuation control files
 scaffolding_or_stubs: 0
 missing_required_files: 0
-validation: 1/1 hosted PASS
+validation: 2/2 hosted activation + post-registry revalidation PASS
 integration: 2/2 Site -> StegCore transfer and StegCore registry/workflow integration complete
 goal_activation: 100% for local CHILD-MODE-AUTHORITY-RUNTIME contract activation
 session_consolidation: 12/12 source goals transferred
