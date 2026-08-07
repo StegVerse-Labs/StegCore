@@ -12,7 +12,7 @@ canonical_owner: StegCore ecosystem management
 claim_state: CLAIMED_FOR_INTEGRATION
 claim_role: canonical runtime-contract continuation owner
 claim_created: 2026-08-07T11:04:00-05:00
-claim_release_condition: production runtime contract, deterministic verifier, receipt/evidence schema, and downstream propagation obligations are installed and validated or explicitly superseded
+claim_release_condition: production runtime contract, deterministic verifier, receipt/evidence schema mapping, and downstream propagation obligations are installed and validated or explicitly superseded
 claim_expiration: release or renewal required when the release condition is evaluated; no indefinite chat-session claim
 ```
 
@@ -50,6 +50,19 @@ turn a validator PASS into execution authority
 ```
 
 External/lawful age, guardian, policy, and pilot-authority evidence must be consumed as bounded evidence, not silently manufactured by StegCore.
+
+## Installed continuation surfaces
+
+```text
+docs/CHILD_MODE_AUTHORITY_RUNTIME_MIRROR_HANDOFF.md
+ecosystem_management/child_mode_authority_runtime.v0.1.json
+tools/verify_child_mode_authority_runtime.py
+.github/workflows/child-mode-authority-runtime.yml
+canonical receipt mapping: docs/stegverse_admissibility_receipt_v1.md
+runtime report output: brain_reports/child_mode_authority_runtime_report.json
+```
+
+The existing `stegverse.admissibility_receipt.v1` envelope is reused as the canonical receipt foundation rather than creating a competing receipt authority. Child Mode-specific evidence fields are declared as required extensions in the machine-readable runtime state.
 
 ## Required runtime inputs
 
@@ -106,6 +119,16 @@ OPTIONAL_DATA_HARVESTING = DENY_BY_DEFAULT
 UNDECLARED_DATA_EGRESS = NONE
 child-visible click/tap/toggle != harvesting authority
 authorized guardian/adult approval = exact data + exact purpose + exact recipient + retention only
+```
+
+Validator terminal compatibility markers:
+
+```text
+OPTIONAL_DATA_HARVESTING=DENY_BY_DEFAULT
+NORMAL_MODE_BYPASS=DENY
+UNDECLARED_DATA_EGRESS=NONE
+FAIL_CLOSED=true
+AUTHORITY_GRANTED=false
 ```
 
 ## Delivery precedence
@@ -185,23 +208,53 @@ collision boundaries:
 expected evidence:
   - committed runtime contract/state
   - deterministic validator/test suite
-  - machine-readable receipt schema
-  - repository-native verification report
+  - canonical receipt mapping
+  - repository-native verification report artifact
   - propagation manifest/obligations
 next task after release: destination-owned propagation/activation review
 ```
 
-## Exact next executable tasks
+## Completed work in this transfer
 
-1. Create `ecosystem_management/child_mode_authority_runtime.v0.1.json` as the machine-readable runtime contract/state.
-2. Create `tools/verify_child_mode_authority_runtime.py` with deterministic positive/negative test vectors.
-3. Create a receipt schema under `docs/spec/schemas/` or reconcile with an existing canonical receipt schema if one already covers the required fields.
-4. Add the chain to `ecosystem_management/task_registry.yml` as a parallel StegCore-owned chain.
-5. Add a repository-native workflow only if no existing StegCore management workflow can execute the verifier and persist the report.
-6. Persist verification output under `brain_reports/child_mode_authority_runtime_report.json`.
-7. After runtime contract validation, propagate only the required normative semantics to Site, Publisher, admissibility-wiki, stegguardian-wiki, master-records, and other destinations identified by their live handoffs.
+```text
+canonical child-mode runtime handoff: installed
+machine-readable runtime state/decision vectors: installed
+deterministic verifier: installed
+canonical admissibility receipt mapping: reconciled
+repository-native verification workflow: installed
+Site -> StegCore continuation transfer: complete
+source session requirements transferred: 12/12
+```
 
-## Blockers
+Key commits:
+
+```text
+b422b0206dce9c594888f357cbdd28ab4611e2c3  canonical handoff
+a254c3268ca44218882fcda00649fbdf7d978c32  runtime state contract
+9f9ea79fe30d64d62669e931d460028a60773674  deterministic verifier
+b359a2974b992b92d52e8f769d6407cc0080486b  repository-native workflow
+```
+
+## Remaining work and ownership
+
+```text
+StegCore repository automation
+  -> execute child-mode-authority-runtime.yml
+  -> upload brain_reports/child_mode_authority_runtime_report.json
+  -> preserve PASS/FAIL as hosted validation evidence
+
+StegCore ecosystem management
+  -> register this chain in ecosystem_management/task_registry.yml
+  -> after hosted PASS, release integration claim or renew with exact downstream propagation work
+
+Destination-owned propagation after PASS
+  -> Site
+  -> Publisher
+  -> admissibility-wiki
+  -> stegguardian-wiki
+  -> master-records
+  -> StegID when identity/guardian receipt semantics require it
+```
 
 No legal/pilot authority is required to build and validate the local deterministic runtime contract.
 
@@ -234,7 +287,7 @@ GCAT-BCAT-Engine/Publisher
 StegVerse-Labs/admissibility-wiki
 StegVerse-002/stegguardian-wiki
 master-records canonical repository
-StegID if age/guardian/identity receipt semantics require it
+StegVerse-Labs/StegID if age/guardian/identity receipt semantics require it
 ```
 
 Do not claim propagation until directly installed and verified in each destination.
@@ -246,19 +299,33 @@ MERGED INTO: StegVerse-Labs/StegCore/docs/CHILD_MODE_AUTHORITY_RUNTIME_MIRROR_HA
 source_session_requirements_transferred: 12/12
 unique_chat_only_requirements_remaining: 0
 source_site_handoff: StegVerse-Labs/Site/docs/CHILD_SAFE_NETWORKING_MIRROR_HANDOFF.md
+originating_chat_archive_dependency: false
 ```
 
 The originating child-safety conversation is not required to implement the runtime from this handoff.
 
-## Completeness at transfer
+## Archive conditions
+
+For the originating Site/child-safety session:
 
 ```text
-developed_files: 1/4 minimum runtime-continuation control files
+all unique requirements durably transferred: yes
+canonical continuation established: yes
+remaining validation machine-owned: yes
+remaining production pilot authorization externally lawful and explicitly fail-closed: yes
+chat-only implementation responsibility: none
+archive_dependency_on_originating_chat: false
+```
+
+## Completeness after transfer implementation
+
+```text
+developed_files: 4/4 minimum runtime-continuation control files
 scaffolding_or_stubs: 0
-missing_required_files: 3
-validation: 0/1 runtime verifier pass
-integration: 1/2 Site -> StegCore continuation transfer complete; StegCore runtime installation pending
-goal_activation: 25%
+missing_required_files: 0
+validation: 0/1 hosted workflow pass pending
+integration: 2/2 Site -> StegCore transfer and StegCore automation installation complete
+goal_activation: 75% for local runtime-contract activation; hosted PASS pending
 session_consolidation: 12/12 source goals transferred
 archive_dependency_on_originating_chat: false
 ```
