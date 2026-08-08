@@ -1,35 +1,51 @@
 {
   "artifact_type": "stegcore.release_readiness_assessment",
-  "assessment_hash": "a7228dc607fc266b755009b6f699bc0abacc174955cf6497f44ca813ef533a46",
-  "completion_event": "independent release policy permits a versioned tag, Governance freshness is independently confirmed, and every required downstream verification gate is durably recorded as pass",
+  "assessment_hash": "4f319a5c9a13755edb8f1bb9bb8c2d8bf737bbc899086aef78eea04c47c62f03",
+  "completion_event": "independent release policy permits a versioned tag and Governance freshness is independently confirmed",
   "continuity_authority_claimed": false,
   "destination_repository": "StegVerse-Labs/StegCore",
   "downstream_gates": [
     {
+      "classification": "PASS_AWARENESS_ONLY",
+      "issue_comment_id": 5226561201,
+      "issue_number": 14,
       "repository": "StegVerse-Labs/Site",
       "required": true,
-      "status": "pending"
+      "status": "pass",
+      "verification_commit": "2a8a603e4473236c4bfa491b060d54074c8eedb5"
     },
     {
+      "classification": "PASS_AWARENESS_ONLY",
+      "issue_comment_id": 5226562055,
+      "issue_number": 4,
       "repository": "GCAT-BCAT-Engine/Publisher",
       "required": true,
-      "status": "pending"
+      "status": "pass",
+      "verification_commit": "ae42e68e12f8cac0e9051c654e933cbe766fced3"
     },
     {
+      "classification": "PASS_DOCUMENTATION_AWARENESS_ONLY",
+      "issue_comment_id": 5226562821,
+      "issue_number": 19,
       "repository": "StegVerse-Labs/admissibility-wiki",
       "required": true,
-      "status": "pending"
+      "status": "pass",
+      "verification_commit": "302e3155864778fd1d4bc6f865a91dc49a773eca"
     },
     {
+      "classification": "PASS_EVIDENCE_AWARENESS_ONLY",
+      "issue_comment_id": 5226563561,
+      "issue_number": 4,
       "repository": "StegVerse-002/stegguardian-wiki",
       "required": true,
-      "status": "pending"
+      "status": "pass",
+      "verification_commit": "b6a4b117ca88c7d118b76fd53b48ba85fce385cd"
     }
   ],
   "gates": {
     "canonical_governance_contract": "pass",
     "continuity_mapping": "pass",
-    "downstream_verification": "pending",
+    "downstream_verification": "pass",
     "evidence_integrity": "pass",
     "governance_freshness": "pending",
     "independent_release_policy": "pending",
@@ -56,7 +72,7 @@
   "runtime_evidence_hash": "7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb",
   "schema_version": "1.1",
   "source_repository": "StegVerse-Labs/StegCore",
-  "state": "validated_not_released",
+  "state": "downstream_verified_release_blocked",
   "stegcore_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
   "tag_permitted": false
 }
