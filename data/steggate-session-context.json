@@ -11,20 +11,23 @@
     "decision_py_is_intentionally_minimal": true,
     "minimal_means_interface_scope_not_resource_budget": true,
     "minimal_interface_does_not_prove_missing_system_engine": true,
-    "new_live_service_is_provisional_until_architecture_reconciliation": true,
-    "must_trace_existing_admissibility_call_graph_before_expanding_new_evaluator": true,
+    "new_live_service_is_provisional_until_architecture_reconciliation": false,
+    "must_trace_existing_admissibility_call_graph_before_expanding_new_evaluator": false,
     "complete_decision_state_is_reconstructable_reality": true,
     "required_dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
     "reality_planes": ["decision", "execution", "observed"],
-    "existing_canonical_layers": [
-      "src/stegcore/three_layer.py",
-      "contracts/permission-admissibility-boundary.v1.json",
-      "src/stegcore/commit_governance.py",
-      "src/stegcore/runtime.py#governed_execute",
-      "src/stegcore/runtime_adapters.py",
-      "docs/DECISION_STATE_RECONSTRUCTION.md"
+    "canonical_call_graph": [
+      "Governance policy/evidence artifacts",
+      "src/stegcore/three_layer.py:evaluate_three_layer",
+      "src/stegcore/steggate.py:evaluate_admissibility composition/normalization",
+      "src/stegcore/commit_governance.py:coherence_gate",
+      "src/stegcore/runtime.py:governed_execute",
+      "src/stegcore/runtime_adapters.py:execute_adapter/execute_http",
+      "execution observation + reconcile_effect",
+      "Continuity/reconstruction consumers"
     ],
-    "reconciliation_record": "docs/STEGGATE_ARCHITECTURE_RECONCILIATION.md"
+    "reconciliation_record": "docs/STEGGATE_ARCHITECTURE_RECONCILIATION.md",
+    "reconciliation_state_record": "data/steggate-architecture-reconciliation-state.json"
   },
   "archive_guard": {
     "rule": "Do not mark a session archive-ready merely because a bounded subgoal is complete or transferred.",
@@ -43,20 +46,16 @@
     "render_service_origin": "https://steggate-core.onrender.com",
     "render_deploy_id": "dep-d9rlicajobas73do1qjg",
     "deployment_state": "BLOCKED_BUILD_MINUTES_EXHAUSTED",
-    "repository_validation_state": "GREEN",
-    "architecture_reconciliation_state": "IN_PROGRESS",
-    "provisional_files": [
-      "src/stegcore/steggate.py",
-      "src/stegcore/service.py",
-      "tests/test_steggate_service.py",
-      "docs/STEGGATE_LIVE_SERVICE.md"
-    ]
+    "repository_validation_state": "GREEN_140_TESTS_127_SUBTESTS",
+    "repository_validation_run": 31270227248,
+    "architecture_reconciliation_state": "COMPLETE",
+    "service_classification": "CANONICAL_HTTP_ADAPTER_TO_RECONCILED_STEGGATE_COMPOSITION"
   },
   "worker_policy": {
     "fail_closed_on_missing_context": true,
     "archive_status_when_active": "DO_NOT_ARCHIVE",
     "emit_next_action": true,
-    "next_action": "Complete call-graph reconciliation: determine how three_layer, permission-admissibility invariants, commit_governance, runtime, runtime_adapters, decision-state normalization, and the provisional live-service files compose; refactor duplicate authority before live deployment.",
+    "next_action": "Deploy the reconciled canonical StegGate service through an authorized hosting control plane; Render is blocked by build-minute exhaustion, so use another connected deployment control plane if available. Then observe /health, /v1/self-test, and /v1/evaluate and persist the exact runtime evidence.",
     "machine_observable_release_conditions": [
       "architecture_reconciliation_state == COMPLETE",
       "deployment_state == LIVE",
