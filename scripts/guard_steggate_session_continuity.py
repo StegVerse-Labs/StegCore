@@ -90,6 +90,7 @@ def validate_context(context: dict[str, Any]) -> list[str]:
 
 def validate_architecture(architecture: dict[str, Any], context: dict[str, Any]) -> list[str]:
     findings: list[str] = []
+    state = architecture.get("state")
     if architecture.get("schema") != "stegverse.steggate_architecture_reconciliation.v1":
         findings.append("architecture_schema_invalid")
     if architecture.get("goal_id") != context.get("goal_id"):
@@ -98,16 +99,25 @@ def validate_architecture(architecture: dict[str, Any], context: dict[str, Any])
         findings.append("architecture_owner_mismatch")
     if not architecture.get("canonical_layers"):
         findings.append("architecture_canonical_layers_missing")
-    if not architecture.get("provisional_layers"):
-        findings.append("architecture_provisional_layers_missing")
-    if set(architecture.get("required_classifications") or []) != REQUIRED_CLASSIFICATIONS:
-        findings.append("architecture_classification_set_incomplete")
-    if not architecture.get("verified_findings"):
-        findings.append("architecture_findings_missing")
     if not architecture.get("next_action"):
         findings.append("architecture_next_action_missing")
-    if architecture.get("archive_allowed") is not False and architecture.get("state") != "COMPLETE":
-        findings.append("architecture_incomplete_archive_must_be_false")
+
+    if state == "COMPLETE":
+        if not architecture.get("canonical_call_graph"):
+            findings.append("architecture_complete_call_graph_missing")
+        if not architecture.get("reconciled_live_service"):
+            findings.append("architecture_complete_service_reconciliation_missing")
+        if not architecture.get("removed_duplication"):
+            findings.append("architecture_complete_duplication_record_missing")
+    else:
+        if not architecture.get("provisional_layers"):
+            findings.append("architecture_provisional_layers_missing")
+        if set(architecture.get("required_classifications") or []) != REQUIRED_CLASSIFICATIONS:
+            findings.append("architecture_classification_set_incomplete")
+        if not architecture.get("verified_findings"):
+            findings.append("architecture_findings_missing")
+        if architecture.get("archive_allowed") is not False:
+            findings.append("architecture_incomplete_archive_must_be_false")
     return findings
 
 
