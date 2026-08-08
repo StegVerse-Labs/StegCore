@@ -6,6 +6,7 @@ on:
       - "src/stegcore/runtime.py"
       - "src/stegcore/runtime_adapters.py"
       - "tests/test_governed_runtime_adapters.py"
+      - "tests/test_governed_runtime_reconciliation.py"
       - "tests/test_runtime_commit_coherence.py"
       - "docs/DECISION_STATE_RECONSTRUCTION.md"
       - "STEGCORE_MIRROR_HANDOFF.md"
@@ -15,6 +16,7 @@ on:
       - "src/stegcore/runtime.py"
       - "src/stegcore/runtime_adapters.py"
       - "tests/test_governed_runtime_adapters.py"
+      - "tests/test_governed_runtime_reconciliation.py"
       - "tests/test_runtime_commit_coherence.py"
       - "docs/DECISION_STATE_RECONSTRUCTION.md"
       - "STEGCORE_MIRROR_HANDOFF.md"
@@ -49,7 +51,7 @@ jobs:
         run: python -m pytest -q tests/test_runtime_commit_coherence.py
 
       - name: Run governed adapter conformance tests
-        run: python -m pytest -q tests/test_governed_runtime_adapters.py
+        run: python -m pytest -q tests/test_governed_runtime_adapters.py tests/test_governed_runtime_reconciliation.py
 
       - name: Verify no direct executor path in adapter
         run: |
