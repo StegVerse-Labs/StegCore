@@ -4,8 +4,10 @@
   "repository": "StegVerse-Labs/StegCore",
   "canonical_issue": "StegVerse-Labs/StegCore#68",
   "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
-  "session_state": "ACTIVE_UNIQUE_WORK_REMAINS",
+  "session_state": "MERGED_INTO_CANONICAL_WORKSTREAM",
   "archive_allowed": false,
+  "conversation_archive_allowed": true,
+  "goal_activation_complete": false,
   "active_goal": "Make canonical StegGate fully functional and live, not merely tagged or repository-tested.",
   "architectural_context": {
     "decision_py_is_intentionally_minimal": true,
@@ -16,6 +18,15 @@
     "complete_decision_state_is_reconstructable_reality": true,
     "required_dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
     "reality_planes": ["decision", "execution", "observed"],
+    "existing_canonical_layers": [
+      "src/stegcore/three_layer.py",
+      "contracts/permission-admissibility-boundary.v1.json",
+      "src/stegcore/steggate.py",
+      "src/stegcore/steggate_runtime.py",
+      "src/stegcore/commit_governance.py",
+      "src/stegcore/runtime_adapters.py",
+      "docs/DECISION_STATE_RECONSTRUCTION.md"
+    ],
     "canonical_call_graph": [
       "Governance policy/evidence artifacts",
       "src/stegcore/three_layer.py:evaluate_three_layer",
@@ -31,21 +42,21 @@
     "reconciliation_state_record": "data/steggate-architecture-reconciliation-state.json"
   },
   "archive_guard": {
-    "rule": "Do not mark a session archive-ready merely because a bounded subgoal is complete or transferred.",
+    "rule": "Project activation completion and conversation archival are distinct. Project activation remains fail-closed until hosted PASS; the originating chat may be archived once all unique context, claims, executable continuation, release conditions, and finalization authority are durably repository-owned.",
     "required_before_archive": [
-      "active functional goal complete or genuinely superseded",
       "architecture reconciliation complete",
       "all unique context represented in durable repository records",
-      "live deployment and runtime observations complete when part of the active goal",
-      "no active session-specific implementation, validation, integration, or observation role"
+      "all unresolved tasks assigned to repository automation or a machine-observable blocker",
+      "successful hosted PASS automatically finalizes canonical records and closes issue #68",
+      "no active chat-specific implementation, validation, integration, propagation, reconciliation, or observation role"
     ],
     "historical_context_loss_is_failure": true
   },
   "current_work": {
-    "implementation_owner": "StegVerse-Labs/StegCore#68",
+    "implementation_owner": "StegVerse-Labs/StegCore#68 + repository-native automation",
     "render_service_id": "srv-d9rlic2jobas73do1q6g",
     "render_service_origin": "https://steggate-core.onrender.com",
-    "latest_inspected_render_deploy_id": "dep-d9rmnub7uimc73b5u58g",
+    "latest_inspected_render_deploy_id": "dep-d9rmt70u01pc73dkt8hg",
     "deployment_state": "BLOCKED_BUILD_MINUTES_EXHAUSTED",
     "repository_validation_state": "GREEN_148_TESTS_127_SUBTESTS",
     "repository_validation_run": 31270401058,
@@ -55,17 +66,19 @@
     "service_classification": "CANONICAL_HTTP_ADAPTER_TO_RECONCILED_STEGGATE_COMPOSITION",
     "live_observer_state": "ACTIVE_FAIL_CLOSED_BLOCKED",
     "live_observer_workflow": ".github/workflows/steggate-live-observer.yml",
-    "initial_live_observer_run": 31270353764,
-    "initial_live_observer_artifact": 9025414196,
-    "initial_live_observer_observation": "health TIMEOUTERROR; self-test TIMEOUTERROR",
     "full_live_observer_semantics": "health + exact four-outcome self-test + deterministic POST /v1/evaluate complete matrix/hash verification",
-    "full_live_observer_commits": ["d4a9e4c7c64315bd50ccea4482c2d3a292c8d936", "2d022fd04d5f2262affada5dea185bac30469f7c"]
+    "full_live_observer_latest_validation_run": 31272908461,
+    "full_live_observer_finalizer": "scripts/finalize_steggate_live_activation.py",
+    "full_live_observer_finalizer_test": "tests/test_finalize_steggate_live_activation.py",
+    "provisional_files": [
+      "none; architecture reconciliation is complete"
+    ]
   },
   "worker_policy": {
     "fail_closed_on_missing_context": true,
-    "archive_status_when_active": "DO_NOT_ARCHIVE",
+    "archive_status_when_active": "ARCHIVE_CHAT_WHEN_MERGED_REPOSITORY_CONTINUES",
     "emit_next_action": true,
-    "next_action": "Keep the repository-native hourly observer active. The observer now performs every remaining hosted functional check automatically. Render currently rejects every auto-deploy because workspace build-pipeline minutes are exhausted; if an authorized alternate hosting route becomes available, deploy the same canonical main without creating a competing StegGate authority.",
+    "next_action": "Repository automation retries hourly. When the host becomes live, the observer must pass health, four-disposition self-test, and complete-matrix evaluate; the finalizer then persists data/steggate-live-activation-receipt.json, reconciles context/inventory/handoff, commits those changes, comments on issue #68, and closes #68. No chat-session action is required.",
     "machine_observable_release_conditions": [
       "architecture_reconciliation_state == COMPLETE",
       "governed_execution_composition_state == COMPLETE_AND_HOSTED_VALIDATED",
@@ -73,7 +86,8 @@
       "hosted_health == PASS",
       "hosted_self_test == PASS",
       "hosted_evaluate == PASS_WITH_COMPLETE_MATRIX_AND_HASHES",
-      "archive_allowed == true only after active goal completion"
+      "data/steggate-live-activation-receipt.json state == COMPLETE",
+      "issue #68 == CLOSED"
     ]
   }
 }
