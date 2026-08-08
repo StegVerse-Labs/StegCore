@@ -8,10 +8,17 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTEXT = ROOT / "data" / "steggate-session-context.json"
+ARCHITECTURE = ROOT / "data" / "steggate-architecture-reconciliation-state.json"
 RECEIPT = ROOT / "data" / "steggate-session-continuity-receipt.json"
 
 REQUIRED_DISPOSITIONS = {"ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"}
 REQUIRED_REALITY_PLANES = {"decision", "execution", "observed"}
+REQUIRED_CLASSIFICATIONS = {
+    "ADAPTER_TO_EXISTING_CANONICAL_ENGINE",
+    "NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS",
+    "NEW_REQUIRED_SEMANTIC_NOT_PRESENT_ELSEWHERE",
+    "DUPLICATE_REMOVE_OR_REFACTOR",
+}
 
 
 def canonical(value: Any) -> bytes:
@@ -46,6 +53,10 @@ def validate_context(context: dict[str, Any]) -> list[str]:
         findings.append("required_dispositions_incomplete")
     if set(architectural.get("reality_planes") or []) != REQUIRED_REALITY_PLANES:
         findings.append("reality_planes_incomplete")
+    if not architectural.get("existing_canonical_layers"):
+        findings.append("canonical_layers_missing")
+    if not architectural.get("reconciliation_record"):
+        findings.append("reconciliation_record_missing")
 
     guard = context.get("archive_guard") or {}
     if guard.get("historical_context_loss_is_failure") is not True:
@@ -57,6 +68,8 @@ def validate_context(context: dict[str, Any]) -> list[str]:
     worker = context.get("worker_policy") or {}
     if not current.get("implementation_owner"):
         findings.append("implementation_owner_missing")
+    if not current.get("provisional_files"):
+        findings.append("provisional_file_inventory_missing")
     if not worker.get("next_action"):
         findings.append("next_action_missing")
     if not worker.get("machine_observable_release_conditions"):
@@ -70,17 +83,47 @@ def validate_context(context: dict[str, Any]) -> list[str]:
     return findings
 
 
-def build_receipt(context: dict[str, Any]) -> dict[str, Any]:
+def validate_architecture(architecture: dict[str, Any], context: dict[str, Any]) -> list[str]:
+    findings: list[str] = []
+    if architecture.get("schema") != "stegverse.steggate_architecture_reconciliation.v1":
+        findings.append("architecture_schema_invalid")
+    if architecture.get("goal_id") != context.get("goal_id"):
+        findings.append("architecture_goal_mismatch")
+    if architecture.get("canonical_issue") != context.get("canonical_issue"):
+        findings.append("architecture_owner_mismatch")
+    if not architecture.get("canonical_layers"):
+        findings.append("architecture_canonical_layers_missing")
+    if not architecture.get("provisional_layers"):
+        findings.append("architecture_provisional_layers_missing")
+    if set(architecture.get("required_classifications") or []) != REQUIRED_CLASSIFICATIONS:
+        findings.append("architecture_classification_set_incomplete")
+    if not architecture.get("verified_findings"):
+        findings.append("architecture_findings_missing")
+    if not architecture.get("next_action"):
+        findings.append("architecture_next_action_missing")
+    if architecture.get("archive_allowed") is not False and architecture.get("state") != "COMPLETE":
+        findings.append("architecture_incomplete_archive_must_be_false")
+    return findings
+
+
+def build_receipt(context: dict[str, Any], architecture: dict[str, Any] | None = None) -> dict[str, Any]:
     findings = validate_context(context)
+    if architecture is None:
+        findings.append("architecture_state_unavailable")
+    else:
+        findings.extend(validate_architecture(architecture, context))
+
     active = context.get("session_state") == "ACTIVE_UNIQUE_WORK_REMAINS"
+    architecture_state = None if architecture is None else architecture.get("state")
     body = {
         "schema": "stegverse.steggate_session_continuity_receipt.v1",
         "goal_id": context.get("goal_id"),
         "context_digest": digest(context),
+        "architecture_digest": None if architecture is None else digest(architecture),
         "state": "PASS" if not findings else "FAIL_CLOSED",
         "archive_allowed": False if active else bool(context.get("archive_allowed", False)),
         "historical_context_preserved": not findings,
-        "architecture_reconciliation_state": (context.get("current_work") or {}).get("architecture_reconciliation_state"),
+        "architecture_reconciliation_state": architecture_state,
         "deployment_state": (context.get("current_work") or {}).get("deployment_state"),
         "next_action": (context.get("worker_policy") or {}).get("next_action"),
         "findings": sorted(findings),
@@ -91,21 +134,22 @@ def build_receipt(context: dict[str, Any]) -> dict[str, Any]:
 def main() -> int:
     try:
         context = json.loads(CONTEXT.read_text(encoding="utf-8"))
+        architecture = json.loads(ARCHITECTURE.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         receipt = {
             "schema": "stegverse.steggate_session_continuity_receipt.v1",
             "state": "FAIL_CLOSED",
             "archive_allowed": False,
             "historical_context_preserved": False,
-            "findings": [f"context_unreadable:{type(exc).__name__}"],
-            "next_action": "Restore the canonical StegGate session context before continuing or archiving.",
+            "findings": [f"continuity_input_unreadable:{type(exc).__name__}"],
+            "next_action": "Restore the canonical StegGate session and architecture context before continuing or archiving.",
         }
         receipt["receipt_digest"] = digest(receipt)
         RECEIPT.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         print(json.dumps(receipt, sort_keys=True))
         return 1
 
-    receipt = build_receipt(context)
+    receipt = build_receipt(context, architecture)
     RECEIPT.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(receipt, sort_keys=True))
     return 0 if receipt["state"] == "PASS" else 1
