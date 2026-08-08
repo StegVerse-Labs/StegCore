@@ -7,7 +7,7 @@
     "release_authority_claimed": false
   },
   "basis": "All six Governance fixture blobs required by contracts/governance_snapshot/manifest.json are byte-identical at current Governance main head.",
-  "evidence_hash": "f0ebf561cb530d9f9a0535d02f3f563fc73b1a8568410f682f61001dc325b32c",
+  "evidence_hash": "d305a60a3ee1f39599bec1d07253c36f9b9bb74c5259dcd370d5b46edb2bcc57",
   "fixtures": [
     [
       "docs/examples/fixtures/condition_degraded_judgment_gdr.json",
@@ -34,6 +34,7 @@
       "50e54fb30e8dc2d8197714ea146283c4d7331ea0"
     ]
   ],
+  "freshness_result": "unchanged",
   "hash_convention": {
     "algorithm": "SHA-256",
     "excluded_field": "evidence_hash",
@@ -50,6 +51,7 @@
   "observed_at": "2026-08-08T15:00:00Z",
   "pinned_snapshot_commit": "c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6",
   "record_type": "governance_freshness_evidence",
+  "revalidation_required": false,
   "schema_version": "1.0",
   "source_head": "94761bb15b1aac081617774737472b99139729b0",
   "source_repository": "StegVerse-Labs/Governance",
