@@ -3,19 +3,20 @@
   "task_id": "STEGCORE-21-GOVERNED-RUNTIME-ADAPTERS",
   "origin_goal": "Complete StegCore issue #21 by forcing supported mutation-entry paths through governed_execute with exact binding, receipt-chain preservation, and reconstructable decision state.",
   "repository": "StegVerse-Labs/StegCore",
-  "branch": "feat/governed-runtime-adapters",
+  "branch": "main",
   "pull_request": 55,
   "canonical_issue": 21,
-  "owner": "StegCore issue #21 implementation lane",
-  "claim_state": "CLAIMED_FOR_IMPLEMENTATION",
-  "claim_created_at": "2026-08-08T08:42:00-05:00",
-  "claim_release_condition": "Dedicated hosted adapter-conformance workflow and applicable repository gates pass on the final implementation head, issue #21 acceptance criteria are met, and merge/release authority is satisfied.",
+  "owner": "StegCore",
+  "claim_state": "COMPLETE",
+  "completion_state": "MERGED_AND_POST_MERGE_CONFORMANCE_GREEN",
+  "claim_released_at": "2026-08-08T09:00:07-05:00",
+  "merge_commit": "8435279b194b9b15e0be66ef2c6f6668a842afdc",
   "collision_boundaries": [
     "src/stegcore/runtime_adapters.py",
     "tests/test_governed_runtime_adapters.py",
+    "tests/test_governed_runtime_reconciliation.py",
     ".github/workflows/governed-runtime-adapters.yml",
-    "docs/GOVERNED_RUNTIME_ADAPTERS.md",
-    "management/governed-runtime-adapters-task.json"
+    "docs/GOVERNED_RUNTIME_ADAPTERS.md"
   ],
   "implemented": [
     "generic governed adapter protocol for ui/api/human/ai/agent/batch/workflow/replay",
@@ -24,51 +25,40 @@
     "capability non-broadening and parameter-bound enforcement",
     "prior verified receipt-pointer binding",
     "evidence-bearing ALLOW/DENY/REVIEW/FAIL_CLOSED decision-state records",
-    "API/agent/batch/workflow conformance tests",
+    "later effect reconciliation for MATCH/DIVERGENT/UNKNOWN/GOVERNANCE_BYPASS",
+    "adapter and reconciliation conformance tests",
     "dedicated hosted workflow with direct-executor static guard"
   ],
-  "validation_state": "DEDICATED_HOSTED_GREEN; FINAL_HEAD_REVALIDATION_PENDING",
+  "validation_state": "POST_MERGE_DEDICATED_CONFORMANCE_GREEN",
   "validation_receipts": [
     {
       "workflow": "Governed Runtime Adapter Conformance",
-      "run_id": 31260357349,
-      "job_id": 93110109292,
-      "head_sha": "055b9d73bedce800e8507cbffc3362807af836c8",
-      "conclusion": "success",
-      "scope": "compile, merged runtime tests, governed adapter tests, no-direct-executor static guard"
+      "run_id": 31260775199,
+      "job_id": 93111118343,
+      "head_sha": "8435279b194b9b15e0be66ef2c6f6668a842afdc",
+      "conclusion": "success"
     },
     {
       "workflow": "Validate StegCore Runtime",
-      "run_id": 31260357344,
-      "head_sha": "055b9d73bedce800e8507cbffc3362807af836c8",
-      "conclusion": "success"
-    },
-    {
-      "workflow": "StegCore Tests",
-      "run_id": 31260357381,
-      "head_sha": "055b9d73bedce800e8507cbffc3362807af836c8",
-      "conclusion": "success"
-    },
-    {
-      "workflow": "BCAT Gate",
-      "run_id": 31260357341,
-      "head_sha": "055b9d73bedce800e8507cbffc3362807af836c8",
-      "conclusion": "success"
+      "run_id": 31260775205,
+      "head_sha": "8435279b194b9b15e0be66ef2c6f6668a842afdc",
+      "conclusion": "failure_after_substantive_validation_pass",
+      "failure_owner": "StegVerse-Labs/StegCore#23",
+      "failure_step": "Commit durable validation evidence"
     }
   ],
-  "legacy_lane_observation": {
-    "workflow": "Validate 001/002 adapter",
-    "run_id": 31260357360,
-    "head_sha": "055b9d73bedce800e8507cbffc3362807af836c8",
-    "conclusion": "failure",
-    "classification": "DISTINCT_LEGACY_LANE_TRIGGERED_BY_INITIAL_ADAPTER_DIRECTORY_PLACEMENT",
-    "correction": "Governed runtime adapter implementation moved to src/stegcore/runtime_adapters.py so issue #21 no longer changes the legacy src/stegcore/adapters/** collision surface. No legacy workflow or 001/002 implementation was modified."
+  "integration_state": "COMPLETE_ON_MAIN",
+  "issue_state": "CLOSED_COMPLETED",
+  "adjacent_blocker": {
+    "issue": 23,
+    "task": "runtime validation evidence persistence across protected main",
+    "state": "MACHINE_OWNED_OPEN",
+    "affects_issue_21_semantics": false
   },
-  "integration_state": "PR_55_OPEN_DRAFT_NOT_MERGED",
   "authority_boundary": [
     "StegCore does not verify or mint Continuity receipts.",
     "Transport and caller type do not create authority.",
-    "No release/publication/deployment authority is claimed by this task record."
+    "No release/publication/deployment authority is granted by completion of issue #21."
   ],
-  "next_action": "Observe final-head dedicated and repository validation after path isolation; if green, update issue #21 and canonical handoff, then assess PR readiness/merge authority."
+  "next_action": "Continue only through the next canonical StegGate runtime or integration goal; runtime-validation evidence persistence remains separately owned by issue #23."
 }
