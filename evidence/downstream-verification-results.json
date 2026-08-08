@@ -1,7 +1,7 @@
 {
   "artifact_type": "stegcore.downstream_verification_results",
   "schema_version": "1.0",
-  "runtime_evidence_hash": "3657e5c64eb54e2c928fba81d3c8d35587d2b87747b9b225102b70339d942730",
+  "runtime_evidence_hash": "7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb",
   "status": "pass",
   "required_gate_count": 4,
   "passed_gate_count": 4,
@@ -43,7 +43,6 @@
     "continuity_authority_claimed": false
   },
   "remaining_gates": [
-    "governance_freshness",
     "independent_release_policy"
   ]
 }
