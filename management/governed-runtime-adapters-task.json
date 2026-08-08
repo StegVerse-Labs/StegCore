@@ -1,0 +1,36 @@
+{
+  "schema_version": "stegverse.task-state.v1",
+  "task_id": "STEGCORE-21-GOVERNED-RUNTIME-ADAPTERS",
+  "origin_goal": "Complete StegCore issue #21 by forcing supported mutation-entry paths through governed_execute with exact binding, receipt-chain preservation, and reconstructable decision state.",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "feat/governed-runtime-adapters",
+  "canonical_issue": 21,
+  "owner": "StegCore issue #21 implementation lane",
+  "claim_state": "CLAIMED_FOR_IMPLEMENTATION",
+  "claim_created_at": "2026-08-08T08:42:00-05:00",
+  "claim_release_condition": "Dedicated hosted adapter-conformance workflow passes on the final implementation head, issue #21 acceptance criteria are met, and merge/release authority is satisfied.",
+  "collision_boundaries": [
+    "src/stegcore/adapters/runtime_entry.py",
+    "tests/test_governed_runtime_adapters.py",
+    ".github/workflows/governed-runtime-adapters.yml",
+    "docs/GOVERNED_RUNTIME_ADAPTERS.md"
+  ],
+  "implemented": [
+    "generic governed adapter protocol for ui/api/human/ai/agent/batch/workflow/replay",
+    "bounded HTTP/API shim",
+    "exact candidate/credential/authority binding",
+    "capability non-broadening and parameter-bound enforcement",
+    "prior verified receipt-pointer binding",
+    "evidence-bearing ALLOW/DENY/REVIEW/FAIL_CLOSED decision-state records",
+    "API/agent/batch/workflow conformance tests",
+    "dedicated hosted workflow with direct-executor static guard"
+  ],
+  "validation_state": "PENDING_HOSTED_CI",
+  "integration_state": "BRANCH_IMPLEMENTED_NOT_MERGED",
+  "authority_boundary": [
+    "StegCore does not verify or mint Continuity receipts.",
+    "Transport and caller type do not create authority.",
+    "No release/publication/deployment authority is claimed by this task record."
+  ],
+  "next_action": "Open PR to main, inspect dedicated workflow and repository gates, correct failures if any, then update issue #21 and canonical handoff with validated evidence."
+}
