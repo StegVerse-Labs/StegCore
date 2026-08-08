@@ -1,0 +1,69 @@
+name: Reconcile StegCore Downstream Verification
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'evidence/runtime-validation.json'
+      - 'evidence/downstream-verification-dispatch.json'
+      - 'evidence/downstream-verification-receipts.json'
+      - 'scripts/reconcile_downstream_verification.py'
+      - 'tests/test_downstream_verification_reconciliation.py'
+      - '.github/workflows/reconcile-downstream-verification.yml'
+  pull_request:
+    paths:
+      - 'evidence/runtime-validation.json'
+      - 'evidence/downstream-verification-dispatch.json'
+      - 'evidence/downstream-verification-receipts.json'
+      - 'scripts/reconcile_downstream_verification.py'
+      - 'tests/test_downstream_verification_reconciliation.py'
+      - '.github/workflows/reconcile-downstream-verification.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run reconciliation tests
+        run: python -m unittest -v tests.test_downstream_verification_reconciliation
+
+      - name: Reconcile current receipts
+        run: |
+          python scripts/reconcile_downstream_verification.py \
+            --runtime-evidence evidence/runtime-validation.json \
+            --dispatch evidence/downstream-verification-dispatch.json \
+            --receipts evidence/downstream-verification-receipts.json \
+            --output "${RUNNER_TEMP}/release-readiness.json"
+
+      - name: Verify generated custody envelope
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          path = Path(os.environ['RUNNER_TEMP']) / 'release-readiness.json'
+          record = json.loads(path.read_text())
+          body = dict(record)
+          declared = body.pop('assessment_hash')
+          computed = hashlib.sha256(json.dumps(body, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+          assert declared == computed
+          assert record['gates']['downstream_verification'] == 'pass'
+          assert record['gates']['governance_freshness'] == 'pending'
+          assert record['gates']['independent_release_policy'] == 'pending'
+          assert record['release_permitted'] is False
+          assert record['tag_permitted'] is False
+          print('DOWNSTREAM_RECONCILIATION_ENVELOPE_PASS')
+          PY
