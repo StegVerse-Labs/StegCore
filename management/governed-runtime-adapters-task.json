@@ -8,7 +8,7 @@
   "canonical_issue": 21,
   "owner": "StegCore",
   "claim_state": "COMPLETE",
-  "completion_state": "MERGED_AND_POST_MERGE_CONFORMANCE_GREEN",
+  "completion_state": "MERGED_VALIDATED_EVIDENCE_PERSISTED_DOWNSTREAM_VERIFIED",
   "claim_released_at": "2026-08-08T09:00:07-05:00",
   "merge_commit": "8435279b194b9b15e0be66ef2c6f6668a842afdc",
   "collision_boundaries": [
@@ -29,7 +29,7 @@
     "adapter and reconciliation conformance tests",
     "dedicated hosted workflow with direct-executor static guard"
   ],
-  "validation_state": "POST_MERGE_DEDICATED_CONFORMANCE_GREEN",
+  "validation_state": "CURRENT_RUNTIME_AND_DOWNSTREAM_RECONCILIATION_HOSTED_GREEN",
   "validation_receipts": [
     {
       "workflow": "Governed Runtime Adapter Conformance",
@@ -40,25 +40,43 @@
     },
     {
       "workflow": "Validate StegCore Runtime",
-      "run_id": 31260775205,
-      "head_sha": "8435279b194b9b15e0be66ef2c6f6668a842afdc",
-      "conclusion": "failure_after_substantive_validation_pass",
-      "failure_owner": "StegVerse-Labs/StegCore#23",
-      "failure_step": "Commit durable validation evidence"
+      "run_id": 31262198018,
+      "head_sha": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
+      "conclusion": "success",
+      "runtime_evidence_hash": "7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb"
+    },
+    {
+      "workflow": "Reconcile StegCore Downstream Verification",
+      "run_id": 31262315602,
+      "head_sha": "97525db35b22ed0f5f72f076f20767d60dda8746",
+      "conclusion": "success"
     }
   ],
   "integration_state": "COMPLETE_ON_MAIN",
   "issue_state": "CLOSED_COMPLETED",
-  "adjacent_blocker": {
+  "adjacent_automation": {
     "issue": 23,
     "task": "runtime validation evidence persistence across protected main",
-    "state": "MACHINE_OWNED_OPEN",
+    "state": "COMPLETE_CLOSED",
+    "repair_pull_request": 56,
+    "generator_compatibility_pull_request": 58,
+    "current_evidence_merge": "e05e904e525028ff9973a5ee80442c03b09fcf89",
     "affects_issue_21_semantics": false
+  },
+  "downstream_verification": {
+    "state": "PASS",
+    "receipt_file": "evidence/downstream-verification-receipts.json",
+    "release_readiness_state": "downstream_verified_release_blocked",
+    "remaining_release_gates": [
+      "governance_freshness",
+      "independent_release_policy"
+    ]
   },
   "authority_boundary": [
     "StegCore does not verify or mint Continuity receipts.",
     "Transport and caller type do not create authority.",
-    "No release/publication/deployment authority is granted by completion of issue #21."
+    "No release/publication/deployment authority is granted by completion of issue #21.",
+    "Downstream verification does not grant tag or release authority."
   ],
-  "next_action": "Continue only through the next canonical StegGate runtime or integration goal; runtime-validation evidence persistence remains separately owned by issue #23."
+  "next_action": "No issue #21 implementation remains. Release readiness continues machine-observably under issue #37 until Governance freshness and independent release policy both pass."
 }
