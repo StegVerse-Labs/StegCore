@@ -22,7 +22,7 @@
       "validation_state": "HOSTED_GREEN",
       "integration_state": "BOUND_TO_CANONICAL_HANDOFF",
       "archival_dependency": false,
-      "evidence": ["run 31267562113", "job 93128078146", "artifact 9024610226", "sha256:01a31b811df5cb58a4bbdec30ccbd2f72d8c9d707011812d7adb7efe8e4786bc", "continuity guard strengthened in commits c82f09d40dcc745c57550b79938314ec36ffba3a and 73bca8c8fe7a628ef4698efa5f1e997a46e124f2"]
+      "evidence": ["run 31276136526", "job 93149840636", "artifact 9027042689", "sha256:212d757d9c155baeb6303c6b7a28fc3d31c0a95fb36d4203b8343df29b4883af", "continuity guard strengthened so incomplete full-functional activation cannot become archive-ready"]
     },
     {
       "task_id": "FF-ARCH-02",
@@ -63,16 +63,16 @@
     {
       "task_id": "FF-DEPLOY-05",
       "destination": "Render service srv-d9rlic2jobas73do1q6g",
-      "locations": ["https://steggate-core.onrender.com", "Render deploy history", "StegVerse-Labs/StegCore#68"],
-      "owner": "Render auto-deploy + StegCore#68 + active session",
+      "locations": ["https://steggate-core.onrender.com", "Render deploy history", "management/steggate-render-capacity-watch.json", "StegVerse-Labs/StegCore#68"],
+      "owner": "Render auto-deploy + hourly Render capacity condition watch + StegCore#68 + active session",
       "claim_state": "BLOCKED",
       "completion_state": "SERVICE_CREATED_DEPLOY_NOT_LIVE",
       "validation_state": "MACHINE_OBSERVED_BLOCKER",
-      "integration_state": "AUTO_DEPLOY_CONNECTED",
+      "integration_state": "AUTO_DEPLOY_CONNECTED_AND_CAPACITY_WATCH_ACTIVE",
       "archival_dependency": true,
-      "evidence": ["service srv-d9rlic2jobas73do1q6g", "latest inspected deploy dep-d9rnlkuq1p3s73f7942g at head 347e22c87d222a3f83b68fdfa1e553710c9528d6 build_failed", "Render workspace build-pipeline minutes exhausted"],
+      "evidence": ["service srv-d9rlic2jobas73do1q6g", "latest inspected deploy dep-d9roungae00c73a7f170 at head 7fa318f5f3392b44f5c50d7f6b31c30d92eaca71 build_failed", "Render logs at 2026-08-08T20:19:43Z: workspace build-pipeline minutes exhausted", "no app logs exist because no deploy has reached live", "management/steggate-render-capacity-watch.json"],
       "machine_observable_release_condition": "A canonical deploy reaches live.",
-      "next_executable_action": "Continue checking supported deployment routes while Render remains blocked; do not archive the session before this activation goal completes."
+      "next_executable_action": "Hourly capacity watch detects restored build capacity and triggers/observes canonical deployment; active session continues inspection and must not archive before this activation goal completes."
     },
     {
       "task_id": "FF-OBSERVE-06",
@@ -84,7 +84,7 @@
       "validation_state": "OBSERVER_AND_FINALIZER_SEMANTICS_HOSTED_VALIDATED",
       "integration_state": "HOURLY_FAIL_CLOSED_FULL_ACTIVATION_OBSERVER_ACTIVE",
       "archival_dependency": true,
-      "evidence": ["run 31272908461 observer/finalizer semantic validation PASS before hosted check", "full health+self-test+evaluate observer", "activation finalizer scripts/finalize_steggate_live_activation.py"],
+      "evidence": ["run 31276036174", "job 93149575467", "artifact 9027024540", "sha256:8dc2248d8f06f0f3a3e50a7380513e47fae5595b69d61273ec875ac90ca75ef3", "health/self-test/evaluate all TIMEOUTERROR while canonical host unavailable"],
       "machine_observable_release_condition": "/health healthy and canonical_three_layer_bound=true; /v1/self-test PASS with exact four dispositions; /v1/evaluate ALLOW with complete required matrix and hashes.",
       "next_executable_action": "Retry hourly and inspect when possible until full receipt state is PASS."
     },
@@ -105,6 +105,7 @@
   "alternate_host_investigation": {
     "render_workspaces_available": 1,
     "render_workspace": "tea-d30avmndiees73bg2rjg",
+    "render_capacity_watch_active": true,
     "vercel_team": "team_tb2tGtHkSFhg5cpTMCvAhQJi",
     "existing_vercel_projects": ["site", "stegverse-scw", "scw", "steg-verse-scw"],
     "stegcore_project_present": false,
@@ -118,8 +119,8 @@
     "tasks_machine_owned_active": 1,
     "tasks_blocked": 1,
     "tasks_waiting_for_evidence": 1,
-    "developed_files_required": 14,
-    "developed_files_complete": 14,
+    "developed_files_required": 15,
+    "developed_files_complete": 15,
     "scaffolding_or_stubs": 0,
     "missing_required_files": 0,
     "validation_groups_required": 7,
