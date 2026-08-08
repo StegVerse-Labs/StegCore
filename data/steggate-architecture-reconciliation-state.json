@@ -2,33 +2,46 @@
   "schema": "stegverse.steggate_architecture_reconciliation.v1",
   "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
   "canonical_issue": "StegVerse-Labs/StegCore#68",
-  "state": "IN_PROGRESS",
+  "state": "COMPLETE",
+  "canonical_call_graph": [
+    "Governance policy/evidence artifacts",
+    "src/stegcore/three_layer.py:evaluate_three_layer",
+    "src/stegcore/steggate.py:evaluate_admissibility composition/normalization",
+    "src/stegcore/commit_governance.py:coherence_gate",
+    "src/stegcore/runtime.py:governed_execute",
+    "src/stegcore/runtime_adapters.py:execute_adapter/execute_http",
+    "execution observation + reconcile_effect",
+    "Continuity/reconstruction consumers"
+  ],
   "canonical_layers": [
-    {"path": "src/stegcore/decision.py", "role": "minimal interface", "authority": "non-exclusive"},
-    {"path": "src/stegcore/three_layer.py", "role": "deterministic three-layer admissibility runtime", "authority": "existing canonical runtime candidate"},
+    {"path": "src/stegcore/decision.py", "role": "minimal compatibility decision interface", "authority": "non-exclusive; not the full StegGate engine"},
+    {"path": "src/stegcore/three_layer.py", "role": "deterministic judgment/signal/execution admissibility runtime", "authority": "canonical core admissibility runtime"},
     {"path": "contracts/permission-admissibility-boundary.v1.json", "role": "permission/admissibility invariant", "authority": "canonical semantic contract"},
+    {"path": "src/stegcore/steggate.py", "role": "complete decision-state composition and matrix normalization around canonical runtime", "authority": "canonical StegGate evaluation composition; not a parallel policy engine"},
     {"path": "src/stegcore/commit_governance.py", "role": "commit-coherence gate", "authority": "canonical commit boundary"},
     {"path": "src/stegcore/runtime.py", "symbol": "governed_execute", "role": "production mutation boundary", "authority": "canonical mutation boundary"},
-    {"path": "src/stegcore/runtime_adapters.py", "role": "caller convergence", "authority": "canonical adapter layer"},
+    {"path": "src/stegcore/runtime_adapters.py", "role": "caller convergence + effect reconciliation", "authority": "canonical adapter layer"},
     {"path": "docs/DECISION_STATE_RECONSTRUCTION.md", "role": "decision/execution/observed reconstruction", "authority": "canonical reconstruction contract"}
   ],
-  "provisional_layers": [
-    {"path": "src/stegcore/steggate.py", "classification": "PROVISIONAL_ADAPTER_OR_DUPLICATION_RISK"},
-    {"path": "src/stegcore/service.py", "classification": "PROVISIONAL_SERVICE_ADAPTER"}
+  "reconciled_live_service": [
+    {"path": "src/stegcore/steggate.py", "classification": ["ADAPTER_TO_EXISTING_CANONICAL_ENGINE", "NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS", "NEW_REQUIRED_SEMANTIC_NOT_PRESENT_ELSEWHERE"], "details": "Calls evaluate_three_layer for canonical core decision; normalizes every material predicate into a reconstructable matrix; adds candidate-hash-bound REVIEW for missing required human approval and composes existing capability/continuity pre-commit bindings."},
+    {"path": "src/stegcore/service.py", "classification": ["ADAPTER_TO_EXISTING_CANONICAL_ENGINE"], "details": "HTTP-only transport; /v1/evaluate routes through reconciled composition and exposes no arbitrary mutation endpoint."},
+    {"path": "tests/test_steggate_service.py", "classification": ["NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS"], "details": "Proves canonical three-layer binding, denial precedence, fail-closed reference-state behavior, REVIEW, permission/admissibility separation, and live service self-test."}
   ],
-  "required_classifications": [
-    "ADAPTER_TO_EXISTING_CANONICAL_ENGINE",
-    "NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS",
-    "NEW_REQUIRED_SEMANTIC_NOT_PRESENT_ELSEWHERE",
-    "DUPLICATE_REMOVE_OR_REFACTOR"
+  "removed_duplication": [
+    "The initial standalone boolean policy/evidence evaluator in src/stegcore/steggate.py was replaced; final ALLOW/DENY/FAIL_CLOSED authority now derives from evaluate_three_layer rather than parallel policy logic."
   ],
-  "verified_findings": [
-    "decision.py minimal means interface scope, not a resource-budget directive",
-    "decision.py minimal status does not establish absence of a broader engine",
-    "three_layer.py already implements substantive admissibility checks and deterministic evidence receipts",
-    "commit_governance and governed_execute already own the post-admissibility commit/mutation boundary",
-    "the live service must expose one canonical chain rather than create parallel authority"
-  ],
-  "next_action": "Trace the remaining call graph and refactor provisional live-service logic to wrap/normalize existing canonical runtime semantics wherever overlap exists.",
+  "validation": {
+    "workflow": "StegCore Tests",
+    "run_id": 31270227248,
+    "job_id": 93134793274,
+    "head_sha": "5d79a86517632a6a0cda295f3f1d63280477aff5",
+    "result": "PASS",
+    "tests": "140 passed",
+    "subtests": "127 passed",
+    "artifact_id": 9025372171,
+    "artifact_digest": "sha256:1de4068a06e0271d6e6077fc0b8d4e33520ac3153c21a0291018064abf522a9c"
+  },
+  "next_action": "Deploy the reconciled canonical service and observe /health, /v1/self-test, and /v1/evaluate. Render remains blocked by workspace build-minute exhaustion; use another authorized hosting control plane if available without changing the canonical repository authority.",
   "archive_allowed": false
 }
