@@ -6,53 +6,51 @@
 Organization: StegVerse-Labs
 Repository: StegCore
 Canonical branch: main
-Primary completed goal: STEGCORE-21-GOVERNED-RUNTIME-ADAPTERS
-Current release-readiness owner: issue #37
-Session state: IMPLEMENTATION_COMPLETE / GOVERNANCE_FRESH / RELEASE_BLOCKED_ON_INDEPENDENT_POLICY / SESSION_ARCHIVE_READY
+Primary goal: STEGGATE-RUNTIME-AND-V0.1.0-TAG-ACTIVATION
+State: IMPLEMENTATION_COMPLETE / INDEPENDENT_POLICY_PASS / AUTHORIZED_TAG_ACTIVE / POST_TAG_AWARENESS_COMPLETE / SESSION_ARCHIVE_READY
 ```
 
-Read this file before changing StegCore runtime decisions, adapters, receipt bindings, validation evidence, release readiness, or downstream verification. Live Git state, workflow runs/jobs, committed evidence, issues, and repository-native claims supersede chat history.
+Read this file before changing StegCore runtime decisions, adapters, receipt bindings, validation evidence, tag/release state, or downstream verification. Live Git state, workflow runs/jobs, committed evidence, issues, and repository-native claims supersede chat history.
 
 ## Architectural invariants
 
 1. `src/stegcore/runtime.py#governed_execute` is the production mutation boundary.
-2. Transport never creates authority; mutation remains unreachable until admissibility and commit coherence both permit execution.
+2. Transport never creates authority; mutation remains unreachable until admissibility and commit coherence permit it.
 3. StegCore consumes already-verified continuity references and does not verify signatures or mint Continuity receipts.
 4. ALLOW, DENY, REVIEW, FAIL_CLOSED, coherence denial, execution failure, non-execution, observation, and reconciliation remain reconstructable.
 5. Decision reality, execution reality, and observed reality remain distinct.
-6. Release, deployment, publication, custody, downstream awareness, and execution authority are separate authority classes.
+6. Tagging, GitHub Release creation, deployment, publication, custody, downstream awareness, and execution authority are separate authority classes.
 
-## Completed governed runtime chain
+## Governed runtime — COMPLETE / MERGED / HOSTED GREEN
 
 ```text
-PR #18 commit coherence: MERGED 5f78b489c51a99af7b76b0b9e3979da820c9a296
-Dedicated acceptance: run 29308236624 / job 87006244615 SUCCESS
+PR #18 commit coherence: 5f78b489c51a99af7b76b0b9e3979da820c9a296
+acceptance run 29308236624 / job 87006244615: SUCCESS
 
-PR #20 production governed_execute boundary: MERGED 8d5178507c86efe98c359f957ab20475e55ca9f2
+PR #20 production governed_execute: 8d5178507c86efe98c359f957ab20475e55ca9f2
 
-Issue #21 governed runtime adapters: CLOSED / COMPLETED
-PR #55 merge: 8435279b194b9b15e0be66ef2c6f6668a842afdc
-Post-merge adapter conformance: run 31260775199 / job 93111118343 SUCCESS
+Issue #21: CLOSED / COMPLETED
+PR #55 governed runtime adapters: 8435279b194b9b15e0be66ef2c6f6668a842afdc
+adapter conformance run 31260775199 / job 93111118343: SUCCESS
 ```
 
-Canonical adapter surfaces:
+Canonical surfaces:
 
 ```text
 src/stegcore/runtime_adapters.py
 tests/test_governed_runtime_adapters.py
 tests/test_governed_runtime_reconciliation.py
 docs/GOVERNED_RUNTIME_ADAPTERS.md
+docs/DECISION_STATE_RECONSTRUCTION.md
 .github/workflows/governed-runtime-adapters.yml
 management/governed-runtime-adapters-task.json
 ```
 
-The merged adapters preserve exact candidate, credential, subject, authority, capability, parameter-bound, and prior-receipt-pointer binding. Capability broadening fails closed. API/HTTP, agent, batch, workflow and other supported callers reach the same governed boundary. Reconciliation preserves MATCH, DIVERGENT, UNKNOWN, and GOVERNANCE_BYPASS without rewriting the governing decision.
+The runtime preserves exact candidate, credential, subject, authority, capability, parameter-bound, and prior-receipt-pointer binding. Capability broadening fails closed. Supported UI/API/human/AI/agent/batch/workflow/replay callers converge on the same governed boundary. Reconciliation preserves MATCH, DIVERGENT, UNKNOWN, and GOVERNANCE_BYPASS without rewriting the governing decision.
 
-## Runtime evidence automation — COMPLETE
+## Runtime evidence — COMPLETE
 
-Issue #23 is CLOSED / COMPLETED. Protected-main evidence persistence and custody-envelope compatibility were repaired through PRs #56, #58, #59 and #60; PR #57 was superseded and not merged.
-
-Current bound runtime evidence:
+Issue #23 is CLOSED / COMPLETED. Protected-main evidence persistence and custody-envelope generation were repaired through PRs #56, #58, #59 and #60; PR #57 was superseded.
 
 ```text
 evidence/runtime-validation.json
@@ -64,18 +62,9 @@ replay mutation: FAIL-CLOSED
 continuity receipt minted: false
 ```
 
-## Downstream verification — COMPLETE / HOSTED GREEN
+## Downstream runtime verification — COMPLETE
 
-Required successor awareness is complete and bound to the current runtime evidence:
-
-```text
-StegVerse-Labs/Site #14 comment 5226561201 — PASS_AWARENESS_ONLY
-GCAT-BCAT-Engine/Publisher #4 comment 5226562055 — PASS_AWARENESS_ONLY
-StegVerse-Labs/admissibility-wiki #19 comment 5226562821 — PASS_DOCUMENTATION_AWARENESS_ONLY
-StegVerse-002/stegguardian-wiki #4 comment 5226563561 — PASS_EVIDENCE_AWARENESS_ONLY
-```
-
-Machine reconciliation:
+Earlier runtime-awareness receipts remain valid for their stated scope, and deterministic reconciliation is hosted green:
 
 ```text
 evidence/downstream-verification-dispatch.json
@@ -83,132 +72,159 @@ evidence/downstream-verification-receipts.json
 scripts/reconcile_downstream_verification.py
 tests/test_downstream_verification_reconciliation.py
 .github/workflows/reconcile-downstream-verification.yml
-hosted run 31262315602 SUCCESS
+run 31262315602: SUCCESS
 ```
 
-## Governance freshness — PASS / DURABLY RECORDED
+## Governance freshness — PASS
 
-The pinned Governance snapshot remains the runtime validation basis:
-
-```text
-contracts/governance_snapshot/manifest.json
-pinned Governance commit: c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6
-```
-
-Freshness was independently re-observed against current `StegVerse-Labs/Governance@main` head `94761bb15b1aac081617774737472b99139729b0`. All six fixture blobs named by the pinned manifest remain byte-identical at current Governance main:
-
-```text
-condition_degraded_judgment_gdr.json      2181829b925a98595c4d9dacf82827dfee8dd831
-signal_admission_drift_gdr.json           908d32568223ed1c236190a025b15a46a13601df
-governance_validation_of_drift_gdr.json  24a2bc3628c1bbde5b97b0aed5744e23309034c0
-three_layer_positive_control_gdr.json     05c24d5d5a45afeb737741bf16c6d3efee2523f5
-three_layer_replay_baseline_gdr.json      71dca6e0bd9fbe536384019c6683aec34cfc0270
-three_layer_replay_mutated_gdr.json       50e54fb30e8dc2d8197714ea146283c4d7331ea0
-```
+`contracts/governance_snapshot/manifest.json` pins Governance commit `c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6`. Freshness was re-observed against Governance main head `94761bb15b1aac081617774737472b99139729b0`; all six required fixture blob SHAs remained byte-identical.
 
 Durable evidence:
 
 ```text
 evidence/governance-freshness.json
-commit c24b3fd762d28c17bc3c4e0ee1d5b4620c8ef07a
-freshness evidence hash f0ebf561cb530d9f9a0535d02f3f563fc73b1a8568410f682f61001dc325b32c
+freshness repair/contract commit: c26511931b82a65aaeb99b9926a9728ce991431d
+status: pass
+freshness_result: unchanged
+revalidation_required: false
 ```
 
-A conflicting earlier freshness record incorrectly represented the pinned July commit as the current Governance head. It was corrected rather than treated as authoritative.
+## Independent release policy — PASS / GOVERNANCE-OWNED
 
-## Release readiness — ONE INDEPENDENT GATE REMAINS
-
-Canonical owner remains:
+The former final blocker was not a human-only unknown. Governance already owned an executable independent release policy:
 
 ```text
-StegVerse-Labs/StegCore#37
+StegVerse-Labs/Governance/policies/stegcore-release-policy-v1.json
+StegVerse-Labs/Governance/scripts/evaluate_stegcore_release.py
+StegVerse-Labs/Governance/.github/workflows/evaluate-stegcore-release.yml
+StegVerse-Labs/Governance/evidence/stegcore-release-decision.json
 ```
 
-Current release-readiness record:
+Stale StegCore candidate bindings were repaired in:
 
 ```text
-evidence/release-readiness.json
-state: governance_fresh_release_blocked
-runtime_validation: pass
-continuity_mapping: pass
-canonical_governance_contract: pass
-evidence_integrity: pass
-downstream_verification: pass
-governance_freshness: pass
-independent_release_policy: pending
-release_permitted: false
-tag_permitted: false
-assessment hash: 92d4dd3e44c155d2362230142e4e611f86f196dc1baa190e1775c1f2b4427bbf
+evidence/governance-freshness.json
+evidence/downstream-verification-results.json
+evidence/release-candidate-request.json
 ```
 
-Machine-observable release condition: `independent_release_policy` must become durably `pass` under issue #37 while all currently passing evidence gates remain bound to the candidate. Until then no release or tag is authorized. The release-bump workflow only creates version/changelog transport and cannot grant release authority.
+Governance re-evaluation then produced:
 
-There is no unspecified external task. The remaining authority boundary is the independent release-policy decision owned by issue #37/repository release policy. This session must not manufacture that independent authority.
+```text
+decision: ALLOW
+policy: stegcore-release-policy-v1
+Governance decision commit: d12cfbfec733f601dcf4a97ccf74d0140bfe5f52
+decision hash: 7b90b85d4c9a4fe0666dd72a13dd1e26e672d5cd57aa88ad98b4ac08a23e768c
+candidate version: 0.1.0
+candidate tag: v0.1.0
+candidate commit: 70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af
+all independent policy checks: PASS
+next permitted action: create annotated tag only
+```
 
-## Cross-repository dependencies
+The independent decision is mirrored without authority expansion at `evidence/independent-release-policy.json`.
 
-Ara decision-state interop is COMPLETE / HOSTED GREEN and archive-safe at `StegVerse-Labs/ara-admissibility-interop/ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md`.
+## Authorized tag activation — COMPLETE / OBSERVED
 
-Continuity decision-state preservation is COMPLETE / CLOSED / HOSTED GREEN at `StegVerse-Labs/Continuity/STEGGATE_CONTINUITY_MIRROR_HANDOFF.md`; issue #5 is closed.
+Repository-native activation workflow:
 
-Governance remains the policy authority. Runtime ownership remains StegCore. Successor awareness comments do not transfer authority to Site, Publisher, admissibility-wiki, or StegGuardian Wiki.
+```text
+.github/workflows/authorized-stegcore-tag.yml
+run: 31265918041
+job: 93123891509
+result: SUCCESS
+```
 
-Adjacent Governed AI / abundant-intelligence and seven-lane DeepSeek work remains durably consolidated in:
+Observed immutable consequence:
+
+```text
+tag: v0.1.0
+tag ref: refs/tags/v0.1.0
+tag object SHA: 071109054e212cba7d52544c62b09581c5eac324
+object type: annotated tag
+target commit: 70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af
+tagger: stegverse-release-bot
+tag message binds Governance decision hash 7b90b85d4c9a4fe0666dd72a13dd1e26e672d5cd57aa88ad98b4ac08a23e768c
+```
+
+Issue #37 is CLOSED / COMPLETED. `evidence/release-readiness.json` now records every declared tag-readiness gate as pass and `tag_created=true`.
+
+Important boundary: Governance authorized **annotated tag creation only**. A GitHub Release, deployment, production activation, publication, Continuity receipt, or execution-authority grant remains a separate authority class and is not implied by this tag.
+
+## Post-tag downstream awareness — COMPLETE
+
+Required downstream handoffs were read before propagation. Site's orchestrator explicitly disallows external session ownership, so no destination implementation workload was claimed. Evidence-only post-tag receipts were installed instead.
+
+Canonical task:
+
+```text
+StegVerse-Labs/StegCore#64 — CLOSED / COMPLETED
+evidence/post-tag-downstream-awareness.json
+```
+
+Receipts:
+
+```text
+StegVerse-Labs/Site#14 comment 5226911203 — POST_TAG_AWARENESS_ONLY
+GCAT-BCAT-Engine/Publisher#4 comment 5226911747 — POST_TAG_AWARENESS_ONLY
+StegVerse-Labs/admissibility-wiki#19 comment 5226912409 — POST_TAG_DOCUMENTATION_AWARENESS_ONLY
+StegVerse-002/stegguardian-wiki#4 comment 5226913120 — POST_TAG_EVIDENCE_AWARENESS_ONLY
+```
+
+Every receipt binds the exact tag object, target commit, and Governance decision hash while preserving destination authority boundaries.
+
+## Cross-repository decision-state dependencies
+
+Ara decision-state interop remains COMPLETE / HOSTED GREEN at `StegVerse-Labs/ara-admissibility-interop/ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md`.
+
+Continuity decision-state preservation remains COMPLETE / CLOSED / HOSTED GREEN at `StegVerse-Labs/Continuity/STEGGATE_CONTINUITY_MIRROR_HANDOFF.md`; issue #5 is closed.
+
+Governance remains policy authority; StegCore remains runtime authority. Site, Publisher, admissibility-wiki, and StegGuardian retain their own handoffs and workloads.
+
+Adjacent Governed AI and seven-lane DeepSeek work remains durably transferred to:
 
 ```text
 GCAT-BCAT-Engine/workflows/experiments/sv-cost-program/governed-ai-premium/SV_GOVERNED_AI_PREMIUM_MIRROR_HANDOFF.md
 GCAT-BCAT-Engine/workflows/experiments/sv-cost-program/seven-lane-results/SV_COST_SEVEN_LANE_MIRROR_HANDOFF.md
 ```
 
-DeepSeek execution remains machine-owned and blocked on its named authorized credential condition; do not duplicate it in StegCore.
+DeepSeek execution remains separately machine-owned and credential-gated; it is not a StegCore remainder.
 
-## Session execution inventory
+## Current execution inventory
 
 Canonical inventory: `management/steggate-runtime-session-consolidation-2026-08-08.json`.
 
 ```text
 1. governed runtime adapters — COMPLETE
-2. exact HTTP/API bounded transport — COMPLETE
+2. HTTP/API bounded transport — COMPLETE
 3. complete decision-state runtime production — COMPLETE
-4. protected-main evidence persistence repair — COMPLETE
-5. v1.1 custody-envelope generator compatibility — COMPLETE
-6. downstream successor verification — COMPLETE
+4. protected-main evidence persistence — COMPLETE
+5. custody-envelope compatibility — COMPLETE
+6. downstream runtime verification — COMPLETE
 7. downstream reconciliation automation — COMPLETE
-8. Governance freshness confirmation — COMPLETE / PASS
-9. independent release/tag policy — BLOCKED / MACHINE OWNED BY #37
-10. Governed AI economics continuation — MERGED INTO canonical workflows handoff
-11. seven-lane DeepSeek continuation — MERGED INTO canonical seven-lane handoff / MACHINE OWNED
+8. Governance freshness — COMPLETE / PASS
+9. independent Governance release policy — COMPLETE / PASS
+10. authorized annotated tag v0.1.0 — COMPLETE / OBSERVED
+11. post-tag downstream awareness — COMPLETE
+12. adjacent Governed AI / DeepSeek goals — MERGED INTO canonical machine-owned workstreams
 ```
 
 ## Claims and collision control
 
-No session-owned implementation claim remains. Issue #37 owns the final release-policy gate. Ara and Continuity completed claims are released/closed. DeepSeek remains separately machine-owned. Do not create a competing release-policy authority or duplicate runtime adapter implementation.
+No session-owned implementation, validation, integration, release-policy, tag, or post-tag propagation claim remains. Issues #21, #23, #37, and #64 are completed/closed for this chain. Do not create a competing runtime adapter, release-policy authority, or duplicate destination workload.
 
-## Validation commands / strongest evidence
-
-```text
-adapter conformance: hosted run 31260775199 SUCCESS
-runtime validation: hosted run 31262198018 SUCCESS
-downstream reconciliation: hosted run 31262315602 SUCCESS
-Governance freshness: six live Governance blob SHAs exactly match the six pinned manifest SHAs
-```
-
-## Completion assessment
+## Release posture
 
 ```text
-session-owned runtime implementation: complete
-runtime validation: complete
-runtime evidence persistence: complete
-downstream verification: complete
-Governance freshness: complete
-independent release policy: pending under issue #37
-release/tag activation: blocked by that independent policy gate
-session-specific information transfer: complete
-session archive readiness: 100%
+StegCore v0.1.0 annotated tag: ACTIVATED
+GitHub Release object: NOT AUTHORIZED BY CURRENT GOVERNANCE DECISION
+Deployment/production activation: NOT AUTHORIZED BY CURRENT GOVERNANCE DECISION
 ```
+
+If a future goal requests a GitHub Release or deployment, it must begin as a new authority-governed goal and may not reinterpret the existing ALLOW as permission for that consequence.
 
 ## Archive condition
 
-SATISFIED. All session-originated implementation, validation, reconciliation, freshness evidence, unresolved release authority, and adjacent work are durably assigned. Deleting or archiving the chat does not remove unique state or execution authority.
+SATISFIED. All session-originated implementation, validation, reconstruction, evidence repair, Governance freshness, independent policy evaluation, authorized tag activation, post-tag downstream awareness, and adjacent work are completed or durably transferred. Deleting or archiving the conversation removes no unique project state or execution authority.
 
-MERGED INTO: `StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md`, `management/steggate-runtime-session-consolidation-2026-08-08.json`, `evidence/governance-freshness.json`, `evidence/release-readiness.json`, issue #37, and the two GCAT-BCAT workflows handoffs named above.
+MERGED INTO: `StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md`, `management/steggate-runtime-session-consolidation-2026-08-08.json`, `evidence/release-readiness.json`, `evidence/independent-release-policy.json`, `evidence/post-tag-downstream-awareness.json`, closed issues #37 and #64, and the cross-repository handoffs named above.
