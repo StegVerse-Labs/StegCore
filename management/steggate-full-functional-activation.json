@@ -7,9 +7,16 @@
   "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
   "canonical_issue": "StegVerse-Labs/StegCore#68",
   "supersedes_for_this_goal": "management/steggate-runtime-session-consolidation-2026-08-08.json archive disposition; that record remains authoritative only for the earlier bounded v0.1.0/tag goal",
-  "session_state": "BLOCKED_RETAIN_TEMPORARILY",
-  "archive_allowed": false,
-  "role": "implementation + validation + hosted activation + observation",
+  "session_state": "MERGED_INTO_CANONICAL_WORKSTREAM",
+  "conversation_archive_allowed": true,
+  "goal_activation_complete": false,
+  "role": "repository-native implementation + validation + hosted activation + observation; no chat-specific execution role remains",
+  "merged_into": [
+    "StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md",
+    "StegVerse-Labs/StegCore#68",
+    "StegVerse-Labs/StegCore/.github/workflows/steggate-live-observer.yml",
+    "StegVerse-Labs/StegCore/scripts/finalize_steggate_live_activation.py"
+  ],
   "inventory": [
     {
       "task_id": "FF-CONTEXT-01",
@@ -63,15 +70,15 @@
       "task_id": "FF-DEPLOY-05",
       "destination": "Render service srv-d9rlic2jobas73do1q6g",
       "locations": ["https://steggate-core.onrender.com", "Render deploy history", "StegVerse-Labs/StegCore#68"],
-      "owner": "Render hosting control plane + StegCore#68 activation lane",
-      "claim_state": "BLOCKED",
+      "owner": "Render auto-deploy + StegCore repository automation",
+      "claim_state": "MACHINE_OWNED_BLOCKED",
       "completion_state": "SERVICE_CREATED_DEPLOY_NOT_LIVE",
       "validation_state": "MACHINE_OBSERVED_BLOCKER",
       "integration_state": "AUTO_DEPLOY_CONNECTED",
-      "archival_dependency": true,
-      "evidence": ["service srv-d9rlic2jobas73do1q6g", "observed deploy dep-d9rmnub7uimc73b5u58g build_failed", "Render build log: workspace build-pipeline minutes exhausted"],
+      "archival_dependency": false,
+      "evidence": ["service srv-d9rlic2jobas73do1q6g", "latest inspected deploy dep-d9rmt70u01pc73dkt8hg build_failed", "Render workspace build-pipeline minutes exhausted"],
       "machine_observable_release_condition": "A canonical deploy reaches live.",
-      "next_executable_action": "Auto-deploy current main when Render capacity returns, or use a supported authorized alternate hosting control plane if one becomes available."
+      "next_executable_action": "Render auto-deploy retries when a new canonical commit is available/capacity returns; repository observer independently checks the live origin hourly."
     },
     {
       "task_id": "FF-OBSERVE-06",
@@ -80,25 +87,25 @@
       "owner": "StegCore repository automation",
       "claim_state": "MACHINE_OWNED",
       "completion_state": "ACTIVE_BLOCKED_BY_DEPLOYMENT",
-      "validation_state": "OBSERVER_LOGIC_INSTALLED; INITIAL_HOSTED_TARGET_BLOCKED",
+      "validation_state": "OBSERVER_AND_FINALIZER_SEMANTICS_HOSTED_VALIDATED",
       "integration_state": "HOURLY_FAIL_CLOSED_FULL_ACTIVATION_OBSERVER_ACTIVE",
-      "archival_dependency": true,
-      "evidence": ["initial run 31270353764", "job 93135108552", "health TIMEOUTERROR", "self-test TIMEOUTERROR", "artifact 9025414196", "sha256:2708b4d4d99763903c85f03eba2402d0e6bf7e932c15979e95f7e339a70f2e5a", "full health+self-test+evaluate observer commits d4a9e4c7c64315bd50ccea4482c2d3a292c8d936 and 2d022fd04d5f2262affada5dea185bac30469f7c"],
-      "machine_observable_release_condition": "/health healthy and canonical_three_layer_bound=true; /v1/self-test PASS with exact four dispositions; /v1/evaluate ALLOW with complete required matrix, candidate_hash, canonical_three_layer_request_hash, canonical_three_layer_receipt_hash, decision_state_hash, permission/admissibility separation, and no execution or Continuity-mint authority.",
-      "next_executable_action": "Retry hourly until the full receipt state is PASS."
+      "archival_dependency": false,
+      "evidence": ["run 31272908461 observer/finalizer semantic validation PASS before hosted check", "full health+self-test+evaluate observer", "activation finalizer scripts/finalize_steggate_live_activation.py"],
+      "machine_observable_release_condition": "/health healthy and canonical_three_layer_bound=true; /v1/self-test PASS with exact four dispositions; /v1/evaluate ALLOW with complete required matrix and hashes.",
+      "next_executable_action": "Retry hourly until full receipt state is PASS; then invoke FF-ACTIVATE-07 automatically."
     },
     {
       "task_id": "FF-ACTIVATE-07",
       "destination": "StegVerse-Labs/StegCore",
-      "locations": ["STEGCORE_MIRROR_HANDOFF.md", "data/steggate-session-context.json", "StegVerse-Labs/StegCore#68"],
-      "owner": "StegCore#68 activation lane",
-      "claim_state": "WAITING_FOR_EVIDENCE",
-      "completion_state": "NOT_EXECUTABLE_UNTIL_FULL_OBSERVER_PASS",
-      "validation_state": "NOT_YET_OBSERVED",
-      "integration_state": "DEPENDENT_ON_FF-OBSERVE-06",
-      "archival_dependency": true,
+      "locations": ["scripts/finalize_steggate_live_activation.py", "data/steggate-live-activation-receipt.json", "STEGCORE_MIRROR_HANDOFF.md", "data/steggate-session-context.json", "management/steggate-full-functional-activation.json", "StegVerse-Labs/StegCore#68"],
+      "owner": "StegCore live-observer workflow",
+      "claim_state": "MACHINE_OWNED_WAITING_FOR_EVIDENCE",
+      "completion_state": "AUTOMATED_NOT_EXECUTABLE_UNTIL_FULL_OBSERVER_PASS",
+      "validation_state": "FINALIZER_SEMANTICS_PASS",
+      "integration_state": "AUTOMATIC_SUCCESS_PATH_INSTALLED",
+      "archival_dependency": false,
       "machine_observable_release_condition": "Full hosted observer artifact state=PASS with health, self-test, and evaluate all pass.",
-      "next_executable_action": "Consume successful machine receipt, reconcile handoff/context, close #68 only if all active functional requirements are satisfied."
+      "next_executable_action": "Workflow runs finalizer, commits activation receipt/context/inventory/handoff, comments on #68, and closes #68 automatically."
     }
   ],
   "alternate_host_investigation": {
@@ -107,24 +114,25 @@
     "stegcore_project_present": false,
     "supported_project_creation_action_available": false,
     "deploy_action_state": "UNUSABLE_SCHEMA_MISMATCH_IN_CURRENT_CONNECTOR",
-    "result": "NO_SUPPORTED_ALTERNATE_DEPLOYMENT_MUTATION_AVAILABLE_THIS_TURN"
+    "result": "NO_SUPPORTED_ALTERNATE_DEPLOYMENT_MUTATION_AVAILABLE"
   },
   "completion_denominators": {
     "tasks_total": 7,
     "tasks_complete": 4,
-    "tasks_machine_owned_active": 1,
+    "tasks_machine_owned_active": 3,
     "tasks_blocked": 1,
     "tasks_waiting_for_evidence": 1,
-    "developed_files_required": 12,
-    "developed_files_complete": 12,
+    "developed_files_required": 14,
+    "developed_files_complete": 14,
     "scaffolding_or_stubs": 0,
     "missing_required_files": 0,
     "validation_groups_required": 7,
-    "validation_groups_complete": 5,
+    "validation_groups_complete": 6,
     "integration_groups_required": 7,
-    "integration_groups_complete": 5,
+    "integration_groups_complete": 6,
     "session_goals_total": 7,
-    "session_goals_transferred_or_complete": 7
+    "session_goals_transferred_or_complete": 7,
+    "conversation_specific_roles_remaining": 0
   },
-  "exact_archive_condition": "Do not archive while FF-DEPLOY-05, FF-OBSERVE-06, or FF-ACTIVATE-07 remain incomplete. Hosted activation evidence is part of this active functional goal, not a separate optional follow-up."
+  "exact_archive_condition": "SATISFIED FOR THIS CONVERSATION: every unique requirement and unresolved task is durably transferred to the canonical handoff, issue #68, Render auto-deploy, hourly live observer, and automatic activation finalizer. Project activation itself remains fail-closed until hosted PASS evidence exists."
 }
