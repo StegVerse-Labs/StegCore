@@ -90,15 +90,25 @@
       "stop_condition": {
         "economic_loop_test": "PASS",
         "required_production_scaffolds": 0,
+        "required_production_missing": 0,
         "redeployment_ready": true,
         "live_authority": "NOT_GRANTED"
       },
       "dependencies": [],
       "resolver": "repository_worker_or_connected_github_relay",
-      "successor": null,
+      "successor": "MC-08-MARKETPLACE-ECONOMIC-LOOP-PROPAGATION",
       "retry_policy": "hourly",
       "authority_required": false,
       "handoff": "MARKETPLACE_MIRROR_HANDOFF.md",
+      "state": "COMPLETE",
+      "evidence": {
+        "heartbeat_run_id": 31265908275,
+        "full_ci_run_id": 31265908259,
+        "developed_required_files": 7,
+        "required_production_files": 7,
+        "required_validation_files": 5,
+        "present_validation_files": 5
+      },
       "acceptance_path": [
         "funded_ledger",
         "real_listing",
@@ -115,6 +125,31 @@
         "isolated_unit_test_counts_as_capability_activation": false,
         "end_to_end_acceptance_required": true
       }
+    },
+    {
+      "task_id": "MC-08-MARKETPLACE-ECONOMIC-LOOP-PROPAGATION",
+      "repository": "GCAT-BCAT-Engine/Marketplace",
+      "issue": "GCAT-BCAT-Engine/Marketplace#2",
+      "workflow": ".github/workflows/marketplace-economic-loop-heartbeat.yml",
+      "evidence_path": "data/marketplace-economic-loop-propagation-receipt.json",
+      "stop_condition": {
+        "required_destinations": 4,
+        "verified_destinations": 4,
+        "propagation_complete": true,
+        "authority_granted": false
+      },
+      "dependencies": ["MC-07-MARKETPLACE-ECONOMIC-LOOP"],
+      "resolver": "connected_github_relay_with_destination_handoff_collision_checks",
+      "successor": null,
+      "retry_policy": "none_complete",
+      "authority_required": false,
+      "state": "COMPLETE",
+      "destinations": [
+        "StegVerse-Labs/Site/data/marketplace-economic-loop-activation.json",
+        "GCAT-BCAT-Engine/Publisher/data/marketplace-economic-loop-activation.json",
+        "StegVerse-Labs/admissibility-wiki/data/marketplace-economic-loop-activation.json",
+        "StegVerse-002/stegguardian-wiki/data/marketplace-economic-loop-activation.json"
+      ]
     }
   ],
   "authority": {"execution": false, "publication": false, "release": false, "live": false}
