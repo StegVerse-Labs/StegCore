@@ -10,7 +10,7 @@ StegCore consumes already-verified credential/receipt references. It neither ver
 signatures nor mints Continuity receipts here.
 """
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from typing import Any, Callable, Generic, Literal, Mapping, Optional, TypeVar
 
 from .commit_governance import canonical_hash
@@ -238,6 +238,65 @@ def _runtime_state(
         coherence_receipt_hash=receipt_hash,
         runtime_pre_state_hash=observation.pre_state_hash,
         runtime_post_state_hash=observation.post_state_hash,
+    )
+
+
+def reconcile_effect(
+    state: DecisionStateRecord,
+    *,
+    effect_observed: Optional[bool],
+) -> DecisionStateRecord:
+    """Reconcile later effect observation without rewriting the governing decision."""
+
+    if effect_observed is None:
+        return replace(
+            state,
+            observation_state="OBSERVATION_UNKNOWN",
+            reconciliation="UNKNOWN",
+        )
+
+    if state.outcome in {"DENY", "REVIEW", "FAIL_CLOSED"}:
+        if effect_observed:
+            return replace(
+                state,
+                observation_state="DIVERGENT",
+                reconciliation="GOVERNANCE_BYPASS",
+            )
+        return replace(
+            state,
+            observation_state="OBSERVED",
+            reconciliation="MATCH",
+        )
+
+    if state.outcome == "ALLOW":
+        if state.commit_state == "COMMITTED" and effect_observed:
+            return replace(
+                state,
+                observation_state="OBSERVED",
+                reconciliation="MATCH",
+            )
+        if state.commit_state == "COMMITTED" and not effect_observed:
+            return replace(
+                state,
+                observation_state="DIVERGENT",
+                reconciliation="DIVERGENT",
+            )
+        if effect_observed and state.commit_state != "COMMITTED":
+            return replace(
+                state,
+                observation_state="DIVERGENT",
+                reconciliation="GOVERNANCE_BYPASS",
+            )
+        return replace(
+            state,
+            observation_state="OBSERVED",
+            reconciliation="MATCH",
+        )
+
+    return replace(
+        state,
+        observation_state="OBSERVATION_UNKNOWN",
+        reconciliation="UNKNOWN",
     )
 
 
