@@ -28,6 +28,8 @@ Before changing runtime decisions, commit governance, receipts, adapters, tests,
 8. The existing `decide()` interface remains intact.
 9. `src/stegcore/runtime.py#governed_execute` is the merged production mutation boundary; injected executors are invoked only after admissibility and commit coherence both ALLOW.
 10. Transport, adapter, hosting, or reachability never create execution authority.
+11. The complete material admissibility decision state is itself part of reconstructable system reality; runtime history must not be limited to successful ALLOW-to-effect paths.
+12. Decision reality, execution reality, and observed reality are distinct planes and may diverge without being normalized into one another.
 
 ## Merged Runtime State
 
@@ -117,6 +119,29 @@ Transferred HTTP/API requirements include:
 
 Machine-observable release condition: issue #21 produces committed HTTP/API adapter code, deterministic conformance tests, and dedicated hosted CI proving callback unreachability before both gates ALLOW and preservation of bound observation/receipt-pointer fields.
 
+## Complete Decision-State Reconstruction
+
+Installed runtime contract: `docs/DECISION_STATE_RECONSTRUCTION.md`, commit `b10ca617d4de3e35d992c9252234f833e54e8655`.
+
+Upstream semantic contract: `StegVerse-Labs/ara-admissibility-interop/admissibility/decision-state-reconstruction.md` on `feat/steggate-v46-schema-foundation`, commit `3fbf916f42189ca6c045c6e3220ae3c2ff021a22`.
+
+Downstream continuity handoff: `StegVerse-Labs/Continuity/STEGGATE_CONTINUITY_MIRROR_HANDOFF.md` with `docs/STEGGATE_DECISION_STATE_RECONSTRUCTION.md` and Continuity issue #5 (`STEGGATE-CONT-001`).
+
+Issue #21 has been extended by durable comment `5224765289`.
+
+The governing requirement is now:
+
+- every governed transition attempt produces or binds a decision-state record, including `ALLOW`, `DENY`, `REVIEW`, `FAIL_CLOSED`, and coherence-denial paths;
+- the record preserves enough material admissibility state to reconstruct why that disposition existed at that time;
+- non-ALLOW paths remain non-executing, but non-execution does not erase the attempted transition;
+- `FAIL_CLOSED` remains distinct from `DENY`;
+- a reviewed successor candidate is a new transition and does not rewrite the earlier `REVIEW` state;
+- ALLOW paths bind the originating decision state to commit and observation records;
+- reconciliation can represent match, divergence, unknown observation, and governance-bypass-equivalent states;
+- an ALLOW receipt does not by itself prove complete mediation or coverage.
+
+The #21 release condition is therefore strengthened: in addition to callback unreachability and receipt-pointer preservation, hosted deterministic adapter conformance must prove durable decision-state binding across executing and non-executing paths and preserve separation between decision, execution, and observed reality.
+
 ## Personal Data Control Decision Layer
 
 ```text
@@ -145,14 +170,15 @@ Next coordinated task remains repository-owned as `SC-PDCL-002`; it is distinct 
 
 1. Issue #21 owns governed adapter implementation and the transferred HTTP/API bounded-transport requirement.
 2. Preserve `governed_execute()` as the only production mutation callback boundary for supported adapters.
-3. Add and host-validate the #21 deterministic adapter/chain suite; do not mark adapter integration complete from PR #18/#20 alone.
-4. Resolve or supersede the generic repository test import-path failure under its owning repository automation/task lane; do not misclassify dedicated commit-coherence success as full-suite success.
-5. Continue `SC-PDCL-002` only under its distinct repository task ownership.
-6. Mirror public documentation through the existing Governance/Site placement rules only after the applicable runtime contract and publication authority are separately ready.
+3. Add and host-validate the #21 deterministic adapter/chain suite, now including complete decision-state binding for ALLOW and all non-ALLOW outcomes; do not mark adapter integration complete from PR #18/#20 alone.
+4. Add explicit observation/reconciliation semantics sufficient to distinguish expected effect, missing effect, unknown effect, divergence, and governance bypass without overclaiming target observability.
+5. Resolve or supersede the generic repository test import-path failure under its owning repository automation/task lane; do not misclassify dedicated commit-coherence success as full-suite success.
+6. Continue `SC-PDCL-002` only under its distinct repository task ownership.
+7. Mirror public documentation through the existing Governance/Site placement rules only after the applicable runtime contract and publication authority are separately ready.
 
 ## Permitted Continuation Scope
 
-Continue work on StegCore decision contracts, capability-surface binding, commit coherence, governed runtime adapters, deterministic observations/receipts, replay checks, personal-data request transition decisions, tests, and repository-owned workflows. Do not add UI restrictions, behavioral scoring, identity verification, external deletion execution, continuity-receipt minting, or authority derived from transport/provider reachability.
+Continue work on StegCore decision contracts, capability-surface binding, commit coherence, governed runtime adapters, deterministic observations/receipts, replay checks, decision-state reconstruction, personal-data request transition decisions, tests, and repository-owned workflows. Do not add UI restrictions, behavioral scoring, identity verification, external deletion execution, continuity-receipt minting, or authority derived from transport/provider reachability.
 
 ## Completion Assessment
 
@@ -160,11 +186,12 @@ Continue work on StegCore decision contracts, capability-surface binding, commit
 - PR #20 production `governed_execute()` boundary: COMPLETE / MERGED.
 - StegGate Goal 0 issue #54: COMPLETE / CLOSED.
 - Ara deterministic execution profile: COMPLETE / HOSTED GREEN; runtime ownership remains here.
+- Decision-state reconstruction semantics: DOCUMENTED / CROSS-REPO BOUND; runtime implementation extension remains ACTIVE under issue #21.
 - Governed adapter/HTTP transport layer: ACTIVE under StegCore issue #21; not complete until committed adapter code + dedicated hosted conformance evidence exist.
 - Generic full-repository test status on the PR #18 historical head: FAILED from an import-path collection error; this is explicitly separate from the green commit-coherence suite.
 
 ## Session Consolidation
 
-The StegGate Goal 0 and HTTP transport requirements are durably represented without relying on chat history. Ara owns interop schema/profile semantics; StegCore issue #21 owns runtime adapter execution. No duplicate runtime implementation should be initiated from ara or another session while #21 remains active.
+The StegGate Goal 0, HTTP transport, and complete decision-state reconstruction requirements are durably represented without relying on chat history. Ara owns interoperable schema/profile semantics; StegCore issue #21 owns runtime adapter execution and decision-state production; Continuity issue #5 owns downstream reconstruction integration. No duplicate runtime implementation should be initiated from ara, Continuity, or another session while #21 remains active.
 
-Archive-safe transfer for this cross-repository slice requires no chat-specific information: continuation is `StegVerse-Labs/StegCore#21`, this handoff, ara's `ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md`, and the corresponding committed receipts/task-state records.
+Archive-safe transfer for this cross-repository slice requires no chat-specific information: continuation is `StegVerse-Labs/StegCore#21`, this handoff, `docs/DECISION_STATE_RECONSTRUCTION.md`, ara's `ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md`, and Continuity's `STEGGATE_CONTINUITY_MIRROR_HANDOFF.md` / issue #5.
