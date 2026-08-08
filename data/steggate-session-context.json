@@ -45,7 +45,7 @@
     "implementation_owner": "StegVerse-Labs/StegCore#68",
     "render_service_id": "srv-d9rlic2jobas73do1q6g",
     "render_service_origin": "https://steggate-core.onrender.com",
-    "latest_render_deploy_id": "dep-d9rmnub7uimc73b5u58g",
+    "latest_inspected_render_deploy_id": "dep-d9rmnub7uimc73b5u58g",
     "deployment_state": "BLOCKED_BUILD_MINUTES_EXHAUSTED",
     "repository_validation_state": "GREEN_148_TESTS_127_SUBTESTS",
     "repository_validation_run": 31270401058,
@@ -55,22 +55,24 @@
     "service_classification": "CANONICAL_HTTP_ADAPTER_TO_RECONCILED_STEGGATE_COMPOSITION",
     "live_observer_state": "ACTIVE_FAIL_CLOSED_BLOCKED",
     "live_observer_workflow": ".github/workflows/steggate-live-observer.yml",
-    "live_observer_run": 31270353764,
-    "live_observer_artifact": 9025414196,
-    "live_observer_observation": "health TIMEOUTERROR; self-test TIMEOUTERROR"
+    "initial_live_observer_run": 31270353764,
+    "initial_live_observer_artifact": 9025414196,
+    "initial_live_observer_observation": "health TIMEOUTERROR; self-test TIMEOUTERROR",
+    "full_live_observer_semantics": "health + exact four-outcome self-test + deterministic POST /v1/evaluate complete matrix/hash verification",
+    "full_live_observer_commits": ["d4a9e4c7c64315bd50ccea4482c2d3a292c8d936", "2d022fd04d5f2262affada5dea185bac30469f7c"]
   },
   "worker_policy": {
     "fail_closed_on_missing_context": true,
     "archive_status_when_active": "DO_NOT_ARCHIVE",
     "emit_next_action": true,
-    "next_action": "Keep the repository-native hourly observer active. Deploy the reconciled canonical StegGate service as soon as an authorized hosting control plane can build it; Render currently rejects every auto-deploy because workspace build-pipeline minutes are exhausted. After deployment, require hosted /health, /v1/self-test, and /v1/evaluate evidence before activation completion.",
+    "next_action": "Keep the repository-native hourly observer active. The observer now performs every remaining hosted functional check automatically. Render currently rejects every auto-deploy because workspace build-pipeline minutes are exhausted; if an authorized alternate hosting route becomes available, deploy the same canonical main without creating a competing StegGate authority.",
     "machine_observable_release_conditions": [
       "architecture_reconciliation_state == COMPLETE",
       "governed_execution_composition_state == COMPLETE_AND_HOSTED_VALIDATED",
       "deployment_state == LIVE",
       "hosted_health == PASS",
       "hosted_self_test == PASS",
-      "hosted_evaluate == PASS",
+      "hosted_evaluate == PASS_WITH_COMPLETE_MATRIX_AND_HASHES",
       "archive_allowed == true only after active goal completion"
     ]
   }
