@@ -7,9 +7,11 @@ on:
       - 'scripts/validate_independent_release_policy.py'
       - 'tests/test_independent_release_policy.py'
       - 'evidence/independent-release-policy.json'
+      - 'evidence/release-readiness.json'
       - 'management/independent-release-policy-task.json'
       - 'docs/INDEPENDENT_RELEASE_POLICY_MIRROR_HANDOFF.md'
       - '.github/workflows/independent-release-policy.yml'
+      - '.github/workflows/activate-authorized-release-tag.yml'
   workflow_dispatch:
 
 permissions:
@@ -30,26 +32,23 @@ jobs:
       - name: Compile validator
         run: python -m py_compile scripts/validate_independent_release_policy.py
       - name: Evaluate current independent policy decision
-        shell: bash
         run: |
-          set -euo pipefail
-          if [[ -f evidence/independent-release-policy.json ]]; then
-            python scripts/validate_independent_release_policy.py \
-              --decision evidence/independent-release-policy.json \
-              --readiness evidence/release-readiness.json \
-              --output /tmp/independent-release-policy-validation.json
-          else
-            set +e
-            python scripts/validate_independent_release_policy.py \
-              --decision evidence/independent-release-policy.json \
-              --readiness evidence/release-readiness.json \
-              --output /tmp/independent-release-policy-validation.json
-            rc=$?
-            set -e
-            test "$rc" -eq 2
-            grep -q 'independent_policy_decision_missing' /tmp/independent-release-policy-validation.json
-            echo 'Independent authority input is absent; gate remains fail-closed as intended.'
-          fi
+          python scripts/validate_independent_release_policy.py \
+            --decision evidence/independent-release-policy.json \
+            --readiness evidence/release-readiness.json \
+            --output /tmp/independent-release-policy-validation.json
+      - name: Verify release-readiness self-hash
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          d = json.load(open('evidence/release-readiness.json'))
+          declared = d.pop('assessment_hash')
+          actual = hashlib.sha256(json.dumps(d, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()).hexdigest()
+          assert declared == actual, (declared, actual)
+          assert d['gates']['independent_release_policy'] == 'pass'
+          assert d['tag_permitted'] is True
+          assert d['release_permitted'] is False
+          PY
       - name: Upload policy validation state
         uses: actions/upload-artifact@v4
         with:
