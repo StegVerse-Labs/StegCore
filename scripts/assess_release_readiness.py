@@ -2,8 +2,8 @@
 """Assess StegCore release readiness from durable runtime validation evidence.
 
 This script never creates a release or grants authority. It emits a deterministic
-machine-readable state that remains blocked until independent release policy and
-all declared downstream verification tasks are satisfied.
+machine-readable state that remains blocked until independent release policy,
+Governance freshness, and all declared downstream verification tasks are satisfied.
 """
 from __future__ import annotations
 
@@ -12,6 +12,18 @@ import json
 import pathlib
 from hashlib import sha256
 from typing import Any
+
+
+HASH_CONVENTION = {
+    "algorithm": "SHA-256",
+    "excluded_field": "assessment_hash",
+    "serialization": {
+        "encoding": "UTF-8",
+        "format": "JSON",
+        "separators": [",", ":"],
+        "sort_keys": True,
+    },
+}
 
 
 def canonical_hash(value: dict[str, Any]) -> str:
@@ -37,6 +49,15 @@ def main() -> int:
         raise SystemExit("runtime validation evidence must have status=pass")
     if evidence.get("release_state") != "validated_not_released":
         raise SystemExit("runtime evidence must preserve validated_not_released")
+    if evidence.get("record_type") != "runtime_validation_evidence":
+        raise SystemExit("runtime evidence must use the custody-envelope record_type")
+    if evidence.get("hash_convention", {}).get("excluded_field") != "evidence_hash":
+        raise SystemExit("runtime evidence must declare evidence_hash exclusion")
+
+    body = dict(evidence)
+    declared_evidence_hash = body.pop("evidence_hash", None)
+    if not declared_evidence_hash or declared_evidence_hash != canonical_hash(body):
+        raise SystemExit("runtime evidence self-hash is invalid")
 
     downstream = evidence.get("downstream_verification")
     if not isinstance(downstream, list) or not downstream:
@@ -54,7 +75,11 @@ def main() -> int:
 
     assessment: dict[str, Any] = {
         "artifact_type": "stegcore.release_readiness_assessment",
-        "schema_version": "1.0",
+        "record_type": "release_readiness_assessment",
+        "source_repository": "StegVerse-Labs/StegCore",
+        "destination_repository": "StegVerse-Labs/StegCore",
+        "hash_convention": HASH_CONVENTION,
+        "schema_version": "1.1",
         "state": "validated_not_released",
         "runtime_evidence_hash": evidence.get("evidence_hash"),
         "stegcore_commit": evidence.get("stegcore_commit"),
@@ -64,6 +89,7 @@ def main() -> int:
             "continuity_mapping": "pass",
             "canonical_governance_contract": "pass",
             "evidence_integrity": "pass",
+            "governance_freshness": "pending",
             "independent_release_policy": "pending",
             "downstream_verification": "pending",
         },
@@ -74,8 +100,9 @@ def main() -> int:
         "continuity_authority_claimed": False,
         "receipt_minting_authority_claimed": False,
         "completion_event": (
-            "independent release policy permits a versioned tag and every required "
-            "downstream verification gate is durably recorded as pass"
+            "independent release policy permits a versioned tag, Governance freshness "
+            "is independently confirmed, and every required downstream verification "
+            "gate is durably recorded as pass"
         ),
     }
     assessment["assessment_hash"] = canonical_hash(assessment)

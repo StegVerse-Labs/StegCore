@@ -15,6 +15,18 @@ from hashlib import sha256
 from typing import Any
 
 
+HASH_CONVENTION = {
+    "algorithm": "SHA-256",
+    "excluded_field": "evidence_hash",
+    "serialization": {
+        "encoding": "UTF-8",
+        "format": "JSON",
+        "separators": [",", ":"],
+        "sort_keys": True,
+    },
+}
+
+
 def canonical_hash(value: dict[str, Any]) -> str:
     payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     return sha256(payload.encode("utf-8")).hexdigest()
@@ -66,6 +78,8 @@ def main() -> int:
         and existing.get("stegcore_commit") == args.stegcore_commit
         and existing.get("governance_commit") == args.governance_commit
         and existing.get("downstream_dispatch_hash") == dispatch_hash
+        and existing.get("record_type") == "runtime_validation_evidence"
+        and existing.get("hash_convention", {}).get("excluded_field") == "evidence_hash"
     ):
         print("Passing evidence already matches contract commits and downstream dispatch.")
         return 0
@@ -88,6 +102,10 @@ def main() -> int:
 
     evidence: dict[str, Any] = {
         "artifact_type": "stegcore.runtime_validation_evidence",
+        "record_type": "runtime_validation_evidence",
+        "source_repository": "StegVerse-Labs/StegCore",
+        "destination_repository": "StegVerse-Labs/StegCore",
+        "hash_convention": HASH_CONVENTION,
         "schema_version": "1.1",
         "status": "pass",
         "release_state": "validated_not_released",
