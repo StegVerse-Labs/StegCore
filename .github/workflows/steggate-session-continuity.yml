@@ -7,9 +7,12 @@ on:
     branches: [main]
     paths:
       - 'data/steggate-session-context.json'
+      - 'data/steggate-architecture-reconciliation-state.json'
+      - 'docs/STEGGATE_ARCHITECTURE_RECONCILIATION.md'
       - 'scripts/guard_steggate_session_continuity.py'
       - 'tests/test_steggate_session_continuity.py'
       - 'STEGCORE_MIRROR_HANDOFF.md'
+      - '.github/workflows/steggate-session-continuity.yml'
 
 permissions:
   contents: read
