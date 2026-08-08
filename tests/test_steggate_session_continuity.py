@@ -20,6 +20,8 @@ def base_context():
         "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
         "session_state": "ACTIVE_UNIQUE_WORK_REMAINS",
         "archive_allowed": False,
+        "conversation_archive_allowed": False,
+        "goal_activation_complete": False,
         "architectural_context": {
             "decision_py_is_intentionally_minimal": True,
             "minimal_means_interface_scope_not_resource_budget": True,
@@ -41,7 +43,7 @@ def base_context():
             "provisional_files": ["src/stegcore/steggate.py"],
         },
         "worker_policy": {
-            "archive_status_when_active": "DO_NOT_ARCHIVE",
+            "archive_status_when_active": "DO_NOT_ARCHIVE_UNTIL_GOAL_ACTIVATED",
             "next_action": "trace call graph",
             "machine_observable_release_conditions": ["architecture complete"],
         },
@@ -63,11 +65,11 @@ def base_architecture():
     }
 
 
-def test_active_context_passes_but_archive_remains_false():
+def test_incomplete_goal_passes_context_but_archive_remains_false():
     receipt = module.build_receipt(base_context(), base_architecture())
     assert receipt["state"] == "PASS"
     assert receipt["archive_allowed"] is False
-    assert receipt["historical_context_preserved"] is True
+    assert receipt["goal_activation_complete"] is False
 
 
 def test_missing_anti_duplication_context_fails_closed():
@@ -76,15 +78,22 @@ def test_missing_anti_duplication_context_fails_closed():
     receipt = module.build_receipt(context, base_architecture())
     assert receipt["state"] == "FAIL_CLOSED"
     assert "anti_duplication_context_missing" in receipt["findings"]
-    assert receipt["archive_allowed"] is False
 
 
-def test_active_session_cannot_self_mark_archive_allowed():
+def test_incomplete_goal_cannot_mark_conversation_archive_allowed():
     context = base_context()
-    context["archive_allowed"] = True
+    context["conversation_archive_allowed"] = True
     receipt = module.build_receipt(context, base_architecture())
     assert receipt["state"] == "FAIL_CLOSED"
-    assert "active_session_archive_must_be_false" in receipt["findings"]
+    assert "incomplete_goal_conversation_archive_must_be_false" in receipt["findings"]
+
+
+def test_incomplete_goal_cannot_merge_session_out_of_active_state():
+    context = base_context()
+    context["session_state"] = "MERGED_INTO_CANONICAL_WORKSTREAM"
+    receipt = module.build_receipt(context, base_architecture())
+    assert receipt["state"] == "FAIL_CLOSED"
+    assert "incomplete_goal_session_state_must_be_active" in receipt["findings"]
 
 
 def test_complete_decision_surface_is_required():
