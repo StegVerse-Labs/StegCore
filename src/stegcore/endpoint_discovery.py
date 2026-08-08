@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from dataclasses import dataclass, asdict
 from typing import Callable
 from urllib.request import Request, urlopen
@@ -35,7 +36,7 @@ class EndpointResolution:
 
 def _read_json(url: str, timeout: float = 10.0) -> dict:
     request = Request(url, headers={"User-Agent": "StegCore-endpoint-discovery/1"})
-    with urlopen(request, timeout=timeout) as response:  # nosec B310 - fixed HTTPS origins
+    with urlopen(request, timeout=timeout) as response:  # nosec B310 - verified HTTPS origins
         return json.loads(response.read().decode("utf-8"))
 
 
@@ -47,6 +48,22 @@ def _healthy(origin: str, reader: Callable[[str, float], dict], timeout: float) 
     return bool(payload.get("healthy") and payload.get("canonical_three_layer_bound"))
 
 
+def _healthy_with_retry(
+    origin: str,
+    reader: Callable[[str, float], dict],
+    timeout: float,
+    *,
+    attempts: int = 3,
+    delay: float = 1.0,
+) -> bool:
+    for attempt in range(attempts):
+        if _healthy(origin, reader, timeout):
+            return True
+        if attempt + 1 < attempts and reader is _read_json:
+            time.sleep(delay)
+    return False
+
+
 def resolve_steggate_origin(
     *,
     timeout: float = 10.0,
@@ -56,6 +73,7 @@ def resolve_steggate_origin(
 
     Failure is explicit.  A registry declaration is insufficient by itself;
     the discovered fallback origin must independently return canonical health.
+    Transient fallback edge propagation is retried before failing closed.
     """
 
     if _healthy(PERSISTENT_ORIGIN, reader, timeout):
@@ -85,13 +103,13 @@ def resolve_steggate_origin(
             detail=f"No verified live endpoint: {exc}",
         )
 
-    if not _healthy(fallback_origin, reader, timeout):
+    if not _healthy_with_retry(fallback_origin, reader, timeout):
         return EndpointResolution(
             state="FAIL_CLOSED",
             origin=None,
             source="fallback_registry",
             canonical_three_layer_bound=False,
-            detail="Fallback registry resolved an origin that did not pass canonical health.",
+            detail="Fallback registry resolved an origin that did not pass canonical health after retry.",
         )
 
     return EndpointResolution(
