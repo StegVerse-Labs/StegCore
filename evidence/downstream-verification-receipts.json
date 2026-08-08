@@ -1,0 +1,52 @@
+{
+  "artifact_type": "stegcore.downstream_verification_receipts",
+  "schema_version": "1.0",
+  "source_repository": "StegVerse-Labs/StegCore",
+  "source_stegcore_commit": "fd1d567712820b19e258c4cc664e74bb89755f4b",
+  "source_runtime_evidence_hash": "fa45688d287bd403effe96abdeec52387e73e36cb0faf05e0eb386842cfbe46e",
+  "source_runtime_validation_run": "31261877002",
+  "authority_boundary": {
+    "release_authority_granted": false,
+    "production_authority_granted": false,
+    "deployment_authority_granted": false,
+    "continuity_authority_granted": false,
+    "cross_repository_mutation_authority_granted": false,
+    "receipt_minting_authority_granted": false
+  },
+  "verifications": [
+    {
+      "repository": "StegVerse-Labs/Site",
+      "issue_number": 14,
+      "issue_comment_id": 5226540240,
+      "observed_destination_head_sha": "2a8a603e4473236c4bfa491b060d54074c8eedb5",
+      "classification": "PASS_AWARENESS_ONLY",
+      "status": "pass"
+    },
+    {
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "issue_number": 4,
+      "issue_comment_id": 5226541425,
+      "observed_destination_head_sha": "ae42e68e12f8cac0e9051c654e933cbe766fced3",
+      "classification": "PASS_AWARENESS_ONLY",
+      "status": "pass"
+    },
+    {
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "issue_number": 19,
+      "issue_comment_id": 5226542416,
+      "observed_destination_head_sha": "302e3155864778fd1d4bc6f865a91dc49a773eca",
+      "classification": "PASS_DOCUMENTATION_AWARENESS_ONLY",
+      "status": "pass"
+    },
+    {
+      "repository": "StegVerse-002/stegguardian-wiki",
+      "issue_number": 4,
+      "issue_comment_id": 5226543089,
+      "observed_destination_head_sha": "b6a4b117ca88c7d118b76fd53b48ba85fce385cd",
+      "classification": "PASS_EVIDENCE_AWARENESS_ONLY",
+      "status": "pass"
+    }
+  ],
+  "completion_state": "ALL_REQUIRED_DESTINATIONS_OBSERVED_PASS",
+  "release_effect": "NONE"
+}
