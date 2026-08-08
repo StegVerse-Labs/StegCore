@@ -56,7 +56,7 @@ jobs:
           chmod +x "$RUNNER_TEMP/cloudflared"
           "$RUNNER_TEMP/cloudflared" --version
 
-      - name: Open zero-credential public tunnel
+      - name: Open zero-credential public tunnel and wait for edge readiness
         id: tunnel
         run: |
           nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 \
@@ -74,8 +74,21 @@ jobs:
             cat build/steggate-fallback-tunnel.log
             exit 1
           fi
-          echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"
           echo "$ORIGIN" > build/steggate-fallback-origin.txt
+          EDGE_READY=0
+          for attempt in $(seq 1 90); do
+            if curl --fail --silent --show-error --max-time 10 "$ORIGIN/health" > build/steggate-fallback-public-health.json 2>build/steggate-fallback-public-health.err; then
+              EDGE_READY=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$EDGE_READY" -ne 1 ]; then
+            cat build/steggate-fallback-tunnel.log
+            cat build/steggate-fallback-public-health.err || true
+            exit 1
+          fi
+          echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"
 
       - name: Verify full public StegGate acceptance contract
         id: observe
@@ -93,6 +106,7 @@ jobs:
           fi
 
       - name: Update stable fallback runtime registry
+        if: success()
         env:
           GH_TOKEN: ${{ github.token }}
           ORIGIN: ${{ steps.tunnel.outputs.origin }}
@@ -120,18 +134,15 @@ jobs:
             --method PATCH \
             --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
 
-      - name: Preserve live proof artifact
+      - name: Preserve fallback evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: steggate-fallback-live-proof-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            build/steggate-fallback-live-proof.json
-            build/steggate-fallback-origin.txt
-            build/steggate-fallback-local-health.json
-            build/steggate-fallback-app.log
-            build/steggate-fallback-tunnel.log
+          path: build/steggate-fallback-*
           if-no-files-found: error
           retention-days: 30
 
       - name: Keep public runtime alive through overlap window
+        if: success()
         run: sleep 3900
