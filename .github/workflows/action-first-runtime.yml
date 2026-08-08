@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -32,4 +34,5 @@ jobs:
         run: python -m py_compile src/stegcore/action_first_reconstruction.py
       - name: Prove execution boundary file was not changed by this lane
         run: |
+          git fetch origin main:refs/remotes/origin/main
           git diff --exit-code origin/main...HEAD -- src/stegcore/runtime.py
