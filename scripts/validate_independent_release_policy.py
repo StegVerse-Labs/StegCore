@@ -4,11 +4,10 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
-from datetime import datetime, timezone
 from typing import Any
 
-SCHEMA_VERSION = "stegcore.independent-release-policy.v1"
-REPOSITORY = "StegVerse-Labs/StegCore"
+ARTIFACT_TYPE = "stegcore.independent_release_policy_evidence"
+GOVERNANCE = "StegVerse-Labs/Governance"
 
 
 def load(path: pathlib.Path) -> dict[str, Any]:
@@ -18,67 +17,53 @@ def load(path: pathlib.Path) -> dict[str, Any]:
     return value
 
 
-def parse_time(value: str) -> datetime:
-    if value.endswith("Z"):
-        value = value[:-1] + "+00:00"
-    parsed = datetime.fromisoformat(value)
-    if parsed.tzinfo is None:
-        raise ValueError("timestamp must include timezone")
-    return parsed.astimezone(timezone.utc)
-
-
-def validate(decision: dict[str, Any], readiness: dict[str, Any], *, now: datetime | None = None) -> dict[str, Any]:
-    now = now or datetime.now(timezone.utc)
+def validate(decision: dict[str, Any], readiness: dict[str, Any]) -> dict[str, Any]:
     errors: list[str] = []
-
     required = (
-        "schema_version", "decision_id", "policy_version", "authority_ref", "repository",
-        "candidate_commit", "release_readiness_assessment_hash", "runtime_evidence_hash",
-        "governance_freshness_evidence_hash", "verdict", "issued_at", "expires_at",
+        "artifact_type", "schema_version", "status", "decision", "policy_id",
+        "decision_owner", "source_repository", "source_commit", "source_path",
+        "decision_hash", "candidate_version", "candidate_tag", "candidate_commit",
+        "next_permitted_action", "release_created", "tag_created",
+        "deployment_authorized", "continuity_receipt_minted",
     )
     for key in required:
-        if decision.get(key) in (None, ""):
+        if key not in decision or decision.get(key) in (None, ""):
             errors.append(f"missing:{key}")
 
-    if decision.get("schema_version") != SCHEMA_VERSION:
-        errors.append("schema_version_mismatch")
-    if decision.get("repository") != REPOSITORY:
-        errors.append("repository_mismatch")
-    if decision.get("verdict") not in {"PASS", "DENY"}:
-        errors.append("invalid_verdict")
-
-    bindings = {
-        "candidate_commit": readiness.get("stegcore_commit"),
-        "release_readiness_assessment_hash": readiness.get("assessment_hash"),
-        "runtime_evidence_hash": readiness.get("runtime_evidence_hash"),
-        "governance_freshness_evidence_hash": readiness.get("governance_freshness_evidence_hash"),
+    checks = {
+        "artifact_type": decision.get("artifact_type") == ARTIFACT_TYPE,
+        "schema_version": decision.get("schema_version") == "1.0",
+        "status_pass": decision.get("status") == "pass",
+        "decision_allow": decision.get("decision") == "ALLOW",
+        "decision_owner": decision.get("decision_owner") == GOVERNANCE,
+        "source_repository": decision.get("source_repository") == GOVERNANCE,
+        "candidate_binding": decision.get("candidate_commit") == readiness.get("stegcore_commit"),
+        "tag_version_binding": decision.get("candidate_tag") == f"v{decision.get('candidate_version')}",
+        "next_action_bounded": decision.get("next_permitted_action") == "create annotated tag only",
+        "release_not_created": decision.get("release_created") is False,
+        "tag_not_created": decision.get("tag_created") is False,
+        "deployment_not_authorized": decision.get("deployment_authorized") is False,
+        "continuity_not_minted": decision.get("continuity_receipt_minted") is False,
+        "source_commit_shape": isinstance(decision.get("source_commit"), str) and len(decision.get("source_commit")) == 40,
+        "decision_hash_shape": isinstance(decision.get("decision_hash"), str) and len(decision.get("decision_hash")) == 64,
     }
-    for key, expected in bindings.items():
-        if decision.get(key) != expected:
-            errors.append(f"binding_mismatch:{key}")
+    for name, passed in checks.items():
+        if not passed:
+            errors.append(name)
 
-    try:
-        issued = parse_time(str(decision.get("issued_at", "")))
-        expires = parse_time(str(decision.get("expires_at", "")))
-        if expires <= issued:
-            errors.append("invalid_validity_window")
-        if now < issued:
-            errors.append("decision_not_yet_valid")
-        if now >= expires:
-            errors.append("decision_expired")
-    except (TypeError, ValueError):
-        errors.append("invalid_timestamp")
-
-    pass_verdict = decision.get("verdict") == "PASS"
-    status = "PASS" if not errors and pass_verdict else "BLOCKED"
+    status = "PASS" if not errors else "BLOCKED"
     return {
         "schema_version": "stegcore.independent-release-policy-validation.v1",
         "status": status,
-        "decision_id": decision.get("decision_id"),
-        "policy_version": decision.get("policy_version"),
-        "authority_ref": decision.get("authority_ref"),
-        "verdict": decision.get("verdict"),
-        "exact_candidate_binding": not any(e.startswith("binding_mismatch:") for e in errors),
+        "policy_id": decision.get("policy_id"),
+        "decision_hash": decision.get("decision_hash"),
+        "source_repository": decision.get("source_repository"),
+        "source_commit": decision.get("source_commit"),
+        "source_path": decision.get("source_path"),
+        "candidate_commit": decision.get("candidate_commit"),
+        "candidate_tag": decision.get("candidate_tag"),
+        "exact_candidate_binding": checks["candidate_binding"],
+        "next_permitted_action": decision.get("next_permitted_action") if status == "PASS" else None,
         "errors": errors,
         "release_policy_gate": "pass" if status == "PASS" else "pending_or_denied",
         "release_authority_created": False,
