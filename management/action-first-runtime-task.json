@@ -1,0 +1,34 @@
+{
+  "task_id": "STEGCORE-ACTION-FIRST-RUNTIME-001",
+  "originating_goal": "Activate Action-First reconstruction semantics as a bounded StegCore runtime observation API.",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "feat/action-first-runtime-observation",
+  "issue": 65,
+  "claim_state": "CLAIMED_FOR_IMPLEMENTATION",
+  "claim_created": "2026-08-08T11:08:41-05:00",
+  "claim_release_condition": "runtime module, tests, docs, workflow and mirror handoff are merged to main with hosted-green evidence and the ara source handoff is updated to point to the runtime producer",
+  "authority_boundaries": [
+    "governed_execute semantics unchanged",
+    "no execution authority created",
+    "no Continuity receipt minted",
+    "no Governance constraint promotion authority created",
+    "no release or publication authority created",
+    "no empirical Reconstruction Singularity claim"
+  ],
+  "semantic_source": {
+    "repository": "StegVerse-Labs/ara-admissibility-interop",
+    "commit": "d48b2734c2fdb8018271e2413a0d786f6cc5e479",
+    "path": "schemas/action-first-reconstruction.v1.json",
+    "blob": "c49f70190ad313e2c849564c411080cd3c7a610f"
+  },
+  "required_files": [
+    "src/stegcore/action_first_reconstruction.py",
+    "tests/test_action_first_reconstruction_runtime.py",
+    "docs/ACTION_FIRST_RUNTIME.md",
+    "management/action-first-runtime-task.json",
+    "docs/ACTION_FIRST_RUNTIME_MIRROR_HANDOFF.md",
+    ".github/workflows/action-first-runtime.yml"
+  ],
+  "state": "IMPLEMENTED_AWAITING_HOSTED_VALIDATION",
+  "next_action": "open PR, inspect hosted test and runtime checks, repair exact failures, merge when green, then update canonical handoffs and release this implementation claim"
+}
