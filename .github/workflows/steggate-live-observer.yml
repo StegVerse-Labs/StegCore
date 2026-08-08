@@ -1,0 +1,54 @@
+name: StegGate Live Service Observer
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/stegcore/steggate.py'
+      - 'src/stegcore/service.py'
+      - 'scripts/observe_steggate_live_service.py'
+      - 'tests/test_steggate_live_observer.py'
+      - 'data/steggate-session-context.json'
+      - 'data/steggate-architecture-reconciliation-state.json'
+      - '.github/workflows/steggate-live-observer.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: steggate-live-observer
+  cancel-in-progress: true
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pytest
+      - name: Validate observer semantics
+        run: python -m pytest -q tests/test_steggate_live_observer.py
+      - name: Observe canonical hosted service
+        id: observe
+        continue-on-error: true
+        env:
+          STEGGATE_ORIGIN: https://steggate-core.onrender.com
+        run: python scripts/observe_steggate_live_service.py
+      - name: Preserve observation receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: steggate-live-observation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/steggate-live-observation.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Keep activation fail-closed until hosted checks pass
+        if: steps.observe.outcome != 'success'
+        run: |
+          echo 'Canonical StegGate hosted activation is not yet observed.'
+          exit 1
