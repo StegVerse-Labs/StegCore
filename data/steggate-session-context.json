@@ -15,7 +15,16 @@
     "must_trace_existing_admissibility_call_graph_before_expanding_new_evaluator": true,
     "complete_decision_state_is_reconstructable_reality": true,
     "required_dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
-    "reality_planes": ["decision", "execution", "observed"]
+    "reality_planes": ["decision", "execution", "observed"],
+    "existing_canonical_layers": [
+      "src/stegcore/three_layer.py",
+      "contracts/permission-admissibility-boundary.v1.json",
+      "src/stegcore/commit_governance.py",
+      "src/stegcore/runtime.py#governed_execute",
+      "src/stegcore/runtime_adapters.py",
+      "docs/DECISION_STATE_RECONSTRUCTION.md"
+    ],
+    "reconciliation_record": "docs/STEGGATE_ARCHITECTURE_RECONCILIATION.md"
   },
   "archive_guard": {
     "rule": "Do not mark a session archive-ready merely because a bounded subgoal is complete or transferred.",
@@ -35,13 +44,19 @@
     "render_deploy_id": "dep-d9rlicajobas73do1qjg",
     "deployment_state": "BLOCKED_BUILD_MINUTES_EXHAUSTED",
     "repository_validation_state": "GREEN",
-    "architecture_reconciliation_state": "REQUIRED"
+    "architecture_reconciliation_state": "IN_PROGRESS",
+    "provisional_files": [
+      "src/stegcore/steggate.py",
+      "src/stegcore/service.py",
+      "tests/test_steggate_service.py",
+      "docs/STEGGATE_LIVE_SERVICE.md"
+    ]
   },
   "worker_policy": {
     "fail_closed_on_missing_context": true,
     "archive_status_when_active": "DO_NOT_ARCHIVE",
     "emit_next_action": true,
-    "next_action": "Trace canonical StegGate/admissibility call graph and classify new src/stegcore/steggate.py + service.py as canonical adapter, duplicate, or refactor target before further feature expansion.",
+    "next_action": "Complete call-graph reconciliation: determine how three_layer, permission-admissibility invariants, commit_governance, runtime, runtime_adapters, decision-state normalization, and the provisional live-service files compose; refactor duplicate authority before live deployment.",
     "machine_observable_release_conditions": [
       "architecture_reconciliation_state == COMPLETE",
       "deployment_state == LIVE",
