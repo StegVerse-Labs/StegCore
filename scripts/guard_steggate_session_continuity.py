@@ -75,11 +75,16 @@ def validate_context(context: dict[str, Any]) -> list[str]:
     if not worker.get("machine_observable_release_conditions"):
         findings.append("release_conditions_missing")
 
-    active = context.get("session_state") == "ACTIVE_UNIQUE_WORK_REMAINS"
-    if active and context.get("archive_allowed") is not False:
-        findings.append("active_session_archive_must_be_false")
-    if active and worker.get("archive_status_when_active") != "DO_NOT_ARCHIVE":
-        findings.append("active_archive_status_invalid")
+    goal_complete = context.get("goal_activation_complete") is True
+    if not goal_complete:
+        if context.get("session_state") != "ACTIVE_UNIQUE_WORK_REMAINS":
+            findings.append("incomplete_goal_session_state_must_be_active")
+        if context.get("archive_allowed") is not False:
+            findings.append("incomplete_goal_archive_must_be_false")
+        if context.get("conversation_archive_allowed") is not False:
+            findings.append("incomplete_goal_conversation_archive_must_be_false")
+        if worker.get("archive_status_when_active") != "DO_NOT_ARCHIVE_UNTIL_GOAL_ACTIVATED":
+            findings.append("incomplete_goal_archive_status_invalid")
     return findings
 
 
@@ -113,7 +118,7 @@ def build_receipt(context: dict[str, Any], architecture: dict[str, Any] | None =
     else:
         findings.extend(validate_architecture(architecture, context))
 
-    active = context.get("session_state") == "ACTIVE_UNIQUE_WORK_REMAINS"
+    goal_complete = context.get("goal_activation_complete") is True
     architecture_state = None if architecture is None else architecture.get("state")
     body = {
         "schema": "stegverse.steggate_session_continuity_receipt.v1",
@@ -121,8 +126,9 @@ def build_receipt(context: dict[str, Any], architecture: dict[str, Any] | None =
         "context_digest": digest(context),
         "architecture_digest": None if architecture is None else digest(architecture),
         "state": "PASS" if not findings else "FAIL_CLOSED",
-        "archive_allowed": False if active else bool(context.get("archive_allowed", False)),
+        "archive_allowed": bool(context.get("archive_allowed", False)) if goal_complete else False,
         "historical_context_preserved": not findings,
+        "goal_activation_complete": goal_complete,
         "architecture_reconciliation_state": architecture_state,
         "deployment_state": (context.get("current_work") or {}).get("deployment_state"),
         "next_action": (context.get("worker_policy") or {}).get("next_action"),
