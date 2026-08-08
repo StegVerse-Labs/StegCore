@@ -48,17 +48,53 @@ Historical generic repo run `29308236597` / job `87006323507` failed during test
 Issue #21 is the canonical implementation owner for reusable mutation-entry adapters, HTTP/API bounded transport, receipt-chain binding, and complete runtime decision-state production.
 
 ```text
-claim_state: CLAIMED_FOR_IMPLEMENTATION
+claim_state: CLAIMED_FOR_INTEGRATION
 canonical_owner: StegVerse-Labs/StegCore#21
-collision_rule: no ara, Continuity, or parallel chat lane may implement competing runtime adapters/producer semantics while #21 remains active
-release_condition: committed adapter/runtime producer code + deterministic dedicated hosted CI proving callback unreachability before admissibility+coherence ALLOW and preserving complete decision/commit/observation/reconciliation bindings
+implementation_candidate: StegVerse-Labs/StegCore#55
+implementation_branch: feat/governed-runtime-adapters
+collision_rule: no ara, Continuity, legacy 001/002 adapter lane, or parallel chat lane may implement competing runtime adapters/producer semantics while #21 remains active
+release_condition: PR #55 integration into main plus successor validation preserving the hosted-green issue #21 acceptance evidence
 ```
 
 The HTTP/API requirement was transferred through comment `5224430822`.
 
 The complete decision-state runtime requirement was initially transferred through comment `5224765289` and reconciled with hosted upstream/downstream evidence through comment `5224812524`.
 
-`MERGED INTO: StegVerse-Labs/StegCore#21#issuecomment-5224812524`
+### Issue #21 implementation candidate — PR #55
+
+PR #55 is the current implementation candidate for issue #21. It is hosted-green on implementation head `d7b7ba47fd78b4db443a61b80a58b0a7e1348b80` and remains unmerged while integration state is reconciled.
+
+Installed candidate surfaces:
+
+- `src/stegcore/runtime_adapters.py`;
+- `tests/test_governed_runtime_adapters.py`;
+- `tests/test_governed_runtime_reconciliation.py`;
+- `docs/GOVERNED_RUNTIME_ADAPTERS.md`;
+- `.github/workflows/governed-runtime-adapters.yml`;
+- `management/governed-runtime-adapters-task.json`.
+
+Implemented properties:
+
+- normalized UI/API/human/AI/agent/batch/workflow/replay entry protocol;
+- no adapter invokes an injected executor directly; adapter execution delegates to `governed_execute()`;
+- exact candidate, credential, subject, authority, capability, parameter-bound, and prior verified receipt-pointer binding;
+- capability broadening and binding mismatch fail closed before the production runtime boundary;
+- ALLOW, DENY, REVIEW, adapter-level FAIL_CLOSED, coherence denial, execution failure, commit state, observation state, and receipt-pointer state remain reconstructable;
+- later effect reconciliation preserves MATCH, DIVERGENT, UNKNOWN, and GOVERNANCE_BYPASS without rewriting the governing decision;
+- HTTP/API transport is a bounded shim and not an authority source.
+
+Hosted validation on `d7b7ba47fd78b4db443a61b80a58b0a7e1348b80`:
+
+- Governed Runtime Adapter Conformance `31260583031`, job `93110658845`: SUCCESS;
+- Validate StegCore Runtime `31260583036`, job `93110674267`: SUCCESS;
+- StegCore Tests `31260583034`, job `93110658851`: SUCCESS;
+- Test Readiness `31260583033`: SUCCESS;
+- BCAT Gate `31260583094`: SUCCESS;
+- Validate StegVerse 001 002 Baseline `31260583093`: SUCCESS.
+
+An earlier candidate revision was initially placed under `src/stegcore/adapters/**`, which triggered the distinct legacy `Validate 001/002 adapter` workflow. That placement was removed. The final issue #21 implementation lives at `src/stegcore/runtime_adapters.py`; no legacy 001/002 adapter implementation or workflow was changed. Successor validation keeps the 001/002 baseline green without claiming that distinct legacy lane as part of issue #21.
+
+`MERGED INTO: StegVerse-Labs/StegCore#21#issuecomment-5226404683`
 
 ## Complete decision-state reconstruction
 
@@ -157,10 +193,10 @@ Next coordinated task `SC-PDCL-002` is distinct from issue #21 and must not be c
 
 ## Remaining integration work
 
-1. Issue #21 implements governed adapters and runtime decision-state production.
-2. Preserve `governed_execute()` as the only production mutation callback boundary for supported adapters.
-3. Add and host-validate deterministic adapter/chain tests covering ALLOW and every non-ALLOW outcome, explicit non-execution, decision→commit→observation binding, divergence/unknown/bypass reconciliation, and prior receipt-pointer preservation.
-4. Resolve or supersede the historical generic repository import-path failure under its owning automation lane; do not infer full-suite green from dedicated suites.
+1. Revalidate PR #55 after this handoff update.
+2. Transition PR #55 out of draft when the successor head remains green.
+3. Integrate PR #55 into main only through repository-authorized merge controls; then observe successor mainline validation before closing #21.
+4. Resolve or supersede the historical generic repository import-path failure under its owning automation lane; do not infer unrelated historical full-suite green from dedicated suites.
 5. Continue `SC-PDCL-002` only under its distinct repository owner.
 6. Public documentation propagation remains gated by applicable release/publication authority; source validation alone does not authorize Site/Publisher/wiki mirroring.
 
@@ -172,8 +208,8 @@ Next coordinated task `SC-PDCL-002` is distinct from issue #21 and must not be c
 - Ara deterministic execution profile: COMPLETE / HOSTED GREEN.
 - Ara complete decision-state interop: COMPLETE / HOSTED GREEN.
 - Continuity decision-state consumer #5: COMPLETE / CLOSED / HOSTED GREEN.
-- Governed adapter/runtime producer: ACTIVE under issue #21; not complete until its machine release condition is satisfied.
+- Governed adapter/runtime producer: IMPLEMENTED / HOSTED GREEN ON PR #55; integration into main still pending.
 
-The decision-state reconstruction session owns no remaining StegCore runtime implementation role. Its unique requirements have been transferred into #21 and validated dependencies are repository-native. No duplicate runtime implementation should be initiated from that session.
+The decision-state reconstruction session owns no remaining StegCore runtime implementation role. Its unique requirements are transferred into #21 and validated dependencies are repository-native. PR #55 is the single implementation candidate for the remaining issue #21 runtime slice.
 
-Archive-safe canonical continuation is `StegVerse-Labs/StegCore#21`, this handoff, `docs/DECISION_STATE_RECONSTRUCTION.md`, ara `ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md`, and Continuity `STEGGATE_CONTINUITY_MIRROR_HANDOFF.md`.
+Archive-safe canonical continuation is `StegVerse-Labs/StegCore#21`, PR #55, this handoff, `docs/DECISION_STATE_RECONSTRUCTION.md`, ara `ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md`, and Continuity `STEGGATE_CONTINUITY_MIRROR_HANDOFF.md`.
