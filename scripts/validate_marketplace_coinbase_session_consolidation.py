@@ -115,9 +115,12 @@ def validate() -> dict[str, Any]:
 
     task_ids = {item.get("task_id") for item in tasks.get("tasks") or []}
     state_ids = {item.get("task_id") for item in state.get("tasks") or []}
-    if task_ids != REQUIRED_TASKS:
+    # These are shared ecosystem registries. This consolidation owns MC-01..MC-06,
+    # but later canonical tasks may coexist. Require the session task set as a
+    # subset rather than failing when the shared orchestrator legitimately grows.
+    if not REQUIRED_TASKS.issubset(task_ids):
         findings.append("canonical_task_registry_mismatch")
-    if state_ids != REQUIRED_TASKS:
+    if not REQUIRED_TASKS.issubset(state_ids):
         findings.append("canonical_state_task_set_mismatch")
 
     state_by_id = {item.get("task_id"): item for item in state.get("tasks") or []}
@@ -147,7 +150,7 @@ def validate() -> dict[str, Any]:
         "requirements_required": 8,
         "claims_recorded": len(claim_items),
         "claims_required": 6,
-        "canonical_tasks_recorded": len(task_ids),
+        "canonical_tasks_recorded": len(REQUIRED_TASKS.intersection(task_ids)),
         "canonical_tasks_required": 6,
         "unique_execution_responsibility_remaining": session_claim.get(
             "unique_execution_responsibility_remaining"
