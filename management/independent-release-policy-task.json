@@ -1,0 +1,31 @@
+{
+  "task_id": "STEGCORE-INDEPENDENT-RELEASE-POLICY-001",
+  "originating_goal": "Activate the remaining StegCore release-readiness path without manufacturing independent authority.",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "feat/independent-release-policy-intake",
+  "owner": "issue/62",
+  "role": "CLAIMED_FOR_IMPLEMENTATION",
+  "claim_created": "2026-08-08T10:59:05-05:00",
+  "claim_release_condition": "contract, validator, tests, workflow, handoff and hosted-green evidence are complete; remaining independent decision input is assigned to issue/37",
+  "collision_boundaries": [
+    "issue/37 retains release-policy authority",
+    "no release, tag, deployment, publication or Continuity authority is created",
+    "no mutation of governed runtime semantics"
+  ],
+  "required_files": [
+    "contracts/release_policy/independent-release-policy.v1.json",
+    "scripts/validate_independent_release_policy.py",
+    "tests/test_independent_release_policy.py",
+    ".github/workflows/independent-release-policy.yml",
+    "management/independent-release-policy-task.json",
+    "docs/INDEPENDENT_RELEASE_POLICY_MIRROR_HANDOFF.md"
+  ],
+  "current_state": "IMPLEMENTED_AWAITING_HOSTED_VALIDATION",
+  "authority_input": {
+    "path": "evidence/independent-release-policy.json",
+    "state": "MISSING_EXPECTED_BLOCKER",
+    "owner": "issue/37",
+    "release_condition": "an independently authorized, exact-bound, unexpired decision artifact is installed"
+  },
+  "next_action": "Open PR, observe hosted workflow, inspect artifact, then release issue/62 implementation claim while retaining issue/37 as the authority owner."
+}
