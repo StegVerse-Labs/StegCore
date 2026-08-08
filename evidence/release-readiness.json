@@ -1,32 +1,35 @@
 {
   "artifact_type": "stegcore.release_readiness_assessment",
-  "record_type": "release_readiness_assessment",
-  "source_repository": "StegVerse-Labs/StegCore",
-  "destination_repository": "StegVerse-Labs/StegCore",
-  "hash_convention": {
-    "algorithm": "SHA-256",
-    "excluded_field": "assessment_hash",
-    "serialization": {
-      "encoding": "UTF-8",
-      "format": "JSON",
-      "separators": [",", ":"],
-      "sort_keys": true
-    }
-  },
-  "completion_event": "independent release policy permits a versioned tag and Governance freshness is independently confirmed",
+  "assessment_hash": "3b30e87335fe040afe9a27b23dcf734c3826ef65e0c97267e9283fd0bde03d57",
+  "completion_event": "independent release policy permits a versioned tag and every required downstream verification gate is durably recorded as pass",
   "continuity_authority_claimed": false,
   "downstream_gates": [
-    {"repository": "StegVerse-Labs/Site", "required": true, "status": "pass", "verification_commit": "6cb67c0b7a36ed4e3be71dd1c4cc60548e5138e1"},
-    {"repository": "GCAT-BCAT-Engine/Publisher", "required": true, "status": "pass", "verification_commit": "fad5822df767128f1a3f11ab7235f95c3c260530"},
-    {"repository": "StegVerse-Labs/admissibility-wiki", "required": true, "status": "pass", "verification_commit": "799e188cc660aa6b22720de248c5e255ec2f0fb0"},
-    {"repository": "StegVerse-002/stegguardian-wiki", "required": true, "status": "pass", "verification_commit": "a23cb19937453369b30288909701b55d1e389cee"}
+    {
+      "repository": "StegVerse-Labs/Site",
+      "required": true,
+      "status": "pending"
+    },
+    {
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "required": true,
+      "status": "pending"
+    },
+    {
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "required": true,
+      "status": "pending"
+    },
+    {
+      "repository": "StegVerse-002/stegguardian-wiki",
+      "required": true,
+      "status": "pending"
+    }
   ],
   "gates": {
     "canonical_governance_contract": "pass",
     "continuity_mapping": "pass",
-    "downstream_verification": "pass",
+    "downstream_verification": "pending",
     "evidence_integrity": "pass",
-    "governance_freshness": "pending",
     "independent_release_policy": "pending",
     "runtime_validation": "pass"
   },
@@ -34,10 +37,9 @@
   "production_authority_claimed": false,
   "receipt_minting_authority_claimed": false,
   "release_permitted": false,
-  "runtime_evidence_hash": "3657e5c64eb54e2c928fba81d3c8d35587d2b87747b9b225102b70339d942730",
-  "schema_version": "1.1",
-  "state": "downstream_verified_release_blocked",
-  "stegcore_commit": "b2290a006cb23e0595388d0ddaa55e7874c16222",
-  "tag_permitted": false,
-  "assessment_hash": "69869582fc30d22efc2d3c558d7378c99f80c65e6f620fd4e5911977e87c2911"
+  "runtime_evidence_hash": "0dcca0915983b0826131d1172c58b57dd7ffd24f61065d3fd155c23ae36ff37a",
+  "schema_version": "1.0",
+  "state": "validated_not_released",
+  "stegcore_commit": "845bf0329ece38fdfbdfb0ac5d42af0b2f4aa065",
+  "tag_permitted": false
 }
