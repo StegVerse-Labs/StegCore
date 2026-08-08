@@ -29,8 +29,7 @@
     {"path": "src/stegcore/steggate.py", "classification": ["ADAPTER_TO_EXISTING_CANONICAL_ENGINE", "NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS", "NEW_REQUIRED_SEMANTIC_NOT_PRESENT_ELSEWHERE"], "details": "Calls evaluate_three_layer for canonical core decision; normalizes every material predicate into a reconstructable matrix; adds candidate-hash-bound REVIEW for missing required human approval and composes existing capability/continuity pre-commit bindings."},
     {"path": "src/stegcore/steggate_runtime.py", "classification": ["ADAPTER_TO_EXISTING_CANONICAL_ENGINE", "NEW_REQUIRED_INTEGRATION"], "details": "Makes the full StegGate result operational at the commit boundary: non-ALLOW cannot invoke the executor, coherence independently gates ALLOW, absent commit authority denies, and the finalized coherence receipt binds the StegGate decision-state hash."},
     {"path": "src/stegcore/service.py", "classification": ["ADAPTER_TO_EXISTING_CANONICAL_ENGINE"], "details": "HTTP evaluation transport only; /v1/evaluate routes through reconciled composition and exposes no arbitrary external mutation endpoint."},
-    {"path": "tests/test_steggate_service.py", "classification": ["NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS"], "details": "Proves canonical three-layer binding, denial precedence, fail-closed reference-state behavior, REVIEW, permission/admissibility separation, and service self-test."},
-    {"path": "tests/test_steggate_runtime.py", "classification": ["INTEGRATION_VALIDATION"], "details": "Proves executor unreachability for DENY/REVIEW/coherence denial/missing authority and proves ALLOW+coherence execution with decision-state hash binding."}
+    {"path": "scripts/observe_steggate_live_service.py", "classification": ["MACHINE_OWNED_ACTIVATION_OBSERVER"], "details": "Hourly fail-closed observer performs health, exact four-disposition self-test, and deterministic POST /v1/evaluate complete-matrix/hash verification."}
   ],
   "removed_duplication": [
     "The initial standalone boolean policy/evidence evaluator in src/stegcore/steggate.py was replaced; final ALLOW/DENY/FAIL_CLOSED authority derives from evaluate_three_layer rather than parallel policy logic.",
@@ -49,15 +48,17 @@
   },
   "hosted_observer": {
     "workflow": ".github/workflows/steggate-live-observer.yml",
-    "run_id": 31270353764,
-    "job_id": 93135108552,
-    "artifact_id": 9025414196,
-    "artifact_digest": "sha256:2708b4d4d99763903c85f03eba2402d0e6bf7e932c15979e95f7e339a70f2e5a",
-    "state": "BLOCKED",
-    "health_error": "TIMEOUTERROR",
-    "self_test_error": "TIMEOUTERROR",
+    "initial_run_id": 31270353764,
+    "initial_job_id": 93135108552,
+    "initial_artifact_id": 9025414196,
+    "initial_artifact_digest": "sha256:2708b4d4d99763903c85f03eba2402d0e6bf7e932c15979e95f7e339a70f2e5a",
+    "initial_state": "BLOCKED",
+    "initial_health_error": "TIMEOUTERROR",
+    "initial_self_test_error": "TIMEOUTERROR",
+    "current_required_checks": ["health", "four_outcome_self_test", "complete_hosted_evaluate"],
+    "current_semantics_commits": ["d4a9e4c7c64315bd50ccea4482c2d3a292c8d936", "2d022fd04d5f2262affada5dea185bac30469f7c"],
     "reason": "canonical Render service has no successful build because workspace build-pipeline minutes are exhausted"
   },
-  "next_action": "Keep the hourly live observer active. Deploy the reconciled canonical service when an authorized hosting route can build it, then observe /health, /v1/self-test, and /v1/evaluate and persist those runtime receipts.",
+  "next_action": "Keep the hourly full live observer active. Deploy the reconciled canonical service when an authorized hosting route can build it; once live, the observer automatically verifies health, four-outcome self-test, and complete hosted evaluation without chat/manual polling.",
   "archive_allowed": false
 }
