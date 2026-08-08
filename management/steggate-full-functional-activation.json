@@ -7,28 +7,22 @@
   "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
   "canonical_issue": "StegVerse-Labs/StegCore#68",
   "supersedes_for_this_goal": "management/steggate-runtime-session-consolidation-2026-08-08.json archive disposition; that record remains authoritative only for the earlier bounded v0.1.0/tag goal",
-  "session_state": "MERGED_INTO_CANONICAL_WORKSTREAM",
-  "conversation_archive_allowed": true,
+  "session_state": "ACTIVE_UNIQUE_WORK_REMAINS",
+  "conversation_archive_allowed": false,
   "goal_activation_complete": false,
-  "role": "repository-native implementation + validation + hosted activation + observation; no chat-specific execution role remains",
-  "merged_into": [
-    "StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md",
-    "StegVerse-Labs/StegCore#68",
-    "StegVerse-Labs/StegCore/.github/workflows/steggate-live-observer.yml",
-    "StegVerse-Labs/StegCore/scripts/finalize_steggate_live_activation.py"
-  ],
+  "role": "active implementation + validation + hosted activation + observation, coordinated with repository-native automation",
   "inventory": [
     {
       "task_id": "FF-CONTEXT-01",
       "destination": "StegVerse-Labs/StegCore",
       "locations": ["data/steggate-session-context.json", "scripts/guard_steggate_session_continuity.py", "tests/test_steggate_session_continuity.py", ".github/workflows/steggate-session-continuity.yml"],
-      "owner": "StegCore repository automation",
+      "owner": "StegCore repository automation + active session",
       "claim_state": "COMPLETE",
       "completion_state": "COMPLETE_AND_ACTIVE",
       "validation_state": "HOSTED_GREEN",
       "integration_state": "BOUND_TO_CANONICAL_HANDOFF",
       "archival_dependency": false,
-      "evidence": ["run 31267562113", "job 93128078146", "artifact 9024610226", "sha256:01a31b811df5cb58a4bbdec30ccbd2f72d8c9d707011812d7adb7efe8e4786bc"]
+      "evidence": ["run 31267562113", "job 93128078146", "artifact 9024610226", "sha256:01a31b811df5cb58a4bbdec30ccbd2f72d8c9d707011812d7adb7efe8e4786bc", "continuity guard strengthened in commits c82f09d40dcc745c57550b79938314ec36ffba3a and 73bca8c8fe7a628ef4698efa5f1e997a46e124f2"]
     },
     {
       "task_id": "FF-ARCH-02",
@@ -52,7 +46,7 @@
       "validation_state": "HOSTED_GREEN",
       "integration_state": "FULL_EVALUATION_TO_COHERENCE_TO_EXECUTOR_BOUND",
       "archival_dependency": false,
-      "evidence": ["commits 3117b88d560e6917729539ee0e657f116f515f03, a274527d501138f25ecf4dbfec9fda62eafa154d", "run 31270401058", "job 93135227329", "148 tests + 127 subtests passed", "artifact 9025421552", "sha256:4cce13a6ec682d09d9f84d3ca739f297bc942290112d2baedabeafe98cb27220"]
+      "evidence": ["run 31272908477", "job 93141782128", "151 tests + 128 subtests passed", "artifact 9026151563", "sha256:684984429c260e4dd4325d8ef42c849b75f208e8882b46ea0535c459afc539de"]
     },
     {
       "task_id": "FF-SERVICE-04",
@@ -64,62 +58,64 @@
       "validation_state": "HOSTED_CI_GREEN",
       "integration_state": "CANONICAL_THREE_LAYER_BOUND",
       "archival_dependency": false,
-      "evidence": ["run 31270401058", "148 tests + 127 subtests passed"]
+      "evidence": ["run 31272908477", "151 tests + 128 subtests passed"]
     },
     {
       "task_id": "FF-DEPLOY-05",
       "destination": "Render service srv-d9rlic2jobas73do1q6g",
       "locations": ["https://steggate-core.onrender.com", "Render deploy history", "StegVerse-Labs/StegCore#68"],
-      "owner": "Render auto-deploy + StegCore repository automation",
-      "claim_state": "MACHINE_OWNED_BLOCKED",
+      "owner": "Render auto-deploy + StegCore#68 + active session",
+      "claim_state": "BLOCKED",
       "completion_state": "SERVICE_CREATED_DEPLOY_NOT_LIVE",
       "validation_state": "MACHINE_OBSERVED_BLOCKER",
       "integration_state": "AUTO_DEPLOY_CONNECTED",
-      "archival_dependency": false,
-      "evidence": ["service srv-d9rlic2jobas73do1q6g", "latest inspected deploy dep-d9rmt70u01pc73dkt8hg build_failed", "Render workspace build-pipeline minutes exhausted"],
+      "archival_dependency": true,
+      "evidence": ["service srv-d9rlic2jobas73do1q6g", "latest inspected deploy dep-d9rnlkuq1p3s73f7942g at head 347e22c87d222a3f83b68fdfa1e553710c9528d6 build_failed", "Render workspace build-pipeline minutes exhausted"],
       "machine_observable_release_condition": "A canonical deploy reaches live.",
-      "next_executable_action": "Render auto-deploy retries when a new canonical commit is available/capacity returns; repository observer independently checks the live origin hourly."
+      "next_executable_action": "Continue checking supported deployment routes while Render remains blocked; do not archive the session before this activation goal completes."
     },
     {
       "task_id": "FF-OBSERVE-06",
       "destination": "StegVerse-Labs/StegCore",
       "locations": ["scripts/observe_steggate_live_service.py", "tests/test_steggate_live_observer.py", ".github/workflows/steggate-live-observer.yml"],
-      "owner": "StegCore repository automation",
-      "claim_state": "MACHINE_OWNED",
+      "owner": "StegCore repository automation + active session",
+      "claim_state": "MACHINE_OWNED_AND_SESSION_OBSERVED",
       "completion_state": "ACTIVE_BLOCKED_BY_DEPLOYMENT",
       "validation_state": "OBSERVER_AND_FINALIZER_SEMANTICS_HOSTED_VALIDATED",
       "integration_state": "HOURLY_FAIL_CLOSED_FULL_ACTIVATION_OBSERVER_ACTIVE",
-      "archival_dependency": false,
+      "archival_dependency": true,
       "evidence": ["run 31272908461 observer/finalizer semantic validation PASS before hosted check", "full health+self-test+evaluate observer", "activation finalizer scripts/finalize_steggate_live_activation.py"],
       "machine_observable_release_condition": "/health healthy and canonical_three_layer_bound=true; /v1/self-test PASS with exact four dispositions; /v1/evaluate ALLOW with complete required matrix and hashes.",
-      "next_executable_action": "Retry hourly until full receipt state is PASS; then invoke FF-ACTIVATE-07 automatically."
+      "next_executable_action": "Retry hourly and inspect when possible until full receipt state is PASS."
     },
     {
       "task_id": "FF-ACTIVATE-07",
       "destination": "StegVerse-Labs/StegCore",
       "locations": ["scripts/finalize_steggate_live_activation.py", "data/steggate-live-activation-receipt.json", "STEGCORE_MIRROR_HANDOFF.md", "data/steggate-session-context.json", "management/steggate-full-functional-activation.json", "StegVerse-Labs/StegCore#68"],
-      "owner": "StegCore live-observer workflow",
-      "claim_state": "MACHINE_OWNED_WAITING_FOR_EVIDENCE",
+      "owner": "StegCore live-observer workflow + active session until completion",
+      "claim_state": "WAITING_FOR_EVIDENCE",
       "completion_state": "AUTOMATED_NOT_EXECUTABLE_UNTIL_FULL_OBSERVER_PASS",
       "validation_state": "FINALIZER_SEMANTICS_PASS",
       "integration_state": "AUTOMATIC_SUCCESS_PATH_INSTALLED",
-      "archival_dependency": false,
+      "archival_dependency": true,
       "machine_observable_release_condition": "Full hosted observer artifact state=PASS with health, self-test, and evaluate all pass.",
-      "next_executable_action": "Workflow runs finalizer, commits activation receipt/context/inventory/handoff, comments on #68, and closes #68 automatically."
+      "next_executable_action": "Workflow runs finalizer, commits activation receipt/context/inventory/handoff, comments on #68, and closes #68 automatically; the session remains active until that evidence exists."
     }
   ],
   "alternate_host_investigation": {
+    "render_workspaces_available": 1,
+    "render_workspace": "tea-d30avmndiees73bg2rjg",
     "vercel_team": "team_tb2tGtHkSFhg5cpTMCvAhQJi",
-    "existing_projects": ["site", "stegverse-scw", "scw", "steg-verse-scw"],
+    "existing_vercel_projects": ["site", "stegverse-scw", "scw", "steg-verse-scw"],
     "stegcore_project_present": false,
-    "supported_project_creation_action_available": false,
-    "deploy_action_state": "UNUSABLE_SCHEMA_MISMATCH_IN_CURRENT_CONNECTOR",
-    "result": "NO_SUPPORTED_ALTERNATE_DEPLOYMENT_MUTATION_AVAILABLE"
+    "supported_vercel_project_creation_action_available": false,
+    "plugin_search_for_alternate_cloud_host": "NO_MATCHING_INSTALLABLE_PLUGIN_FOUND",
+    "result": "NO_SUPPORTED_ALTERNATE_DEPLOYMENT_MUTATION_AVAILABLE_AT_LAST_INSPECTION"
   },
   "completion_denominators": {
     "tasks_total": 7,
     "tasks_complete": 4,
-    "tasks_machine_owned_active": 3,
+    "tasks_machine_owned_active": 1,
     "tasks_blocked": 1,
     "tasks_waiting_for_evidence": 1,
     "developed_files_required": 14,
@@ -131,8 +127,8 @@
     "integration_groups_required": 7,
     "integration_groups_complete": 6,
     "session_goals_total": 7,
-    "session_goals_transferred_or_complete": 7,
-    "conversation_specific_roles_remaining": 0
+    "session_goals_transferred_or_complete": 4,
+    "conversation_specific_roles_remaining": 3
   },
-  "exact_archive_condition": "SATISFIED FOR THIS CONVERSATION: every unique requirement and unresolved task is durably transferred to the canonical handoff, issue #68, Render auto-deploy, hourly live observer, and automatic activation finalizer. Project activation itself remains fail-closed until hosted PASS evidence exists."
+  "exact_archive_condition": "NOT SATISFIED. Do not archive while FF-DEPLOY-05, FF-OBSERVE-06, or FF-ACTIVATE-07 remain incomplete. Machine ownership does not substitute for completion of the active goal."
 }
