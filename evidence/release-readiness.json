@@ -1,7 +1,7 @@
 {
   "artifact_type": "stegcore.release_readiness_assessment",
-  "assessment_hash": "4f319a5c9a13755edb8f1bb9bb8c2d8bf737bbc899086aef78eea04c47c62f03",
-  "completion_event": "independent release policy permits a versioned tag and Governance freshness is independently confirmed",
+  "assessment_hash": "92d4dd3e44c155d2362230142e4e611f86f196dc1baa190e1775c1f2b4427bbf",
+  "completion_event": "independent release policy permits a versioned tag",
   "continuity_authority_claimed": false,
   "destination_repository": "StegVerse-Labs/StegCore",
   "downstream_gates": [
@@ -47,11 +47,14 @@
     "continuity_mapping": "pass",
     "downstream_verification": "pass",
     "evidence_integrity": "pass",
-    "governance_freshness": "pending",
+    "governance_freshness": "pass",
     "independent_release_policy": "pending",
     "runtime_validation": "pass"
   },
   "governance_commit": "c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6",
+  "governance_freshness_evidence": "evidence/governance-freshness.json",
+  "governance_freshness_evidence_hash": "f0ebf561cb530d9f9a0535d02f3f563fc73b1a8568410f682f61001dc325b32c",
+  "governance_observed_head": "94761bb15b1aac081617774737472b99139729b0",
   "hash_convention": {
     "algorithm": "SHA-256",
     "excluded_field": "assessment_hash",
@@ -72,7 +75,7 @@
   "runtime_evidence_hash": "7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb",
   "schema_version": "1.1",
   "source_repository": "StegVerse-Labs/StegCore",
-  "state": "downstream_verified_release_blocked",
+  "state": "governance_fresh_release_blocked",
   "stegcore_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
   "tag_permitted": false
 }
