@@ -8,10 +8,10 @@ Repository: StegCore
 Canonical branch: main
 Primary goal: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001
 Canonical task owner: issue #68
-State: ARCHITECTURE_RECONCILED / FULL GOVERNED EXECUTION COMPOSITION VALIDATED / HOST DEPLOYMENT BLOCKED / LIVE OBSERVER ACTIVE
+State: ARCHITECTURE_RECONCILED / FULL GOVERNED EXECUTION COMPOSITION VALIDATED / HOST DEPLOYMENT BLOCKED / FULL LIVE OBSERVER ACTIVE
 ```
 
-Read this file before changing StegCore runtime decisions, adapters, receipt bindings, live-service activation, deployment, or downstream verification. Live Git state, workflow runs/jobs, committed evidence, issues, Render observations, `data/steggate-session-context.json`, and `data/steggate-architecture-reconciliation-state.json` supersede chat summaries.
+Read this file before changing StegCore runtime decisions, adapters, receipt bindings, live-service activation, deployment, or downstream verification. Live Git state, workflow runs/jobs, committed evidence, issues, Render observations, `data/steggate-session-context.json`, `data/steggate-architecture-reconciliation-state.json`, and `management/steggate-full-functional-activation.json` supersede chat summaries.
 
 ## Active goal
 
@@ -114,7 +114,7 @@ artifact_id: 9025421552
 digest: sha256:4cce13a6ec682d09d9f84d3ca739f297bc942290112d2baedabeafe98cb27220
 ```
 
-The preceding reconciled service-only validation run `31270227248`, job `93134793274`, passed `140 tests + 127 subtests`; it is superseded by the stronger runtime-integrated validation above.
+A later observer-test change is under normal repository validation; do not substitute an in-progress check for the completed runtime-integrated evidence above.
 
 ## Canonical hosted service — CREATED, NOT LIVE
 
@@ -131,7 +131,7 @@ plan: free
 region: oregon
 ```
 
-Render has attempted every new `main` commit automatically, but the builds are canceled before source build execution because the workspace has exhausted its build-pipeline minutes for the current billing period. Latest observed failed deploy at this handoff update:
+Render has attempted every new `main` commit automatically, but the builds are canceled before source build execution because the workspace has exhausted its build-pipeline minutes for the current billing period. Latest explicitly inspected failed deploy before this handoff update:
 
 ```text
 deploy_id: dep-d9rmnub7uimc73b5u58g
@@ -142,9 +142,9 @@ machine cause: workspace build pipeline minutes exhausted
 
 This is an account-level hosting-capacity blocker, not a source/test failure.
 
-## Live observer — ACTIVE / FAIL-CLOSED
+## Live observer — ACTIVE / FULLY MACHINE-OWNED / FAIL-CLOSED
 
-The repository now owns the repeated deployment/runtime observation instead of relying on a chat session:
+The repository owns the repeated deployment/runtime observation instead of relying on a chat session:
 
 ```text
 scripts/observe_steggate_live_service.py
@@ -154,13 +154,15 @@ tests/test_steggate_live_observer.py
 
 Trigger: relevant pushes, manual recovery dispatch, and hourly schedule at minute 23.
 
-The observer requires:
+The observer now performs all activation observations automatically in one cycle:
 
-- `/health` -> `healthy` and `canonical_three_layer_bound=true`;
-- `/v1/self-test` -> `PASS` with exact ALLOW/DENY/REVIEW/FAIL_CLOSED mapping;
-- then `/v1/evaluate` must be exercised and complete matrix/hash evidence retained before activation completion.
+1. `GET /health` must return `healthy` and `canonical_three_layer_bound=true`;
+2. `GET /v1/self-test` must return `PASS` with exact ALLOW/DENY/REVIEW/FAIL_CLOSED mapping;
+3. `POST /v1/evaluate` uses a deterministic non-mutating activation fixture and must return `ALLOW`, a complete required predicate matrix, `candidate_hash`, `canonical_three_layer_request_hash`, `canonical_three_layer_receipt_hash`, `decision_state_hash`, `permission_is_not_admissibility=true`, `continuity_receipt_minted=false`, and `external_execution_performed=false`.
 
-First hosted observer evidence:
+The observer writes and uploads the exact request/response evidence. It intentionally concludes failure until all three checks pass. No chat session or manual polling is required for detection of the hosting release condition.
+
+First hosted observer evidence before the full POST-evaluate enhancement:
 
 ```text
 run_id: 31270353764
@@ -173,7 +175,7 @@ artifact_id: 9025414196
 artifact_digest: sha256:2708b4d4d99763903c85f03eba2402d0e6bf7e932c15979e95f7e339a70f2e5a
 ```
 
-The workflow intentionally concludes failure while the service is unavailable. That is the required fail-closed activation state, not a worker defect.
+The full three-observation worker was installed in commits `d4a9e4c7c64315bd50ccea4482c2d3a292c8d936` and `2d022fd04d5f2262affada5dea185bac30469f7c`. Its hosted target remains blocked by the same Render quota until a build can occur.
 
 ## Alternative hosting investigation
 
@@ -193,18 +195,17 @@ claimant: this activation workstream / issue #68
 role: implementation + validation + deployment activation + observation
 claim_state: BLOCKED_HOST_ACTIVATION / MACHINE_OBSERVER_ACTIVE
 claim_created: 2026-08-08
-claim_release_condition: live service + health + four-outcome self-test + real evaluate evidence
-expected_evidence: hosted deploy ID, health response, self-test response, evaluate matrix/hashes, persisted receipt
+claim_release_condition: live service + health + four-outcome self-test + real complete matrix evaluation evidence
+expected_evidence: hosted deploy ID, health response, self-test response, evaluate request/response with matrix/hashes, persisted observer receipt
 collision_boundary: no competing StegGate policy engine or canonical deployment identity
-next_task_after_release: integration/consumer activation only if separately required by the live result
+next_task_after_release: reconcile activation evidence into issue #68, session context, and this handoff
 ```
 
 ## Exact incomplete tasks
 
-1. `FF-DEPLOY-01` — `Render/srv-d9rlic2jobas73do1q6g`: obtain a successful build/deploy of current canonical `main`. Owner: Render hosting control plane; state `BLOCKED`. Release condition: a deploy reaches `live`.
-2. `FF-OBSERVE-02` — `.github/workflows/steggate-live-observer.yml`: obtain `/health` and `/v1/self-test` PASS from the canonical origin. Owner: repository automation; state `MACHINE_OWNED/BLOCKED_BY_FF-DEPLOY-01`.
-3. `FF-EVALUATE-03` — canonical origin `/v1/evaluate`: execute a real evaluation after service is live and persist the complete matrix, canonical three-layer request/receipt hashes, candidate hash, and decision-state hash. Owner: issue #68 activation lane; state `WAITING_FOR_EVIDENCE` dependent on FF-OBSERVE-02.
-4. `FF-HANDOFF-04` — this file + `data/steggate-session-context.json`: change `archive_allowed` only after the three items above are directly verified. Owner: context worker/issue #68.
+1. `FF-DEPLOY-05` — `Render/srv-d9rlic2jobas73do1q6g`: obtain a successful build/deploy of current canonical `main`. Owner: Render hosting control plane; state `BLOCKED`. Release condition: a canonical deploy reaches `live`.
+2. `FF-OBSERVE-06` — `.github/workflows/steggate-live-observer.yml`: automatically obtain `/health`, `/v1/self-test`, and `/v1/evaluate` PASS evidence from the canonical origin. Owner: repository automation; state `MACHINE_OWNED/BLOCKED_BY_FF-DEPLOY-05`.
+3. `FF-ACTIVATE-07` — `STEGCORE_MIRROR_HANDOFF.md`, `data/steggate-session-context.json`, and issue #68: consume the successful observer receipt and mark the functional activation complete only after direct evidence. Owner: issue #68 activation lane; state `WAITING_FOR_EVIDENCE` dependent on FF-OBSERVE-06.
 
 There are no unnamed external tasks. The only unresolved dependency is the inability of the currently connected hosting surfaces to produce a live canonical deployment: Render rejects builds for exhausted build minutes and the Vercel connector presently exposes no usable StegCore project-creation/deployment path.
 
@@ -223,4 +224,4 @@ The earlier `management/steggate-runtime-session-consolidation-2026-08-08.json` 
 
 NOT SATISFIED.
 
-Architecture reconciliation is complete, duplicate decision authority was removed, full StegGate decision-to-coherence execution composition is implemented and hosted-CI validated, and repository-native context/live observers are active. However the canonical hosted service has never completed a build and the live health/self-test/evaluate observations required by issue #68 do not exist. This session must not be marked archive-ready while that active functional goal remains incomplete.
+Architecture reconciliation is complete, duplicate decision authority was removed, full StegGate decision-to-coherence execution composition is implemented and hosted-CI validated, and repository-native context/live observers are active. However the canonical hosted service has never completed a build and the live health/self-test/evaluate observations required by issue #68 do not exist. This active functional goal must remain open until the machine observer records all required hosted evidence.
