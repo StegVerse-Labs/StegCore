@@ -1,14 +1,16 @@
 # Action-First Runtime Mirror Handoff
 
-## Active goal
+## Status
 
 ```text
 goal_id: STEGCORE-ACTION-FIRST-RUNTIME-001
-originating_goal: activate Action-First reconstruction v1 as a bounded StegCore runtime observation producer
 repository: StegVerse-Labs/StegCore
-branch: feat/action-first-runtime-observation
+canonical_branch: main
 canonical_owner: issue #65
-claim_state: CLAIMED_FOR_IMPLEMENTATION
+implementation: COMPLETE / MERGED
+runtime_observation_activation: COMPLETE
+claim_state: CLAIMED_FOR_INTEGRATION
+remaining_release_condition: ara Action-First handoff records this producer evidence, then issue #65 closes
 ```
 
 Read `STEGCORE_MIRROR_HANDOFF.md`, this handoff, issue #65, `management/action-first-runtime-task.json`, and the pinned ara schema before changing this lane. Live main state and hosted workflow evidence supersede chat claims.
@@ -16,33 +18,20 @@ Read `STEGCORE_MIRROR_HANDOFF.md`, this handoff, issue #65, `management/action-f
 ## Semantic source
 
 ```text
-StegVerse-Labs/ara-admissibility-interop
-d48b2734c2fdb8018271e2413a0d786f6cc5e479
-schemas/action-first-reconstruction.v1.json
-blob c49f70190ad313e2c849564c411080cd3c7a610f
+repository: StegVerse-Labs/ara-admissibility-interop
+commit: d48b2734c2fdb8018271e2413a0d786f6cc5e479
+schema: schemas/action-first-reconstruction.v1.json
+blob: c49f70190ad313e2c849564c411080cd3c7a610f
+schema_version: stegverse.action-first-reconstruction.v1
 ```
 
-The runtime consumes this semantic contract; it does not duplicate ownership of the interop schema.
+StegCore consumes this semantic contract and does not duplicate schema authority.
 
-## Runtime producer
+## Activated runtime producer
 
-`src/stegcore/action_first_reconstruction.py` provides `build_action_first_record()`. It consumes an already-produced StegCore `AdapterObservation` plus explicit reconstruction inputs and emits the Action-First v1 record shape.
+PR #66 merged to main as `08583953ced22ae0b8f1cd09120ea72b77119bba`.
 
-Implemented boundaries:
-
-- exact action-candidate binding to the runtime decision;
-- calculated, realized, and observed state remain distinct;
-- model→reality and reality→observation residuals remain distinct;
-- unknown residuals cannot invent numeric values;
-- unobserved realized transitions remain representable;
-- a non-executed runtime decision cannot claim its consequence crossed irreversibility;
-- committed execution requires a bounded realized-state identity;
-- StegCore records latent/unknown constraint candidates but refuses `PROMOTED` posture;
-- `governed_execute()` is not modified;
-- Continuity consequence is carried as an externally established value and defaults to `UNKNOWN`;
-- no receipt, deployment, publication, standards, or causal-truth authority is created.
-
-## Required files
+Canonical surfaces:
 
 ```text
 src/stegcore/action_first_reconstruction.py
@@ -53,30 +42,41 @@ docs/ACTION_FIRST_RUNTIME_MIRROR_HANDOFF.md
 .github/workflows/action-first-runtime.yml
 ```
 
-## Validation
+`build_action_first_record()` consumes an existing StegCore `AdapterObservation` plus explicit reconstruction inputs and emits the Action-First v1 record shape. Calculated, realized, and observed states remain distinct; model→reality and reality→observation residuals remain distinct; unobserved realized transitions remain representable; candidate binding is exact; non-execution cannot claim irreversibility; unresolved residuals cannot invent numeric values; and StegCore refuses `PROMOTED` constraint posture because Governance owns promotion authority.
 
-The dedicated workflow must prove:
+`src/stegcore/runtime.py#governed_execute` was not modified by this lane. Continuity consequence remains externally established and defaults to `UNKNOWN`. No receipt, deployment, publication, standards, causal-truth, Governance-promotion, or execution authority is created.
+
+## Hosted validation
+
+PR head `7ef8e81c83d73594c65cc8f7e92528ef042c1bb2`:
 
 ```text
-focused Action-First runtime tests: PASS
-validator/module compile: PASS
-full existing StegCore test suite: PASS through repository-required checks
-runtime authority boundary unchanged
+Action-First Runtime Validation 31266359492: SUCCESS
+focused Action-First tests: 7/7 PASS
+module compile: PASS
+runtime.py unchanged proof: PASS
+Validate StegCore Runtime 31266359489: SUCCESS
+StegCore Tests 31266359504: SUCCESS
+BCAT Gate 31266359511: SUCCESS
+Test Readiness 31266359494: SUCCESS
+Validate StegVerse 001 002 Baseline 31266359496: SUCCESS
 ```
 
-Hosted evidence must be recorded here after the PR becomes green. Do not infer activation from file presence.
+Post-merge main `08583953ced22ae0b8f1cd09120ea72b77119bba`:
+
+```text
+Validate StegCore Runtime 31266389594: SUCCESS
+StegCore Tests 31266389565: SUCCESS
+BCAT Gate 31266389573: SUCCESS
+Validate StegVerse 001 002 Baseline 31266389560: SUCCESS
+```
+
+The unrelated legacy `release-bump.yml` check emitted a no-job failure record on this push even though that workflow is dispatch-only. It is not an Action-First acceptance check and created no release consequence.
 
 ## Integration obligation
 
-After merge to StegCore main, update the ara `ACTION_FIRST_RECONSTRUCTION_MIRROR_HANDOFF.md` on its canonical PR #1 branch so `runtime_activation` points to the exact StegCore merge and hosted evidence. That update is evidence/ownership propagation only and must not claim ara release or publication authority.
+The only remaining claim release action is evidence propagation to the canonical ara PR #1 branch: update `ACTION_FIRST_RECONSTRUCTION_MIRROR_HANDOFF.md` so its runtime activation points to StegCore merge `08583953ced22ae0b8f1cd09120ea72b77119bba` and the hosted evidence above. This is ownership/evidence propagation only; ara release/publication authority remains unchanged.
 
-## Release condition
+## Release posture
 
-The implementation claim is released after:
-
-1. PR is hosted-green and merged to main;
-2. current-main StegCore tests remain green;
-3. issue #65 records exact merge/workflow evidence;
-4. ara Action-First handoff records the runtime producer evidence.
-
-No chat session is required after those durable records exist.
+The existing StegCore `v0.1.0` tag predates this merge and therefore does **not** contain the Action-First runtime producer. No current Governance decision authorizes a new release/tag/publication/deployment consequence for this post-tag capability.
