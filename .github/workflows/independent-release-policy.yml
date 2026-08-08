@@ -1,0 +1,56 @@
+name: Independent Release Policy Validation
+
+on:
+  pull_request:
+    paths:
+      - 'contracts/release_policy/**'
+      - 'scripts/validate_independent_release_policy.py'
+      - 'tests/test_independent_release_policy.py'
+      - 'evidence/independent-release-policy.json'
+      - 'management/independent-release-policy-task.json'
+      - 'docs/INDEPENDENT_RELEASE_POLICY_MIRROR_HANDOFF.md'
+      - '.github/workflows/independent-release-policy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run focused release-policy tests
+        run: python -m pytest -q tests/test_independent_release_policy.py
+      - name: Compile validator
+        run: python -m py_compile scripts/validate_independent_release_policy.py
+      - name: Evaluate current independent policy decision
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f evidence/independent-release-policy.json ]]; then
+            python scripts/validate_independent_release_policy.py \
+              --decision evidence/independent-release-policy.json \
+              --readiness evidence/release-readiness.json \
+              --output /tmp/independent-release-policy-validation.json
+          else
+            set +e
+            python scripts/validate_independent_release_policy.py \
+              --decision evidence/independent-release-policy.json \
+              --readiness evidence/release-readiness.json \
+              --output /tmp/independent-release-policy-validation.json
+            rc=$?
+            set -e
+            test "$rc" -eq 2
+            grep -q 'independent_policy_decision_missing' /tmp/independent-release-policy-validation.json
+            echo 'Independent authority input is absent; gate remains fail-closed as intended.'
+          fi
+      - name: Upload policy validation state
+        uses: actions/upload-artifact@v4
+        with:
+          name: independent-release-policy-validation
+          path: /tmp/independent-release-policy-validation.json
+          if-no-files-found: error
