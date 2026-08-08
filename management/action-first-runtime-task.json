@@ -2,11 +2,11 @@
   "task_id": "STEGCORE-ACTION-FIRST-RUNTIME-001",
   "originating_goal": "Activate Action-First reconstruction semantics as a bounded StegCore runtime observation API.",
   "repository": "StegVerse-Labs/StegCore",
-  "branch": "feat/action-first-runtime-observation",
+  "canonical_branch": "main",
   "issue": 65,
-  "claim_state": "CLAIMED_FOR_IMPLEMENTATION",
+  "claim_state": "CLAIMED_FOR_INTEGRATION",
   "claim_created": "2026-08-08T11:08:41-05:00",
-  "claim_release_condition": "runtime module, tests, docs, workflow and mirror handoff are merged to main with hosted-green evidence and the ara source handoff is updated to point to the runtime producer",
+  "claim_release_condition": "ara source handoff records the merged StegCore producer and hosted evidence; issue 65 then closes",
   "authority_boundaries": [
     "governed_execute semantics unchanged",
     "no execution authority created",
@@ -21,6 +21,24 @@
     "path": "schemas/action-first-reconstruction.v1.json",
     "blob": "c49f70190ad313e2c849564c411080cd3c7a610f"
   },
+  "implementation": {
+    "pull_request": 66,
+    "merge_commit": "08583953ced22ae0b8f1cd09120ea72b77119bba",
+    "pr_head": "7ef8e81c83d73594c65cc8f7e92528ef042c1bb2",
+    "state": "MERGED_TO_MAIN"
+  },
+  "hosted_validation": {
+    "action_first_runtime": {"run": 31266359492, "status": "success", "focused_tests": "7/7", "boundary_diff": "success"},
+    "runtime_pr": {"run": 31266359489, "status": "success"},
+    "full_tests_pr": {"run": 31266359504, "status": "success"},
+    "bcat_pr": {"run": 31266359511, "status": "success"},
+    "readiness_pr": {"run": 31266359494, "status": "success"},
+    "baseline_pr": {"run": 31266359496, "status": "success"},
+    "runtime_main": {"run": 31266389594, "status": "success"},
+    "full_tests_main": {"run": 31266389565, "status": "success"},
+    "bcat_main": {"run": 31266389573, "status": "success"},
+    "baseline_main": {"run": 31266389560, "status": "success"}
+  },
   "required_files": [
     "src/stegcore/action_first_reconstruction.py",
     "tests/test_action_first_reconstruction_runtime.py",
@@ -29,6 +47,7 @@
     "docs/ACTION_FIRST_RUNTIME_MIRROR_HANDOFF.md",
     ".github/workflows/action-first-runtime.yml"
   ],
-  "state": "IMPLEMENTED_AWAITING_HOSTED_VALIDATION",
-  "next_action": "open PR, inspect hosted test and runtime checks, repair exact failures, merge when green, then update canonical handoffs and release this implementation claim"
+  "state": "IMPLEMENTATION_COMPLETE_HOSTED_GREEN_MERGED",
+  "integration_state": "PENDING_ARA_HANDOFF_PROPAGATION",
+  "next_action": "Update ara ACTION_FIRST_RECONSTRUCTION_MIRROR_HANDOFF.md with exact StegCore producer evidence, validate that branch, then close issue 65 and release the claim."
 }
