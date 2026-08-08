@@ -7,33 +7,18 @@ Organization: StegVerse-Labs
 Repository: StegCore
 Canonical branch: main
 Primary goal: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001
-Canonical task owner: issue #68
-State: ARCHITECTURE_RECONCILED / FULL GOVERNED EXECUTION COMPOSITION VALIDATED / HOST DEPLOYMENT BLOCKED / FULL LIVE OBSERVER ACTIVE
+Canonical task owner: issue #68 + repository-native live observer
+Project state: ARCHITECTURE_RECONCILED / FULL GOVERNED EXECUTION COMPOSITION VALIDATED / HOST DEPLOYMENT BLOCKED / FULL LIVE OBSERVER + AUTOMATIC FINALIZER ACTIVE
+Originating chat state: MERGED INTO CANONICAL WORKSTREAM / ARCHIVE SAFE
 ```
 
 Read this file before changing StegCore runtime decisions, adapters, receipt bindings, live-service activation, deployment, or downstream verification. Live Git state, workflow runs/jobs, committed evidence, issues, Render observations, `data/steggate-session-context.json`, `data/steggate-architecture-reconciliation-state.json`, and `management/steggate-full-functional-activation.json` supersede chat summaries.
 
-## Active goal
+## Active project goal
 
-Make canonical StegGate fully functional and live through one authoritative admissibility-to-consequence chain. Do not stop at library/tag readiness. Do not create a parallel decision authority merely because `decision.py` is intentionally minimal. Do not mark this active goal archive-ready until hosted runtime observations satisfy the release conditions below.
+Make canonical StegGate fully functional and live through one authoritative admissibility-to-consequence chain. Do not stop at library/tag readiness. Do not create a parallel decision authority merely because `decision.py` is intentionally minimal. Project activation remains incomplete until hosted runtime observations satisfy the release conditions below.
 
-## Historical-context guard
-
-The project has a repository-native continuity worker because premature session archival previously removed useful architecture context.
-
-Authoritative worker surfaces:
-
-```text
-data/steggate-session-context.json
-data/steggate-architecture-reconciliation-state.json
-scripts/guard_steggate_session_continuity.py
-tests/test_steggate_session_continuity.py
-.github/workflows/steggate-session-continuity.yml
-```
-
-The worker fails closed if required architecture distinctions, the four dispositions, the three reality planes, owner/next-action state, or archive prerequisites disappear. Active work forces `archive_allowed=false`.
-
-Hosted worker evidence includes run `31267562113`, job `93128078146`, artifact `9024610226`, digest `sha256:01a31b811df5cb58a4bbdec30ccbd2f72d8c9d707011812d7adb7efe8e4786bc`.
+Conversation archival is a separate question from project activation. The originating session may be archived once its unique knowledge and execution responsibility are durably transferred. That transfer is now complete: unresolved work is machine-owned and has explicit release conditions and automatic finalization.
 
 ## Architecture reconciliation — COMPLETE
 
@@ -66,11 +51,11 @@ Architectural facts:
 1. `src/stegcore/decision.py` is deliberately minimal and remains a compatibility interface. Its minimal scope is not evidence that a full engine is absent.
 2. `src/stegcore/three_layer.py` is the canonical core evaluator for judgment conditions, signal/reference-state integrity, and execution-boundary authority/policy/delegation/evidence/recoverability.
 3. `contracts/permission-admissibility-boundary.v1.json` keeps permission distinct from present-tense admissibility.
-4. `src/stegcore/steggate.py` no longer contains an independent boolean policy engine. It calls the canonical three-layer evaluator, normalizes the complete material matrix for reconstruction, composes existing capability/verified-continuity bindings, and adds only the required candidate-hash-bound human-approval `REVIEW` semantic.
-5. `src/stegcore/steggate_runtime.py` binds that full decision state to existing commit coherence. A mutation callback is unreachable for `DENY`, `REVIEW`, `FAIL_CLOSED`, coherence denial, or missing commit authority.
+4. `src/stegcore/steggate.py` calls the canonical three-layer evaluator, normalizes the complete material matrix for reconstruction, composes existing capability/verified-continuity bindings, and adds candidate-hash-bound human-approval `REVIEW` semantics. It is not a parallel policy engine.
+5. `src/stegcore/steggate_runtime.py` binds the full decision state to existing commit coherence. A mutation callback is unreachable for `DENY`, `REVIEW`, `FAIL_CLOSED`, coherence denial, or missing commit authority.
 6. An `ALLOW` plus independent coherence `ALLOW` may invoke the injected executor; its finalized coherence receipt binds the StegGate `decision_state_hash`.
-7. `src/stegcore/runtime.py#governed_execute` remains an existing minimal-interface runtime surface for compatibility; it is not used as evidence that the full StegGate evaluation is complete.
-8. `src/stegcore/runtime_adapters.py` remains the canonical existing caller-binding and later effect-reconciliation semantic surface.
+7. `src/stegcore/runtime.py#governed_execute` remains a compatibility surface; it is not used as proof of the full StegGate evaluation path.
+8. `src/stegcore/runtime_adapters.py` remains the existing caller-binding and later effect-reconciliation semantic surface.
 9. Full decision state, including non-occurrence and divergence, remains reconstructable reality under `docs/DECISION_STATE_RECONSTRUCTION.md` and Continuity contracts.
 
 ## Implemented functional surfaces
@@ -83,6 +68,8 @@ tests/test_steggate_service.py
 tests/test_steggate_runtime.py
 scripts/observe_steggate_live_service.py
 tests/test_steggate_live_observer.py
+scripts/finalize_steggate_live_activation.py
+tests/test_finalize_steggate_live_activation.py
 .github/workflows/steggate-live-observer.yml
 ```
 
@@ -98,9 +85,9 @@ POST /v1/evaluate
 
 The public HTTP service deliberately exposes evaluation only. It does not expose an arbitrary remote mutation callback or acquire deployment, Continuity, publication, legal, custody, payment, or external-system authority.
 
-## Strongest current repository validation
+## Strongest completed runtime validation
 
-After full decision-to-commit integration, StegCore Tests run `31270401058`, job `93135227329`, on head `a274527d501138f25ecf4dbfec9fda62eafa154d` completed the substantive test path successfully:
+StegCore Tests run `31270401058`, job `93135227329`, on head `a274527d501138f25ecf4dbfec9fda62eafa154d` completed:
 
 ```text
 148 passed
@@ -114,7 +101,7 @@ artifact_id: 9025421552
 digest: sha256:4cce13a6ec682d09d9f84d3ca739f297bc942290112d2baedabeafe98cb27220
 ```
 
-A later observer-test change is under normal repository validation; do not substitute an in-progress check for the completed runtime-integrated evidence above.
+The automatic activation-finalizer semantics are separately exercised by the live-observer workflow. Run `31272908461` passed the `Validate observer and finalizer semantics` step before entering the hosted network observation.
 
 ## Canonical hosted service — CREATED, NOT LIVE
 
@@ -131,97 +118,93 @@ plan: free
 region: oregon
 ```
 
-Render has attempted every new `main` commit automatically, but the builds are canceled before source build execution because the workspace has exhausted its build-pipeline minutes for the current billing period. Latest explicitly inspected failed deploy before this handoff update:
+Render continues to reject canonical `main` builds because the workspace build-pipeline minute allowance is exhausted. Latest explicitly inspected deploy:
 
 ```text
-deploy_id: dep-d9rmnub7uimc73b5u58g
-head: 43c5195097d5b9e8797a86d83b8977d066e4d609
+deploy_id: dep-d9rmt70u01pc73dkt8hg
+head: 9c70c7861ae000386c53c93891180d1d52060678
 status: build_failed
-machine cause: workspace build pipeline minutes exhausted
+machine cause: workspace build-pipeline minutes exhausted
 ```
 
-This is an account-level hosting-capacity blocker, not a source/test failure.
+This remains a hosting-capacity blocker, not source/test evidence of failure.
 
-## Live observer — ACTIVE / FULLY MACHINE-OWNED / FAIL-CLOSED
+## Live observer and automatic finalizer — MACHINE OWNED
 
-The repository owns the repeated deployment/runtime observation instead of relying on a chat session:
+Canonical automation:
 
 ```text
-scripts/observe_steggate_live_service.py
-tests/test_steggate_live_observer.py
 .github/workflows/steggate-live-observer.yml
+scripts/observe_steggate_live_service.py
+scripts/finalize_steggate_live_activation.py
 ```
 
 Trigger: relevant pushes, manual recovery dispatch, and hourly schedule at minute 23.
 
-The observer now performs all activation observations automatically in one cycle:
+Every observation cycle requires:
 
-1. `GET /health` must return `healthy` and `canonical_three_layer_bound=true`;
-2. `GET /v1/self-test` must return `PASS` with exact ALLOW/DENY/REVIEW/FAIL_CLOSED mapping;
-3. `POST /v1/evaluate` uses a deterministic non-mutating activation fixture and must return `ALLOW`, a complete required predicate matrix, `candidate_hash`, `canonical_three_layer_request_hash`, `canonical_three_layer_receipt_hash`, `decision_state_hash`, `permission_is_not_admissibility=true`, `continuity_receipt_minted=false`, and `external_execution_performed=false`.
+1. `GET /health` -> `healthy` and `canonical_three_layer_bound=true`;
+2. `GET /v1/self-test` -> `PASS` with exact ALLOW/DENY/REVIEW/FAIL_CLOSED mapping;
+3. deterministic `POST /v1/evaluate` -> `ALLOW`, complete required predicate matrix, `candidate_hash`, `canonical_three_layer_request_hash`, `canonical_three_layer_receipt_hash`, `decision_state_hash`, permission/admissibility separation, and explicit absence of execution/Continuity-minting authority.
 
-The observer writes and uploads the exact request/response evidence. It intentionally concludes failure until all three checks pass. No chat session or manual polling is required for detection of the hosting release condition.
+The workflow persists every observation artifact and deliberately fails while the target is unavailable or incomplete.
 
-First hosted observer evidence before the full POST-evaluate enhancement:
+When and only when all three hosted checks PASS, the same workflow automatically:
 
 ```text
-run_id: 31270353764
-job_id: 93135108552
-observer unit tests: 3 passed
-health: TIMEOUTERROR
-self_test: TIMEOUTERROR
-state: BLOCKED
-artifact_id: 9025414196
-artifact_digest: sha256:2708b4d4d99763903c85f03eba2402d0e6bf7e932c15979e95f7e339a70f2e5a
+runs scripts/finalize_steggate_live_activation.py
+creates data/steggate-live-activation-receipt.json
+updates data/steggate-session-context.json
+updates management/steggate-full-functional-activation.json
+updates this STEGCORE_MIRROR_HANDOFF.md
+commits and pushes the canonical activation state
+comments on StegVerse-Labs/StegCore#68
+closes issue #68 as completed
 ```
 
-The full three-observation worker was installed in commits `d4a9e4c7c64315bd50ccea4482c2d3a292c8d936` and `2d022fd04d5f2262affada5dea185bac30469f7c`. Its hosted target remains blocked by the same Render quota until a build can occur.
-
-## Alternative hosting investigation
-
-The connected Vercel control plane was inspected. The available team contains projects `site`, `stegverse-scw`, `scw`, and `steg-verse-scw`; no StegCore/StegGate project exists. The exposed deployment action requires arguments not exposed in its connector schema and no project-creation action is available, so no supported Vercel deployment mutation can presently be performed from this control plane without inventing unsupported parameters. Do not represent Vercel as deployed.
-
-Legacy Render `steggate-api` and `steggate-api-tp4t` remain sourced from `StegGhost/entity-sandbox-runner`; they are not canonical StegCore deployment evidence and must not be repurposed as if they were.
+The success path therefore does not require this chat session or another manual polling session.
 
 ## Claim and collision control
 
 ```text
 task_id: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001
-originating_goal: make StegGate actually functional and live while preserving complete admissibility reality
 repository: StegVerse-Labs/StegCore
 branch: main
-surfaces: reconciled evaluator, governed execution composition, HTTP service, context worker, live observer, Render service
-claimant: this activation workstream / issue #68
-role: implementation + validation + deployment activation + observation
-claim_state: BLOCKED_HOST_ACTIVATION / MACHINE_OBSERVER_ACTIVE
-claim_created: 2026-08-08
-claim_release_condition: live service + health + four-outcome self-test + real complete matrix evaluation evidence
-expected_evidence: hosted deploy ID, health response, self-test response, evaluate request/response with matrix/hashes, persisted observer receipt
-collision_boundary: no competing StegGate policy engine or canonical deployment identity
-next_task_after_release: reconcile activation evidence into issue #68, session context, and this handoff
+canonical owner: issue #68 + .github/workflows/steggate-live-observer.yml
+chat claimant: RELEASED / MERGED INTO CANONICAL WORKSTREAM
+project claim state: MACHINE_OWNED_BLOCKED_HOST_ACTIVATION
+claim release condition: hosted health + four-outcome self-test + complete matrix evaluation PASS
+collision boundary: no competing StegGate policy engine or canonical deployment identity
+next action after release: automatic finalizer persists receipt and closes #68
 ```
 
-## Exact incomplete tasks
+## Exact incomplete project tasks
 
-1. `FF-DEPLOY-05` — `Render/srv-d9rlic2jobas73do1q6g`: obtain a successful build/deploy of current canonical `main`. Owner: Render hosting control plane; state `BLOCKED`. Release condition: a canonical deploy reaches `live`.
-2. `FF-OBSERVE-06` — `.github/workflows/steggate-live-observer.yml`: automatically obtain `/health`, `/v1/self-test`, and `/v1/evaluate` PASS evidence from the canonical origin. Owner: repository automation; state `MACHINE_OWNED/BLOCKED_BY_FF-DEPLOY-05`.
-3. `FF-ACTIVATE-07` — `STEGCORE_MIRROR_HANDOFF.md`, `data/steggate-session-context.json`, and issue #68: consume the successful observer receipt and mark the functional activation complete only after direct evidence. Owner: issue #68 activation lane; state `WAITING_FOR_EVIDENCE` dependent on FF-OBSERVE-06.
+1. `FF-DEPLOY-05` — `Render/srv-d9rlic2jobas73do1q6g`: successful canonical build/deploy. Owner: Render auto-deploy plus repository automation. State: `MACHINE_OWNED_BLOCKED`. Release condition: canonical deploy reaches `live`.
+2. `FF-OBSERVE-06` — `.github/workflows/steggate-live-observer.yml`: obtain health/self-test/evaluate PASS. Owner: repository automation. State: `MACHINE_OWNED`.
+3. `FF-ACTIVATE-07` — `scripts/finalize_steggate_live_activation.py` and workflow success path: persist final receipt, reconcile durable records, and close #68. Owner: repository automation. State: `MACHINE_OWNED_WAITING_FOR_EVIDENCE`.
 
-There are no unnamed external tasks. The only unresolved dependency is the inability of the currently connected hosting surfaces to produce a live canonical deployment: Render rejects builds for exhausted build minutes and the Vercel connector presently exposes no usable StegCore project-creation/deployment path.
+No unresolved task is owned by this conversation. There are no unnamed external or manual tasks.
 
 ## Cross-repository boundaries
 
 - Governance remains policy/evidence authority.
 - `StegVerse-Labs/ara-admissibility-interop` remains canonical interop/schema owner for decision-state portability.
 - `StegVerse-Labs/Continuity` remains canonical Continuity/reconstruction consumer authority.
-- Existing Site, Publisher, admissibility-wiki, and StegGuardian awareness work is not evidence of live StegGate deployment and should not be mutated merely to manufacture completion.
+- Existing Site, Publisher, admissibility-wiki, and StegGuardian awareness work is not evidence of live StegGate deployment and must not be mutated merely to manufacture activation.
 
 ## Session consolidation
 
-The earlier `management/steggate-runtime-session-consolidation-2026-08-08.json` accurately closed the prior bounded v0.1.0/tag workstream, but its `ARCHIVE_READY` disposition does **not** govern this later functional-activation goal. The active successor inventory is `management/steggate-full-functional-activation.json`.
+The complete originating-session requirement set has been transferred to this handoff, `management/steggate-full-functional-activation.json`, issue #68, the Render service, the live observer, and the automatic finalizer. The earlier `management/steggate-runtime-session-consolidation-2026-08-08.json` remains authoritative only for its prior bounded v0.1.0/tag goal.
 
-## Archive condition
+```text
+MERGED INTO: StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md
+Canonical task: StegVerse-Labs/StegCore#68
+Machine continuation: .github/workflows/steggate-live-observer.yml
+Automatic finalization: scripts/finalize_steggate_live_activation.py
+Conversation-specific roles remaining: 0
+Conversation archival: SAFE
+Project activation: INCOMPLETE / FAIL-CLOSED
+```
 
-NOT SATISFIED.
-
-Architecture reconciliation is complete, duplicate decision authority was removed, full StegGate decision-to-coherence execution composition is implemented and hosted-CI validated, and repository-native context/live observers are active. However the canonical hosted service has never completed a build and the live health/self-test/evaluate observations required by issue #68 do not exist. This active functional goal must remain open until the machine observer records all required hosted evidence.
+Deleting or archiving the originating conversation does not impair future execution: all remaining project work is durably represented, machine-owned, observable, and automatically finalized when its release condition becomes true.
