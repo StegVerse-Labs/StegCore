@@ -1,6 +1,6 @@
 {
   "artifact_type": "stegcore.release_readiness_assessment",
-  "assessment_hash": "938d39a11654df6f2e8b602c4364b648875eaccbfc1c1d54dbdca613f0b3d9f8",
+  "assessment_hash": "a7228dc607fc266b755009b6f699bc0abacc174955cf6497f44ca813ef533a46",
   "completion_event": "independent release policy permits a versioned tag, Governance freshness is independently confirmed, and every required downstream verification gate is durably recorded as pass",
   "continuity_authority_claimed": false,
   "destination_repository": "StegVerse-Labs/StegCore",
@@ -53,10 +53,10 @@
   "receipt_minting_authority_claimed": false,
   "record_type": "release_readiness_assessment",
   "release_permitted": false,
-  "runtime_evidence_hash": "fa45688d287bd403effe96abdeec52387e73e36cb0faf05e0eb386842cfbe46e",
+  "runtime_evidence_hash": "7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb",
   "schema_version": "1.1",
   "source_repository": "StegVerse-Labs/StegCore",
   "state": "validated_not_released",
-  "stegcore_commit": "fd1d567712820b19e258c4cc664e74bb89755f4b",
+  "stegcore_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
   "tag_permitted": false
 }
