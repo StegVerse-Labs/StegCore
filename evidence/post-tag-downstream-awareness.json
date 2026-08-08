@@ -1,0 +1,50 @@
+{
+  "artifact_type": "stegcore.post_tag_downstream_awareness",
+  "schema_version": "1.0",
+  "tag": "v0.1.0",
+  "tag_object_sha": "071109054e212cba7d52544c62b09581c5eac324",
+  "target_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
+  "governance_decision_hash": "7b90b85d4c9a4fe0666dd72a13dd1e26e672d5cd57aa88ad98b4ac08a23e768c",
+  "governance_decision_commit": "d12cfbfec733f601dcf4a97ccf74d0140bfe5f52",
+  "status": "complete",
+  "verifications": [
+    {
+      "repository": "StegVerse-Labs/Site",
+      "issue_number": 14,
+      "comment_id": 5226911203,
+      "classification": "POST_TAG_AWARENESS_ONLY",
+      "status": "pass"
+    },
+    {
+      "repository": "GCAT-BCAT-Engine/Publisher",
+      "issue_number": 4,
+      "comment_id": 5226911747,
+      "classification": "POST_TAG_AWARENESS_ONLY",
+      "status": "pass"
+    },
+    {
+      "repository": "StegVerse-Labs/admissibility-wiki",
+      "issue_number": 19,
+      "comment_id": 5226912409,
+      "classification": "POST_TAG_DOCUMENTATION_AWARENESS_ONLY",
+      "status": "pass"
+    },
+    {
+      "repository": "StegVerse-002/stegguardian-wiki",
+      "issue_number": 4,
+      "comment_id": 5226913120,
+      "classification": "POST_TAG_EVIDENCE_AWARENESS_ONLY",
+      "status": "pass"
+    }
+  ],
+  "authority_boundary": {
+    "site_activation_authorized": false,
+    "publication_authorized": false,
+    "admissibility_authorized": false,
+    "guardian_enforcement_authorized": false,
+    "deployment_authorized": false,
+    "release_authorized": false,
+    "execution_authorized": false,
+    "cross_repository_mutation_authorized": false
+  }
+}
