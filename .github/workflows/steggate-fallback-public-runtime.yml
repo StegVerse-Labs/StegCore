@@ -65,15 +65,10 @@ jobs:
           ORIGIN=""
           for attempt in $(seq 1 60); do
             ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/steggate-fallback-tunnel.log | tail -1 || true)"
-            if [ -n "$ORIGIN" ]; then
-              break
-            fi
+            if [ -n "$ORIGIN" ]; then break; fi
             sleep 1
           done
-          if [ -z "$ORIGIN" ]; then
-            cat build/steggate-fallback-tunnel.log
-            exit 1
-          fi
+          test -n "$ORIGIN" || { cat build/steggate-fallback-tunnel.log; exit 1; }
           echo "$ORIGIN" > build/steggate-fallback-origin.txt
           EDGE_READY=0
           for attempt in $(seq 1 90); do
@@ -83,11 +78,7 @@ jobs:
             fi
             sleep 2
           done
-          if [ "$EDGE_READY" -ne 1 ]; then
-            cat build/steggate-fallback-tunnel.log
-            cat build/steggate-fallback-public-health.err || true
-            exit 1
-          fi
+          test "$EDGE_READY" -eq 1 || { cat build/steggate-fallback-tunnel.log; cat build/steggate-fallback-public-health.err || true; exit 1; }
           echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"
 
       - name: Verify full public StegGate acceptance contract
@@ -95,18 +86,11 @@ jobs:
         env:
           STEGGATE_ORIGIN: ${{ steps.tunnel.outputs.origin }}
         run: |
-          set +e
           python scripts/observe_steggate_live_service.py > build/steggate-fallback-observer.stdout 2>&1
-          RC=$?
           cat build/steggate-fallback-observer.stdout
-          test -f build/steggate-live-observation.json
           cp build/steggate-live-observation.json build/steggate-fallback-live-proof.json
-          if [ "$RC" -ne 0 ]; then
-            exit "$RC"
-          fi
 
       - name: Update stable fallback runtime registry
-        if: success()
         env:
           GH_TOKEN: ${{ github.token }}
           ORIGIN: ${{ steps.tunnel.outputs.origin }}
@@ -115,27 +99,23 @@ jobs:
           import json, os
           from pathlib import Path
           proof = json.loads(Path("build/steggate-fallback-live-proof.json").read_text())
-          origin = os.environ["ORIGIN"]
           print("## StegGate fallback public-runtime registry")
           print()
           print("State: `LIVE_ACCEPTANCE_PASS`")
           print()
-          print(f"Current public origin: `{origin}`")
+          print(f"Current public origin: `{os.environ['ORIGIN']}`")
           print(f"Workflow run: `{os.environ['GITHUB_RUN_ID']}` attempt `{os.environ['GITHUB_RUN_ATTEMPT']}`")
           print(f"StegCore commit: `{os.environ['GITHUB_SHA']}`")
           print()
           print("Acceptance: `/health` PASS; `/v1/self-test` exact four-disposition PASS; `/v1/evaluate` complete-matrix PASS.")
           print()
-          print("This is a rotating zero-spend public runtime lane backed by the canonical StegCore source. It grants no additional policy, execution, Continuity, publication, payment, custody, or release authority. The persistent deployment remains a separate activation objective.")
+          print("The origin is supervised by this run. If its tunnel degrades, the workflow recreates the tunnel, repeats the full acceptance contract, and updates this registry before advertising the replacement.")
           print()
           print(f"Observed at: `{proof.get('observed_at')}`")
           PY
-          gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${REGISTRY_COMMENT_ID}" \
-            --method PATCH \
-            --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
+          gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${REGISTRY_COMMENT_ID}" --method PATCH --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
 
-      - name: Preserve fallback evidence
-        if: always()
+      - name: Preserve initial fallback evidence
         uses: actions/upload-artifact@v4
         with:
           name: steggate-fallback-live-proof-${{ github.run_id }}-${{ github.run_attempt }}
@@ -143,6 +123,54 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Keep public runtime alive through overlap window
-        if: success()
-        run: sleep 3900
+      - name: Supervise and self-heal public runtime through overlap window
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          END=$(( $(date +%s) + 3900 ))
+          while [ "$(date +%s)" -lt "$END" ]; do
+            ORIGIN="$(cat build/steggate-fallback-origin.txt)"
+            if curl --fail --silent --max-time 10 "$ORIGIN/health" >/dev/null 2>&1; then
+              sleep 30
+              continue
+            fi
+
+            echo "Public fallback degraded; rotating tunnel."
+            kill "$(cat build/steggate-fallback-tunnel.pid)" 2>/dev/null || true
+            : > build/steggate-fallback-tunnel.log
+            nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 > build/steggate-fallback-tunnel.log 2>&1 &
+            echo $! > build/steggate-fallback-tunnel.pid
+
+            NEW_ORIGIN=""
+            for attempt in $(seq 1 60); do
+              NEW_ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/steggate-fallback-tunnel.log | tail -1 || true)"
+              if [ -n "$NEW_ORIGIN" ] && curl --fail --silent --max-time 10 "$NEW_ORIGIN/health" >/dev/null 2>&1; then break; fi
+              sleep 2
+            done
+            if [ -z "$NEW_ORIGIN" ]; then
+              sleep 30
+              continue
+            fi
+
+            STEGGATE_ORIGIN="$NEW_ORIGIN" python scripts/observe_steggate_live_service.py > build/steggate-fallback-observer.stdout 2>&1 || { sleep 30; continue; }
+            cp build/steggate-live-observation.json build/steggate-fallback-live-proof.json
+            echo "$NEW_ORIGIN" > build/steggate-fallback-origin.txt
+            OBSERVED_AT="$(python -c 'import json; print(json.load(open("build/steggate-fallback-live-proof.json"))["observed_at"])')"
+            cat > "$RUNNER_TEMP/registry.md" <<EOF
+          ## StegGate fallback public-runtime registry
+
+          State: \`LIVE_ACCEPTANCE_PASS\`
+
+          Current public origin: \`$NEW_ORIGIN\`
+          Workflow run: \`$GITHUB_RUN_ID\` attempt \`$GITHUB_RUN_ATTEMPT\`
+          StegCore commit: \`$GITHUB_SHA\`
+
+          Acceptance: \`/health\` PASS; \`/v1/self-test\` exact four-disposition PASS; \`/v1/evaluate\` complete-matrix PASS.
+
+          The origin is supervised by this run and was automatically rotated after a failed public health check.
+
+          Observed at: \`$OBSERVED_AT\`
+          EOF
+            gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${REGISTRY_COMMENT_ID}" --method PATCH --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
+            sleep 30
+          done
