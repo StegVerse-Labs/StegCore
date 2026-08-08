@@ -1,0 +1,35 @@
+name: Action-First Runtime Validation
+
+on:
+  pull_request:
+    paths:
+      - 'src/stegcore/action_first_reconstruction.py'
+      - 'tests/test_action_first_reconstruction_runtime.py'
+      - 'docs/ACTION_FIRST_RUNTIME.md'
+      - 'docs/ACTION_FIRST_RUNTIME_MIRROR_HANDOFF.md'
+      - 'management/action-first-runtime-task.json'
+      - '.github/workflows/action-first-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install project and tests
+        run: |
+          python -m pip install -e .
+          python -m pip install pytest
+      - name: Run Action-First runtime tests
+        run: python -m pytest -q tests/test_action_first_reconstruction_runtime.py
+      - name: Compile runtime producer
+        run: python -m py_compile src/stegcore/action_first_reconstruction.py
+      - name: Prove execution boundary file was not changed by this lane
+        run: |
+          git diff --exit-code origin/main...HEAD -- src/stegcore/runtime.py
