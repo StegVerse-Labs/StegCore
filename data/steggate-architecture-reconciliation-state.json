@@ -1,0 +1,34 @@
+{
+  "schema": "stegverse.steggate_architecture_reconciliation.v1",
+  "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
+  "canonical_issue": "StegVerse-Labs/StegCore#68",
+  "state": "IN_PROGRESS",
+  "canonical_layers": [
+    {"path": "src/stegcore/decision.py", "role": "minimal interface", "authority": "non-exclusive"},
+    {"path": "src/stegcore/three_layer.py", "role": "deterministic three-layer admissibility runtime", "authority": "existing canonical runtime candidate"},
+    {"path": "contracts/permission-admissibility-boundary.v1.json", "role": "permission/admissibility invariant", "authority": "canonical semantic contract"},
+    {"path": "src/stegcore/commit_governance.py", "role": "commit-coherence gate", "authority": "canonical commit boundary"},
+    {"path": "src/stegcore/runtime.py", "symbol": "governed_execute", "role": "production mutation boundary", "authority": "canonical mutation boundary"},
+    {"path": "src/stegcore/runtime_adapters.py", "role": "caller convergence", "authority": "canonical adapter layer"},
+    {"path": "docs/DECISION_STATE_RECONSTRUCTION.md", "role": "decision/execution/observed reconstruction", "authority": "canonical reconstruction contract"}
+  ],
+  "provisional_layers": [
+    {"path": "src/stegcore/steggate.py", "classification": "PROVISIONAL_ADAPTER_OR_DUPLICATION_RISK"},
+    {"path": "src/stegcore/service.py", "classification": "PROVISIONAL_SERVICE_ADAPTER"}
+  ],
+  "required_classifications": [
+    "ADAPTER_TO_EXISTING_CANONICAL_ENGINE",
+    "NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS",
+    "NEW_REQUIRED_SEMANTIC_NOT_PRESENT_ELSEWHERE",
+    "DUPLICATE_REMOVE_OR_REFACTOR"
+  ],
+  "verified_findings": [
+    "decision.py minimal means interface scope, not a resource-budget directive",
+    "decision.py minimal status does not establish absence of a broader engine",
+    "three_layer.py already implements substantive admissibility checks and deterministic evidence receipts",
+    "commit_governance and governed_execute already own the post-admissibility commit/mutation boundary",
+    "the live service must expose one canonical chain rather than create parallel authority"
+  ],
+  "next_action": "Trace the remaining call graph and refactor provisional live-service logic to wrap/normalize existing canonical runtime semantics wherever overlap exists.",
+  "archive_allowed": false
+}
