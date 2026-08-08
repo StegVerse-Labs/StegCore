@@ -1,0 +1,93 @@
+name: Create Authorized StegCore Tag
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'evidence/independent-release-policy.json'
+      - '.github/workflows/authorized-stegcore-tag.yml'
+  workflow_dispatch: {}
+
+concurrency:
+  group: stegcore-authorized-tag-v0.1.0
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out StegCore
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate independent ALLOW and candidate binding
+        id: policy
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+
+          policy = json.loads(Path('evidence/independent-release-policy.json').read_text())
+          candidate = json.loads(Path('evidence/release-candidate-request.json').read_text())
+          readiness = json.loads(Path('evidence/release-readiness.json').read_text())
+
+          assert policy['artifact_type'] == 'stegcore.independent_release_policy_evidence'
+          assert policy['status'] == 'pass'
+          assert policy['decision'] == 'ALLOW'
+          assert policy['policy_id'] == 'stegcore-release-policy-v1'
+          assert policy['decision_owner'] == 'StegVerse-Labs/Governance'
+          assert policy['next_permitted_action'] == 'create annotated tag only'
+          assert policy['release_created'] is False
+          assert policy['tag_created'] is False
+          assert policy['deployment_authorized'] is False
+          assert policy['continuity_receipt_minted'] is False
+          assert candidate['version'] == policy['candidate_version']
+          assert candidate['tag'] == policy['candidate_tag']
+          assert candidate['stegcore_commit'] == policy['candidate_commit']
+          assert readiness['gates']['runtime_validation'] == 'pass'
+          assert readiness['gates']['downstream_verification'] == 'pass'
+          assert readiness['gates']['governance_freshness'] == 'pass'
+          assert readiness['release_permitted'] is False
+          assert readiness['tag_permitted'] is False
+
+          print(f"tag={policy['candidate_tag']}")
+          print(f"commit={policy['candidate_commit']}")
+          print(f"decision_hash={policy['decision_hash']}")
+          PY
+
+      - name: Create or verify authorized annotated tag
+        env:
+          TAG: ${{ steps.policy.outputs.tag }}
+          COMMIT: ${{ steps.policy.outputs.commit }}
+          DECISION_HASH: ${{ steps.policy.outputs.decision_hash }}
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            test "$(git rev-list -n 1 "refs/tags/${TAG}")" = "$COMMIT"
+            test "$(git cat-file -t "refs/tags/${TAG}")" = "tag"
+            echo "Authorized annotated tag ${TAG} already exists at ${COMMIT}."
+            exit 0
+          fi
+          git config user.name "stegverse-release-bot"
+          git config user.email "stegverse-release-bot@users.noreply.github.com"
+          git tag -a "$TAG" "$COMMIT" -m "StegCore ${TAG}: authorized by Governance decision ${DECISION_HASH}"
+          git push origin "refs/tags/${TAG}"
+          git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null
+          test "$(git rev-list -n 1 "refs/tags/${TAG}")" = "$COMMIT"
+          test "$(git cat-file -t "refs/tags/${TAG}")" = "tag"
+
+      - name: Record activation on release-readiness issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.policy.outputs.tag }}
+          COMMIT: ${{ steps.policy.outputs.commit }}
+          DECISION_HASH: ${{ steps.policy.outputs.decision_hash }}
+        run: |
+          gh issue comment 37 --body "Authorized annotated tag \`${TAG}\` activated at \`${COMMIT}\` after independent Governance ALLOW \`${DECISION_HASH}\`. This tag is not a GitHub Release, deployment, Continuity receipt, or execution-authority grant. Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
