@@ -1,7 +1,7 @@
 {
   "artifact_type": "stegcore.release_readiness_assessment",
-  "assessment_hash": "92d4dd3e44c155d2362230142e4e611f86f196dc1baa190e1775c1f2b4427bbf",
-  "completion_event": "independent release policy permits a versioned tag",
+  "assessment_hash": "d1d4a28c5911948f59e618e1ac248339c5f50c903e7649da480ef6e9495ad843",
+  "completion_event": "authorized annotated tag v0.1.0 is created at candidate commit 70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
   "continuity_authority_claimed": false,
   "destination_repository": "StegVerse-Labs/StegCore",
   "downstream_gates": [
@@ -48,7 +48,7 @@
     "downstream_verification": "pass",
     "evidence_integrity": "pass",
     "governance_freshness": "pass",
-    "independent_release_policy": "pending",
+    "independent_release_policy": "pass",
     "runtime_validation": "pass"
   },
   "governance_commit": "c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6",
@@ -68,6 +68,10 @@
       "sort_keys": true
     }
   },
+  "independent_release_policy_candidate_tag": "v0.1.0",
+  "independent_release_policy_decision_hash": "7b90b85d4c9a4fe0666dd72a13dd1e26e672d5cd57aa88ad98b4ac08a23e768c",
+  "independent_release_policy_evidence": "evidence/independent-release-policy.json",
+  "independent_release_policy_source_commit": "d12cfbfec733f601dcf4a97ccf74d0140bfe5f52",
   "production_authority_claimed": false,
   "receipt_minting_authority_claimed": false,
   "record_type": "release_readiness_assessment",
@@ -75,7 +79,7 @@
   "runtime_evidence_hash": "7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb",
   "schema_version": "1.1",
   "source_repository": "StegVerse-Labs/StegCore",
-  "state": "governance_fresh_release_blocked",
+  "state": "ready_to_tag",
   "stegcore_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
-  "tag_permitted": false
+  "tag_permitted": true
 }
