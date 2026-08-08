@@ -1,0 +1,27 @@
+{
+  "artifact_type": "stegcore.independent_release_policy_evidence",
+  "schema_version": "1.0",
+  "status": "pass",
+  "decision": "ALLOW",
+  "policy_id": "stegcore-release-policy-v1",
+  "decision_owner": "StegVerse-Labs/Governance",
+  "source_repository": "StegVerse-Labs/Governance",
+  "source_commit": "d12cfbfec733f601dcf4a97ccf74d0140bfe5f52",
+  "source_path": "evidence/stegcore-release-decision.json",
+  "decision_hash": "7b90b85d4c9a4fe0666dd72a13dd1e26e672d5cd57aa88ad98b4ac08a23e768c",
+  "candidate_version": "0.1.0",
+  "candidate_tag": "v0.1.0",
+  "candidate_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
+  "next_permitted_action": "create annotated tag only",
+  "release_created": false,
+  "tag_created": false,
+  "deployment_authorized": false,
+  "continuity_receipt_minted": false,
+  "authority_boundary": {
+    "evidence_copy_is_release_authority": false,
+    "allow_decision_is_deployment": false,
+    "allow_decision_is_tag_creation": false,
+    "governance_claims_execution_authority": false,
+    "governance_claims_continuity_authority": false
+  }
+}
