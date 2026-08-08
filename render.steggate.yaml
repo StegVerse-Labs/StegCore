@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: steggate-core
+    runtime: python
+    plan: free
+    region: oregon
+    repo: https://github.com/StegVerse-Labs/StegCore
+    branch: main
+    autoDeploy: true
+    buildCommand: pip install --upgrade pip && pip install -e .
+    startCommand: uvicorn stegcore.service:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
