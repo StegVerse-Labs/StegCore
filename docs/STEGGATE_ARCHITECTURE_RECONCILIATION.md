@@ -1,96 +1,100 @@
 # StegGate Architecture Reconciliation
 
-## Purpose
+## Status
 
-This record prevents loss of architectural context while `STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001` remains active. It is a worker-consumed continuation record, not a replacement decision engine.
+```text
+goal_id: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001
+state: COMPLETE
+canonical_issue: StegVerse-Labs/StegCore#68
+archive_allowed: false
+reason: live deployment/runtime observation remains active
+```
 
-## Verified existing canonical layers
+## Resolved architecture
 
-1. `src/stegcore/decision.py`
-   - intentionally documents itself as a minimal deterministic decision interface;
-   - uses shape references only and explicitly says it is not a full policy engine;
-   - therefore must not be treated, by itself, as evidence that broader StegGate capability is missing.
-
-2. `src/stegcore/three_layer.py`
-   - existing deterministic three-layer admissibility runtime;
-   - evaluates judgment conditions, signal admission/state integrity, and execution-boundary currency/recoverability;
-   - returns `ALLOW`, `DENY`, or `FAIL-CLOSED`;
-   - preserves policy/delegation/evidence references, reference-state hashes, findings, and a deterministic evidence receipt;
-   - does not mint Continuity receipts.
-
-3. `contracts/permission-admissibility-boundary.v1.json` plus `docs/PERMISSION_ADMISSIBILITY_MIRROR_HANDOFF.md`
-   - canonical permission/admissibility semantic invariant;
-   - permission is independent of present-tense admissibility;
-   - successful execution does not prove authority or admissibility.
-
-4. `src/stegcore/commit_governance.py`
-   - canonical commit-coherence gate after admissibility;
-   - preserves authority, denial reachability, governed continuation, capability binding, and receipt chaining.
-
-5. `src/stegcore/runtime.py#governed_execute`
-   - production mutation boundary;
-   - mutation callback is unreachable unless the decision layer and coherence gate permit execution.
-
-6. `src/stegcore/runtime_adapters.py`
-   - canonical adapter convergence surface for supported caller classes.
-
-7. `docs/DECISION_STATE_RECONSTRUCTION.md` and Continuity interop
-   - complete decision state, including non-execution and reconciliation, is part of reconstructable reality.
-
-## Provisional live-service additions
-
-The files below were added during live functional activation and MUST remain provisional until this reconciliation is complete:
-
-- `src/stegcore/steggate.py`
-- `src/stegcore/service.py`
-- `tests/test_steggate_service.py`
-- `docs/STEGGATE_LIVE_SERVICE.md`
-
-Current classification: `PROVISIONAL_ADAPTER_OR_DUPLICATION_RISK`.
-
-The new evaluator overlaps existing three-layer admissibility semantics. It additionally models `REVIEW` and exposes a full predicate matrix. That does not yet establish that it should become a separate authoritative decision engine.
-
-## Required reconciliation outcome
-
-Before further feature expansion or live activation, classify each new live-service responsibility as exactly one of:
-
-- `ADAPTER_TO_EXISTING_CANONICAL_ENGINE`
-- `NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS`
-- `NEW_REQUIRED_SEMANTIC_NOT_PRESENT_ELSEWHERE`
-- `DUPLICATE_REMOVE_OR_REFACTOR`
-
-The preferred architecture is one canonical admissibility authority with service/API normalization around it, not parallel engines that can diverge.
-
-## Required call graph to establish
+The deliberately minimal `src/stegcore/decision.py` is a compatibility decision interface, not evidence that StegCore lacked the broader admissibility engine. The canonical StegGate path is now reconciled as one chain rather than parallel authorities:
 
 ```text
 Governance policy/evidence artifacts
         ↓
-existing StegCore admissibility runtime(s)
+src/stegcore/three_layer.py:evaluate_three_layer
+  canonical judgment + signal/state + execution-boundary admissibility
         ↓
-complete decision-state normalization
+src/stegcore/steggate.py:evaluate_admissibility
+  complete matrix normalization + pre-commit composition
+  + candidate-hash-bound REVIEW when required approval is absent
         ↓
-commit coherence
+src/stegcore/commit_governance.py:coherence_gate
         ↓
-governed_execute mutation boundary
+src/stegcore/runtime.py:governed_execute
         ↓
-execution observation
+src/stegcore/runtime_adapters.py:execute_adapter / execute_http
         ↓
-Continuity/reconstruction + reconciliation
+execution observation + reconcile_effect
+        ↓
+Continuity/reconstruction consumers
 ```
 
-The live service must expose this canonical chain without acquiring mutation, Continuity, publication, deployment, or external legal authority.
+`contracts/permission-admissibility-boundary.v1.json` remains a cross-cutting invariant: permission is recorded independently and never substitutes for present-tense admissibility. `docs/DECISION_STATE_RECONSTRUCTION.md` remains the reconstruction contract for decision, execution, and observed reality.
 
-## Archive guard
+## Live-service reconciliation
 
-While this reconciliation is incomplete:
+The first version of `src/stegcore/steggate.py` duplicated authority/evidence/policy boolean evaluation. That implementation has been replaced.
 
-- `archive_allowed=false`;
-- completion of a bounded subtask does not make the active functional goal archive-ready;
-- historical context loss is a validation failure;
-- the worker must emit `DO_NOT_ARCHIVE` and the exact next action.
+Current classification:
+
+| Surface | Classification | Result |
+|---|---|---|
+| `src/stegcore/steggate.py` | `ADAPTER_TO_EXISTING_CANONICAL_ENGINE` + `NORMALIZATION_OF_EXISTING_CANONICAL_RESULTS` + `NEW_REQUIRED_SEMANTIC_NOT_PRESENT_ELSEWHERE` | calls `evaluate_three_layer`; emits the full reconstructable matrix; composes existing capability/continuity bindings; adds candidate-hash-bound `REVIEW` only for required-but-absent human approval |
+| `src/stegcore/service.py` | `ADAPTER_TO_EXISTING_CANONICAL_ENGINE` | HTTP transport only; `/v1/evaluate` routes through the reconciled composition; no arbitrary external mutation endpoint |
+| `tests/test_steggate_service.py` | validation | proves canonical binding and four-outcome normalization |
+
+The service therefore no longer claims an independent policy engine. Canonical ALLOW/DENY/FAIL_CLOSED authority comes from `evaluate_three_layer`; known canonical denial outranks REVIEW, canonical FAIL-CLOSED remains epistemically distinct, and supplemental runtime-binding uncertainty fails closed.
+
+## Full-matrix preservation
+
+The normalized matrix preserves material predicates even though the canonical three-layer evaluator can terminate on the first governing failure. The matrix is reconstruction evidence, not an alternative source of authority. It records the state of judgment, signal/state integrity, execution-boundary facts, capability, verified-continuity input, approval binding, and permission presence.
+
+The result also binds:
+
+- candidate hash;
+- canonical three-layer request hash;
+- canonical three-layer receipt hash;
+- final decision-state hash;
+- permission/admissibility separation;
+- `continuity_receipt_minted=false`;
+- `external_execution_performed=false` for the evaluation-only service.
+
+## Validation
+
+Hosted repository validation after reconciliation:
+
+```text
+workflow: StegCore Tests
+run_id: 31270227248
+job_id: 93134793274
+head_sha: 5d79a86517632a6a0cda295f3f1d63280477aff5
+result: PASS
+140 passed, 127 subtests passed
+artifact_id: 9025372171
+artifact_digest: sha256:1de4068a06e0271d6e6077fc0b8d4e33520ac3153c21a0291018064abf522a9c
+```
+
+## Remaining activation work
+
+Architecture reconciliation is no longer a blocker. The active blocker is hosted runtime activation/observation.
+
+Render service `srv-d9rlic2jobas73do1q6g` exists but the attempted build was canceled because the workspace exhausted build-pipeline minutes. The next executable action is to deploy the same canonical `main` service through an available authorized hosting control plane, or allow the existing Render service to deploy once capacity returns, then directly observe:
+
+1. `/health` healthy and canonical-three-layer-bound;
+2. `/v1/self-test` PASS for ALLOW/DENY/REVIEW/FAIL_CLOSED;
+3. `/v1/evaluate` returning a complete matrix plus canonical three-layer and decision-state hashes.
+
+## Session-continuity guard
 
 Canonical machine context: `data/steggate-session-context.json`.
+Architecture state: `data/steggate-architecture-reconciliation-state.json`.
 Worker: `scripts/guard_steggate_session_continuity.py`.
 Workflow: `.github/workflows/steggate-session-continuity.yml`.
-Canonical activation issue: `StegVerse-Labs/StegCore#68`.
+
+The active functional goal is not archive-ready until hosted activation and observations are complete or genuinely transferred without losing execution context.
