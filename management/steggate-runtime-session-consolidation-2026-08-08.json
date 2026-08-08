@@ -1,11 +1,11 @@
 {
-  "schema_version": "stegverse.session-consolidation.v2",
+  "schema_version": "stegverse.session-consolidation.v3",
   "session_id": "steggate-runtime-governed-ai-consolidation-2026-08-08",
   "repository": "StegVerse-Labs/StegCore",
   "branch": "main",
   "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
-  "originating_session_goal": "Complete the StegGate governed runtime boundary, preserve complete decision-state reality, repair and automate its evidence path, verify downstream awareness, advance release gates without inventing authority, and durably transfer adjacent Governed AI / seven-lane work.",
-  "session_role": "MERGED_INTO_CANONICAL_WORKSTREAM",
+  "originating_session_goal": "Complete the StegGate governed runtime boundary, preserve complete decision-state reality, repair and automate evidence, verify downstream awareness, satisfy independent Governance release policy, activate every authorized finished consequence, and durably transfer adjacent goals.",
+  "session_role": "COMPLETE_ARCHIVE",
   "active_session_claims": 0,
   "chat_only_requirements_remaining": 0,
   "inventory": [
@@ -13,157 +13,134 @@
       "task_id": "STEGCORE-21-GOVERNED-RUNTIME-ADAPTERS",
       "destination": "StegVerse-Labs/StegCore",
       "locations": ["src/stegcore/runtime_adapters.py", "tests/test_governed_runtime_adapters.py", "tests/test_governed_runtime_reconciliation.py", "docs/GOVERNED_RUNTIME_ADAPTERS.md", ".github/workflows/governed-runtime-adapters.yml", "management/governed-runtime-adapters-task.json", "issue #21", "PR #55"],
-      "owner": "StegCore",
       "claim_state": "COMPLETE",
       "completion_state": "MERGED",
       "validation_state": "HOSTED_GREEN",
       "integration_state": "COMPLETE_ON_MAIN",
-      "evidence": ["merge 8435279b194b9b15e0be66ef2c6f6668a842afdc", "run 31260775199", "job 93111118343"],
-      "next_executable_action": "none"
+      "evidence": ["merge 8435279b194b9b15e0be66ef2c6f6668a842afdc", "run 31260775199", "job 93111118343"]
     },
     {
-      "task_id": "STEGCORE-HTTP-BOUNDED-TRANSPORT",
-      "destination": "StegVerse-Labs/StegCore",
-      "locations": ["src/stegcore/runtime_adapters.py", "tests/test_governed_runtime_adapters.py"],
-      "owner": "StegCore",
-      "claim_state": "COMPLETE",
-      "completion_state": "MERGED_WITH_ISSUE_21",
-      "validation_state": "HOSTED_GREEN",
-      "integration_state": "COMPLETE_ON_MAIN",
-      "evidence": ["run 31260775199"],
-      "next_executable_action": "none"
-    },
-    {
-      "task_id": "STEGCORE-DECISION-STATE-PRODUCER",
+      "task_id": "STEGCORE-DECISION-STATE-RUNTIME",
       "destination": "StegVerse-Labs/StegCore",
       "locations": ["docs/DECISION_STATE_RECONSTRUCTION.md", "src/stegcore/runtime_adapters.py", "tests/test_governed_runtime_reconciliation.py"],
-      "owner": "StegCore",
       "claim_state": "COMPLETE",
       "completion_state": "MERGED",
       "validation_state": "HOSTED_GREEN",
-      "integration_state": "BOUND_TO_ARA_AND_CONTINUITY",
-      "evidence": ["run 31260775199", "Continuity run 31242432042"],
-      "next_executable_action": "none"
+      "integration_state": "BOUND_TO_ARA_AND_CONTINUITY"
     },
     {
       "task_id": "STEGCORE-EVIDENCE-PERSISTENCE",
       "destination": "StegVerse-Labs/StegCore",
-      "locations": [".github/workflows/runtime-tests.yml", "issue #23", "PR #56", "scripts/record_runtime_validation.py", "scripts/assess_release_readiness.py", "tests/test_runtime_evidence_generators.py"],
-      "owner": "StegCore automation",
+      "locations": [".github/workflows/runtime-tests.yml", "issue #23", "scripts/record_runtime_validation.py", "scripts/assess_release_readiness.py", "tests/test_runtime_evidence_generators.py"],
       "claim_state": "COMPLETE",
       "completion_state": "CLOSED_AND_MERGED",
       "validation_state": "HOSTED_GREEN",
-      "integration_state": "CURRENT_EVIDENCE_PERSISTED",
-      "evidence": ["merge 845bf0329ece38fdfbdfb0ac5d42af0b2f4aa065", "run 31262198018", "runtime evidence hash 7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb"],
-      "next_executable_action": "none"
+      "evidence": ["run 31262198018", "runtime evidence hash 7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb"]
     },
     {
-      "task_id": "STEGCORE-DOWNSTREAM-VERIFY",
-      "destination": "StegVerse-Labs/StegCore plus four successor issue records",
-      "locations": ["evidence/downstream-verification-receipts.json", "Site#14", "Publisher#4", "admissibility-wiki#19", "stegguardian-wiki#4"],
-      "owner": "StegCore release-readiness integration",
+      "task_id": "STEGCORE-DOWNSTREAM-RUNTIME-VERIFY",
+      "destination": "StegVerse-Labs/StegCore plus four successor records",
+      "locations": ["evidence/downstream-verification-receipts.json", "scripts/reconcile_downstream_verification.py", ".github/workflows/reconcile-downstream-verification.yml"],
       "claim_state": "COMPLETE",
       "completion_state": "ALL_REQUIRED_DESTINATIONS_OBSERVED_PASS",
-      "validation_state": "RECEIPTS_BOUND_TO_CURRENT_RUNTIME_EVIDENCE",
-      "integration_state": "COMPLETE",
-      "evidence": ["comments 5226561201, 5226562055, 5226562821, 5226563561"],
-      "next_executable_action": "none"
-    },
-    {
-      "task_id": "STEGCORE-DOWNSTREAM-RECONCILE-AUTOMATION",
-      "destination": "StegVerse-Labs/StegCore",
-      "locations": ["scripts/reconcile_downstream_verification.py", "tests/test_downstream_verification_reconciliation.py", ".github/workflows/reconcile-downstream-verification.yml", "evidence/release-readiness.json"],
-      "owner": "StegCore repository automation",
-      "claim_state": "COMPLETE",
-      "completion_state": "ACTIVE_AUTOMATION",
       "validation_state": "HOSTED_GREEN",
-      "integration_state": "DOWNSTREAM_GATE_PASS",
-      "evidence": ["run 31262315602"],
-      "next_executable_action": "rerun when bound evidence changes"
+      "evidence": ["run 31262315602"]
     },
     {
       "task_id": "STEGCORE-GOVERNANCE-FRESHNESS",
-      "originating_goal": "Independently establish whether the pinned Governance fixtures remain current enough for this release candidate without granting release authority.",
       "destination": "StegVerse-Labs/StegCore",
-      "locations": ["contracts/governance_snapshot/manifest.json", "evidence/governance-freshness.json", "evidence/release-readiness.json", "STEGCORE_MIRROR_HANDOFF.md"],
-      "owner": "StegCore release-readiness integration",
+      "locations": ["contracts/governance_snapshot/manifest.json", "evidence/governance-freshness.json", "evidence/release-readiness.json"],
       "claim_state": "COMPLETE",
       "completion_state": "PASS",
-      "validation_state": "LIVE_GOVERNANCE_HEAD_OBSERVED_AND_SIX_OF_SIX_PINNED_FIXTURE_BLOBS_MATCH",
-      "integration_state": "RELEASE_READINESS_GATE_PASS",
-      "evidence": ["Governance head 94761bb15b1aac081617774737472b99139729b0", "freshness commit c24b3fd762d28c17bc3c4e0ee1d5b4620c8ef07a", "freshness hash f0ebf561cb530d9f9a0535d02f3f563fc73b1a8568410f682f61001dc325b32c", "release-readiness commit 512f6029977de575925e600acb6ad23a0f177783"],
-      "next_executable_action": "none until Governance fixture blobs change"
+      "validation_state": "LIVE_GOVERNANCE_HEAD_OBSERVED_AND_SIX_OF_SIX_FIXTURE_BLOBS_MATCH",
+      "evidence": ["StegVerse-Labs/Governance head 94761bb15b1aac081617774737472b99139729b0", "commit c26511931b82a65aaeb99b9926a9728ce991431d"]
     },
     {
       "task_id": "STEGCORE-INDEPENDENT-RELEASE-POLICY",
-      "originating_goal": "Activate release only after a genuinely independent release-policy authority permits a versioned tag.",
+      "destination": "StegVerse-Labs/Governance + StegVerse-Labs/StegCore",
+      "locations": ["Governance/policies/stegcore-release-policy-v1.json", "Governance/evidence/stegcore-release-decision.json", "StegCore/evidence/independent-release-policy.json", "StegCore/evidence/release-readiness.json", "issue #37"],
+      "owner": "StegVerse-Labs/Governance",
+      "claim_state": "COMPLETE",
+      "completion_state": "ALLOW",
+      "validation_state": "ALL_POLICY_CHECKS_PASS",
+      "integration_state": "DURABLY_BOUND_IN_STEGCORE",
+      "evidence": ["Governance commit d12cfbfec733f601dcf4a97ccf74d0140bfe5f52", "decision hash 7b90b85d4c9a4fe0666dd72a13dd1e26e672d5cd57aa88ad98b4ac08a23e768c", "Governance workflow run 31265845417", "StegCore issue #37 CLOSED"]
+    },
+    {
+      "task_id": "STEGCORE-AUTHORIZED-TAG-V0.1.0",
       "destination": "StegVerse-Labs/StegCore",
-      "locations": ["issue #37", "evidence/release-readiness.json"],
-      "owner": "StegVerse-Labs/StegCore#37 / repository release policy",
-      "claim_state": "BLOCKED",
-      "completion_state": "PENDING_INDEPENDENT_AUTHORITY",
-      "validation_state": "ALL_OTHER_RELEASE_GATES_PASS",
-      "integration_state": "MACHINE_OWNED_FAIL_CLOSED",
-      "evidence": ["release-readiness assessment hash 92d4dd3e44c155d2362230142e4e611f86f196dc1baa190e1775c1f2b4427bbf"],
-      "next_executable_action": "independent_release_policy must become durably pass under issue #37; this session must not self-authorize that gate"
+      "locations": ["evidence/independent-release-policy.json", ".github/workflows/authorized-stegcore-tag.yml", "refs/tags/v0.1.0", "evidence/release-readiness.json"],
+      "owner": "StegCore repository automation",
+      "claim_state": "COMPLETE",
+      "completion_state": "AUTHORIZED_ANNOTATED_TAG_CREATED",
+      "validation_state": "HOSTED_GREEN_AND_REMOTE_TAG_OBSERVED",
+      "integration_state": "ACTIVE",
+      "evidence": ["workflow run 31265918041", "job 93123891509", "tag object 071109054e212cba7d52544c62b09581c5eac324", "target 70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af"]
+    },
+    {
+      "task_id": "STEGCORE-POST-TAG-AWARENESS",
+      "destination": "StegVerse-Labs/StegCore plus Site/Publisher/admissibility-wiki/stegguardian-wiki issue records",
+      "locations": ["issue #64", "evidence/post-tag-downstream-awareness.json", "Site#14 comment 5226911203", "Publisher#4 comment 5226911747", "admissibility-wiki#19 comment 5226912409", "stegguardian-wiki#4 comment 5226913120"],
+      "claim_state": "COMPLETE",
+      "completion_state": "FOUR_OF_FOUR_POST_TAG_AWARENESS_RECEIPTS_PERSISTED",
+      "validation_state": "EXACT_TAG_OBJECT_TARGET_AND_DECISION_HASH_BOUND",
+      "integration_state": "COMPLETE_AWARENESS_ONLY",
+      "evidence": ["issue #64 CLOSED", "commit dd8268184aaf39e8d46712e45f3c624a16120dee"]
     },
     {
       "task_id": "SV-GOVAI-PRIMARY-001",
       "destination": "GCAT-BCAT-Engine/workflows",
-      "locations": ["experiments/sv-cost-program/governed-ai-premium/SV_GOVERNED_AI_PREMIUM_MIRROR_HANDOFF.md"],
-      "owner": "Governed AI workstream",
       "claim_state": "MERGED_INTO_CANONICAL_WORKSTREAM",
       "completion_state": "SESSION_ARCHIVE_READY_PROJECT_CONTINUATION_MACHINE_OWNED",
-      "validation_state": "LOCAL_STACK_HOSTED_GREEN",
-      "integration_state": "DURABLY_TRANSFERRED",
       "next_executable_action": "repository-native continuation only"
     },
     {
       "task_id": "SV-GOVAI-DEEPSEEK-002",
       "destination": "GCAT-BCAT-Engine/workflows",
-      "locations": ["experiments/sv-cost-program/seven-lane-results/SV_COST_SEVEN_LANE_MIRROR_HANDOFF.md", ".github/workflows/sv-cost-deepseek-pair-continuation.yml"],
-      "owner": "github-actions:SV Cost DeepSeek Pair Continuation",
       "claim_state": "MACHINE_OWNED_BLOCKED",
       "completion_state": "IMPLEMENTED_BLOCKED_ON_AUTHORIZED_CREDENTIAL",
-      "validation_state": "SCHEMA_AND_PRICE_CARD_VALIDATED",
-      "integration_state": "BLOCKED_ON_PAIR_COMPLETE",
-      "evidence": ["run 31222916921", "artifact 9011025214", "DEEPSEEK_API_KEY_MISSING"],
-      "next_executable_action": "daily workflow retries when authorized credential becomes present"
+      "next_executable_action": "scheduled workflow executes when authorized credential becomes present"
     }
   ],
   "developed_files_denominator": {
-    "required": 15,
-    "installed_substantive": 15,
+    "required": 18,
+    "installed_substantive": 18,
     "scaffolding_or_stubs": 0,
     "missing": 0
   },
   "validation_denominator": {
-    "required_groups": 9,
-    "validated_groups": 9
+    "required_groups": 11,
+    "validated_groups": 11
   },
   "integration_denominator": {
-    "required_groups": 9,
-    "integrated_groups": 9
+    "required_groups": 11,
+    "integrated_groups": 11
   },
   "session_goal_denominator": {
-    "total": 10,
-    "complete_or_durably_transferred": 10
+    "total": 12,
+    "complete_or_durably_transferred": 12
   },
   "release_state": {
-    "project_release_complete": false,
+    "tag_activation_complete": true,
+    "tag": "v0.1.0",
+    "tag_object_sha": "071109054e212cba7d52544c62b09581c5eac324",
+    "tag_target_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
     "governance_freshness": "pass",
-    "remaining_gates": ["independent_release_policy"],
-    "owner": "StegVerse-Labs/StegCore#37",
-    "session_retention_required": false
+    "independent_release_policy": "pass",
+    "remaining_tag_gates": [],
+    "github_release_authorized": false,
+    "deployment_authorized": false,
+    "authority_boundary": "Governance ALLOW permitted annotated tag creation only; GitHub Release and deployment require a new governed authority decision."
   },
   "archive_state": "ARCHIVE_READY",
-  "archive_condition": "All session-originated implementation, validation, integration, freshness, and adjacent goals are complete or durably transferred. The only remaining StegCore release gate is independent release policy under issue #37, which this session cannot self-authorize.",
+  "archive_condition": "All session-originated implementation, validation, integration, independent policy, authorized tag activation, post-tag awareness, and adjacent goals are complete or durably transferred; no unique chat-only state remains.",
   "merged_into": [
     "StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md",
-    "StegVerse-Labs/StegCore/evidence/governance-freshness.json",
     "StegVerse-Labs/StegCore/evidence/release-readiness.json",
+    "StegVerse-Labs/StegCore/evidence/independent-release-policy.json",
+    "StegVerse-Labs/StegCore/evidence/post-tag-downstream-awareness.json",
     "StegVerse-Labs/StegCore#37",
-    "GCAT-BCAT-Engine/workflows/experiments/sv-cost-program/governed-ai-premium/SV_GOVERNED_AI_PREMIUM_MIRROR_HANDOFF.md",
-    "GCAT-BCAT-Engine/workflows/experiments/sv-cost-program/seven-lane-results/SV_COST_SEVEN_LANE_MIRROR_HANDOFF.md"
+    "StegVerse-Labs/StegCore#64",
+    "GCAT-BCAT-Engine/workflows canonical handoffs"
   ]
 }
