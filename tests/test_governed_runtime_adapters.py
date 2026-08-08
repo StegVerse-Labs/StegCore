@@ -1,6 +1,6 @@
 from dataclasses import replace
 
-from stegcore.adapters.runtime_entry import (
+from stegcore.runtime_adapters import (
     ExecutionBinding,
     GovernedAdapterRequest,
     execute_adapter,
