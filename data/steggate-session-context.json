@@ -1,0 +1,54 @@
+{
+  "schema": "stegverse.steggate_session_context.v1",
+  "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
+  "repository": "StegVerse-Labs/StegCore",
+  "canonical_issue": "StegVerse-Labs/StegCore#68",
+  "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
+  "session_state": "ACTIVE_UNIQUE_WORK_REMAINS",
+  "archive_allowed": false,
+  "active_goal": "Make canonical StegGate fully functional and live, not merely tagged or repository-tested.",
+  "architectural_context": {
+    "decision_py_is_intentionally_minimal": true,
+    "minimal_means_interface_scope_not_resource_budget": true,
+    "minimal_interface_does_not_prove_missing_system_engine": true,
+    "new_live_service_is_provisional_until_architecture_reconciliation": true,
+    "must_trace_existing_admissibility_call_graph_before_expanding_new_evaluator": true,
+    "complete_decision_state_is_reconstructable_reality": true,
+    "required_dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
+    "reality_planes": ["decision", "execution", "observed"]
+  },
+  "archive_guard": {
+    "rule": "Do not mark a session archive-ready merely because a bounded subgoal is complete or transferred.",
+    "required_before_archive": [
+      "active functional goal complete or genuinely superseded",
+      "architecture reconciliation complete",
+      "all unique context represented in durable repository records",
+      "live deployment and runtime observations complete when part of the active goal",
+      "no active session-specific implementation, validation, integration, or observation role"
+    ],
+    "historical_context_loss_is_failure": true
+  },
+  "current_work": {
+    "implementation_owner": "StegVerse-Labs/StegCore#68",
+    "render_service_id": "srv-d9rlic2jobas73do1q6g",
+    "render_service_origin": "https://steggate-core.onrender.com",
+    "render_deploy_id": "dep-d9rlicajobas73do1qjg",
+    "deployment_state": "BLOCKED_BUILD_MINUTES_EXHAUSTED",
+    "repository_validation_state": "GREEN",
+    "architecture_reconciliation_state": "REQUIRED"
+  },
+  "worker_policy": {
+    "fail_closed_on_missing_context": true,
+    "archive_status_when_active": "DO_NOT_ARCHIVE",
+    "emit_next_action": true,
+    "next_action": "Trace canonical StegGate/admissibility call graph and classify new src/stegcore/steggate.py + service.py as canonical adapter, duplicate, or refactor target before further feature expansion.",
+    "machine_observable_release_conditions": [
+      "architecture_reconciliation_state == COMPLETE",
+      "deployment_state == LIVE",
+      "hosted_health == PASS",
+      "hosted_self_test == PASS",
+      "hosted_evaluate == PASS",
+      "archive_allowed == true only after active goal completion"
+    ]
+  }
+}
