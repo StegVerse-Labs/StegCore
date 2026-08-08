@@ -34,6 +34,7 @@ concurrency:
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   validate:
@@ -121,23 +122,39 @@ jobs:
           echo "contract_sha=$CONTRACT_SHA" >> "$GITHUB_OUTPUT"
           echo "governance_sha=$GOVERNANCE_SHA" >> "$GITHUB_OUTPUT"
 
-      - name: Commit durable validation evidence
+      - name: Persist durable validation evidence through PR
         if: github.event_name != 'pull_request' && steps.evidence.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          BRANCH="automation/runtime-validation-evidence"
           git config user.name "stegcore-validation-bot"
           git config user.email "stegcore-validation-bot@users.noreply.github.com"
+          git checkout -B "$BRANCH"
           git add evidence/runtime-validation.json evidence/release-readiness.json
-          git commit -m "Record StegCore validation and release-readiness state [skip ci]"
-          for attempt in 1 2 3; do
-            if git pull --rebase origin main && git push origin HEAD:main; then
-              exit 0
-            fi
-            if [ "$attempt" -eq 3 ]; then
-              echo "Unable to persist validation evidence after 3 synchronized push attempts" >&2
-              exit 1
-            fi
-            sleep $((attempt * 2))
-          done
+          git commit -m "Record StegCore validation and release-readiness state"
+          git push --force origin HEAD:"$BRANCH"
+
+          PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
+          if [ -z "$PR_NUMBER" ]; then
+            gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --base main \
+              --head "$BRANCH" \
+              --title "Record StegCore runtime validation evidence" \
+              --body "Repository automation generated validated runtime/release-readiness evidence. This PR is a persistence transport only; it grants no release, deployment, continuity-minting, or execution authority. Source validation run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
+            PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
+          fi
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Evidence branch was persisted but no open evidence PR could be resolved" >&2
+            exit 1
+          fi
+
+          echo "Runtime validation evidence persisted in PR #${PR_NUMBER}."
+          if ! gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --auto --squash --delete-branch; then
+            echo "Auto-merge is not currently available; durable evidence remains preserved in PR #${PR_NUMBER}."
+          fi
 
       - name: Reconcile implementation and release-readiness issues
         if: github.event_name != 'pull_request'
@@ -147,14 +164,14 @@ jobs:
           GOVERNANCE_SHA: ${{ steps.evidence.outputs.governance_sha }}
         run: |
           IMPLEMENTATION_STATE="$(gh issue view 22 --repo "$GITHUB_REPOSITORY" --json state --jq '.state')"
-          COMPLETION_COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against pinned Governance evidence commit ${GOVERNANCE_SHA}. Durable evidence: evidence/runtime-validation.json. Release state: evidence/release-readiness.json. Downstream dispatch: evidence/downstream-verification-dispatch.json. Governance freshness remains required before release. This establishes validated_not_released only."
+          COMPLETION_COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against pinned Governance evidence commit ${GOVERNANCE_SHA}. Durable evidence is persisted through the repository-owned runtime-validation evidence PR path. Release state remains validated_not_released; Governance freshness is still required before release."
           if [ "$IMPLEMENTATION_STATE" = "OPEN" ]; then
             gh issue close 22 --repo "$GITHUB_REPOSITORY" --reason completed --comment "$COMPLETION_COMMENT"
           fi
 
           FAILURE_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "StegCore runtime validation failure in:title" --json number --jq '.[0].number // empty')"
           if [ -n "$FAILURE_NUMBER" ]; then
-            gh issue close "$FAILURE_NUMBER" --repo "$GITHUB_REPOSITORY" --reason completed --comment "Automatic runtime validation recovered. Passing evidence is recorded under evidence/."
+            gh issue close "$FAILURE_NUMBER" --repo "$GITHUB_REPOSITORY" --reason completed --comment "Automatic runtime validation recovered. Passing evidence was persisted through the protected-main-compatible evidence PR path."
           fi
 
           READINESS_TITLE="[release-readiness] StegCore three-layer candidate"
