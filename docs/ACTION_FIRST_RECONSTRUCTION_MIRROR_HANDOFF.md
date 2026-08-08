@@ -3,7 +3,7 @@
 ## Status
 
 ```text
-session_state: ACTIVE_TRANSFER
+session_state: COMPLETE — ARCHIVE
 formalism_goal: ACTION-FIRST-RECONSTRUCTION-001
 runtime_activation: NOT_CLAIMED
 publication_activation: NOT_CLAIMED
@@ -21,6 +21,13 @@ Primary review artifact:
 ```text
 docs/STEGGATE_PRODUCT_REVIEW_V5.md
 commit: 28f9be6ddb45667973e3618a141d964006bd6578
+```
+
+Canonical successor task:
+
+```text
+StegVerse-Labs/ara-admissibility-interop#108
+Formalize Action-First reconstruction and Reconstruction Singularity model
 ```
 
 Prior architecture retained:
@@ -90,13 +97,13 @@ The live StegCore claim in `docs/STEGCORE_MIRROR_HANDOFF.md` owns external-evide
 
 ### ara-admissibility-interop
 
-The live handoff `docs/ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md` owns completion of the `0.2.0-release-candidate` governed publication/email-monitoring lane. The v5 review explicitly does not mutate that release lane. Canonical protocol/schema formalization is transferred there as successor work rather than installed ahead of its live claim.
+The live handoff `docs/ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md` owns completion of the `0.2.0-release-candidate` governed publication/email-monitoring lane. The v5 review does not mutate that release lane. Canonical protocol/schema formalization is now durably registered as issue `#108`, explicitly subordinate to the current handoff and its collision boundaries.
 
 ## Next canonical work
 
-### `StegVerse-Labs/ara-admissibility-interop`
+### `StegVerse-Labs/ara-admissibility-interop` — issue #108
 
-Create a successor formalism version only after reconciling the current release-candidate handoff. Required machine-readable objects:
+After reconciling the current release-candidate handoff, formalize machine-readable objects for:
 
 ```text
 state ontology
@@ -158,6 +165,7 @@ StegVerse-002/stegguardian-wiki
 conceptual convergence: COMPLETE_FOR_REVIEW
 review artifact: INSTALLED_ON_MAIN
 handoff: INSTALLED_ON_MAIN
+canonical successor registration: COMPLETE — ara-admissibility-interop#108
 runtime implementation: NOT_STARTED_BY_THIS_GOAL
 canonical interop schemas: TRANSFERRED / NOT_INSTALLED
 shared vectors: TRANSFERRED / NOT_INSTALLED
@@ -167,4 +175,8 @@ release/tag: NOT_AUTHORIZED
 
 ## Archive condition
 
-The conceptual work in the originating conversation may be archived once successor work is durably registered in the canonical interop repository. Until that transfer is recorded, this handoff is the durable continuation source for the v5 formalism.
+All unique conceptual decisions from the originating conversation are now preserved in the v5 review, this handoff, and canonical interop issue `#108`. No unique task requires the conversation to remain open.
+
+## Archive status
+
+`COMPLETE — ARCHIVE`
