@@ -85,6 +85,7 @@ def update_inventory(deployment_source: str) -> None:
     denom["conversation_specific_roles_remaining"] = 0
     inventory["goal_activation_complete"] = True
     inventory["conversation_archive_allowed"] = True
+    inventory["archive_allowed"] = True
     inventory["session_state"] = "COMPLETE_ARCHIVE"
     inventory["role"] = "COMPLETE_ARCHIVE"
     inventory["functional_deployment_source"] = deployment_source
