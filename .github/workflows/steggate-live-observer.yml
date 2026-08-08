@@ -9,10 +9,12 @@ on:
     paths:
       - 'src/stegcore/steggate.py'
       - 'src/stegcore/service.py'
+      - 'src/stegcore/endpoint_discovery.py'
       - 'scripts/observe_steggate_live_service.py'
       - 'scripts/finalize_steggate_live_activation.py'
       - 'tests/test_steggate_live_observer.py'
       - 'tests/test_finalize_steggate_live_activation.py'
+      - 'tests/test_endpoint_discovery.py'
       - 'data/steggate-session-context.json'
       - 'data/steggate-architecture-reconciliation-state.json'
       - '.github/workflows/steggate-live-observer.yml'
@@ -33,14 +35,31 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install pytest
-      - name: Validate observer and finalizer semantics
-        run: python -m pytest -q tests/test_steggate_live_observer.py tests/test_finalize_steggate_live_activation.py
-      - name: Observe canonical hosted service
+      - run: python -m pip install -e . pytest
+      - name: Validate observer, discovery, and finalizer semantics
+        run: python -m pytest -q tests/test_steggate_live_observer.py tests/test_finalize_steggate_live_activation.py tests/test_endpoint_discovery.py
+      - name: Resolve a verified live StegGate origin
+        id: resolve
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json, os
+          from stegcore.endpoint_discovery import resolve_steggate_origin
+          result = resolve_steggate_origin(timeout=12)
+          print(json.dumps(result.to_dict(), sort_keys=True))
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
+              fh.write(f"state={result.state}\n")
+              fh.write(f"origin={result.origin or ''}\n")
+              fh.write(f"source={result.source or ''}\n")
+          if result.state != 'LIVE' or not result.origin:
+              raise SystemExit(2)
+          PY
+      - name: Observe resolved canonical service
         id: observe
+        if: steps.resolve.outcome == 'success'
         continue-on-error: true
         env:
-          STEGGATE_ORIGIN: https://steggate-core.onrender.com
+          STEGGATE_ORIGIN: ${{ steps.resolve.outputs.origin }}
         run: python scripts/observe_steggate_live_service.py
       - name: Preserve observation receipt
         if: always()
@@ -48,10 +67,12 @@ jobs:
         with:
           name: steggate-live-observation-${{ github.run_id }}-${{ github.run_attempt }}
           path: build/steggate-live-observation.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 90
       - name: Finalize canonical activation after full hosted PASS
         if: steps.observe.outcome == 'success'
+        env:
+          STEGGATE_DEPLOYMENT_SOURCE: ${{ steps.resolve.outputs.source }}
         run: python scripts/finalize_steggate_live_activation.py
       - name: Commit canonical activation receipt
         if: steps.observe.outcome == 'success'
@@ -70,10 +91,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue comment 68 --repo StegVerse-Labs/StegCore --body 'Repository-native live observer recorded full hosted PASS for health, exact four-disposition self-test, and deterministic complete-matrix evaluation. Canonical activation receipt has been persisted by this workflow; closing the activation lane.'
+          gh issue comment 68 --repo StegVerse-Labs/StegCore --body "Repository-native live observer recorded full hosted PASS for health, exact four-disposition self-test, and deterministic complete-matrix evaluation through source '${{ steps.resolve.outputs.source }}'. Canonical activation receipt has been persisted by this workflow; closing the functional activation lane. Persistent hosting hardening remains a separate non-authority-escalating objective when applicable."
           gh issue close 68 --repo StegVerse-Labs/StegCore --reason completed
       - name: Keep activation fail-closed until hosted checks pass
         if: steps.observe.outcome != 'success'
         run: |
-          echo 'Canonical StegGate hosted activation is not yet observed.'
+          echo 'No verified StegGate hosted activation is currently observable.'
           exit 1
