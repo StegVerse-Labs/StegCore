@@ -1,0 +1,33 @@
+name: StegGate Session Continuity Guard
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'data/steggate-session-context.json'
+      - 'scripts/guard_steggate_session_continuity.py'
+      - 'tests/test_steggate_session_continuity.py'
+      - 'STEGCORE_MIRROR_HANDOFF.md'
+
+permissions:
+  contents: read
+
+jobs:
+  guard-context:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pytest
+      - run: python -m pytest -q tests/test_steggate_session_continuity.py
+      - run: python scripts/guard_steggate_session_continuity.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: steggate-session-continuity
+          path: data/steggate-session-continuity-receipt.json
+          if-no-files-found: error
+          retention-days: 90
