@@ -1,0 +1,137 @@
+name: StegGate Fallback Public Runtime
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/steggate-fallback-public-runtime.yml"
+      - "src/stegcore/steggate.py"
+      - "src/stegcore/steggate_runtime.py"
+      - "src/stegcore/service.py"
+      - "scripts/observe_steggate_live_service.py"
+      - "pyproject.toml"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  public-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      REGISTRY_COMMENT_ID: "5228464425"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install canonical StegCore
+        run: python -m pip install -e .
+
+      - name: Start canonical StegGate HTTP service
+        run: |
+          mkdir -p build
+          nohup uvicorn stegcore.service:app --host 127.0.0.1 --port 8000 > build/steggate-fallback-app.log 2>&1 &
+          echo $! > build/steggate-fallback-app.pid
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/health > build/steggate-fallback-local-health.json; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat build/steggate-fallback-app.log
+          exit 1
+
+      - name: Install Cloudflare tunnel client
+        run: |
+          curl --fail --location --silent --show-error \
+            https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
+            --output "$RUNNER_TEMP/cloudflared"
+          chmod +x "$RUNNER_TEMP/cloudflared"
+          "$RUNNER_TEMP/cloudflared" --version
+
+      - name: Open zero-credential public tunnel
+        id: tunnel
+        run: |
+          nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 \
+            > build/steggate-fallback-tunnel.log 2>&1 &
+          echo $! > build/steggate-fallback-tunnel.pid
+          ORIGIN=""
+          for attempt in $(seq 1 60); do
+            ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/steggate-fallback-tunnel.log | tail -1 || true)"
+            if [ -n "$ORIGIN" ]; then
+              break
+            fi
+            sleep 1
+          done
+          if [ -z "$ORIGIN" ]; then
+            cat build/steggate-fallback-tunnel.log
+            exit 1
+          fi
+          echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"
+          echo "$ORIGIN" > build/steggate-fallback-origin.txt
+
+      - name: Verify full public StegGate acceptance contract
+        id: observe
+        env:
+          STEGGATE_ORIGIN: ${{ steps.tunnel.outputs.origin }}
+        run: |
+          set +e
+          python scripts/observe_steggate_live_service.py > build/steggate-fallback-observer.stdout 2>&1
+          RC=$?
+          cat build/steggate-fallback-observer.stdout
+          test -f build/steggate-live-observation.json
+          cp build/steggate-live-observation.json build/steggate-fallback-live-proof.json
+          if [ "$RC" -ne 0 ]; then
+            exit "$RC"
+          fi
+
+      - name: Update stable fallback runtime registry
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ORIGIN: ${{ steps.tunnel.outputs.origin }}
+        run: |
+          python - <<'PY' > "$RUNNER_TEMP/registry.md"
+          import json, os
+          from pathlib import Path
+          proof = json.loads(Path("build/steggate-fallback-live-proof.json").read_text())
+          origin = os.environ["ORIGIN"]
+          print("## StegGate fallback public-runtime registry")
+          print()
+          print("State: `LIVE_ACCEPTANCE_PASS`")
+          print()
+          print(f"Current public origin: `{origin}`")
+          print(f"Workflow run: `{os.environ['GITHUB_RUN_ID']}` attempt `{os.environ['GITHUB_RUN_ATTEMPT']}`")
+          print(f"StegCore commit: `{os.environ['GITHUB_SHA']}`")
+          print()
+          print("Acceptance: `/health` PASS; `/v1/self-test` exact four-disposition PASS; `/v1/evaluate` complete-matrix PASS.")
+          print()
+          print("This is a rotating zero-spend public runtime lane backed by the canonical StegCore source. It grants no additional policy, execution, Continuity, publication, payment, custody, or release authority. The persistent deployment remains a separate activation objective.")
+          print()
+          print(f"Observed at: `{proof.get('observed_at')}`")
+          PY
+          gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${REGISTRY_COMMENT_ID}" \
+            --method PATCH \
+            --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
+
+      - name: Preserve live proof artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: steggate-fallback-live-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            build/steggate-fallback-live-proof.json
+            build/steggate-fallback-origin.txt
+            build/steggate-fallback-local-health.json
+            build/steggate-fallback-app.log
+            build/steggate-fallback-tunnel.log
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Keep public runtime alive through overlap window
+        run: sleep 3900
