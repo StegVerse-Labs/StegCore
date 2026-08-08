@@ -27,6 +27,8 @@ def base_context():
             "complete_decision_state_is_reconstructable_reality": True,
             "required_dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
             "reality_planes": ["decision", "execution", "observed"],
+            "existing_canonical_layers": ["src/stegcore/three_layer.py"],
+            "reconciliation_record": "docs/STEGGATE_ARCHITECTURE_RECONCILIATION.md",
         },
         "archive_guard": {
             "historical_context_loss_is_failure": True,
@@ -34,8 +36,9 @@ def base_context():
         },
         "current_work": {
             "implementation_owner": "StegVerse-Labs/StegCore#68",
-            "architecture_reconciliation_state": "REQUIRED",
+            "architecture_reconciliation_state": "IN_PROGRESS",
             "deployment_state": "BLOCKED",
+            "provisional_files": ["src/stegcore/steggate.py"],
         },
         "worker_policy": {
             "archive_status_when_active": "DO_NOT_ARCHIVE",
@@ -45,8 +48,23 @@ def base_context():
     }
 
 
+def base_architecture():
+    return {
+        "schema": "stegverse.steggate_architecture_reconciliation.v1",
+        "goal_id": "G",
+        "canonical_issue": "StegVerse-Labs/StegCore#68",
+        "state": "IN_PROGRESS",
+        "canonical_layers": [{"path": "src/stegcore/three_layer.py"}],
+        "provisional_layers": [{"path": "src/stegcore/steggate.py"}],
+        "required_classifications": sorted(module.REQUIRED_CLASSIFICATIONS),
+        "verified_findings": ["three-layer runtime exists"],
+        "next_action": "classify overlap",
+        "archive_allowed": False,
+    }
+
+
 def test_active_context_passes_but_archive_remains_false():
-    receipt = module.build_receipt(base_context())
+    receipt = module.build_receipt(base_context(), base_architecture())
     assert receipt["state"] == "PASS"
     assert receipt["archive_allowed"] is False
     assert receipt["historical_context_preserved"] is True
@@ -55,7 +73,7 @@ def test_active_context_passes_but_archive_remains_false():
 def test_missing_anti_duplication_context_fails_closed():
     context = base_context()
     context["architectural_context"]["minimal_interface_does_not_prove_missing_system_engine"] = False
-    receipt = module.build_receipt(context)
+    receipt = module.build_receipt(context, base_architecture())
     assert receipt["state"] == "FAIL_CLOSED"
     assert "anti_duplication_context_missing" in receipt["findings"]
     assert receipt["archive_allowed"] is False
@@ -64,7 +82,7 @@ def test_missing_anti_duplication_context_fails_closed():
 def test_active_session_cannot_self_mark_archive_allowed():
     context = base_context()
     context["archive_allowed"] = True
-    receipt = module.build_receipt(context)
+    receipt = module.build_receipt(context, base_architecture())
     assert receipt["state"] == "FAIL_CLOSED"
     assert "active_session_archive_must_be_false" in receipt["findings"]
 
@@ -72,6 +90,20 @@ def test_active_session_cannot_self_mark_archive_allowed():
 def test_complete_decision_surface_is_required():
     context = base_context()
     context["architectural_context"]["required_dispositions"] = ["ALLOW", "DENY"]
-    receipt = module.build_receipt(context)
+    receipt = module.build_receipt(context, base_architecture())
     assert receipt["state"] == "FAIL_CLOSED"
     assert "required_dispositions_incomplete" in receipt["findings"]
+
+
+def test_missing_architecture_state_fails_closed():
+    receipt = module.build_receipt(base_context(), None)
+    assert receipt["state"] == "FAIL_CLOSED"
+    assert "architecture_state_unavailable" in receipt["findings"]
+
+
+def test_incomplete_architecture_cannot_allow_archive():
+    architecture = base_architecture()
+    architecture["archive_allowed"] = True
+    receipt = module.build_receipt(base_context(), architecture)
+    assert receipt["state"] == "FAIL_CLOSED"
+    assert "architecture_incomplete_archive_must_be_false" in receipt["findings"]
