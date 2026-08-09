@@ -1,0 +1,108 @@
+{
+  "inventory_version": "1.0",
+  "goal_id": "STEGCORE-NEURAL-ENDTOEND-002",
+  "originating_session_goal": "Build a full testable governance system plus a physical transmit/receive model for specifically addressed neural micro-node transport.",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "main",
+  "canonical_handoff": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
+  "predecessor_issue": 71,
+  "claim": {
+    "state": "CLAIMED_FOR_VALIDATION",
+    "implementation": "INSTALLED_ON_MAIN",
+    "validation": "MACHINE_OWNED",
+    "claim_created": "2026-08-09",
+    "collision_boundary": [
+      "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
+      "docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md",
+      "src/stegcore/neural_physical_channel.py",
+      "src/stegcore/neural_governance_system.py",
+      "tests/test_neural_end_to_end.py",
+      ".github/workflows/neural-end-to-end.yml",
+      "data/neural-end-to-end-session-inventory.json"
+    ],
+    "release_condition": "Hosted neural-end-to-end workflow succeeds; job/log evidence is inspected; successor issue and handoff are reconciled; no software result is represented as biological activation."
+  },
+  "goals": [
+    {
+      "id": "NE2E-01",
+      "goal": "Correct the prior premature archive claim and reopen the canonical handoff.",
+      "destination": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
+      "state": "COMPLETE",
+      "validation": "COMMITTED"
+    },
+    {
+      "id": "NE2E-02",
+      "goal": "Define an adapter-neutral physical bidirectional transmit/receive model.",
+      "destination": "docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md",
+      "state": "COMPLETE",
+      "validation": "HOSTED_PENDING"
+    },
+    {
+      "id": "NE2E-03",
+      "goal": "Implement deterministic physical channel eligibility for READ and WRITE paths.",
+      "destination": "src/stegcore/neural_physical_channel.py",
+      "state": "COMPLETE",
+      "validation": "HOSTED_PENDING"
+    },
+    {
+      "id": "NE2E-04",
+      "goal": "Compose neural evidence, physical eligibility, canonical StegGate, commit coherence, and modeled consequence into one receipt-producing system.",
+      "destination": "src/stegcore/neural_governance_system.py",
+      "state": "COMPLETE",
+      "validation": "HOSTED_PENDING"
+    },
+    {
+      "id": "NE2E-05",
+      "goal": "Test positive and fail-closed paths across candidate binding, neural authority separation, physical envelope, policy, and commit coherence.",
+      "destination": "tests/test_neural_end_to_end.py",
+      "state": "COMPLETE",
+      "validation": "HOSTED_PENDING"
+    },
+    {
+      "id": "NE2E-06",
+      "goal": "Automate hosted validation of predecessor + full end-to-end composition and non-activation boundaries.",
+      "destination": ".github/workflows/neural-end-to-end.yml",
+      "state": "COMPLETE",
+      "validation": "MACHINE_OWNED"
+    },
+    {
+      "id": "NE2E-07",
+      "goal": "Persist complete execution inventory and release conditions.",
+      "destination": "data/neural-end-to-end-session-inventory.json",
+      "state": "COMPLETE",
+      "validation": "HOSTED_PENDING"
+    },
+    {
+      "id": "NE2E-08",
+      "goal": "Bind the successor work to a durable issue and close it only on hosted evidence.",
+      "destination": "StegVerse-Labs/StegCore issue successor to #71",
+      "state": "PENDING",
+      "validation": "NOT_STARTED"
+    },
+    {
+      "id": "NE2E-09",
+      "goal": "Inspect hosted workflow jobs/logs and reconcile final handoff state.",
+      "destination": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
+      "state": "PENDING",
+      "validation": "NOT_STARTED"
+    },
+    {
+      "id": "NE2E-10",
+      "goal": "Preserve absence of real neural hardware as an explicit non-activation boundary with a machine-observable release condition.",
+      "destination": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
+      "state": "COMPLETE",
+      "validation": "COMMITTED"
+    }
+  ],
+  "hardware_integration": {
+    "state": "BLOCKED",
+    "owner": "future named neural adapter repository",
+    "release_condition": "A specific adapter/device repository exists and supplies empirical locator, calibration, physical-unit to governed-envelope mapping, targeting/coupling/noise/latency evidence, safety evidence, and post-consequence observation capability.",
+    "software_model_is_not_activation": true
+  },
+  "cross_repository": {
+    "ara_admissibility_interop": "DESTINATION_OWNED_AFTER_HANDOFF_ADMISSION",
+    "site_publisher_wikis": "NOT_REQUIRED_UNTIL_PUBLICATION_OR_RELEASE_CLAIM"
+  },
+  "archive_condition": "Successor hosted validation and handoff reconciliation complete; real-hardware absence remains durably assigned and no unique session information remains only in chat."
+}
