@@ -6,18 +6,18 @@
 Organization: StegVerse-Labs
 Repository: StegCore
 Branch: main
-Active project goal ID: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001
-Originating session goal: make StegGate actually functional, preserving the complete admissibility matrix and decision/execution/observation state as reconstructable reality
-Canonical project owner: StegVerse-Labs/StegCore#68 + repository-native workers
-Project state: PORTABLE_STEGGATE_ACTIVE / REAL_CONSUMER_INTEGRATED / RESIDENT_HTTP_IMPLEMENTED / PUBLIC_EPHEMERAL_HTTP_PROVEN / STABLE_RENDEZVOUS_MACHINE_OWNED_BLOCKED_ON_AUTHORIZED_CREDENTIALS
-Originating session state: MERGED_INTO_CANONICAL_WORKSTREAM
-Conversation archive allowed: YES
-Project activation complete: NO
+Completed functional goal: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001 / issue #68 CLOSED
+Current integration goal: STEGGATE-HEARTBEAT-CREDENTIAL-INTEGRATION-001 / issue #75
+Originating session goal: make StegGate actually functional while preserving the complete admissibility matrix and decision/execution/observation state as reconstructable reality
+Canonical StegGate owner: StegVerse-Labs/StegCore
+Current goal state: COMPLETE / 6 OF 6 ACCEPTANCE GROUPS SATISFIED
+Session state: ACTIVE_FOR_ADJACENT_STABLE_RENDEZVOUS_RECONCILIATION
+Conversation archive allowed: NO
 ```
 
-Read this handoff, `management/steggate-full-functional-activation.json`, `management/steggate-portable-micronode-activation.json`, `data/steggate-session-context.json`, `data/steggate-architecture-reconciliation-state.json`, Site `data/steggate-rendezvous-activation.json`, and issue #68 before changing StegGate. Live Git/workflow evidence supersedes chat summaries.
+Read this handoff, `management/steggate-heartbeat-credential-integration.json`, `data/steggate-live-activation-receipt.json`, `management/steggate-full-functional-activation.json`, Site issue #24/state, TV infrastructure-credential task, TVC infrastructure-credential task, and issue #75 before changing this workstream. Live repository/workflow evidence supersedes older chat summaries.
 
-## Canonical authority chain
+## Canonical StegGate authority chain
 
 ```text
 Governance policy/evidence
@@ -27,194 +27,152 @@ Governance policy/evidence
   -> src/stegcore/steggate_runtime.py:governed_steggate_execute
   -> src/stegcore/commit_governance.py:coherence_gate
   -> bounded consequence callback only after ALLOW + coherence ALLOW
-  -> execution observation / reconciliation
+  -> execution observation/reconciliation
   -> Continuity/reconstruction consumers
 ```
 
-`decision.py` is an intentionally minimal compatibility interface, not the full engine. Do not create a competing evaluator.
+`decision.py` remains an intentionally minimal compatibility interface. Do not create a competing evaluator.
 
-## Completed canonical capabilities
+## Functional StegGate activation — COMPLETE
 
-### Core runtime and decision-state reconstruction
+Issue #68 is closed. Canonical activation is persisted on `main` through merged PR #74 / merge commit `1d26a21354917a74b40a6c8f1101d91e8d2c44c0`.
 
-Canonical three-layer evaluation, full matrix normalization, candidate-bound REVIEW, fail-closed semantics, commit coherence, consequence inaccessibility on non-ALLOW, execution observation, divergence/bypass semantics, and complete decision-state preservation are complete and validated.
-
-### Resident HTTP surface
-
-Implemented:
+Canonical receipt:
 
 ```text
-src/stegcore/service.py
-src/stegcore/endpoint_discovery.py
-scripts/observe_steggate_live_service.py
-scripts/finalize_steggate_live_activation.py
-.github/workflows/steggate-live-observer.yml
-.github/workflows/steggate-fallback-public-runtime.yml
+data/steggate-live-activation-receipt.json
+state: COMPLETE
+deployment_source: heartbeat_ephemeral_micronode
+observed_at: 2026-08-09T09:14:06.578269Z
+observation_digest: sha256:4159d510a8c8e2d941f8c5efb8355f95ce651c328b41e22abb8be7e97b799506
+receipt_digest: sha256:8fa34d07283a48e5aacf71f8f11242371de5e997b61f16b055e403c10a07df13
 ```
 
-The public fallback workflow has run canonical StegGate through a Cloudflare Quick Tunnel and passed `/health`, exact ALLOW/DENY/REVIEW/FAIL_CLOSED `/v1/self-test`, and complete-matrix `/v1/evaluate`. Quick Tunnel is ephemeral transport, not stable identity.
+The accepted public execution proved `/health`, exact ALLOW/DENY/REVIEW/FAIL_CLOSED `/v1/self-test`, and deterministic complete-matrix `/v1/evaluate`. Persistent Render hosting and the named `stegverse.org/api/steggate` route are not prerequisites for functional StegGate activation.
 
-Endpoint discovery now resolves candidates in this order and independently verifies canonical health before accepting any origin:
+## Portable / ephemeral topology — COMPLETE
 
-```text
-1. https://stegverse.org/api/steggate      stable StegVerse rendezvous
-2. https://steggate-core.onrender.com      persistent Render lane
-3. verified rotating fallback registry     ephemeral public proof lane
-```
+`src/stegcore/portable_steggate.py` is the first-class governed-package topology. A receiver may instantiate a short-lived StegGate micro-node from the governed package/runtime profile, evaluate the canonical chain locally, invoke consequence only after ALLOW + coherence ALLOW, emit reconstructable evidence, and terminate. Networking is optional.
 
-Hosted StegCore validation after this discovery change:
+Hosted evidence remains run `31286273932`, job `93175594894`, artifact `9029913625`, digest `sha256:fd7b9a27eb18d6e4a061e7e7b507cceb6d6b10bef649e2198c08841a9e25e054`.
 
-```text
-run 31289831506
-job 93185008397
-169 passed
-133 subtests passed
-artifact 9031013648
-sha256 05e3ab8b56714709df24cf81f10bd1d26ebf872c58df3c371523195819693485
-```
+A real Ecosystem Chat consumer remains validated in `StegVerse-org/LLM-adapter`; do not duplicate that consumer authority lane.
 
-### Portable / ephemeral governed-package topology — COMPLETE
+## Heartbeat-native scheduling integration — COMPLETE
+
+StegGate no longer has a normative wall-clock scheduler. Its public-runtime workflow accepts `repository_dispatch: stegverse-heartbeat`; manual dispatch is diagnostic only. The canonical organization heartbeat additionally has a stronger zero-extra-credential carrier: `.github` invokes StegCore's reusable heartbeat micro-node workflow directly with the exact heartbeat ID and epoch.
 
 Authoritative surfaces:
 
 ```text
-src/stegcore/portable_steggate.py
-tests/test_portable_steggate.py
-docs/STEGGATE_PORTABLE_MICRONODE.md
-management/steggate-portable-micronode-activation.json
+StegVerse-Labs/.github/.github/workflows/steggate-heartbeat-integration.yml
+StegVerse-Labs/StegCore/.github/workflows/steggate-heartbeat-worker-reusable.yml
+StegVerse-Labs/StegCore/.github/workflows/steggate-fallback-public-runtime.yml
 ```
 
-A `GovernedTransitionPackage` carries the canonical `AdmissibilityRequest`, package identity/hash, portable-node profile, expected reconciled-runtime profile/fingerprint, execution/coherence context, and optional expiry. The receiver instantiates a fresh short-lived micro-node from a known StegCore runtime, verifies package/runtime binding, evaluates the canonical chain, optionally crosses commit coherence, invokes a bounded consequence only after ALLOW + coherence ALLOW, emits reconstructable evidence, and terminates. Networking is optional.
-
-Hosted evidence: run `31286273932`, job `93175594894`, `161 tests + 129 subtests`, artifact `9029913625`, digest `sha256:fd7b9a27eb18d6e4a061e7e7b507cceb6d6b10bef649e2198c08841a9e25e054`.
-
-### Real consumer integration — COMPLETE
-
-Canonical consumer: `StegVerse-org/LLM-adapter` / Ecosystem Chat user-LLM path.
+Hosted proof:
 
 ```text
-llm_adapter/steggate_portable_consumer.py
-tests/test_steggate_portable_consumer.py
-.github/workflows/steggate-portable-consumer.yml
-receipts/steggate-portable-consumer-integration.latest.json
-LLM_ADAPTER_MIRROR_HANDOFF.md
+workflow run: 31306010854
+canonical heartbeat job: 93226408727 SUCCESS
+StegGate micro-node job: 93226429725 SUCCESS
+heartbeat epoch: 4
+heartbeat artifact: 9035958447
+heartbeat artifact digest: sha256:4b71b5600ad2b1b7ccd580568b66145f811deaf389b0825f5b700bf4828631f6
+micro-node artifact: 9035963753
+micro-node artifact digest: sha256:b496a848c0f2561e1eb3b3dcdc33502f3019252995fa83cbe81e1c13c32651ba
 ```
 
-Hosted evidence: run `31286444819`, job `93176065654`, SUCCESS, artifact `9029971776`, digest `sha256:c555e9035d480120d36184308d165e8e0987a0765c3020a60abf0c45f425c4f4`.
+`StegVerse-Labs/.github/control/heartbeat-state.json` durably advanced from epoch 3 to epoch 4. That canonical heartbeat directly drove the reusable StegCore micro-node through full public StegGate acceptance.
 
-The consumer maps explicit governance facts into canonical StegCore input and supplies only the bounded provider callback. Policy drift prevents the callback. No provider credential travels in the package. No public StegGate ingress is required.
+The original issue #75 wording requiring a cross-repository `repository_dispatch` from `.github` is superseded for the canonical `.github -> StegCore` path by the direct reusable-workflow carrier. This is a narrowing, not an authority expansion: it preserves the one-heartbeat scheduler and removes an unnecessary PAT/App-token dependency. StegCore still accepts `repository_dispatch` for compatible external heartbeat carriers.
 
-## Stable rendezvous — IMPLEMENTED / MACHINE OWNED / BLOCKED
+## TV/TVC governed infrastructure credentials — COMPLETE CONTRACT / FAIL-CLOSED VALUE ABSENCE
 
-Canonical owner:
+### TV
+
+Canonical task: `StegVerse-Labs/TV/tasks/TV-INFRA-CREDENTIAL-PACKAGING-001.json`.
+
+TV packages only credential references and no-secret usage metadata for:
 
 ```text
-StegVerse-Labs/Site#24
-StegVerse-Labs/Site/data/steggate-rendezvous-activation.json
-StegVerse-Labs/Site/.github/workflows/steggate-rendezvous-deploy.yml
+GITHUB_CROSS_REPO_DISPATCH
+CLOUDFLARE_API_TOKEN
+CLOUDFLARE_ACCOUNT_ID
 ```
 
-Installed Site surfaces:
+It never stores raw values. Hosted validation is green; current task state is COMPLETE / RELEASED.
+
+### TVC
+
+Canonical task: `StegVerse-Labs/TVC/tasks/TVC-INFRA-CREDENTIAL-AUTHORITY-001.json`.
+
+TVC exact-bound secret-reference authority is hosted-green for heartbeat dispatch and Site Cloudflare rendezvous use. Validation run `31305690694`, job `93225596181`, artifact `9035862288`, digest `sha256:a6ff49884bd4199f7b6f4ff8999d860d4517b547a4fd495118ccc59c00070562` proved allow/deny scope/binding semantics and `credentials_recorded=false`.
+
+TVC publishes the no-secret consumer contract at `contracts/infrastructure-credential-consumer-authority.v1.json`. Site imports the pinned contract; TVC does not transport secret values.
+
+## Stable StegVerse rendezvous — ADJACENT HARDENING / BLOCKED ON VALUE PRESENCE
+
+Owner: `StegVerse-Labs/Site#24`.
+
+The Site rendezvous workflow now has no cron scheduler. It accepts `stegverse-heartbeat`, diagnostic manual dispatch, and bounded configuration pushes. It validates the pinned TVC authority contract before checking the execution environment for Cloudflare values.
+
+Run `31305845192`, job `93225990737`, proved:
 
 ```text
-src/steggate-rendezvous-worker.js
-wrangler.steggate.jsonc
-.github/workflows/steggate-rendezvous-deploy.yml
-data/steggate-rendezvous-activation.json
+pinned TVC authority import: PASS
+credential reference authority: admissible
+CLOUDFLARE_API_TOKEN value present: NO
+CLOUDFLARE_ACCOUNT_ID value present: NO
+deployment: SKIPPED
+state: FAIL_CLOSED_CREDENTIAL_ABSENT
+artifact: 9035908600
+artifact digest: sha256:fe1be4cbdb0cd0a87542fe1ee40b2a1dad561c9355b5647cbfdd187c331c2af8
 ```
 
-Stable intended origin:
-
-```text
-https://stegverse.org/api/steggate
-```
-
-Deployment run `31286621905`, job `93176517796`, observed both required Site Actions bindings empty before Wrangler execution. The enhanced machine-owned retry workflow run `31289859109`, job `93185080182`, then confirmed the same blocker while successfully producing artifact `9031019850`, digest `sha256:259dd1747e151ff333342f4124e0814cec71523aa4f48048cc28442c526b1e41` containing the explicit blocker observation.
-
-The rendezvous workflow is scheduled hourly at minute 41. It remains red/blocked while credentials are unavailable, emits a machine-readable observation artifact on every run, and automatically deploys plus verifies readiness/health/exact four-disposition self-test when both authorized bindings become available. On success it persists `LIVE_ACCEPTANCE_PASS` to Site's rendezvous state. No chat polling is required.
-
-Machine-observable release condition:
-
-```text
-CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID both become non-empty in the Site Actions runtime,
-OR an already-authorized endpoint-publication plane deploys the same non-authorizing rendezvous contract.
-```
-
-## Automatic final activation chain
-
-StegCore `.github/workflows/steggate-live-observer.yml` runs hourly. After any stable route becomes healthy, it independently resolves the endpoint, verifies `/health`, exact four-disposition `/v1/self-test`, and deterministic complete-matrix `/v1/evaluate`, then invokes `scripts/finalize_steggate_live_activation.py`. Only a full PASS may create the activation receipt, reconcile durable state, comment issue #68, and close #68.
-
-Render `srv-d9rlic2jobas73do1q6g` remains a secondary machine-owned lane. Latest inspected deploy `dep-d9ru30bl550s73dt3vf0` failed before source build because workspace build-pipeline minutes remain exhausted. Paid capacity changes are not authorized and are not required for the portable topology.
-
-## Collision control and adjacent workstreams
-
-- Governance remains policy/evidence authority.
-- `StegVerse-Labs/ara-admissibility-interop` remains decision-state interop/schema authority.
-- `StegVerse-Labs/Continuity` remains reconstruction/Continuity consumer authority.
-- `StegVerse-org/LLM-adapter#18` remains the sole Ecosystem Chat real-provider/custody activation lane; do not duplicate it.
-- `StegVerse-Labs/Site#24` remains stable endpoint publication/discovery owner.
-- Neural micro-node governance from the originating discussion is complete and separately consolidated at `docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md`, issue #71, and `data/neural-micronode-session-inventory.json`. Do not duplicate that experimental lane.
-- Render is not architectural authority.
+This is not a StegGate functional blocker. It is stable-routing hardening. Release condition: both referenced Cloudflare values become available in the Site execution environment; then the heartbeat-triggered workflow may deploy and validate `https://stegverse.org/api/steggate`. TV/TVC cannot manufacture absent credential values.
 
 ## Current execution inventory
 
-Authoritative machine-readable inventory: `management/steggate-full-functional-activation.json`.
+Authoritative current-goal inventory: `management/steggate-heartbeat-credential-integration.json`.
 
 ```text
-FF-CONTEXT-01 COMPLETE
-FF-ARCH-02 COMPLETE
-FF-EXEC-03 COMPLETE
-FF-SERVICE-04 COMPLETE
-FF-RESIDENT-DEPLOY-05 PARTIAL / MACHINE OWNED
-FF-OBSERVE-06 ACTIVE / MACHINE OWNED
-FF-ACTIVATE-07 WAITING_FOR_HOSTED_EVIDENCE / MACHINE OWNED
-FF-PORTABLE-08 COMPLETE_AND_HOSTED_VALIDATED
-FF-CONSUMER-09 COMPLETE_AND_HOSTED_VALIDATED
-FF-STABLE-RENDEZVOUS-10 BLOCKED / MACHINE OWNED / HOURLY RETRY ACTIVE
+HBI-01 heartbeat-only StegCore trigger surface                         COMPLETE
+HBI-02 canonical heartbeat -> public StegGate micro-node proof         COMPLETE
+HBI-03 TV infrastructure credential-reference packaging                COMPLETE
+HBI-04 TVC exact-bound no-secret authority                              COMPLETE
+HBI-05 Site TVC-consumer integration + credential-absence fail-close    COMPLETE
+HBI-06 handoff/inventory/scheduler reconciliation                       COMPLETE
 ```
 
-## Session consolidation
+Current integration goal: `6/6 = 100%`.
 
-The project remains incomplete, but the originating chat no longer owns unique execution work. All original and adjacent session requirements are implemented, completed, or durably transferred with exact owners, machine-observable release conditions, and automatic continuation paths.
+## Collision controls
 
-```text
-MERGED INTO: StegVerse-Labs/StegCore#68
-ALSO OWNED BY: StegVerse-Labs/Site#24 for stable rendezvous deployment
-REAL PROVIDER/CUSTODY OWNER: StegVerse-org/LLM-adapter#18
-NEURAL ADJACENT GOAL: StegVerse-Labs/StegCore#71 + docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md
-```
+- `.github#12` owns the single StegVerse heartbeat.
+- Heartbeat cadence/epoch does not grant execution authority.
+- StegCore owns StegGate evaluation/runtime; Site must not copy StegGate policy logic.
+- TV owns credential-reference packaging/usage evidence, not secret values.
+- TVC owns secret-reference read authority, not secret values or StegGate admissibility.
+- Site #24 owns stable endpoint publication/discovery.
+- LLM-adapter #18 remains the real-provider/custody owner for Ecosystem Chat.
+- Render remains optional hosting, not architectural authority.
 
-No remaining task requires information that exists only in the conversation. No manual workflow dispatch, polling, artifact copying, blocker transcription, or receipt construction is assigned to the chat/user.
+## Next integration goal candidate
+
+Because `STEGGATE-HEARTBEAT-CREDENTIAL-INTEGRATION-001` is complete, the directly related candidate is stable rendezvous hardening under existing canonical owner `StegVerse-Labs/Site#24`.
+
+Do not create a competing StegCore implementation lane. The current state there is `BLOCKED_CREDENTIAL_VALUES_ABSENT`, with a machine-observable release condition already installed. This session retains only reconciliation/support responsibility until the adjacent Site handoff/task state reflects the heartbeat/TVC changes.
 
 ## Completeness
 
 ```text
-activation tasks complete: 6/10
-project developed files: 24/24
-scaffolding or stubs: 0
-validation groups: 9/10
-integration groups: 9/10
-session goals transferred-or-complete: 10/10
-project goal activation: 60%
-session consolidation: 100%
-conversation archival readiness: 100%
+functional StegGate goal: 100%
+heartbeat/credential integration goal: 100%
+developed current-goal files: 13/13
+scaffolding/stubs: 0
+validation groups: 6/6
+integration groups: 6/6
+session consolidation for current goal: 5/6
+archive readiness: NO — adjacent stable-rendezvous state still needs final durable reconciliation
 ```
-
-## Archive condition for originating session
-
-SATISFIED BY DURABLE TRANSFER.
-
-Archiving the originating conversation does not assert that the stable resident StegGate endpoint is live. It asserts only that no unique implementation, validation, integration, propagation, reconciliation, or observation responsibility remains in chat. Repository-native owners continue fail-closed until their actual activation evidence exists.
-
-## Machine-finalized live activation
-
-Canonical hosted functional activation is COMPLETE. The repository-native runtime recorded PASS for `/health`, exact four-disposition `/v1/self-test`, and deterministic complete-matrix `POST /v1/evaluate`.
-
-Deployment source: `heartbeat_ephemeral_micronode`  
-Activation receipt: `data/steggate-live-activation-receipt.json`  
-Observation digest: `sha256:4159d510a8c8e2d941f8c5efb8355f95ce651c328b41e22abb8be7e97b799506`  
-Observed at: `2026-08-09T09:14:06.578269Z`
-
-The persistent hosted origin is healthy and was used for activation.
-
-Issue #68 may be closed by repository automation. No chat-session execution role remains for this functional-activation goal.
