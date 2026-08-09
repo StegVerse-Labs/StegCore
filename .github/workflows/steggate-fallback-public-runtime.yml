@@ -12,10 +12,11 @@ on:
       - "src/stegcore/steggate_runtime.py"
       - "src/stegcore/service.py"
       - "scripts/observe_steggate_live_service.py"
+      - "scripts/finalize_steggate_live_activation.py"
       - "pyproject.toml"
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 jobs:
@@ -26,6 +27,8 @@ jobs:
       REGISTRY_COMMENT_ID: "5228464425"
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -109,19 +112,58 @@ jobs:
           print()
           print("Acceptance: `/health` PASS; `/v1/self-test` exact four-disposition PASS; `/v1/evaluate` complete-matrix PASS.")
           print()
-          print("The origin is supervised by this run. If its tunnel degrades, the workflow recreates the tunnel, repeats the full acceptance contract, and updates this registry before advertising the replacement.")
+          print("The origin is supervised by this scheduled run. If its tunnel degrades, the workflow recreates the tunnel, repeats the full acceptance contract, and updates this registry before advertising the replacement.")
           print()
           print(f"Observed at: `{proof.get('observed_at')}`")
           PY
           gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${REGISTRY_COMMENT_ID}" --method PATCH --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
 
-      - name: Preserve initial fallback evidence
+      - name: Finalize functional activation immediately after hosted PASS
+        env:
+          STEGGATE_DEPLOYMENT_SOURCE: github_actions_fallback_registry
+        run: python scripts/finalize_steggate_live_activation.py
+
+      - name: Persist canonical activation state
+        run: |
+          set -euo pipefail
+          git config user.name 'stegverse-automation'
+          git config user.email 'stegverse-automation@users.noreply.github.com'
+          git add data/steggate-live-activation-receipt.json data/steggate-session-context.json management/steggate-full-functional-activation.json STEGCORE_MIRROR_HANDOFF.md
+          if git diff --cached --quiet; then
+            echo 'Activation state already persisted.'
+          else
+            git commit -m 'Finalize StegGate functional activation from autonomous fallback runtime'
+            for attempt in 1 2 3 4; do
+              if git push origin HEAD:main; then
+                exit 0
+              fi
+              git fetch origin main
+              git rebase origin/main
+              sleep $((attempt * 3))
+            done
+            exit 1
+          fi
+
+      - name: Close canonical activation issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ORIGIN: ${{ steps.tunnel.outputs.origin }}
+        run: |
+          if gh issue view 68 --repo StegVerse-Labs/StegCore --json state --jq '.state' | grep -q '^OPEN$'; then
+            gh issue comment 68 --repo StegVerse-Labs/StegCore --body "Autonomous scheduled fallback runtime produced full hosted PASS at ${ORIGIN}, persisted the canonical activation receipt, and completed/superseded the remaining activation tasks. Named persistent/rendezvous hosting remains non-blocking hardening."
+            gh issue close 68 --repo StegVerse-Labs/StegCore --reason completed
+          fi
+
+      - name: Preserve activation evidence
         uses: actions/upload-artifact@v4
         with:
           name: steggate-fallback-live-proof-${{ github.run_id }}-${{ github.run_attempt }}
-          path: build/steggate-fallback-*
+          path: |
+            build/steggate-fallback-*
+            build/steggate-live-observation.json
+            data/steggate-live-activation-receipt.json
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90
 
       - name: Supervise and self-heal public runtime through overlap window
         env:
