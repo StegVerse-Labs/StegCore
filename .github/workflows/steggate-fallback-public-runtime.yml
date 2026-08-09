@@ -18,6 +18,7 @@ on:
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 
 concurrency:
   group: steggate-heartbeat-public-runtime
@@ -139,20 +140,42 @@ jobs:
           STEGGATE_DEPLOYMENT_SOURCE: heartbeat_ephemeral_micronode
         run: python scripts/finalize_steggate_live_activation.py | tee build/steggate-finalization.json
 
-      - name: Persist canonical activation state
+      - name: Persist canonical activation through protected-main PR
+        id: persist
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           git config user.name 'stegverse-heartbeat-worker'
           git config user.email '210078727+StegVerse@users.noreply.github.com'
           git add data/steggate-live-activation-receipt.json data/steggate-session-context.json management/steggate-full-functional-activation.json STEGCORE_MIRROR_HANDOFF.md
-          if git diff --cached --quiet; then exit 0; fi
+          if git diff --cached --quiet; then
+            echo 'pr_number=' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          BRANCH="automation/steggate-activation-${HEARTBEAT_ID}"
+          git checkout -b "$BRANCH"
           git commit -m 'Finalize StegGate activation from heartbeat worker'
-          for attempt in 1 2 3 4; do
-            if git push origin HEAD:main; then exit 0; fi
-            git fetch origin main
-            git rebase origin/main
-            sleep $((attempt * 3))
+          git push --force-with-lease origin "$BRANCH"
+          PR_URL="$(gh pr create --repo StegVerse-Labs/StegCore --base main --head "$BRANCH" --title 'Finalize StegGate activation from heartbeat worker' --body "Heartbeat-owned ephemeral StegGate produced full hosted acceptance PASS. Heartbeat id: ${HEARTBEAT_ID}; epoch: ${HEARTBEAT_EPOCH}. This PR persists the canonical activation receipt and reconciled state through the protected-main path.")"
+          PR_NUMBER="${PR_URL##*/}"
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          gh pr merge "$PR_NUMBER" --repo StegVerse-Labs/StegCore --auto --squash
+
+      - name: Wait for protected-main activation merge
+        if: steps.persist.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.persist.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 100); do
+            STATE="$(gh pr view "$PR_NUMBER" --repo StegVerse-Labs/StegCore --json state,mergedAt --jq 'if .mergedAt then "MERGED" else .state end')"
+            if [ "$STATE" = "MERGED" ]; then exit 0; fi
+            if [ "$STATE" = "CLOSED" ]; then exit 1; fi
+            sleep 20
           done
+          echo "Activation PR did not merge within the heartbeat lease."
           exit 1
 
       - name: Close canonical activation issue
@@ -161,7 +184,7 @@ jobs:
           ORIGIN: ${{ steps.tunnel.outputs.origin }}
         run: |
           if gh issue view 68 --repo StegVerse-Labs/StegCore --json state --jq '.state' | grep -q '^OPEN$'; then
-            gh issue comment 68 --repo StegVerse-Labs/StegCore --body "Heartbeat-owned ephemeral StegGate runtime produced full hosted PASS at ${ORIGIN}, persisted the canonical activation receipt, and completed the functional activation path. Heartbeat epoch: ${HEARTBEAT_EPOCH}; heartbeat id: ${HEARTBEAT_ID}."
+            gh issue comment 68 --repo StegVerse-Labs/StegCore --body "Heartbeat-owned ephemeral StegGate runtime produced full hosted PASS at ${ORIGIN}, persisted the canonical activation receipt through protected-main PR checks, and completed the functional activation path. Heartbeat epoch: ${HEARTBEAT_EPOCH}; heartbeat id: ${HEARTBEAT_ID}."
             gh issue close 68 --repo StegVerse-Labs/StegCore --reason completed
           fi
 
