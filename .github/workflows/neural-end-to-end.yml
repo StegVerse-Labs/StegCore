@@ -1,0 +1,73 @@
+name: Neural End-to-End Governance
+
+on:
+  push:
+    paths:
+      - 'docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md'
+      - 'docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md'
+      - 'src/stegcore/neural_micronode.py'
+      - 'src/stegcore/neural_physical_channel.py'
+      - 'src/stegcore/neural_governance_system.py'
+      - 'tests/test_neural_micronode.py'
+      - 'tests/test_neural_end_to_end.py'
+      - '.github/workflows/neural-end-to-end.yml'
+      - 'data/neural-end-to-end-session-inventory.json'
+  pull_request:
+    paths:
+      - 'docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md'
+      - 'docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md'
+      - 'src/stegcore/neural_micronode.py'
+      - 'src/stegcore/neural_physical_channel.py'
+      - 'src/stegcore/neural_governance_system.py'
+      - 'tests/test_neural_micronode.py'
+      - 'tests/test_neural_end_to_end.py'
+      - '.github/workflows/neural-end-to-end.yml'
+      - 'data/neural-end-to-end-session-inventory.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install project and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+      - name: Validate predecessor and end-to-end tests
+        run: pytest -q tests/test_neural_micronode.py tests/test_neural_end_to_end.py
+      - name: Validate durable inventory JSON
+        run: python -m json.tool data/neural-end-to-end-session-inventory.json >/dev/null
+      - name: Verify full governance chain is canonical
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('src/stegcore/neural_governance_system.py').read_text()
+          for required in (
+              'evaluate_neural_transition',
+              'evaluate_physical_channel',
+              'governed_steggate_execute',
+              'biological_activation_claimed',
+          ):
+              assert required in text, required
+          print('full governance composition present')
+          PY
+      - name: Verify physical model non-activation boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md').read_text()
+          for required in (
+              'software_model_validated != biological_transport_activated',
+              'adapter-declared governed envelope',
+              'not a universal brain address',
+          ):
+              assert required in text, required
+          print('physical non-activation boundary present')
+          PY
