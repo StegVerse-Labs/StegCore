@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/neural-micronode-packet.schema.json",
+  "title": "StegGate Neural Micro-Node Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile", "transition_id", "source", "destination", "payload", "requirements", "translation"],
+  "properties": {
+    "profile": {"const": "steggate.neural-micronode.v0"},
+    "transition_id": {"type": "string", "minLength": 1},
+    "source": {
+      "type": "object", "additionalProperties": false, "required": ["micro_node_id"],
+      "properties": {"micro_node_id": {"type": "string", "minLength": 1}}
+    },
+    "destination": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receiver_class", "receiver_locator", "locator_profile"],
+      "properties": {
+        "receiver_class": {"const": "neural_micro_node"},
+        "receiver_locator": {"type": "string", "minLength": 1},
+        "locator_profile": {"type": "string", "minLength": 1}
+      }
+    },
+    "payload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidate_hash", "semantic_profile"],
+      "properties": {
+        "candidate_hash": {"type": "string", "minLength": 1},
+        "semantic_profile": {"type": "string", "minLength": 1}
+      }
+    },
+    "requirements": {
+      "type": "object", "additionalProperties": false,
+      "required": ["required_assertions", "prohibited_assertions", "freshness_ms", "minimum_observation_quality"],
+      "properties": {
+        "required_assertions": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "prohibited_assertions": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "freshness_ms": {"type": "integer", "minimum": 1},
+        "minimum_observation_quality": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "translation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["adapter_profile", "model_or_mapping_id", "calibration_ref"],
+      "properties": {
+        "adapter_profile": {"type": "string", "minLength": 1},
+        "model_or_mapping_id": {"type": "string", "minLength": 1},
+        "calibration_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "expiry": {"type": "string", "format": "date-time"}
+  }
+}
