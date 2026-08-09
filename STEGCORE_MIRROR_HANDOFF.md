@@ -8,15 +8,16 @@ Repository: StegCore
 Branch: main
 Completed functional goal: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001 / issue #68 CLOSED
 Completed integration goal: STEGGATE-HEARTBEAT-CREDENTIAL-INTEGRATION-001 / issue #75
-Current integration goal: STEGGATE-TUNNEL-CONTINUITY-HARDENING
+Current continuity goal: STEGGATE-TUNNEL-CONTINUITY-HARDENING
+Current product integration goal: STEGGATE-FOUR-APP-RUNTIME-BINDING-001 / issue #70
 Canonical StegGate owner: StegVerse-Labs/StegCore
 Canonical scheduler/signal owner: StegVerse-Labs/.github single heartbeat
 Canonical runtime transport: heartbeat-owned zero-credential public tunnel
 Persistent Render authority: NONE
-Session-local implementation claim: RELEASED / MERGED_INTO_CANONICAL_WORKSTREAM
+Active #70 implementation claim: current-session-common-runtime-binding / CLAIMED_FOR_IMPLEMENTATION
 ```
 
-Live repository/workflow evidence supersedes chat summaries. Read this handoff together with `StegVerse-Labs/.github/docs/ORG_MIRROR_HANDOFF.md`, `StegVerse-Labs/.github/control/heartbeat-subsignals.json`, `StegVerse-Labs/.github/control/worker-registry.json`, `StegVerse-Labs/.github/handoffs/SHWP-DURABLE-RUNTIME-ACTIVATION.json`, `StegVerse-Labs/.github/receipts/steggate-transport-lease/STEGGATE-TUNNEL-LEASE-001.json`, `.github/workflows/steggate-heartbeat-worker-reusable.yml`, `management/steggate-heartbeat-credential-integration.json`, and `data/steggate-live-activation-receipt.json`.
+Live repository/workflow evidence supersedes chat summaries. Read this handoff together with `StegVerse-Labs/.github/docs/ORG_MIRROR_HANDOFF.md`, `StegVerse-Labs/.github/control/heartbeat-subsignals.json`, `StegVerse-Labs/.github/control/worker-registry.json`, `StegVerse-Labs/.github/handoffs/SHWP-DURABLE-RUNTIME-ACTIVATION.json`, `StegVerse-Labs/.github/receipts/steggate-transport-lease/STEGGATE-TUNNEL-LEASE-001.json`, `.github/workflows/steggate-heartbeat-worker-reusable.yml`, `management/steggate-heartbeat-credential-integration.json`, `management/steggate-four-app-runtime-binding.json`, `docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md`, and `data/steggate-live-activation-receipt.json`.
 
 ## Canonical authority chain
 
@@ -150,7 +151,43 @@ StegVerse-Labs/.github
 
 StegVerse-Labs/StegCore
   lease-bound self-healing reusable micro-node       229e8c99b77f8965fb3f07eea62d320d2d6d1ec6
+  runtime identity endpoint + contract fields        fec0248d51083cf840ad983a5b0af83d4fc6db37
+  runtime identity tests                             74273127c22f70995329774593236f299b98c854
+  runtime identity contract documentation            8c484e584d60a3bd2763d6948d0eb3f4afd67e0c
+  #70 durable claim/state                            267fde596f0857ed8bbe49b02155c0e9a164b7fe
 ```
+
+## Four-app canonical runtime identity integration — ACTIVE
+
+Issue #70 became executable when #68 closed. The canonical transport-independent binding contract is now implemented rather than inferred from an ephemeral tunnel URL.
+
+```text
+GET /v1/runtime-identity
+contract_version: stegverse.steggate.runtime-identity.v1
+runtime_identity: stegverse:steggate:canonical:three-layer:v1
+canonical_owner: StegVerse-Labs/StegCore
+canonical_admissibility_runtime: stegcore.three_layer.evaluate_three_layer
+transport_identity_authoritative: false
+```
+
+The same identity is exposed through `/health`, `/v1/capabilities`, and `/v1/self-test`. This allows applications to bind to canonical StegGate semantics across heartbeat carrier replacement without making a host URL into policy authority.
+
+Direct validation:
+
+```text
+StegCore Tests run: 31338809707
+job: 93308982069 SUCCESS
+artifact: 9045154237
+artifact digest: sha256:e59d08fc0de1a4c4fdf893c5db1d857e20fe7e3fa77dc3cde44c1e6f4b2f6ab2
+```
+
+Current claim and remaining integration are in `management/steggate-four-app-runtime-binding.json`. The core contract is implemented and validated, but issue #70 MUST remain open until Ecosystem Chat, VACC, Math Solver, and HIL each retain direct evidence that their governed path consumed this canonical identity and traversed the canonical StegGate semantics. Static contract existence is not four-app integration completion.
+
+Collision boundaries:
+
+- do not modify HIL upload paths currently owned by the separate Site claimant;
+- do not create per-application StegGate evaluators;
+- do not bind canonical identity to an ephemeral or vendor-specific transport URL.
 
 ## Third-party posture
 
@@ -168,23 +205,23 @@ Render is non-authoritative and not an activation dependency. The credentialed `
 7. Successor/reconstruction continuity proof: NOT YET TERMINAL; MERGED INTO canonical heartbeat/worker continuation plus canonical StegGate integration workflow.
 8. Persistent stable rendezvous: OPTIONAL HARDENING; machine-owned separately by STEGGATE-STABLE-RENDEZVOUS-WORKER-001; not activation authority.
 9. Render build-capacity monitoring: SUPERSEDED/OBSOLETE for StegGate activation.
+10. Four-app stable canonical runtime identity contract: IMPLEMENTED + CI VALIDATED; issue #70 application bindings remain ACTIVE.
 ```
-
-No unique requirement remains only in chat history.
 
 ## Archive condition
 
-The functional StegGate goal is activated. The remaining sovereign carrier/reconstruction production goal is durably owned by a documented StegVerse worker that is actually BOUND and cycle-leased through the canonical heartbeat and worker task registry. Therefore this session does not need to remain open to preserve execution authority.
+The StegCore functional activation goal is complete, but the parent session goal is `StegVerse-Labs/Site#239`: four public applications at directly verified functional production state. That parent is not complete. While this session owns the active #70 common-runtime-binding claim, it is not archiveable.
 
 Canonical continuation locations:
 
 ```text
-StegVerse-Labs/.github/docs/ORG_MIRROR_HANDOFF.md
+StegVerse-Labs/Site#239
+StegVerse-Labs/StegCore#70
+StegVerse-Labs/StegCore/management/steggate-four-app-runtime-binding.json
+StegVerse-Labs/StegCore/docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md
+StegVerse-Labs/Site/docs/STEGGATE_FOUR_APP_MIRROR_HANDOFF.md
 StegVerse-Labs/.github/control/heartbeat-subsignals.json
 StegVerse-Labs/.github/control/worker-registry.json#SHWP-DURABLE-RUNTIME-ACTIVATION
-StegVerse-Labs/.github/handoffs/SHWP-DURABLE-RUNTIME-ACTIVATION.json
-StegVerse-Labs/.github/.github/workflows/steggate-heartbeat-integration.yml
-StegVerse-Labs/StegCore/.github/workflows/steggate-heartbeat-worker-reusable.yml
 ```
 
 ## Completeness
@@ -192,12 +229,10 @@ StegVerse-Labs/StegCore/.github/workflows/steggate-heartbeat-worker-reusable.yml
 ```text
 functional StegGate: 100%
 heartbeat transport activation: 100%
-lease-subsig contract/install: 100%
-first live lease opening/hold: 100%
-dependent-task lifecycle control: 100%
-successor/reconstruction production proof: machine-owned, pending
-session-specific requirements transferred/completed: 9/9
-scaffolding/stubs in completed StegGate runtime: 0
-session unique active claims: 0
-archive readiness under documented-heartbeat-worker alternative: YES
+stable runtime identity core contract: 100% implemented + CI validated
+four-app direct identity bindings: 0/4 complete at this checkpoint
+parent four-app direct runtime gates: follow Site machine status
+scaffolding/stubs in completed StegGate runtime identity contract: 0
+active session claim: #70 common-runtime-binding integration
+archive readiness for parent session goal: NO
 ```
