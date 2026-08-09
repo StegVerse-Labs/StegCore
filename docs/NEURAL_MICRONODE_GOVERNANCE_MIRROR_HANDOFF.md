@@ -1,42 +1,39 @@
 # Neural Micro-Node Governance Mirror Handoff
 
-Status: COMPLETE — MERGED INTO CANONICAL WORKSTREAM — ARCHIVE
+Status: ACTIVE — UNIQUE WORK REMAINS
 Date: 2026-08-08
 Repository: `StegVerse-Labs/StegCore`
 Branch: `main`
-Goal: `STEGCORE-NEURAL-MICRONODE-001`
-Canonical issue: `#71`
+Active goal: `STEGCORE-NEURAL-ENDTOEND-002`
+Predecessor goal: `STEGCORE-NEURAL-MICRONODE-001`
+Canonical issue: `#71` (predecessor validation record; successor issue required)
+
+## Correction to prior completion claim
+
+The predecessor lane correctly installed and validated an adapter-neutral neural evidence boundary, but the prior archival conclusion was too broad. It did **not** establish either of the two additional capabilities required by the originating session insight:
+
+1. a full end-to-end StegGate governance composition that can be tested from neural receiver evidence through canonical admissibility, commit coherence, consequence invocation, and receipt; or
+2. a physical bidirectional transmit/receive model that represents addressing, coupling, channel quality, stimulation/observation bounds, noise, calibration, and post-consequence observation.
+
+Therefore `STEGCORE-NEURAL-MICRONODE-001` remains a completed predecessor, while this handoff is reopened for `STEGCORE-NEURAL-ENDTOEND-002`. No claim is made that present hardware can perform arbitrary neural read/write or that a software simulation proves biological capability.
 
 ## Governing sources and collision control
 
-This continuation read and preserved the authority/collision boundaries in:
+Read and preserve:
 
 - `docs/STEGCORE_MIRROR_HANDOFF.md`
 - `docs/STEGGATE_NETWORK_GOVERNANCE_MIRROR_HANDOFF.md`
 - `docs/STEGGATE_PORTABLE_MICRONODE.md`
 - `docs/STEGGATE_PRODUCT_REVIEW_V4.md`
+- `src/stegcore/steggate.py`
+- `src/stegcore/steggate_runtime.py`
+- `src/stegcore/neural_micronode.py`
 
-The existing StegCore external-evidence claim owns different files. No competing runtime mutation was made there. Portable integration is transferred to its canonical lane rather than mutating `portable_steggate.py` from this session.
+Existing StegCore external-evidence and portable-micro-node lanes remain distinct. The successor lane may consume canonical `evaluate_admissibility` / `governed_steggate_execute` surfaces but must not redefine them.
 
-## Released claim
+## Originating session goal
 
-```text
-task_id: STEGCORE-NEURAL-MICRONODE-001
-originating_goal: govern minimal ephemeral transport to/from a specifically addressed downstream neural micro-node
-implementation_claim: COMPLETE_ON_MAIN
-validation_claim: COMPLETE_HOSTED
-claim_created: 2026-08-09T02:08:28Z
-claim_released: 2026-08-09
-release_evidence: workflow run 31289736205 / job 93184768876 SUCCESS
-collision_boundary:
-  - docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md
-  - schemas/neural-micronode-packet.schema.json
-  - src/stegcore/neural_micronode.py
-  - tests/test_neural_micronode.py
-  - .github/workflows/neural-micronode.yml
-  - data/neural-micronode-session-inventory.json
-next_task_after_release: portable integration review through its canonical owner; interop propagation only through destination handoff
-```
+Develop the insight that least-stable ephemeral micro-node governance can address a specific downstream neural receiver while the BCI is transport/translation infrastructure. The receiver signature is translated into exactly the transition-relative admissibility evidence required for the incoming or outgoing packet.
 
 ## Preserved receiver model
 
@@ -50,19 +47,12 @@ source micro-node
  -> receiver observation/signature
  -> bounded admissibility translation
  -> transition-relative evidence
- -> ALLOW | DENY | REVIEW | FAIL_CLOSED
- -> separately governed consequence or non-consequence
+ -> canonical StegGate governance
+ -> commit coherence
+ -> separately authorized consequence or non-consequence
+ -> post-consequence observation
  -> receipt
 ```
-
-For destination `N_d`, observation `sigma(N_d,t)`, candidate `P`, and transition requirements `R_T`:
-
-```text
-A_T = translate(sigma(N_d,t), P, R_T)
-decision = evaluate(P, R_T, A_T)
-```
-
-`A_T` is bounded evidence, never a complete representation of the receiver/person/cognition/mental state/intent/identity.
 
 Required non-equivalences:
 
@@ -77,110 +67,129 @@ observation != receiver state in full
 receiver signature != authority
 translation confidence != authority
 transport success != admissibility
+physical coupling != semantic delivery
+stimulation != intended neural state transition
 ```
 
-## Installed implementation
+## Completed predecessor implementation
+
+Installed and hosted-validated:
+
+- `schemas/neural-micronode-packet.schema.json`
+- `src/stegcore/neural_micronode.py`
+- `tests/test_neural_micronode.py`
+- `.github/workflows/neural-micronode.yml`
+- `data/neural-micronode-session-inventory.json`
+
+Hosted evidence: run `31289736205`, job `93184768876`, SUCCESS; schema valid; `7 passed in 0.05s`; authority-boundary literal verification passed.
+
+## Active implementation claim
 
 ```text
-docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md
-schemas/neural-micronode-packet.schema.json
-src/stegcore/neural_micronode.py
-tests/test_neural_micronode.py
-.github/workflows/neural-micronode.yml
-data/neural-micronode-session-inventory.json
+task_id: STEGCORE-NEURAL-ENDTOEND-002
+originating_goal: full testable governance + physical bidirectional model for addressed neural micro-node transport
+organization: StegVerse-Labs
+repository: StegCore
+branch: main
+claimant: this execution lane
+role: CLAIMED_FOR_IMPLEMENTATION
+claim_created: 2026-08-09
+claim_release_condition: end-to-end governance composition, physical channel model, tests, hosted validation, durable inventory, and handoff evidence complete; remaining hardware/biological capability boundaries explicitly transferred
+collision_boundary:
+  - docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md
+  - docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md
+  - src/stegcore/neural_physical_channel.py
+  - src/stegcore/neural_governance_system.py
+  - tests/test_neural_end_to_end.py
+  - .github/workflows/neural-end-to-end.yml
+  - data/neural-end-to-end-session-inventory.json
+next_task_after_release: hardware-adapter conformance only when a real adapter/device and empirical calibration evidence exist
 ```
 
-Commits:
+## Full governance system requirement
+
+A completed software governance model must test the entire following chain, not only the neural evidence boundary:
 
 ```text
-997fea00f658ce6fe6c2200ba65afb1431087bc9 initial handoff
-ddb74ae2020eeb13f547c56f63abaaa140155eaf packet schema
-a450f71e46a7463f6da18a1744b99fe1d646de19 adapter-neutral evaluator
-d095a684e9808c03a1b7fa3f95e5daf66037ed3f focused tests
-cdd5c7165d603d3dfa8a08effc369baea532fed9 hosted validation workflow
-761088027856ba856e4e5d96e45b85caafa84c35 initial session inventory
-2a45ef3a362be26a15306d11229c177b70f05617 validation-state handoff
-9cdc0b3b158e86046f117ade9ec513360b286310 successful-validation inventory
+physical pre-observation
+ -> neural evidence boundary
+ -> canonical AdmissibilityRequest binding
+ -> three-layer StegCore judgment/signal/execution evaluation
+ -> capability / continuity / approval predicates
+ -> StegGate disposition
+ -> independent commit-coherence gate
+ -> physical consequence callback only after ALLOW + coherence ALLOW
+ -> post-consequence observation
+ -> reconstructable receipt
 ```
 
-The evaluator verifies destination resolution/ambiguity, adapter attestation, calibration presence/validity, translation identity, freshness, observation quality, required/prohibited assertions and provenance. It rejects attempts to elevate decoder assertions named `intended_by`, `authorized_by`, `consented_to_by`, or `execution_authority` into authority. ALLOW means only that this bounded evidence boundary is satisfied; it does not execute a consequence or manufacture authority.
+The neural evidence decision is an admitted signal/evidence reference. It cannot fill or synthesize actor authority, policy currency, delegation, consent, approval, continuity, or capability predicates.
 
-## Inbound / outbound semantics
+## Physical bidirectional model requirement
 
-Inbound:
+The physical model must represent the smallest device-independent variables necessary to reason about whether a packet can be physically coupled to and observed from an addressed neural target:
+
+- modality/profile identity;
+- source and target locator;
+- targeting uncertainty and ambiguity;
+- calibration state;
+- coupling quality;
+- channel attenuation / transfer efficiency;
+- noise / interference;
+- stimulation energy/intensity normalized to an adapter-specific safe envelope rather than universal biological units;
+- observation sensitivity / specificity or equivalent bounded quality metrics;
+- latency and freshness;
+- write consequence class and reversibility declaration;
+- read observation provenance;
+- post-consequence observation when available.
+
+The model must fail closed when target identity, calibration, channel bounds, safe envelope, or observation quality cannot be established.
+
+## Scientific boundary
+
+Current science supports multiple recording and stimulation modalities, including invasive electrical recording/stimulation and emerging non-invasive focused-ultrasound neuromodulation, but does not establish a universal addressable neural packet transport layer. The StegCore model is therefore a conformance/simulation abstraction: a real hardware adapter must supply empirically justified locator semantics, calibration, safety envelope, transfer characteristics, and observations.
+
+No software test may be reported as proof of safe human stimulation, accurate thought decoding, semantic writing, consent detection, or biological activation.
+
+## Active deliverables
+
+1. `docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md`
+2. `src/stegcore/neural_physical_channel.py`
+3. `src/stegcore/neural_governance_system.py`
+4. `tests/test_neural_end_to_end.py`
+5. `.github/workflows/neural-end-to-end.yml`
+6. `data/neural-end-to-end-session-inventory.json`
+7. successor issue with claim/evidence
+8. hosted workflow pass with job/log inspection
+9. final handoff reconciliation
+
+## Cross-repository obligations
+
+- `StegVerse-Labs/ara-admissibility-interop`: schema/profile propagation remains destination-owned and requires its live handoff to admit the work.
+- Site / Publisher / admissibility-wiki / stegguardian-wiki: not release/publication targets until this becomes a public or released capability.
+- No real hardware repository is currently identified as a canonical neural adapter owner. This is a specific unresolved integration boundary, not an unspecified external task. The release condition for hardware integration is: a named adapter/device repository plus empirical calibration and safety evidence becomes available and accepts the interface contract.
+
+## Validation commands planned
+
 ```text
-candidate -> destination resolution -> receiver evidence -> admissibility -> separately authorized consequence -> observation
+pytest -q tests/test_neural_micronode.py tests/test_neural_end_to_end.py
+python -m json.tool data/neural-end-to-end-session-inventory.json >/dev/null
 ```
-
-Outbound:
-```text
-neural observation -> candidate reconstruction -> provenance -> bounded interpretation -> proposed payload -> authorization -> admissibility -> commit coherence -> consequence
-```
-
-Decoder output is candidate/evidence production, not authority merely because confidence is high.
-
-## Provenance, minimization, and scientific boundary
-
-Translated assertions preserve observation reference, adapter profile, model/mapping identity, calibration reference, timestamp/freshness, assertion provenance, and bounded scope. Raw neural observations should remain local whenever derived bounded assertions suffice.
-
-This protocol does not claim present neurotechnology can reliably address arbitrary neural ensembles, infer complete mental states, establish subjective meaning, or safely write arbitrary information to selected neural networks. Unknown biological semantics, ambiguous targeting, and insufficient evidence fail closed.
-
-Conduit Intelligence / Naomi Bashkansky is preserved only as a motivating external application surface; it is not a dependency and no implementation claim is made about Conduit.
-
-## Hosted validation evidence
-
-Workflow: `.github/workflows/neural-micronode.yml`
-
-```text
-run_id: 31289736205
-head_sha: cdd5c7165d603d3dfa8a08effc369baea532fed9
-job_id: 93184768876
-job: validate
-status: completed
-conclusion: success
-schema: valid
-focused_tests: 7 passed in 0.05s
-authority_boundary_check: present
-```
-
-All job steps completed successfully: checkout, Python setup, dependency install, Draft 2020-12 schema validation, focused tests, and authority-boundary verification. No deployment or biological adapter activation is claimed.
-
-## Durable execution inventory
-
-`data/neural-micronode-session-inventory.json` v1.1 preserves nine primary/adjacent goals, exact destinations, claim release, hosted evidence, transfer state, and archive determination.
-
-## Transferred continuation
-
-1. Portable integration: `StegVerse-Labs/StegCore/src/stegcore/portable_steggate.py`; continuation belongs to the portable canonical owner/issue. Requirement transferred: consume neural receiver-evidence decisions without granting the adapter policy authorship, authorization, or consequence authority.
-2. Interop schema review: `StegVerse-Labs/ara-admissibility-interop/docs/ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md`; destination-owned. It must explicitly admit the neural packet/profile before cross-repository schema propagation.
-3. Site / Publisher / admissibility-wiki / stegguardian-wiki: no propagation is required for this experimental runtime boundary. If a later release/public claim is made, destination-owned handoffs govern publication verification.
-4. No deployment, neural hardware integration, biological targeting capability, or release/tag is claimed by this goal.
-
-There are no unspecified external tasks. Remaining work has a durable canonical owner/release condition and no unique information remains only in this conversation.
 
 ## Completion assessment
 
 ```text
-task_completion: 9/9 complete or durably transferred
-developed_files: 6/6 current-lane required files
+predecessor_task_completion: 9/9
+successor_task_completion: 1/9 (handoff corrected/reopened)
+developed_files: 1/7 successor files (handoff only)
 scaffolding_or_stubs: 0
-missing_required_files: 0
-validation: 3/3 (schema, focused runtime tests, hosted workflow)
-integration: 3/3 (StegCore lane installed; portable requirement transferred; interop requirement transferred)
-propagation: not_required_for_experimental_goal
-session_consolidation: 9/9
-unique_untransferred_goals: 0
-active_session_claims: 0
-archival_readiness: true
+missing_required_files: 6
+validation: 0/4 successor validation classes
+integration: 0/3 successor integration classes
+session_consolidation: 9/11 goals durable; 2 newly recognized goals active
+archival_readiness: false
 ```
 
-## Canonical continuation
+## Archive condition
 
-```text
-MERGED INTO: StegVerse-Labs/StegCore/docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md
-issue: StegVerse-Labs/StegCore#71
-inventory: StegVerse-Labs/StegCore/data/neural-micronode-session-inventory.json
-workflow evidence: run 31289736205 / job 93184768876
-```
-
-Deleting or archiving the originating conversation does not remove implementation state, requirements, validation evidence, or continuation ownership.
+This session is not archive-ready until the testable full governance composition and physical bidirectional model are installed and hosted-validated, their limitations are durably assigned, and the handoff records final evidence. A real human neural interface is not required for software-model completion, but absence of real hardware must remain an explicit non-activation boundary.
