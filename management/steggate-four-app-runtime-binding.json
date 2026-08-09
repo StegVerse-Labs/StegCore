@@ -60,8 +60,26 @@
       }
     },
     "vacc": {
-      "owner": "StegVerse-Labs/Site#241",
-      "binding_state": "PENDING_DIRECT_EVIDENCE"
+      "owner": "StegVerse-Labs/Site#241 + StegVerse-org/LLM-adapter#90",
+      "binding_state": "CI_BOUND_PUBLIC_EVIDENCE_PENDING",
+      "consumer_commits": [
+        "9212f6cda2c98eea7de072badbbc1252a0755278",
+        "e0c95a0b3e036a46a81be066f5695f27878a0f71",
+        "f617aba650128ca5635701f8dcafce434a337a16",
+        "df1d5b0d42938e7cbb696a06f321661515955cf1",
+        "f03d9a144cf70d6c69ab2cde8c82a2d3fab4db23"
+      ],
+      "validation": {
+        "workflow": "VA Claim Assistant Governed Retrieval",
+        "run_id": 31339681257,
+        "job_id": 93311292315,
+        "conclusion": "SUCCESS",
+        "artifact_id": 9045428133,
+        "artifact_digest": "sha256:5127b21f40554f9f6894c550ad54bb496d2bbbb0af374c927ebf0bc871309813",
+        "readiness_receipt": "StegVerse-org/LLM-adapter/receipts/va-claim-assistant-service-connection-execution-readiness.json",
+        "provider_execution_proven": false,
+        "public_end_to_end_proven": false
+      }
     },
     "math_solver": {
       "owner": "StegVerse-Labs/Site#240 + StegVerse-org/LLM-adapter#132",
@@ -89,11 +107,11 @@
   },
   "binding_progress": {
     "core_contract": "COMPLETE",
-    "applications_ci_or_stronger": 2,
+    "applications_ci_or_stronger": 3,
     "applications_public_direct": 0,
     "required_applications": 4
   },
   "state": "ACTIVE_INTEGRATION",
   "goal_complete": false,
-  "next_executable_action": "Bind VACC through its canonical governed runtime path while preserving HIL upload ownership; Ecosystem Chat and Math Solver public evidence remain machine-owned and pending."
+  "next_executable_action": "Inspect the HIL canonical handoff and active claim boundary; if a nonconflicting runtime integration surface exists, bind it to the common runtime identity. Ecosystem Chat, VACC, and Math Solver public evidence remain machine-owned and pending."
 }
