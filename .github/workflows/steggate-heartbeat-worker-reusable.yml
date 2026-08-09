@@ -1,0 +1,107 @@
+name: Reusable StegGate Heartbeat Micro-Node
+
+on:
+  workflow_call:
+    inputs:
+      heartbeat_id:
+        required: true
+        type: string
+      heartbeat_epoch:
+        required: true
+        type: string
+    outputs:
+      acceptance_state:
+        description: Hosted StegGate acceptance state.
+        value: ${{ jobs.micro-node.outputs.acceptance_state }}
+
+permissions:
+  contents: read
+
+jobs:
+  micro-node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      acceptance_state: ${{ steps.observe.outputs.state }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: StegVerse-Labs/StegCore
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Record canonical heartbeat binding
+        run: |
+          mkdir -p build
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          Path('build/heartbeat-binding.json').write_text(json.dumps({
+            'schema':'stegverse.steggate_heartbeat_binding.v1',
+            'heartbeat_id':'${{ inputs.heartbeat_id }}',
+            'heartbeat_epoch':'${{ inputs.heartbeat_epoch }}',
+            'scheduler':'stegverse-heartbeat',
+            'authority_effect':False
+          }, indent=2, sort_keys=True)+'\n')
+          PY
+
+      - name: Install canonical StegCore
+        run: python -m pip install -e .
+
+      - name: Start canonical StegGate
+        run: |
+          nohup uvicorn stegcore.service:app --host 127.0.0.1 --port 8000 > build/app.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            curl --fail --silent http://127.0.0.1:8000/health >/dev/null && exit 0
+            sleep 1
+          done
+          cat build/app.log
+          exit 1
+
+      - name: Start ephemeral public transport
+        id: tunnel
+        run: |
+          curl --fail --location --silent --show-error https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 --output "$RUNNER_TEMP/cloudflared"
+          chmod +x "$RUNNER_TEMP/cloudflared"
+          nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 > build/tunnel.log 2>&1 &
+          ORIGIN=''
+          for attempt in $(seq 1 60); do
+            ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/tunnel.log | tail -1 || true)"
+            [ -n "$ORIGIN" ] && break
+            sleep 1
+          done
+          test -n "$ORIGIN"
+          for attempt in $(seq 1 60); do
+            curl --fail --silent --max-time 10 "$ORIGIN/health" >/dev/null && { echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"; exit 0; }
+            sleep 2
+          done
+          exit 1
+
+      - name: Verify complete public acceptance
+        id: observe
+        env:
+          STEGGATE_ORIGIN: ${{ steps.tunnel.outputs.origin }}
+        run: |
+          python scripts/observe_steggate_live_service.py | tee build/observer.json
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          d=json.loads(Path('build/steggate-live-observation.json').read_text())
+          print('state='+d['state'])
+          if d['state'] != 'PASS': raise SystemExit(1)
+          PY
+
+      - name: Preserve heartbeat micro-node evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: steggate-heartbeat-micronode-${{ inputs.heartbeat_epoch }}-${{ github.run_id }}
+          path: |
+            build/heartbeat-binding.json
+            build/steggate-live-observation.json
+            build/app.log
+            build/tunnel.log
+          if-no-files-found: error
+          retention-days: 90
