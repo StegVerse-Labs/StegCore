@@ -77,14 +77,30 @@ def validate_context(context: dict[str, Any]) -> list[str]:
 
     goal_complete = context.get("goal_activation_complete") is True
     if not goal_complete:
-        if context.get("session_state") != "ACTIVE_UNIQUE_WORK_REMAINS":
-            findings.append("incomplete_goal_session_state_must_be_active")
-        if context.get("archive_allowed") is not False:
-            findings.append("incomplete_goal_archive_must_be_false")
-        if context.get("conversation_archive_allowed") is not False:
-            findings.append("incomplete_goal_conversation_archive_must_be_false")
-        if worker.get("archive_status_when_active") != "DO_NOT_ARCHIVE_UNTIL_GOAL_ACTIVATED":
-            findings.append("incomplete_goal_archive_status_invalid")
+        state = context.get("session_state")
+        if state == "ACTIVE_UNIQUE_WORK_REMAINS":
+            if context.get("archive_allowed") is not False:
+                findings.append("active_incomplete_goal_archive_must_be_false")
+            if context.get("conversation_archive_allowed") is not False:
+                findings.append("active_incomplete_goal_conversation_archive_must_be_false")
+            if worker.get("archive_status_when_active") != "DO_NOT_ARCHIVE_UNTIL_GOAL_ACTIVATED_OR_DURABLY_TRANSFERRED":
+                findings.append("incomplete_goal_archive_status_invalid")
+        elif state == "MERGED_INTO_CANONICAL_WORKSTREAM":
+            consolidation = context.get("session_consolidation") or {}
+            if consolidation.get("all_unique_context_transferred") is not True:
+                findings.append("merged_session_unique_context_not_transferred")
+            if consolidation.get("machine_owned_continuation") is not True:
+                findings.append("merged_session_continuation_not_machine_owned")
+            if not consolidation.get("canonical_locations"):
+                findings.append("merged_session_canonical_locations_missing")
+            if not consolidation.get("remaining_tasks"):
+                findings.append("merged_session_remaining_tasks_missing")
+            if context.get("archive_allowed") is not True:
+                findings.append("merged_session_archive_must_be_true")
+            if context.get("conversation_archive_allowed") is not True:
+                findings.append("merged_session_conversation_archive_must_be_true")
+        else:
+            findings.append("incomplete_goal_session_state_invalid")
     return findings
 
 
@@ -130,15 +146,17 @@ def build_receipt(context: dict[str, Any], architecture: dict[str, Any] | None =
 
     goal_complete = context.get("goal_activation_complete") is True
     architecture_state = None if architecture is None else architecture.get("state")
+    archive_allowed = bool(context.get("archive_allowed", False)) and not findings
     body = {
         "schema": "stegverse.steggate_session_continuity_receipt.v1",
         "goal_id": context.get("goal_id"),
         "context_digest": digest(context),
         "architecture_digest": None if architecture is None else digest(architecture),
         "state": "PASS" if not findings else "FAIL_CLOSED",
-        "archive_allowed": bool(context.get("archive_allowed", False)) if goal_complete else False,
+        "archive_allowed": archive_allowed,
         "historical_context_preserved": not findings,
         "goal_activation_complete": goal_complete,
+        "session_state": context.get("session_state"),
         "architecture_reconciliation_state": architecture_state,
         "deployment_state": (context.get("current_work") or {}).get("deployment_state"),
         "next_action": (context.get("worker_policy") or {}).get("next_action"),
