@@ -13,7 +13,7 @@ evaluate the canonical three-layer StegGate chain, optionally cross the existing
 commit-coherence boundary, emit reconstructable evidence, and terminate.
 """
 
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -147,6 +147,24 @@ def _expired(expires_at: Optional[str]) -> bool:
     return datetime.now(timezone.utc) >= expiry.astimezone(timezone.utc)
 
 
+def _observation_dict(observation: StegGateExecutionObservation[Any]) -> dict[str, Any]:
+    """Normalize nested dataclass/Pydantic state into portable JSON-compatible evidence."""
+
+    return {
+        "artifact_type": observation.artifact_type,
+        "status": observation.status,
+        "evaluation": observation.evaluation.model_dump(mode="json"),
+        "pre_state_hash": observation.pre_state_hash,
+        "post_state_hash": observation.post_state_hash,
+        "executor_invoked": observation.executor_invoked,
+        "coherence_receipt": observation.coherence_receipt,
+        "result": observation.result,
+        "error_type": observation.error_type,
+        "error_message": observation.error_message,
+        "observed_at": observation.observed_at,
+    }
+
+
 def _receipt(
     *,
     node_instance_id: str,
@@ -168,7 +186,7 @@ def _receipt(
         "runtime_fingerprint": runtime_fingerprint(),
         "state": state,
         "evaluation": evaluation.model_dump(mode="json") if evaluation else None,
-        "execution_observation": asdict(observation) if observation else None,
+        "execution_observation": _observation_dict(observation) if observation else None,
         "fail_closed_reason": fail_closed_reason,
         "instantiated_at": instantiated_at,
         "terminated_at": terminated_at,
