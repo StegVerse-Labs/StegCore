@@ -1,9 +1,11 @@
 """Machine discovery for the currently usable StegGate HTTP origin.
 
-Persistent hosting is preferred.  When it is unavailable, discovery may use the
-machine-updated issue-comment registry populated by the bounded GitHub Actions
-fallback runtime.  Discovery never grants execution or policy authority; it
-only locates an endpoint and verifies its canonical health declaration.
+Stable StegVerse-owned rendezvous is preferred when it is independently healthy.
+Persistent hosting is retained as a secondary resident lane. When neither is
+available, discovery may use the machine-updated issue-comment registry populated
+by the bounded GitHub Actions fallback runtime. Discovery never grants execution
+or policy authority; it only locates an endpoint and verifies its canonical
+health declaration.
 """
 
 from __future__ import annotations
@@ -15,6 +17,7 @@ from dataclasses import dataclass, asdict
 from typing import Callable
 from urllib.request import Request, urlopen
 
+STABLE_RENDEZVOUS_ORIGIN = "https://stegverse.org/api/steggate"
 PERSISTENT_ORIGIN = "https://steggate-core.onrender.com"
 FALLBACK_REGISTRY_URL = (
     "https://api.github.com/repos/StegVerse-Labs/StegCore/issues/comments/5228464425"
@@ -69,12 +72,22 @@ def resolve_steggate_origin(
     timeout: float = 10.0,
     reader: Callable[[str, float], dict] = _read_json,
 ) -> EndpointResolution:
-    """Resolve a verified live StegGate origin, preferring persistent hosting.
+    """Resolve a verified live StegGate origin.
 
-    Failure is explicit.  A registry declaration is insufficient by itself;
-    the discovered fallback origin must independently return canonical health.
-    Transient fallback edge propagation is retried before failing closed.
+    Resolution order is stable StegVerse rendezvous, persistent resident host,
+    then the rotating fallback registry. Every candidate must independently pass
+    canonical health; declaration or DNS presence alone never establishes a live
+    endpoint.
     """
+
+    if _healthy(STABLE_RENDEZVOUS_ORIGIN, reader, timeout):
+        return EndpointResolution(
+            state="LIVE",
+            origin=STABLE_RENDEZVOUS_ORIGIN,
+            source="stegverse_stable_rendezvous",
+            canonical_three_layer_bound=True,
+            detail="Stable StegVerse rendezvous is healthy and canonically bound.",
+        )
 
     if _healthy(PERSISTENT_ORIGIN, reader, timeout):
         return EndpointResolution(
