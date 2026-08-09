@@ -30,7 +30,7 @@
       "canonical_handoff": "docs/SITE_MIRROR_HANDOFF.md",
       "state": "BLOCKED",
       "owner": "StegVerse-Labs/Site repository orchestrator",
-      "reason": "Active HIL/heartbeat/deployment workloads own the current Site sequence; source semantics must not bypass orchestration.",
+      "reason": "Active HIL/heartbeat/deployment workloads own the current Site sequence and external session ownership is disabled; source semantics must not bypass orchestration.",
       "release_condition": "Site orchestrator admits a nonconflicting correctability projection task and target-native validation records the result.",
       "next_action": "Admit only through Site orchestration after collision check."
     },
@@ -54,32 +54,41 @@
     },
     {
       "repository": "StegVerse-Labs/admissibility-wiki",
-      "canonical_handoff": "ADMISSIBILITY_WIKI_MIRROR_HANDOFF.md",
-      "state": "BLOCKED",
-      "owner": "StegVerse-Labs/admissibility-wiki issue #50 canonical validation task mesh",
-      "reason": "Repository-wide canonical validation remains fail-closed and issue #50 owns the remaining validation mesh.",
-      "release_condition": "The canonical validation mesh records correctability ingestion or a precise dependency blocker and target-native validation outcome.",
-      "next_action": "Merge the missing correctability distinction into canonical admissibility work without creating a competing validation lane."
+      "canonical_handoff": "docs/CORRECTABILITY_PROJECTION_MIRROR_HANDOFF.md",
+      "state": "COMPLETE",
+      "owner": "StegVerse-Labs/admissibility-wiki bounded integration support lane",
+      "evidence": {
+        "data": "data/correctability-projection.json",
+        "validator": "scripts/check_correctability_projection.py",
+        "workflow": ".github/workflows/check-correctability-projection.yml",
+        "workflow_run_id": 31290068860,
+        "job_id": 93185607425,
+        "head_sha": "9e9f0e5d7c9f42015c7f831500d1c6723f48d746",
+        "conclusion": "success",
+        "handoff_commit": "e12f087d6a6f40f9d1926d043c7f14e7972d9838"
+      },
+      "release_condition": "SATISFIED",
+      "next_action": "None for bounded correctability ingestion; issue #50 remains separately fail-closed for unrelated repository-wide validation."
     },
     {
       "repository": "StegVerse-002/stegguardian-wiki",
       "canonical_handoff": "STEGGUARDIAN_WIKI_MIRROR_HANDOFF.md",
-      "state": "BLOCKED",
+      "state": "REVIEW_REQUIRED",
       "owner": "StegVerse-002/stegguardian-wiki orchestration",
-      "reason": "Guardian interpretation is dependency-blocked pending the verified upstream admissibility chain.",
-      "release_condition": "Verified upstream admissibility evidence exists, Guardian orchestration admits the projection, and Guardian target-native validation succeeds.",
-      "next_action": "Queue only a bounded Guardian interpretation after admissibility evidence exists; documentation must not become enforcement authority."
+      "reason": "The HIL Guardian projection remains dependency-blocked, but a distinct bounded correctability-awareness projection may be parallel-safe because active Guardian implementation tasks are empty.",
+      "release_condition": "Guardian orchestration admits a bounded non-HIL correctability-awareness projection and target-native validation succeeds without creating enforcement authority.",
+      "next_action": "Evaluate and, if nonconflicting, install a bounded correctability-awareness projection distinct from GUARDIAN-HIL-0001."
     }
   ],
   "progress": {
-    "completed_targets": 1,
+    "completed_targets": 2,
     "required_targets": 4,
-    "integration_percent": 25
+    "integration_percent": 50
   },
   "allowed_states": ["COMPLETE", "BLOCKED", "RETRY", "REVIEW_REQUIRED", "FAILED", "CLAIMED", "SUPERSEDED", "MERGED"],
   "duplicate_prevention": "Do not mutate a target when its canonical handoff or orchestrator reports an overlapping active claim; merge only the missing correctability requirement into the admitted target-native workstream.",
   "authority_boundary": "Correctability conformance, workflow success, artifacts, and propagation records do not create deployment, financial, legal, physical, Guardian, publication, release, custody, or execution authority.",
   "release_condition": "All four destinations have verified target-native propagation evidence or durable blockers with named owners and machine-observable release conditions, and the source handoff/task registry are reconciled.",
-  "next_executable_task": "EVALUATE_ADMISSIBILITY_WIKI_CANONICAL_INTEGRATION_WITHOUT_DUPLICATING_ISSUE_50; SITE_AND_GUARDIAN_REMAIN_DEPENDENCY_BLOCKED",
+  "next_executable_task": "EVALUATE_STEGGUARDIAN_BOUNDED_NON_HIL_CORRECTABILITY_AWARENESS_PROJECTION; SITE_REMAINS_ORCHESTRATOR_BLOCKED",
   "session_dependency": true
 }
