@@ -7,23 +7,20 @@ Organization: StegVerse-Labs
 Repository: StegCore
 Canonical branch: main
 Primary goal: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001
-Canonical task owner: issue #68 + repository-native live observer + active originating session + Render capacity condition watch
-Project state: ARCHITECTURE_RECONCILED / FULL GOVERNED EXECUTION COMPOSITION VALIDATED / HOST DEPLOYMENT BLOCKED / FULL LIVE OBSERVER + AUTOMATIC FINALIZER + CAPACITY WATCH ACTIVE
-Originating chat state: ACTIVE_UNIQUE_WORK_REMAINS / DO NOT ARCHIVE UNTIL GOAL ACTIVATED
+Canonical task owner: issue #68 + repository-native workers + active originating session
+Project state: ARCHITECTURE_RECONCILED / RESIDENT RUNTIME VALIDATED / PORTABLE EPHEMERAL TOPOLOGY ACTIVE / PUBLIC FALLBACK PROVEN / STABLE RESIDENT ENDPOINT STILL UNRESOLVED
+Originating chat state: ACTIVE_UNIQUE_WORK_REMAINS / DO NOT ARCHIVE UNTIL FULL GOAL ACTIVATED
 ```
 
-Read this file before changing StegCore runtime decisions, adapters, receipt bindings, live-service activation, deployment, or downstream verification. Live Git state, workflow runs/jobs, committed evidence, issues, Render observations, `data/steggate-session-context.json`, `data/steggate-architecture-reconciliation-state.json`, `management/steggate-full-functional-activation.json`, and `management/steggate-render-capacity-watch.json` supersede chat summaries.
+Read this file before changing StegCore runtime decisions, adapters, package topology, live-service activation, deployment, or downstream verification. Live Git state, workflow runs/jobs, committed evidence, issue #68, `data/steggate-session-context.json`, `data/steggate-architecture-reconciliation-state.json`, `management/steggate-full-functional-activation.json`, and `management/steggate-portable-micronode-activation.json` supersede chat summaries.
 
-## Active project/session goal
+## Active goal
 
-Make canonical StegGate fully functional and live through one authoritative admissibility-to-consequence chain. Do not stop at library/tag readiness. Do not create a parallel decision authority merely because `decision.py` is intentionally minimal. Do not archive the originating session merely because unresolved work is machine-owned. This goal remains active until the hosted service is live, required live observations pass, the activation receipt is persisted, and issue #68 is closed.
+Make canonical StegGate actually functional through one authoritative admissibility-to-consequence chain across the deployment topologies that use it. Persistent HTTP hosting is one topology, not the definition of StegGate. A portable governed package may instantiate an ephemeral StegGate micro-node locally at the consequence boundary.
 
-## Architecture reconciliation — COMPLETE
+Do not create a parallel decision authority because `decision.py` is intentionally minimal. Do not reproduce StegGate policy logic in Site, a consumer, a tunnel, or a rendezvous layer. Do not archive the originating session while the broader full-functional activation goal still has unique integration work.
 
-Canonical record: `docs/STEGGATE_ARCHITECTURE_RECONCILIATION.md`.
-Machine state: `data/steggate-architecture-reconciliation-state.json`.
-
-Resolved call graph:
+## Canonical authority chain — RECONCILED
 
 ```text
 Governance policy/evidence artifacts
@@ -37,7 +34,7 @@ src/stegcore/steggate_runtime.py:governed_steggate_execute
         ↓
 src/stegcore/commit_governance.py:coherence_gate
         ↓
-injected mutation callback at governed commit boundary
+injected consequence callback at governed commit boundary
         ↓
 execution observation / runtime_adapters reconciliation semantics
         ↓
@@ -46,33 +43,25 @@ Continuity/reconstruction consumers
 
 Architectural facts:
 
-1. `src/stegcore/decision.py` is deliberately minimal and remains a compatibility interface. Its minimal scope is not evidence that a full engine is absent.
-2. `src/stegcore/three_layer.py` is the canonical core evaluator for judgment conditions, signal/reference-state integrity, and execution-boundary authority/policy/delegation/evidence/recoverability.
-3. `contracts/permission-admissibility-boundary.v1.json` keeps permission distinct from present-tense admissibility.
-4. `src/stegcore/steggate.py` calls the canonical three-layer evaluator, normalizes the complete material matrix for reconstruction, composes existing capability/verified-continuity bindings, and adds candidate-hash-bound human-approval `REVIEW` semantics. It is not a parallel policy engine.
-5. `src/stegcore/steggate_runtime.py` binds the full decision state to existing commit coherence. A mutation callback is unreachable for `DENY`, `REVIEW`, `FAIL_CLOSED`, coherence denial, or missing commit authority.
-6. An `ALLOW` plus independent coherence `ALLOW` may invoke the injected executor; its finalized coherence receipt binds the StegGate `decision_state_hash`.
-7. `src/stegcore/runtime.py#governed_execute` remains a compatibility surface; it is not used as proof of the full StegGate evaluation path.
-8. `src/stegcore/runtime_adapters.py` remains the existing caller-binding and later effect-reconciliation semantic surface.
-9. Full decision state, including non-occurrence and divergence, remains reconstructable reality under `docs/DECISION_STATE_RECONSTRUCTION.md` and Continuity contracts.
+1. `src/stegcore/decision.py` remains a deliberately minimal compatibility interface, not the canonical full engine.
+2. `src/stegcore/three_layer.py` is the core evaluator for judgment, signal/reference-state integrity, and execution-boundary authority/policy/delegation/evidence/recoverability.
+3. `src/stegcore/steggate.py` composes that evaluator into the complete decision-state matrix and candidate-bound REVIEW semantics; it is not a second policy engine.
+4. `src/stegcore/steggate_runtime.py` binds full decision state to independent commit coherence before any injected consequence callback is reachable.
+5. DENY, REVIEW, FAIL_CLOSED, coherence denial, or missing commit authority cannot invoke the consequence callback.
+6. Complete decision state, including non-occurrence and divergence, remains reconstructable reality.
 
-## Implemented functional surfaces
+## Functional topologies
+
+### A. Resident HTTP StegGate
+
+Implemented surfaces:
 
 ```text
-src/stegcore/steggate.py
-src/stegcore/steggate_runtime.py
 src/stegcore/service.py
-tests/test_steggate_service.py
-tests/test_steggate_runtime.py
 scripts/observe_steggate_live_service.py
-tests/test_steggate_live_observer.py
 scripts/finalize_steggate_live_activation.py
-tests/test_finalize_steggate_live_activation.py
-scripts/guard_steggate_session_continuity.py
-tests/test_steggate_session_continuity.py
+src/stegcore/endpoint_discovery.py
 .github/workflows/steggate-live-observer.yml
-.github/workflows/steggate-session-continuity.yml
-management/steggate-render-capacity-watch.json
 ```
 
 HTTP evaluation surface:
@@ -85,37 +74,9 @@ GET  /v1/self-test
 POST /v1/evaluate
 ```
 
-The public HTTP service deliberately exposes evaluation only. It does not expose an arbitrary remote mutation callback or acquire deployment, Continuity, publication, legal, custody, payment, or external-system authority.
+The resident HTTP service exposes evaluation only. It does not expose an arbitrary remote mutation callback or gain deployment, Continuity, publication, legal, custody, payment, or external-system authority.
 
-## Strongest current repository validation
-
-StegCore Tests run `31276082614`, job `93149695844`, on head `0c1b843d3c603f0b41a64e3ba2f797fd1f2796c1` completed successfully after the active-session archive guard was restored. The prior full-suite run `31272908477`, job `93141782128`, recorded:
-
-```text
-151 passed
-128 subtests passed
-```
-
-Diagnostics artifact from that full-suite run:
-
-```text
-artifact_id: 9026151563
-digest: sha256:684984429c260e4dd4325d8ef42c849b75f208e8882b46ea0535c459afc539de
-```
-
-The continuity guard itself is hosted-green after reconciliation-state correction:
-
-```text
-run: 31276136526
-job: 93149840636
-result: SUCCESS
-artifact_id: 9027042689
-digest: sha256:212d757d9c155baeb6303c6b7a28fc3d31c0a95fb36d4203b8343df29b4883af
-```
-
-## Canonical hosted service — CREATED, NOT LIVE
-
-Render service:
+The original Render service still exists:
 
 ```text
 name: steggate-core
@@ -124,98 +85,132 @@ origin: https://steggate-core.onrender.com
 repo: StegVerse-Labs/StegCore
 branch: main
 auto_deploy: yes
-plan: free
-region: oregon
-workspace: tea-d30avmndiees73bg2rjg
 ```
 
-Latest explicitly inspected deploy:
+Render remains blocked before source build execution by exhausted workspace build-pipeline minutes. Paid workspace changes are not authorized by this goal.
+
+A zero-spend GitHub Actions + Cloudflare Quick Tunnel fallback proved that the canonical HTTP service can run publicly and pass `/health`, exact four-disposition `/v1/self-test`, and complete-matrix `/v1/evaluate`. Quick Tunnel endpoints are ephemeral and were not reliably reachable from an independent subsequent runner, so they are proof/transport nodes rather than a stable service identity.
+
+`src/stegcore/endpoint_discovery.py` therefore verifies endpoint health independently and fails closed on a stale/unreachable registry declaration.
+
+### B. Portable / ephemeral governed-package StegGate — ACTIVE
+
+Canonical record: `management/steggate-portable-micronode-activation.json`.
+Design: `docs/STEGGATE_PORTABLE_MICRONODE.md`.
+Implementation: `src/stegcore/portable_steggate.py`.
+Tests: `tests/test_portable_steggate.py`.
+
+Principle:
+
+> A governed transition and the StegGate boundary required to admit it may travel as one transportable execution object.
+
+A `GovernedTransitionPackage` carries the canonical `AdmissibilityRequest`, package identity/hash, portable-node profile, expected reconciled-runtime profile/fingerprint, declared execution/coherence context, and optional expiry. It does not gain trust by transporting arbitrary executable bytes.
+
+The receiver instantiates a fresh short-lived `SGMU-*` micro-node from a locally installed known StegCore runtime, verifies package and runtime binding, runs the canonical authority chain, emits a `stegcore.portable_micronode_receipt`, and terminates.
+
+Lifecycle:
 
 ```text
-deploy_id: dep-d9rood9t0dsc73b92sug
-head: 0c1b843d3c603f0b41a64e3ba2f797fd1f2796c1
-status: build_failed
-machine cause: workspace build-pipeline minutes exhausted
+TRANSPORTED
+  → INSTANTIATED
+  → PACKAGE_AND_RUNTIME_BINDING_VERIFIED
+  → EVALUATED
+  → [COMMIT_COHERENCE if execution requested]
+  → [CONSEQUENCE only if ALLOW + coherence ALLOW]
+  → RECEIPT_EMITTED
+  → TERMINATED
 ```
 
-Render logs continue to state that builds are canceled before source build execution because the workspace has exhausted build-pipeline minutes for the current billing period. Render identifies workspace-plan upgrade or increased build-spend limit as immediate capacity-restoration mechanisms; neither paid action is authorized by this goal/session.
+Fail-closed before consequence on:
 
-Only one connected Render workspace is available. The connected Vercel team has no StegCore project and exposes no supported project-creation mutation for this repository. Plugin discovery for an alternate supported hosting/cloud connector returned no matching installable plugin. No unsupported deployment route should be invented.
+- package hash mismatch;
+- runtime fingerprint mismatch;
+- invalid or expired package validity;
+- canonical non-ALLOW admissibility;
+- independent coherence denial.
 
-## Render capacity condition watch — ACTIVE
+Networking is optional. A portable node can execute locally beside the governed consequence adapter and therefore does not require Render, a public ingress, a stable URL, or a tunnel.
 
-Durable record: `management/steggate-render-capacity-watch.json`.
-
-A separate hourly condition watch is active against the canonical Render service. It does not treat the blocker as completion. Its required behavior is:
-
-1. remain silent while build capacity is still exhausted;
-2. when capacity becomes available, trigger a canonical deploy if none is live/in-progress;
-3. inspect deployment status;
-4. after a live deploy, verify `/health`, exact four-outcome `/v1/self-test`, and deterministic complete-matrix `/v1/evaluate`;
-5. permit final activation reconciliation only after those checks pass.
-
-This watch adds an execution path that can react when hosting capacity returns even if no new chat turn occurs. It has no authority to upgrade a workspace plan, increase spend, or make another paid change.
-
-## Live observer and automatic finalizer — ACTIVE / FAIL-CLOSED
-
-Canonical automation:
+Hosted validation for this topology:
 
 ```text
-.github/workflows/steggate-live-observer.yml
-scripts/observe_steggate_live_service.py
-scripts/finalize_steggate_live_activation.py
+StegCore Tests run: 31286273932
+job: 93175594894
+head: 2f0076a25fdf7ee020dca85f3934c6bca385b310
+result: PASS
+161 tests passed
+129 subtests passed
+artifact: 9029913625
+artifact sha256: fd7b9a27eb18d6e4a061e7e7b507cceb6d6b10bef649e2198c08841a9e25e054
 ```
 
-Trigger: relevant pushes, manual recovery dispatch, and hourly schedule at minute 23.
+The tests prove JSON transport + fresh instantiation, canonical execution after ALLOW+coherence ALLOW, runtime-fingerprint fail-closed behavior, package-tamper fail-closed behavior, and no executor invocation on canonical DENY.
 
-Every observation cycle requires:
+**Portable topology activation state: COMPLETE_AND_HOSTED_VALIDATED.**
 
-1. `GET /health` -> `healthy` and `canonical_three_layer_bound=true`;
-2. `GET /v1/self-test` -> `PASS` with exact ALLOW/DENY/REVIEW/FAIL_CLOSED mapping;
-3. deterministic `POST /v1/evaluate` -> `ALLOW`, complete required predicate matrix, `candidate_hash`, `canonical_three_layer_request_hash`, `canonical_three_layer_receipt_hash`, `decision_state_hash`, permission/admissibility separation, and explicit absence of execution/Continuity-minting authority.
+## Worker/context retention — ACTIVE
 
-When and only when all three hosted checks PASS, the workflow automatically creates `data/steggate-live-activation-receipt.json`, updates context/inventory/handoff, commits the activation state, comments on issue #68, and closes #68.
+Canonical worker surfaces:
 
-Machine ownership is continuation support, not a substitute for completion. The originating session remains active until that success condition actually occurs.
+```text
+data/steggate-session-context.json
+scripts/guard_steggate_session_continuity.py
+tests/test_steggate_session_continuity.py
+.github/workflows/steggate-session-continuity.yml
+```
 
-## Claim and collision control
+The worker preserves the active full-functional goal, prevents intentional minimal interfaces from being misclassified as missing engines, prevents duplicate canonical decision authority, and fails closed if an incomplete goal is prematurely marked archive-ready.
+
+Hosted green evidence remains run `31276136526`, job `93149840636`, artifact `9027042689`, digest `sha256:212d757d9c155baeb6303c6b7a28fc3d31c0a95fb36d4203b8343df29b4883af`.
+
+## Current claim and collision control
 
 ```text
 task_id: STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001
 repository: StegVerse-Labs/StegCore
 branch: main
-canonical owner: issue #68 + repository-native automation + Render capacity watch + active originating session
+canonical owner: issue #68 + repository-native automation + active originating session
 chat claimant: ACTIVE_UNIQUE_WORK_REMAINS
-project claim state: BLOCKED_HOST_ACTIVATION / MACHINE_OBSERVER_ACTIVE / CAPACITY_WATCH_ACTIVE
-claim release condition: hosted health + four-outcome self-test + complete matrix evaluation PASS + activation receipt + issue #68 closed
-collision boundary: no competing StegGate policy engine or canonical deployment identity
-next action: capacity watch checks Render hourly; active session continues inspecting supported deployment routes and machine evidence without manufacturing authority
+collision boundary: no competing StegGate policy engine; no consumer may reinterpret package transport as policy authority
+claim release condition: full functional goal has no remaining unique integration/activation work and all required consumer/runtime observations are durable
 ```
 
-## Exact incomplete tasks
+Completed subgoals:
 
-1. `FF-DEPLOY-05` — `Render/srv-d9rlic2jobas73do1q6g`: successful canonical build/deploy. State `BLOCKED + CONDITION_WATCH_ACTIVE`. Release condition: canonical deploy reaches `live`.
-2. `FF-OBSERVE-06` — `.github/workflows/steggate-live-observer.yml`: obtain health/self-test/evaluate PASS. State `MACHINE_OWNED + SESSION_OBSERVED`, blocked by FF-DEPLOY-05.
-3. `FF-ACTIVATE-07` — `scripts/finalize_steggate_live_activation.py` and workflow success path: persist final receipt, reconcile durable records, and close #68. State `WAITING_FOR_EVIDENCE`.
+- `FF-CONTEXT-01` context-retention worker: COMPLETE.
+- `FF-ARCH-02` canonical architecture reconciliation: COMPLETE.
+- `FF-EXEC-03` evaluation → coherence → consequence composition: COMPLETE.
+- `FF-SERVICE-04` resident HTTP evaluation service implementation: COMPLETE.
+- `FF-PORTABLE-08` portable ephemeral governed-package micro-node: COMPLETE_AND_HOSTED_VALIDATED.
+- Public HTTP execution through an ephemeral Cloudflare transport: PROVEN, but not accepted as stable endpoint continuity.
 
-These three tasks are archival dependencies for this active session.
+Open work:
+
+1. `FF-CONSUMER-09` — bind at least one real StegVerse consumer/provider adapter to `GovernedTransitionPackage` and execute/evaluate locally without public StegGate ingress. Candidate consumers: Ecosystem Chat, VACC, Math Solver, HIL. This is now the highest-value unblocked functional proof.
+2. `FF-RESIDENT-STABLE-10` — if a resident remote StegGate endpoint remains required by a consumer, converge it with StegVerse-owned endpoint publication/discovery rather than treating Render as architectural authority. Site issue #24 already owns the general endpoint-publication/fail-closed routing architecture; do not duplicate its authority.
+3. Existing Render and live-observer automation remain valid as a resident-topology lane, but failure of that lane does not invalidate the portable topology.
 
 ## Cross-repository boundaries
 
 - Governance remains policy/evidence authority.
-- `StegVerse-Labs/ara-admissibility-interop` remains canonical interop/schema owner for decision-state portability.
-- `StegVerse-Labs/Continuity` remains canonical Continuity/reconstruction consumer authority.
-- Existing Site, Publisher, admissibility-wiki, and StegGuardian awareness work is not evidence of live StegGate deployment and must not be mutated merely to manufacture activation.
+- `StegVerse-Labs/ara-admissibility-interop` remains interop/schema owner for decision-state portability.
+- `StegVerse-Labs/Continuity` remains Continuity/reconstruction consumer authority.
+- Site issue #24 owns the StegVerse-owned endpoint-publication/discovery architecture for stable routing where remote ingress is needed.
+- Consumers may construct/transport governed packages and provide bounded consequence adapters; they must not duplicate StegGate policy evaluation.
+
+## Next executable action
+
+Select the first nonconflicting consumer whose canonical handoff permits integration, read its handoff, and install a thin adapter that:
+
+1. constructs or accepts `GovernedTransitionPackage`;
+2. transports the package without rewriting its governance semantics;
+3. instantiates `evaluate_governed_package` or `execute_governed_package` locally;
+4. supplies only the consumer-specific bounded consequence callback;
+5. preserves the returned portable micro-node receipt for reconstruction;
+6. proves no public StegGate ingress is required.
 
 ## Archive condition
 
 NOT SATISFIED.
 
-```text
-Current project activation tasks complete: 4/7
-Incomplete: FF-DEPLOY-05, FF-OBSERVE-06, FF-ACTIVATE-07
-Conversation archive allowed: false
-Required before archive: full hosted PASS + activation receipt + issue #68 closed
-```
-
-The repository-native worker must fail closed if a future handoff attempts to mark this conversation archive-ready before the active StegGate functional goal itself is complete.
+Portable micro-node activation is complete, but the broader full-functional goal still has a unique integration proof remaining: a real consumer must use the portable package topology without duplicating decision authority. The originating session remains active until that integration is installed/validated or durably transferred to an already-claimed canonical consumer lane with no unique chat-only requirements remaining.
