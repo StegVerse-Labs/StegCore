@@ -15,7 +15,7 @@ Canonical runtime transport: heartbeat-owned zero-credential public tunnel
 Persistent Render authority: NONE
 ```
 
-Live repository/workflow evidence supersedes chat summaries. Read this handoff together with `StegVerse-Labs/.github/docs/ORG_MIRROR_HANDOFF.md`, `StegVerse-Labs/.github/control/heartbeat-subsignals.json`, `.github/workflows/steggate-heartbeat-worker-reusable.yml`, `management/steggate-heartbeat-credential-integration.json`, and `data/steggate-live-activation-receipt.json`.
+Live repository/workflow evidence supersedes chat summaries. Read this handoff together with `StegVerse-Labs/.github/docs/ORG_MIRROR_HANDOFF.md`, `StegVerse-Labs/.github/control/heartbeat-subsignals.json`, `StegVerse-Labs/.github/receipts/steggate-transport-lease/STEGGATE-TUNNEL-LEASE-001.json`, `.github/workflows/steggate-heartbeat-worker-reusable.yml`, `management/steggate-heartbeat-credential-integration.json`, and `data/steggate-live-activation-receipt.json`.
 
 ## Canonical authority chain
 
@@ -45,25 +45,7 @@ observed_at: 2026-08-09T09:14:06.578269Z
 
 The receipt is historical activation evidence. It is not rewritten on every heartbeat.
 
-## Fresh zero-credential tunnel proof
-
-Fresh accepted proof remains:
-
-```text
-StegVerse-Labs/.github run: 31325104576
-heartbeat job: 93274099310 SUCCESS
-micro-node job: 93274112655 SUCCESS
-heartbeat: HB-31325104576-5 / epoch 5
-health: PASS
-self-test exact four dispositions: PASS
-v1/evaluate deterministic complete matrix: PASS
-micro-node artifact: 9041297862
-artifact digest: sha256:a1222757e3fe0187b58ce2bd26c32600c70087c14c5f9e48f68ee7ffa2473b69
-```
-
-Historical rotating endpoint declarations never prove indefinite liveness; consumers health-check the current origin.
-
-## Corrected heartbeat lease semantics
+## Corrected heartbeat lease semantics — INSTALLED AND LIVE
 
 The transport lease is **not per heartbeat**. Heartbeats are the signaling carrier; the lease is a subsignal-controlled continuity object.
 
@@ -73,7 +55,10 @@ Canonical subsignal:
 StegVerse-Labs/.github/control/heartbeat-subsignals.json
 subsignal: steggate_transport_lease
 schema: stegverse.heartbeat-subsignals/v1
-lease actions: NONE | OPEN | EXTEND | CLOSE
+lease_id: STEGGATE-TUNNEL-LEASE-001
+state: OPEN
+lease_action: EXTEND
+opened_epoch: 10
 ```
 
 The lease persists independently of heartbeat occurrence. A heartbeat may open, extend, hand off, or close the lease, but the heartbeat epoch itself is not the lease lifetime.
@@ -88,27 +73,53 @@ Release semantics:
 
 Wall-clock expiry is not governance authority. A host/runtime envelope may force reconstruction, but that infrastructure limit does not redefine lease validity; the next admitted carrier reconstructs/extends the same governed lease state.
 
-Current implementation commits:
+## Live lease proof
+
+Canonical hosted validation run:
+
+```text
+StegVerse-Labs/.github workflow run: 31325697942
+heartbeat job: 93275589574 SUCCESS
+heartbeat epoch persisted: 10
+micro-node job: 93275629397 IN_PROGRESS
+Start zero-credential public transport: SUCCESS
+Verify complete public acceptance: SUCCESS
+Hold and self-heal tunnel under heartbeat lease subsignal: IN_PROGRESS
+```
+
+This proves the corrected relationship directly: the heartbeat job completed and persisted epoch 10 while the StegGate micro-node remained active afterward under `STEGGATE-TUNNEL-LEASE-001`. The tunnel is therefore governed by the lease subsignal rather than by the heartbeat lifetime.
+
+Durable org-level receipt:
+
+```text
+StegVerse-Labs/.github/receipts/steggate-transport-lease/STEGGATE-TUNNEL-LEASE-001.json
+state: OPEN
+runtime_state: LEASE_HOLD_SELF_HEAL_IN_PROGRESS
+lease_is_per_heartbeat: false
+wall_clock_expiry_authority: false
+render_dependency: false
+```
+
+## Dependent-task participation
+
+`StegVerse-Labs/.github/scripts/manage_heartbeat_subsignal.py` is the canonical mutation surface for dependent-task and lease lifecycle changes. It supports `register`, `unregister`, `open`, `extend`, `close`, and `handoff` and rejects invalid state/authority semantics. Current commit: `26540ef445a90e80b5adfefcf211b735226e33ea`.
+
+An empty dependent-task set does not automatically release an open lease. When dependent tasks are declared, the active micro-node consults the canonical worker registry and releases on task completion only when every declared task reaches a configured terminal state.
+
+## Implementation commits
 
 ```text
 StegVerse-Labs/.github
-  schemas/heartbeat-subsignal.schema.json        00adef98237b692e65387cffc089cd0602bc8495
-  control/heartbeat-subsignals.json              09100d98efe0b043c4382c98727180cf79f76fc0
-  steggate-heartbeat-integration.yml             2f13e7472377185250c4365460468111a95ea356
+  heartbeat subsignal schema                         00adef98237b692e65387cffc089cd0602bc8495
+  heartbeat integration + safe rebase                2f13e7472377185250c4365460468111a95ea356
+  lease opening receipt                              429fb3eac002b4176194abe48931b13964f638c6
+  OPEN / EXTEND subsignal state                      7d073bf302c2c905cb366a59deffa57edb375b76
+  dependent-task lifecycle manager                   26540ef445a90e80b5adfefcf211b735226e33ea
+  organization handoff reconciliation                1d2eadc53d7915e6ddea0be62a451261c6c91329
 
 StegVerse-Labs/StegCore
-  steggate-heartbeat-worker-reusable.yml         229e8c99b77f8965fb3f07eea62d320d2d6d1ec6
+  lease-bound self-healing reusable micro-node       229e8c99b77f8965fb3f07eea62d320d2d6d1ec6
 ```
-
-The reusable worker now receives lease identity/action/dependent-task state, binds it into runtime evidence, maintains and self-heals the tunnel while the lease remains admitted, and releases only under the subsignal/task conditions above.
-
-## Validation state
-
-The first lease-bearing integration run `31325629644` was a startup failure because it resolved the older reusable workflow SHA before the new inputs existed. The next run `31325667609` resolved the corrected reusable SHA but exposed an existing heartbeat persistence defect: runtime-generated unstaged files prevented `git pull --rebase`.
-
-That persistence path has now been corrected in `.github` commit `2f13e7472377185250c4365460468111a95ea356` by stashing noncanonical runtime evidence across the canonical rebase/push and restoring it for artifact preservation.
-
-Current validation run: `31325697942`; it resolves StegCore reusable commit `229e8c99b77f8965fb3f07eea62d320d2d6d1ec6`. At last observation its heartbeat job was queued. Do not claim live lease activation until that run reaches tunneled acceptance.
 
 ## Third-party posture
 
@@ -118,26 +129,26 @@ Render is non-authoritative and not an activation dependency. The credentialed `
 
 ```text
 StegVerse-Labs/.github:
-  - complete hosted validation of run 31325697942 or successor
-  - persist/advance lease subsignal state from OPEN_REQUESTED to observed OPEN after public acceptance
-  - add successor-lease acceptance writeback so handoff is machine-observable
-  - allow tunnel-dependent workers/tasks to register/deregister their lease dependency
+  - make successor-lease acceptance/handoff machine-observable across carriers
+  - preserve an explicit reconstruction signal when a carrier host envelope ends before lease release
+  - validate at least one successor/reconstruction opening under the same governing lease semantics
 
 StegVerse-Labs/StegCore:
-  - validate lease-hold/self-heal loop in hosted execution
-  - preserve final lease runtime evidence artifact
+  - preserve final lease runtime evidence when the current carrier releases/reconstructs
   - keep endpoint discovery fail-closed against stale origins
 ```
 
-No scaffolding-only transport implementation is counted as activation.
+No scaffolding-only transport implementation is counted as activation and no manual user action is assigned.
 
 ## Completeness
 
 ```text
 functional StegGate: 100%
 heartbeat transport activation: 100%
-lease-subsig contract/install: 90%
-hosted lease validation: pending
+lease-subsig contract/install: 100%
+first live lease opening/hold: 100%
+dependent-task lifecycle control: 100% installed
+successor/reconstruction proof: pending
 scaffolding/stubs in completed StegGate runtime: 0
-archive readiness for this lease-correction work: NO
+archive readiness for this lease-continuity goal: NO
 ```
