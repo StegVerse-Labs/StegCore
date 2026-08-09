@@ -9,7 +9,7 @@ from stegcore.steggate import (
     SignalState,
     evaluate_admissibility,
 )
-from stegcore.service import health, self_test
+from stegcore.service import capabilities, health, runtime_identity, self_test
 
 
 def request_all_pass() -> AdmissibilityRequest:
@@ -156,7 +156,33 @@ def test_live_service_health_and_self_test_contract():
     status = health()
     assert status["state"] == "healthy"
     assert status["canonical_three_layer_bound"] is True
+    assert status["runtime_identity"] == "stegverse:steggate:canonical:three-layer:v1"
     result = self_test()
     assert result["state"] == "PASS"
     assert result["canonical_three_layer_bound"] is True
+    assert result["runtime_identity"] == status["runtime_identity"]
     assert result["observed"] == result["expected"]
+
+
+def test_runtime_identity_is_stable_transport_independent_contract():
+    identity = runtime_identity()
+    caps = capabilities()
+    assert identity["contract_version"] == "stegverse.steggate.runtime-identity.v1"
+    assert identity["runtime_identity"] == "stegverse:steggate:canonical:three-layer:v1"
+    assert identity["canonical_owner"] == "StegVerse-Labs/StegCore"
+    assert identity["canonical_admissibility_runtime"] == "stegcore.three_layer.evaluate_three_layer"
+    assert identity["binding_fields"] == [
+        "contract_version",
+        "runtime_identity",
+        "canonical_owner",
+        "canonical_admissibility_runtime",
+    ]
+    assert identity["application_specific_policy_authority"] is False
+    assert identity["transport_identity_authoritative"] is False
+    assert identity["execution_authority"] is False
+    assert caps["runtime_identity"] == identity["runtime_identity"]
+    assert caps["contract_version"] == identity["contract_version"]
+    assert caps["canonical_owner"] == identity["canonical_owner"]
+    assert caps["canonical_admissibility_runtime"] == identity["canonical_admissibility_runtime"]
+    assert caps["application_specific_policy_authority"] is False
+    assert caps["transport_identity_authoritative"] is False
