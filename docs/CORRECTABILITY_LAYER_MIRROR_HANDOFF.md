@@ -7,20 +7,20 @@ goal_id: CORRECTABILITY-LAYER-001
 originating_goal: distinguish reconstructability from timely, authorized, enforceable correction and build the missing layer
 repository: StegVerse-Labs/StegCore
 branch: main
-state: MACHINE_OWNED_PROPAGATION
-issue: StegVerse-Labs/StegCore#43
-canonical_owner: StegVerse-Labs/StegCore correctability workflow lane
-implementation_claim: COMPLETE_AT_REPOSITORY_FILE_LEVEL
-validation_claim: RELEASED_HOSTED_VALIDATION_COMPLETE
-integration_claim: MACHINE_OWNED_C06_DOWNSTREAM_PROPAGATION
-claim_release_condition: four destination propagation receipts or durable target-native blockers are recorded and task registry reconciled
+state: ACTIVE_FINAL_SITE_PROPAGATION_BLOCKED_AND_OBSERVED
+issue: StegVerse-Labs/StegCore#43 (closed completed)
+canonical_owner: StegVerse-Labs/StegCore correctability propagation lane
+implementation_claim: COMPLETE
+validation_claim: COMPLETE_RELEASED
+integration_claim: 3_OF_4_COMPLETE_SITE_BLOCKED_BY_TARGET_ORCHESTRATION
+claim_release_condition: Site target-native orchestration admits and validates the bounded projection
 ```
 
 ## Determination
 
-The governed correctability layer is implemented and hosted-validated. It provides canonical authority resolution, fail-closed correction predicates, explicit ADMIT/DENY behavior, before-irreversible-boundary enforcement, and post-irreversibility compensation semantics. Hosted workflow evidence now proves the compensation-aware implementation passes all ten canonical cases.
+The governed correctability source implementation is complete and hosted-validated. Downstream bounded integrations are now complete and hosted-validated in Publisher, admissibility-wiki, and StegGuardian. The only remaining target is StegVerse-Labs/Site, whose live orchestration state explicitly disallows external tasks and external-session ownership while its current sequence is `OBSERVED_BLOCKED`.
 
-No production, deployment, financial, legal, physical, Guardian, publication, custody, release, or execution authority is claimed.
+No production, deployment, financial, legal, physical, Guardian-enforcement, publication, custody, release, or execution authority is claimed.
 
 ## Authoritative files
 
@@ -29,7 +29,6 @@ Handoff: docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md
 Session consolidation: docs/CORRECTABILITY_SESSION_CONSOLIDATION_2026-08-02.md
 Machine state: ecosystem_management/correctability_layer.v0.1.json
 Task registry: ecosystem_management/task_registry.yml
-Issue: StegVerse-Labs/StegCore#43
 Specification: docs/spec/STEGVERSE_SPEC_V1_3.md
 Correction schema: docs/spec/schemas/correction_request.schema.json
 Authority schema: docs/spec/schemas/authority_record.schema.json
@@ -37,147 +36,96 @@ Delegation schema: docs/spec/schemas/delegation_record.schema.json
 Commit-time schema: docs/spec/schemas/commit_time_check.schema.json
 Compensation schema: docs/spec/schemas/compensation_receipt.schema.json
 Verifier: tools/verify_correctability_layer.py
-Authority records: tests/fixtures/correctability/authority_records.json
-Correction matrix: tests/fixtures/correctability/v2/cases.json
-Compensation matrix: tests/fixtures/correctability/v2/compensation_cases.json
 Workflow: .github/workflows/correctability-layer.yml
-Committed report path: brain_reports/correctability_layer_report.json
+Committed report: brain_reports/correctability_layer_report.json
 Propagation task: receipts/correctability-propagation-task.json
+Site admission observer: tools/observe_correctability_site_admission.py
+Site admission workflow: .github/workflows/observe-correctability-site-admission.yml
 ```
 
-## Completed implementation
+## Source validation — COMPLETE
 
 ```text
-COMPLETE: dedicated correction, authority, delegation, commit-time and compensation schemas
-COMPLETE: canonical authority_reference resolution
-COMPLETE: subject, scope, intervention, validity, revocation, reachability, enforceability, evidence and timing predicates
-COMPLETE: explicit ADMIT and DENY correction decisions
-COMPLETE: authority-resolved correction matrix
-COMPLETE: post-irreversibility compensation cases with PARTIAL and IMPOSSIBLE outcomes
-COMPLETE: compensation-aware verifier distinguishes timely correction from compensation
-COMPLETE: compensation receipt vocabulary aligned to COMPLETE, PARTIAL, FAILED and IMPOSSIBLE
-COMPLETE: canonical staged specification separates correctability from admissibility, reconstructability, replayability, recoverability, rollback and compensation
-COMPLETE: session requirements/history consolidated into repository state
-COMPLETE: hosted validation and report-artifact inspection
-ACTIVATED: C-06 machine-owned downstream propagation task
-```
-
-## Evidence commits
-
-```text
-authority_records: 4341864cc9e7da1ff9f18141b67e442bafe0e7e1
-v2_cases: f549e6f48dbe94b3eeb05f0a716a05dfc9ff7adb
-authority_resolving_verifier: 7ab3099f045c775fa06c0a7ec7510d549efdc1cd
-initial_validation_receipt: 896a57fa17a8b4d438f97d2c604fa1cd143fdcb0
-compensation_cases: 5dce83add0f879a0a5d4d0d4462f3cea364da040
-compensation_aware_verifier: 18613cd901b6f4b57cf7eb839424c9ec003f90b3
-compensation_schema_alignment: cbc3bb2e33a4960c7a8551091412125185101e92
-compensation_authority_binding: d9975c0bdffe0efe482127fd4e89552d962df2db
-canonical_spec_integration: 0db2ab026a5ddacdd0f37283ee09e87c5c251e06
-session_consolidation: c45cfe33d13e81db1f58a06cf12a5813a16d3c77
-propagation_activation: 83d1dfeb31227f4bfc5895c01f6da56f1c268a09
-```
-
-## Hosted validation evidence — C-05 COMPLETE
-
-```text
-workflow: Correctability Layer
 run_id: 30774680694
-run_number: 19
-head_sha: 21cf5ddfe3f58da270718b4c627a2f56adb580eb
 job_id: 91567818006
-job: verify
-status: completed
-conclusion: success
-verification_command: python tools/verify_correctability_layer.py
+head_sha: 21cf5ddfe3f58da270718b4c627a2f56adb580eb
 fixture_count: 10
 passed_count: 10
-reported_state: COMPLETE
-reported_status: pass
 artifact_id: 8841612361
-artifact_name: correctability-layer-report
 artifact_digest: sha256:030f22b998a6f9c382db5463a4cc55f6d70132d5dd20d880778b5efda9844536
-artifact_expired: false
 ```
 
-Direct job-log inspection confirmed all ten cases passed, including valid timely correction, late correction denial, revoked/unknown authority denial, scope/intervention/reachability/evidence failures, PARTIAL post-irreversibility compensation, and IMPOSSIBLE compensation denial. The uploaded report artifact was directly inspected at the workflow metadata layer.
-
-C-05 release condition is therefore SATISFIED and the validation claim is RELEASED.
-
-## C-06 — machine-owned downstream propagation
-
-Canonical durable task:
+## C-06 downstream integration
 
 ```text
-receipts/correctability-propagation-task.json
+GCAT-BCAT-Engine/Publisher: COMPLETE_VALIDATED
+  run: 31290000111
+  job: 93185432929
+  handoff: PUBLISHER_MIRROR_HANDOFF.md
+
+StegVerse-Labs/admissibility-wiki: COMPLETE_VALIDATED
+  run: 31290068860
+  job: 93185607425
+  handoff: docs/CORRECTABILITY_PROJECTION_MIRROR_HANDOFF.md
+
+StegVerse-002/stegguardian-wiki: COMPLETE_VALIDATED
+  run: 31290120403
+  job: 93185742651
+  handoff: docs/CORRECTABILITY_AWARENESS_MIRROR_HANDOFF.md
+
+StegVerse-Labs/Site: BLOCKED_BY_TARGET_ORCHESTRATION
+  canonical handoff: docs/SITE_MIRROR_HANDOFF.md
+  target state: OBSERVED_BLOCKED
+  external_tasks_allowed: false
+  external_session_ownership_allowed: false
+  admitted_tasks: []
+  active_task_count: 8
+  blocker_count: 8
 ```
 
-Current target states:
+## Final Site observer — ACTIVE
+
+A repository-native scheduled observer now checks the Site orchestration state hourly and on workflow dispatch/push without requiring another chat trigger.
 
 ```text
-StegVerse-Labs/Site
-  state: BLOCKED
-  owner: Site repository orchestrator
-  release: orchestrator admits a nonconflicting correctability projection and target-native validation records the result
-
-GCAT-BCAT-Engine/Publisher
-  state: BLOCKED
-  owner: Publisher repository automation
-  release: active source chain admits bounded correctability publication semantics and Publisher records target-native propagation evidence
-
-StegVerse-Labs/admissibility-wiki
-  state: BLOCKED
-  owner: issue #50 canonical validation task mesh
-  release: canonical mesh records correctability ingestion or a precise dependency blocker and target-native validation outcome
-
-StegVerse-002/stegguardian-wiki
-  state: BLOCKED
-  owner: Guardian orchestration
-  release: verified upstream admissibility evidence exists, Guardian orchestration admits the projection, and Guardian validation succeeds
+workflow: Observe Correctability Site Admission
+workflow_file: .github/workflows/observe-correctability-site-admission.yml
+observer: tools/observe_correctability_site_admission.py
+first_run: 31290213557
+first_job: 93185975026
+first_result: success
+first_decision: BLOCKED_BY_SITE_ORCHESTRATION
+artifact_id: 9031121532
+artifact_digest: sha256:a68e23fc1cbe5b20a3a1823d2b15db03bd20a5f5554c952372a427cd1b4b50c7
+manual_user_action_required: false
 ```
 
-All four blockers are durable and machine-observable. No destination mutation is authorized from this source lane while its target handoff reports an overlapping active claim or dependency block.
+The observer does not bypass Site admission and does not convert target availability into authority. It exists to prevent the final dependency from becoming an unobserved durable note.
 
-## Anti-collision and anti-stall rules
+## Anti-collision rule
 
-```text
-Do not create a second canonical correction semantics implementation.
-Do not trust request-local authority booleans where canonical authority records are available.
-Do not label a late request as timely correction.
-Do not label FAILED or IMPOSSIBLE compensation as successful remediation.
-Do not treat a missing workflow run or artifact as success.
-Do not bypass a destination orchestrator or active claim.
-Do not convert propagation, documentation, verification, or transport into runtime authority.
-```
+Do not directly mutate Site for this integration while its canonical orchestration reports external tasks/session ownership disabled. Site's repository-native admission controller is the only valid next mutation boundary.
 
-## Session consolidation
+## Session state
 
 ```text
-MERGED INTO: StegVerse-Labs/StegCore/docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md
-consolidation_record: docs/CORRECTABILITY_SESSION_CONSOLIDATION_2026-08-02.md
-external-convergence transfer record: StegVerse-Labs/StegCore#69
-unique_requirements_transferred: all
+session_role: DISTINCT_SUPPORT_OBSERVATION_UNTIL_SITE_ADMISSION
 session_specific_unassigned_work: none
-session_role_after_transfer: none
-```
-
-## Archive condition
-
-```text
-thread_archive_ready: true
-archive_basis: all unique goals, decisions, implementation history, hosted validation evidence, unresolved propagation tasks, owners, collision boundaries and release conditions are repository-resident; C-06 is machine-owned and does not require conversation context
+external_convergence_transfer: StegVerse-Labs/StegCore#69
 ```
 
 ## Progress denominator
 
 ```text
-required_deliverables: 18
-task_completion: 15/18
-developed_files_complete: 17/18
+current_goal: C-06 four-target propagation
+required_targets: 4
+complete_and_target_validated: 3
+blocked_and_observed: 1
+integration_completion: 3/4 = 75%
+source_implementation_files: COMPLETE
+source_validation: 4/4 levels complete
 scaffolding_or_stubs: 0
-missing_required_files: 0
-validation_completion: 4/4 levels complete
-integration_completion: 0/4 destinations complete
-goal_activation: 15/18
-session_consolidation: 8/8 goals transferred or complete
+missing_source_files: 0
+session_consolidation: 8/8 requirements transferred or implemented
+archive_readiness: false while this session retains final Site observation/support responsibility
 ```
