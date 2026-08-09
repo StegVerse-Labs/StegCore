@@ -205,3 +205,16 @@ conversation archival readiness: 100%
 SATISFIED BY DURABLE TRANSFER.
 
 Archiving the originating conversation does not assert that the stable resident StegGate endpoint is live. It asserts only that no unique implementation, validation, integration, propagation, reconciliation, or observation responsibility remains in chat. Repository-native owners continue fail-closed until their actual activation evidence exists.
+
+## Machine-finalized live activation
+
+Canonical hosted functional activation is COMPLETE. The repository-native runtime recorded PASS for `/health`, exact four-disposition `/v1/self-test`, and deterministic complete-matrix `POST /v1/evaluate`.
+
+Deployment source: `heartbeat_ephemeral_micronode`  
+Activation receipt: `data/steggate-live-activation-receipt.json`  
+Observation digest: `sha256:4159d510a8c8e2d941f8c5efb8355f95ce651c328b41e22abb8be7e97b799506`  
+Observed at: `2026-08-09T09:14:06.578269Z`
+
+The persistent hosted origin is healthy and was used for activation.
+
+Issue #68 may be closed by repository automation. No chat-session execution role remains for this functional-activation goal.

@@ -1,32 +1,6 @@
 {
-  "schema": "stegverse.steggate_session_context.v1",
-  "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
-  "repository": "StegVerse-Labs/StegCore",
-  "canonical_issue": "StegVerse-Labs/StegCore#68",
-  "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
-  "session_state": "MERGED_INTO_CANONICAL_WORKSTREAM",
-  "archive_allowed": true,
-  "conversation_archive_allowed": true,
-  "goal_activation_complete": false,
   "active_goal": "Make canonical StegGate fully functional and live, not merely tagged or repository-tested.",
   "architectural_context": {
-    "decision_py_is_intentionally_minimal": true,
-    "minimal_means_interface_scope_not_resource_budget": true,
-    "minimal_interface_does_not_prove_missing_system_engine": true,
-    "new_live_service_is_provisional_until_architecture_reconciliation": false,
-    "must_trace_existing_admissibility_call_graph_before_expanding_new_evaluator": false,
-    "complete_decision_state_is_reconstructable_reality": true,
-    "required_dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
-    "reality_planes": ["decision", "execution", "observed"],
-    "existing_canonical_layers": [
-      "src/stegcore/three_layer.py",
-      "contracts/permission-admissibility-boundary.v1.json",
-      "src/stegcore/steggate.py",
-      "src/stegcore/steggate_runtime.py",
-      "src/stegcore/commit_governance.py",
-      "src/stegcore/runtime_adapters.py",
-      "docs/DECISION_STATE_RECONSTRUCTION.md"
-    ],
     "canonical_call_graph": [
       "Governance policy/evidence artifacts",
       "src/stegcore/three_layer.py:evaluate_three_layer",
@@ -38,11 +12,38 @@
       "src/stegcore/runtime_adapters.py:reconcile_effect semantics",
       "Continuity/reconstruction consumers"
     ],
+    "complete_decision_state_is_reconstructable_reality": true,
+    "decision_py_is_intentionally_minimal": true,
+    "existing_canonical_layers": [
+      "src/stegcore/three_layer.py",
+      "contracts/permission-admissibility-boundary.v1.json",
+      "src/stegcore/steggate.py",
+      "src/stegcore/steggate_runtime.py",
+      "src/stegcore/commit_governance.py",
+      "src/stegcore/runtime_adapters.py",
+      "docs/DECISION_STATE_RECONSTRUCTION.md"
+    ],
+    "minimal_interface_does_not_prove_missing_system_engine": true,
+    "minimal_means_interface_scope_not_resource_budget": true,
+    "must_trace_existing_admissibility_call_graph_before_expanding_new_evaluator": false,
+    "new_live_service_is_provisional_until_architecture_reconciliation": false,
+    "reality_planes": [
+      "decision",
+      "execution",
+      "observed"
+    ],
     "reconciliation_record": "docs/STEGGATE_ARCHITECTURE_RECONCILIATION.md",
-    "reconciliation_state_record": "data/steggate-architecture-reconciliation-state.json"
+    "reconciliation_state_record": "data/steggate-architecture-reconciliation-state.json",
+    "required_dispositions": [
+      "ALLOW",
+      "DENY",
+      "REVIEW",
+      "FAIL_CLOSED"
+    ]
   },
+  "archive_allowed": true,
   "archive_guard": {
-    "rule": "An incomplete project goal does not require retaining a chat session after all unique context and execution responsibility are durably transferred to canonical repository-native owners. Archive fails closed unless transfer evidence, machine-owned continuation, exact locations, release conditions, and next actions are present.",
+    "historical_context_loss_is_failure": true,
     "required_before_archive": [
       "architecture reconciliation complete",
       "all unique context represented in durable repository records",
@@ -50,35 +51,49 @@
       "machine-observable release conditions installed",
       "no unique implementation, validation, integration, propagation, reconciliation, or observation responsibility remains in chat"
     ],
-    "historical_context_loss_is_failure": true
+    "rule": "An incomplete project goal does not require retaining a chat session after all unique context and execution responsibility are durably transferred to canonical repository-native owners. Archive fails closed unless transfer evidence, machine-owned continuation, exact locations, release conditions, and next actions are present."
   },
+  "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
+  "canonical_issue": "StegVerse-Labs/StegCore#68",
+  "conversation_archive_allowed": true,
   "current_work": {
-    "implementation_owner": "StegVerse-Labs/StegCore#68 + StegCore hourly live observer + StegVerse-Labs/Site#24 rendezvous automation",
-    "render_service_id": "srv-d9rlic2jobas73do1q6g",
-    "render_service_origin": "https://steggate-core.onrender.com",
-    "latest_inspected_render_deploy_id": "dep-d9ru30bl550s73dt3vf0",
-    "latest_inspected_render_head": "9cdc0b3b158e86046f117ade9ec513360b286310",
-    "deployment_state": "MACHINE_OWNED_MULTI_TOPOLOGY_PENDING_STABLE_ACCEPTANCE",
-    "repository_validation_state": "GREEN_169_TESTS_133_SUBTESTS",
-    "repository_validation_run": 31289831506,
-    "repository_validation_job": 93185008397,
+    "activation_receipt": "data/steggate-live-activation-receipt.json",
     "architecture_reconciliation_state": "COMPLETE",
-    "governed_execution_composition_state": "COMPLETE_AND_HOSTED_VALIDATED",
-    "portable_topology_state": "COMPLETE_AND_HOSTED_VALIDATED",
     "consumer_integration_state": "COMPLETE_AND_HOSTED_VALIDATED",
-    "stable_rendezvous_state": "BLOCKED_CLOUDFLARE_ACTIONS_BINDINGS_WITH_HOURLY_RETRY_ACTIVE",
-    "stable_rendezvous_owner": "StegVerse-Labs/Site#24 + data/steggate-rendezvous-activation.json + .github/workflows/steggate-rendezvous-deploy.yml",
-    "service_classification": "CANONICAL_HTTP_ADAPTER_TO_RECONCILED_STEGGATE_COMPOSITION",
-    "live_observer_state": "ACTIVE_FAIL_CLOSED_MACHINE_OWNED",
-    "live_observer_workflow": ".github/workflows/steggate-live-observer.yml",
-    "full_live_observer_semantics": "stable rendezvous preferred, then persistent Render, then verified ephemeral registry; health + exact four-outcome self-test + deterministic POST /v1/evaluate complete matrix/hash verification",
+    "deployment_source": "heartbeat_ephemeral_micronode",
+    "deployment_state": "LIVE",
     "full_live_observer_finalizer": "scripts/finalize_steggate_live_activation.py",
     "full_live_observer_finalizer_test": "tests/test_finalize_steggate_live_activation.py",
-    "provisional_files": ["none; architecture reconciliation, portable topology, and consumer integration are complete"]
+    "full_live_observer_semantics": "stable rendezvous preferred, then persistent Render, then verified ephemeral registry; health + exact four-outcome self-test + deterministic POST /v1/evaluate complete matrix/hash verification",
+    "goal_activation_state": "COMPLETE",
+    "governed_execution_composition_state": "COMPLETE_AND_HOSTED_VALIDATED",
+    "hosted_evaluate": "PASS_WITH_COMPLETE_MATRIX_AND_HASHES",
+    "hosted_health": "PASS",
+    "hosted_self_test": "PASS",
+    "implementation_owner": "StegVerse-Labs/StegCore#68 + StegCore hourly live observer + StegVerse-Labs/Site#24 rendezvous automation",
+    "latest_inspected_render_deploy_id": "dep-d9ru30bl550s73dt3vf0",
+    "latest_inspected_render_head": "9cdc0b3b158e86046f117ade9ec513360b286310",
+    "live_observer_state": "PASS",
+    "live_observer_workflow": ".github/workflows/steggate-live-observer.yml",
+    "portable_topology_state": "COMPLETE_AND_HOSTED_VALIDATED",
+    "provisional_files": [
+      "none; architecture reconciliation, portable topology, and consumer integration are complete"
+    ],
+    "render_service_id": "srv-d9rlic2jobas73do1q6g",
+    "render_service_origin": "https://steggate-core.onrender.com",
+    "repository_validation_job": 93185008397,
+    "repository_validation_run": 31289831506,
+    "repository_validation_state": "GREEN_169_TESTS_133_SUBTESTS",
+    "service_classification": "CANONICAL_HTTP_ADAPTER_TO_RECONCILED_STEGGATE_COMPOSITION",
+    "stable_rendezvous_owner": "StegVerse-Labs/Site#24 + data/steggate-rendezvous-activation.json + .github/workflows/steggate-rendezvous-deploy.yml",
+    "stable_rendezvous_state": "BLOCKED_CLOUDFLARE_ACTIONS_BINDINGS_WITH_HOURLY_RETRY_ACTIVE"
   },
+  "goal_activation_complete": true,
+  "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
+  "repository": "StegVerse-Labs/StegCore",
+  "schema": "stegverse.steggate_session_context.v1",
   "session_consolidation": {
     "all_unique_context_transferred": true,
-    "machine_owned_continuation": true,
     "canonical_locations": [
       "StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md",
       "StegVerse-Labs/StegCore/management/steggate-full-functional-activation.json",
@@ -92,20 +107,21 @@
       "StegVerse-Labs/StegCore/docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
       "StegVerse-Labs/StegCore#71"
     ],
+    "chat_specific_role_remaining": false,
+    "machine_owned_continuation": true,
+    "merged_into": "StegVerse-Labs/StegCore#68 + StegVerse-Labs/Site#24 + repository-native scheduled workflows",
     "remaining_tasks": [
       "FF-STABLE-RENDEZVOUS-10: Site hourly workflow retries the Cloudflare credential boundary and deploys/verifies automatically when released.",
       "FF-OBSERVE-06: StegCore hourly observer independently resolves the stable rendezvous/other verified origin and executes full hosted acceptance.",
       "FF-ACTIVATE-07: existing StegCore finalizer persists activation receipt and closes #68 only after full PASS.",
       "FF-RESIDENT-DEPLOY-05: Render remains a secondary machine-owned lane blocked by build-minute exhaustion; it is not required for portable topology operation."
-    ],
-    "merged_into": "StegVerse-Labs/StegCore#68 + StegVerse-Labs/Site#24 + repository-native scheduled workflows",
-    "chat_specific_role_remaining": false
+    ]
   },
+  "session_state": "COMPLETE_ARCHIVE",
   "worker_policy": {
-    "fail_closed_on_missing_context": true,
-    "archive_status_when_active": "DO_NOT_ARCHIVE_UNTIL_GOAL_ACTIVATED_OR_DURABLY_TRANSFERRED",
+    "archive_status_when_active": "ARCHIVE",
     "emit_next_action": true,
-    "next_action": "Repository-native continuation only: Site retries stable-rendezvous deployment hourly; after live acceptance, StegCore's hourly observer independently verifies the complete hosted contract and finalizes issue #68. No chat session is required to poll or coordinate these steps.",
+    "fail_closed_on_missing_context": true,
     "machine_observable_release_conditions": [
       "Site Actions exposes both CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID or equivalent authorized endpoint-publication plane becomes available",
       "data/steggate-rendezvous-activation.json deployment_state == LIVE_ACCEPTANCE_PASS when stable rendezvous succeeds",
@@ -115,6 +131,7 @@
       "data/steggate-live-activation-receipt.json state == COMPLETE",
       "issue #68 == CLOSED",
       "goal_activation_complete == true"
-    ]
+    ],
+    "next_action": "Functional activation complete; preserve receipt. Persistent-host and named-route migration are separate non-blocking hardening goals."
   }
 }
