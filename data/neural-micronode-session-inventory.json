@@ -1,5 +1,5 @@
 {
-  "inventory_version": "1.0",
+  "inventory_version": "1.1",
   "goal_id": "STEGCORE-NEURAL-MICRONODE-001",
   "originating_session_goal": "Develop the insight that least-stable ephemeral micro-node governance can address a specific downstream neural receiver, with the BCI acting as transport/translation rather than authority.",
   "canonical_handoff": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
@@ -7,90 +7,33 @@
   "repository": "StegVerse-Labs/StegCore",
   "branch": "main",
   "claim": {
-    "state": "CLAIMED_FOR_VALIDATION",
-    "implementation": "INSTALLED_ON_MAIN",
-    "validation": "MACHINE_OWNED",
-    "collision_boundary": [
-      "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
-      "schemas/neural-micronode-packet.schema.json",
-      "src/stegcore/neural_micronode.py",
-      "tests/test_neural_micronode.py",
-      ".github/workflows/neural-micronode.yml",
-      "data/neural-micronode-session-inventory.json"
-    ],
-    "release_condition": "Hosted Neural Micro-Node Governance workflow passes and the canonical handoff records the run/job evidence."
+    "state": "MERGED_INTO_CANONICAL_WORKSTREAM",
+    "implementation": "COMPLETE_ON_MAIN",
+    "validation": "HOSTED_SUCCESS",
+    "claim_release_evidence": "workflow run 31289736205 / job 93184768876",
+    "next_owner": "portable integration canonical lane, then destination-owned interop review",
+    "collision_boundary": ["docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md", "schemas/neural-micronode-packet.schema.json", "src/stegcore/neural_micronode.py", "tests/test_neural_micronode.py", ".github/workflows/neural-micronode.yml", "data/neural-micronode-session-inventory.json"]
   },
   "goals": [
-    {
-      "id": "NM-01",
-      "goal": "Preserve receiver decomposition: addressed bounded neural target is receiver; BCI is adapter/transport.",
-      "destination": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
-      "completion": "COMPLETE",
-      "validation": "COMMITTED"
-    },
-    {
-      "id": "NM-02",
-      "goal": "Define minimal transition-relative neural governance packet.",
-      "destination": "schemas/neural-micronode-packet.schema.json",
-      "completion": "COMPLETE",
-      "validation": "HOSTED_PENDING"
-    },
-    {
-      "id": "NM-03",
-      "goal": "Implement adapter-neutral receiver-evidence evaluator with fail-closed semantics.",
-      "destination": "src/stegcore/neural_micronode.py",
-      "completion": "COMPLETE",
-      "validation": "HOSTED_PENDING"
-    },
-    {
-      "id": "NM-04",
-      "goal": "Prove stale, ambiguous, provenance-mismatch, authority-upgrade, required-false, and prohibited-state behavior.",
-      "destination": "tests/test_neural_micronode.py",
-      "completion": "COMPLETE",
-      "validation": "HOSTED_PENDING"
-    },
-    {
-      "id": "NM-05",
-      "goal": "Automate schema/runtime authority-boundary validation.",
-      "destination": ".github/workflows/neural-micronode.yml",
-      "completion": "COMPLETE",
-      "validation": "RUN_31289736205_QUEUED"
-    },
-    {
-      "id": "NM-06",
-      "goal": "Integrate neural evidence boundary with portable StegGate without granting adapter policy authorship or execution authority.",
-      "destination": "src/stegcore/portable_steggate.py",
-      "completion": "BLOCKED",
-      "validation": "NOT_STARTED",
-      "release_condition": "Issue #68 / portable lane handoff admits a nonconflicting integration mutation after neural boundary hosted validation."
-    },
-    {
-      "id": "NM-07",
-      "goal": "Evaluate interop propagation only after canonical interop handoff admits the schema work.",
-      "destination": "StegVerse-Labs/ara-admissibility-interop/docs/ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md",
-      "completion": "MERGED_INTO_CANONICAL_WORKSTREAM",
-      "validation": "DESTINATION_OWNED"
-    },
-    {
-      "id": "NM-08",
-      "goal": "Preserve scientific boundary: protocol makes no claim of arbitrary neural addressing, complete mental-state inference, or arbitrary neural writing.",
-      "destination": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
-      "completion": "COMPLETE",
-      "validation": "COMMITTED"
-    },
-    {
-      "id": "NM-09",
-      "goal": "Preserve Conduit/Bashkansky discussion as motivating external application without making Conduit a dependency or claiming its implementation.",
-      "destination": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
-      "completion": "COMPLETE",
-      "validation": "CONCEPT_TRANSFERRED"
-    }
+    {"id":"NM-01","destination":"docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md","completion":"COMPLETE","validation":"COMMITTED"},
+    {"id":"NM-02","destination":"schemas/neural-micronode-packet.schema.json","completion":"COMPLETE","validation":"HOSTED_SUCCESS"},
+    {"id":"NM-03","destination":"src/stegcore/neural_micronode.py","completion":"COMPLETE","validation":"HOSTED_SUCCESS"},
+    {"id":"NM-04","destination":"tests/test_neural_micronode.py","completion":"COMPLETE","validation":"7_OF_7_HOSTED_PASS"},
+    {"id":"NM-05","destination":".github/workflows/neural-micronode.yml","completion":"COMPLETE","validation":"RUN_31289736205_SUCCESS"},
+    {"id":"NM-06","destination":"src/stegcore/portable_steggate.py","completion":"MERGED_INTO_CANONICAL_WORKSTREAM","validation":"PORTABLE_OWNER_REQUIRED","release_condition":"portable canonical lane admits nonconflicting integration mutation"},
+    {"id":"NM-07","destination":"StegVerse-Labs/ara-admissibility-interop/docs/ARA_ADMISSIBILITY_INTEROP_MIRROR_HANDOFF.md","completion":"MERGED_INTO_CANONICAL_WORKSTREAM","validation":"DESTINATION_OWNED"},
+    {"id":"NM-08","destination":"docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md","completion":"COMPLETE","validation":"COMMITTED"},
+    {"id":"NM-09","destination":"docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md","completion":"COMPLETE","validation":"CONCEPT_TRANSFERRED"}
   ],
   "hosted_validation": {
     "workflow": ".github/workflows/neural-micronode.yml",
     "run_id": 31289736205,
+    "head_sha": "cdd5c7165d603d3dfa8a08effc369baea532fed9",
     "job_id": 93184768876,
-    "observed_state": "QUEUED"
+    "observed_state": "COMPLETED",
+    "conclusion": "SUCCESS",
+    "evidence": ["schema valid", "7 passed in 0.05s", "authority boundary present"]
   },
-  "archive_condition": "All unique session requirements are durable; session can archive once hosted validation state and any resulting correction are transferred to the handoff and no unique execution role remains."
+  "session_consolidation": {"complete_or_transferred":9,"total":9,"unique_untransferred":0,"archive_ready":true},
+  "archive_condition": "SATISFIED: implementation and hosted validation evidence are durable; remaining portable/interop work is transferred to canonical destination owners and contains no chat-only requirement."
 }
