@@ -41,12 +41,45 @@
     "artifact_digest": "sha256:e59d08fc0de1a4c4fdf893c5db1d857e20fe7e3fa77dc3cde44c1e6f4b2f6ab2"
   },
   "applications": {
-    "ecosystem_chat": {"owner": "StegVerse-Labs/Site#242", "binding_state": "PENDING_DIRECT_EVIDENCE"},
-    "vacc": {"owner": "StegVerse-Labs/Site#241", "binding_state": "PENDING_DIRECT_EVIDENCE"},
-    "math_solver": {"owner": "StegVerse-Labs/Site#240 + StegVerse-org/LLM-adapter#132", "binding_state": "PENDING_DIRECT_EVIDENCE"},
-    "hil": {"owner": "StegVerse-Labs/Site#243", "binding_state": "PENDING_DIRECT_EVIDENCE"}
+    "ecosystem_chat": {
+      "owner": "StegVerse-Labs/Site#242",
+      "binding_state": "PENDING_DIRECT_EVIDENCE"
+    },
+    "vacc": {
+      "owner": "StegVerse-Labs/Site#241",
+      "binding_state": "PENDING_DIRECT_EVIDENCE"
+    },
+    "math_solver": {
+      "owner": "StegVerse-Labs/Site#240 + StegVerse-org/LLM-adapter#132",
+      "binding_state": "CI_BOUND_PUBLIC_EVIDENCE_PENDING",
+      "consumer_commits": [
+        "77932e74295db4e6e408b71267cd353fbb16b0fe",
+        "cd9d484b92797c3f2d375108c630375ca0e9da30",
+        "b1446855e94fd2041dfecc8dce4a10511c033166",
+        "e212309d43f26956c68df5d41f15dc5bed0e1d3e"
+      ],
+      "validation": {
+        "workflow": "Math Solver Governed Runtime",
+        "run_id": 31338939595,
+        "job_id": 93309372914,
+        "conclusion": "SUCCESS",
+        "artifact_id": 9045196248,
+        "artifact_digest": "sha256:5389162e3bef48594802aead69d309d5726bf0e046121129696179c60bce293d",
+        "public_deployment_proven": false
+      }
+    },
+    "hil": {
+      "owner": "StegVerse-Labs/Site#243",
+      "binding_state": "PENDING_DIRECT_EVIDENCE"
+    }
+  },
+  "binding_progress": {
+    "core_contract": "COMPLETE",
+    "applications_ci_or_stronger": 1,
+    "applications_public_direct": 0,
+    "required_applications": 4
   },
   "state": "ACTIVE_INTEGRATION",
   "goal_complete": false,
-  "next_executable_action": "Install common runtime-identity consumption/evidence contract in non-conflicting application integration surfaces, beginning with Math Solver or Ecosystem Chat while HIL upload paths remain claimed."
+  "next_executable_action": "Bind the common runtime identity into the next non-conflicting application path while preserving HIL upload ownership; public evidence remains required for Math Solver before counting direct integration completion."
 }
