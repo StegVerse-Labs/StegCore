@@ -9,6 +9,15 @@ on:
       heartbeat_epoch:
         required: true
         type: string
+      lease_id:
+        required: true
+        type: string
+      lease_action:
+        required: true
+        type: string
+      lease_dependents_json:
+        required: true
+        type: string
     outputs:
       acceptance_state:
         description: Hosted StegGate acceptance state.
@@ -20,7 +29,7 @@ permissions:
 jobs:
   micro-node:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 355
     outputs:
       acceptance_state: ${{ steps.observe.outputs.state }}
     steps:
@@ -33,17 +42,26 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Record canonical heartbeat binding
+      - name: Record canonical heartbeat and lease binding
         run: |
           mkdir -p build
           python - <<'PY'
           import json
           from pathlib import Path
           Path('build/heartbeat-binding.json').write_text(json.dumps({
-            'schema':'stegverse.steggate_heartbeat_binding.v1',
+            'schema':'stegverse.steggate_heartbeat_binding.v2',
             'heartbeat_id':'${{ inputs.heartbeat_id }}',
             'heartbeat_epoch':'${{ inputs.heartbeat_epoch }}',
+            'subsignals':{
+              'steggate_transport_lease':{
+                'lease_id':'${{ inputs.lease_id }}',
+                'lease_action':'${{ inputs.lease_action }}',
+                'dependent_tasks':json.loads(r'''${{ inputs.lease_dependents_json }}''')
+              }
+            },
             'scheduler':'stegverse-heartbeat',
+            'lease_is_per_heartbeat':False,
+            'wall_clock_expiry_authority':False,
             'authority_effect':False
           }, indent=2, sort_keys=True)+'\n')
           PY
@@ -54,6 +72,7 @@ jobs:
       - name: Start canonical StegGate
         run: |
           nohup uvicorn stegcore.service:app --host 127.0.0.1 --port 8000 > build/app.log 2>&1 &
+          echo $! > build/app.pid
           for attempt in $(seq 1 30); do
             curl --fail --silent http://127.0.0.1:8000/health >/dev/null && exit 0
             sleep 1
@@ -61,12 +80,13 @@ jobs:
           cat build/app.log
           exit 1
 
-      - name: Start ephemeral public transport
+      - name: Start zero-credential public transport
         id: tunnel
         run: |
           curl --fail --location --silent --show-error https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 --output "$RUNNER_TEMP/cloudflared"
           chmod +x "$RUNNER_TEMP/cloudflared"
           nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 > build/tunnel.log 2>&1 &
+          echo $! > build/tunnel.pid
           ORIGIN=''
           for attempt in $(seq 1 60); do
             ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/tunnel.log | tail -1 || true)"
@@ -74,6 +94,7 @@ jobs:
             sleep 1
           done
           test -n "$ORIGIN"
+          echo "$ORIGIN" > build/tunnel-origin.txt
           for attempt in $(seq 1 60); do
             curl --fail --silent --max-time 10 "$ORIGIN/health" >/dev/null && { echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"; exit 0; }
             sleep 2
@@ -94,14 +115,88 @@ jobs:
           if d['state'] != 'PASS': raise SystemExit(1)
           PY
 
-      - name: Preserve heartbeat micro-node evidence
+      - name: Hold and self-heal tunnel under heartbeat lease subsignal
+        env:
+          LEASE_ID: ${{ inputs.lease_id }}
+          LEASE_DEPENDENTS_JSON: ${{ inputs.lease_dependents_json }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('build/lease-state.json').write_text(json.dumps({
+            'schema':'stegverse.steggate_transport_lease_runtime.v1',
+            'lease_id':os.environ['LEASE_ID'],
+            'state':'OPEN',
+            'dependent_tasks':json.loads(os.environ['LEASE_DEPENDENTS_JSON']),
+            'release_reason':None,
+            'wall_clock_expiry_authority':False
+          },indent=2,sort_keys=True)+'\n')
+          PY
+          while true; do
+            SIGNAL="$(curl --fail --silent --max-time 10 https://raw.githubusercontent.com/StegVerse-Labs/.github/main/control/heartbeat-subsignals.json || true)"
+            REGISTRY="$(curl --fail --silent --max-time 10 https://raw.githubusercontent.com/StegVerse-Labs/.github/main/control/worker-registry.json || true)"
+            DECISION="$(SIGNAL_JSON="$SIGNAL" REGISTRY_JSON="$REGISTRY" python - <<'PY'
+          import json, os
+          lease_id=os.environ['LEASE_ID']
+          dependents=json.loads(os.environ['LEASE_DEPENDENTS_JSON'])
+          try: signal=json.loads(os.environ.get('SIGNAL_JSON') or '{}')['subsignals']['steggate_transport_lease']
+          except Exception: signal={}
+          try: registry=json.loads(os.environ.get('REGISTRY_JSON') or '{}')
+          except Exception: registry={}
+          if signal.get('lease_action') == 'CLOSE' and signal.get('lease_id') == lease_id:
+              print('CLOSE_SIGNAL'); raise SystemExit
+          if signal.get('successor_lease_id') and signal.get('successor_lease_id') != lease_id and signal.get('state') == 'HANDOFF_READY':
+              print('SUCCESSOR_ACCEPTED'); raise SystemExit
+          if dependents:
+              terminal={'COMPLETE','CLOSED','CANCELLED','SUPERSEDED'}
+              rows={str(t.get('task_id')):str(t.get('state')) for t in registry.get('tasks',[])}
+              if all(rows.get(task) in terminal for task in dependents):
+                  print('DEPENDENTS_COMPLETE'); raise SystemExit
+          print('HOLD')
+          PY
+          )"
+            if [ "$DECISION" != "HOLD" ]; then
+              DECISION="$DECISION" python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path('build/lease-state.json'); d=json.loads(p.read_text())
+          d['state']='RELEASED'; d['release_reason']=os.environ['DECISION']
+          p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
+          PY
+              break
+            fi
+            ORIGIN="$(cat build/tunnel-origin.txt)"
+            if ! curl --fail --silent --max-time 10 "$ORIGIN/health" >/dev/null 2>&1; then
+              kill "$(cat build/tunnel.pid)" 2>/dev/null || true
+              : > build/tunnel.log
+              nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 > build/tunnel.log 2>&1 &
+              echo $! > build/tunnel.pid
+              NEW_ORIGIN=''
+              for attempt in $(seq 1 60); do
+                NEW_ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/tunnel.log | tail -1 || true)"
+                if [ -n "$NEW_ORIGIN" ] && curl --fail --silent --max-time 10 "$NEW_ORIGIN/health" >/dev/null 2>&1; then break; fi
+                sleep 2
+              done
+              if [ -n "$NEW_ORIGIN" ]; then
+                STEGGATE_ORIGIN="$NEW_ORIGIN" python scripts/observe_steggate_live_service.py >/dev/null
+                echo "$NEW_ORIGIN" > build/tunnel-origin.txt
+              fi
+            fi
+            sleep 30
+          done
+
+      - name: Preserve heartbeat lease and micro-node evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: steggate-heartbeat-micronode-${{ inputs.heartbeat_epoch }}-${{ github.run_id }}
           path: |
             build/heartbeat-binding.json
             build/steggate-live-observation.json
+            build/lease-state.json
+            build/tunnel-origin.txt
             build/app.log
             build/tunnel.log
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 90
