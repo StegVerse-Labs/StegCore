@@ -1,0 +1,76 @@
+{
+  "schema": "stegverse.session_consolidation.v2",
+  "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
+  "session_state": "MERGED_INTO_CANONICAL_WORKSTREAM",
+  "conversation_archive_allowed": true,
+  "project_goal_activation_complete": false,
+  "supersedes": "session/archive disposition in management/steggate-full-functional-activation.json where it still records ACTIVE_UNIQUE_WORK_REMAINS; activation task states in that inventory remain authoritative",
+  "canonical_continuation": [
+    "StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md",
+    "StegVerse-Labs/StegCore#68",
+    "StegVerse-Labs/Site/SITE_MIRROR_HANDOFF.md",
+    "StegVerse-Labs/Site/data/steggate-rendezvous-activation.json",
+    "StegVerse-Labs/Site/.github/workflows/steggate-rendezvous-deploy.yml",
+    "StegVerse-Labs/Site#24",
+    "StegVerse-org/LLM-adapter/LLM_ADAPTER_MIRROR_HANDOFF.md",
+    "StegVerse-org/LLM-adapter#18",
+    "StegVerse-Labs/StegCore/docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
+    "StegVerse-Labs/StegCore#71"
+  ],
+  "completed_or_transferred": {
+    "canonical_three_layer_reconciliation": "complete",
+    "governed_execution_boundary": "complete",
+    "resident_http_implementation": "complete",
+    "portable_ephemeral_steggate": "complete_and_hosted_validated",
+    "ecosystem_chat_portable_consumer": "complete_and_hosted_validated",
+    "neural_micronode_adjacent_goal": "complete_and_merged",
+    "stable_rendezvous_implementation": "complete_and_machine_owned",
+    "stable_rendezvous_deployment": "blocked_with_hourly_machine_retry",
+    "final_hosted_observation": "machine_owned",
+    "final_activation_receipt_and_issue_closure": "machine_owned"
+  },
+  "remaining_machine_owned_tasks": [
+    {
+      "task_id": "FF-STABLE-RENDEZVOUS-10",
+      "owner": "StegVerse-Labs/Site#24 + .github/workflows/steggate-rendezvous-deploy.yml",
+      "state": "BLOCKED",
+      "release_condition": "CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID become available to Site Actions, or an already-authorized endpoint-publication plane deploys the same contract.",
+      "evidence": "run 31289859109 / job 93185080182 / artifact 9031019850 / sha256:259dd1747e151ff333342f4124e0814cec71523aa4f48048cc28442c526b1e41"
+    },
+    {
+      "task_id": "FF-OBSERVE-06",
+      "owner": "StegVerse-Labs/StegCore/.github/workflows/steggate-live-observer.yml",
+      "state": "MACHINE_OWNED",
+      "release_condition": "a verified origin passes health, exact four-disposition self-test, and complete-matrix evaluate"
+    },
+    {
+      "task_id": "FF-ACTIVATE-07",
+      "owner": "StegVerse-Labs/StegCore/scripts/finalize_steggate_live_activation.py",
+      "state": "MACHINE_OWNED_WAITING_FOR_EVIDENCE",
+      "release_condition": "full observer PASS creates activation receipt and closes issue #68"
+    },
+    {
+      "task_id": "FF-RESIDENT-DEPLOY-05",
+      "owner": "Render auto-deploy + StegCore fallback/runtime observers",
+      "state": "SECONDARY_BLOCKED_LANE",
+      "release_condition": "Render build capacity returns or another verified stable resident endpoint exists"
+    }
+  ],
+  "validation_evidence": {
+    "endpoint_discovery_and_full_suite": "run 31289831506 / job 93185008397 / 169 passed + 133 subtests / artifact 9031013648 / sha256:05e3ab8b56714709df24cf81f10bd1d26ebf872c58df3c371523195819693485",
+    "session_continuity_guard": "run 31289987708 / job 93185399006 / 8 focused tests passed / guard PASS archive_allowed=true / artifact 9031055161 / sha256:32e501ea1ec1a461b9c3279eb8ee2d2d17ebe2e9f05494e1110372688b02e64a"
+  },
+  "session_completion": {
+    "unique_information_transferred": true,
+    "unique_execution_responsibility_remaining": false,
+    "session_goals_transferred_or_complete": "10/10",
+    "session_consolidation_percent": 100,
+    "conversation_archival_readiness_percent": 100
+  },
+  "project_completion": {
+    "activation_tasks_complete": "6/10",
+    "goal_activation_percent": 60,
+    "stable_resident_activation_complete": false
+  },
+  "archive_effect": "Archiving this conversation does not assert project activation. It only removes a redundant chat lane after durable transfer. Repository-native automation remains fail-closed until actual activation evidence exists."
+}
