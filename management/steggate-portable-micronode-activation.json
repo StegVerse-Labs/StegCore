@@ -1,0 +1,86 @@
+{
+  "schema_version": "STEGGATE-PORTABLE-MICRONODE-ACTIVATION-v1",
+  "goal_id": "STEGGATE-PORTABLE-MICRONODE-001",
+  "parent_goal": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "main",
+  "canonical_handoff": "STEGCORE_MIRROR_HANDOFF.md",
+  "canonical_issue": "StegVerse-Labs/StegCore#68",
+  "state": "IMPLEMENTED_AND_HOSTED_VALIDATED",
+  "claim_state": "COMPLETE",
+  "topology": "portable_ephemeral_governed_package",
+  "principle": "A governed transition and the StegGate boundary required to admit it may travel as one transportable execution object; persistent HTTP hosting is one topology, not an architectural prerequisite.",
+  "authoritative_files": [
+    "src/stegcore/portable_steggate.py",
+    "tests/test_portable_steggate.py",
+    "docs/STEGGATE_PORTABLE_MICRONODE.md"
+  ],
+  "profiles": {
+    "portable_node": "steggate.portable-micronode.v1",
+    "runtime": "stegcore.reconciled-three-layer.v1"
+  },
+  "runtime_fingerprint_components": [
+    "src/stegcore/three_layer.py",
+    "src/stegcore/steggate.py",
+    "src/stegcore/steggate_runtime.py",
+    "src/stegcore/commit_governance.py"
+  ],
+  "lifecycle": [
+    "TRANSPORTED",
+    "INSTANTIATED",
+    "PACKAGE_AND_RUNTIME_BINDING_VERIFIED",
+    "EVALUATED",
+    "COMMIT_COHERENCE_IF_EXECUTION_REQUESTED",
+    "CONSEQUENCE_IF_ALLOWED",
+    "RECEIPT_EMITTED",
+    "TERMINATED"
+  ],
+  "fail_closed_conditions": [
+    "package_hash_mismatch",
+    "runtime_fingerprint_mismatch",
+    "package_expired_or_expiry_invalid",
+    "canonical_admissibility_not_allow",
+    "commit_coherence_not_allow"
+  ],
+  "non_authorities": [
+    "arbitrary_remote_code_execution",
+    "publication_authority",
+    "provider_credential_authority",
+    "payment_or_transaction_authority",
+    "continuity_receipt_minting_authority",
+    "deployment_authority",
+    "policy_authorship"
+  ],
+  "validation": {
+    "workflow": "StegCore Tests",
+    "run_id": 31286273932,
+    "job_id": 93175594894,
+    "head_sha": "2f0076a25fdf7ee020dca85f3934c6bca385b310",
+    "result": "PASS",
+    "tests_passed": 161,
+    "subtests_passed": 129,
+    "artifact_id": 9029913625,
+    "artifact_sha256": "fd7b9a27eb18d6e4a061e7e7b507cceb6d6b10bef649e2198c08841a9e25e054",
+    "portable_contract_assertions": [
+      "JSON transport and fresh micro-node evaluation",
+      "ALLOW plus coherence ALLOW executes and binds decision-state hash",
+      "runtime fingerprint mismatch fails closed before executor",
+      "package tampering fails closed before executor",
+      "canonical DENY never invokes executor"
+    ]
+  },
+  "activation_effect": {
+    "portable_topology_functional": true,
+    "public_ingress_required": false,
+    "render_required": false,
+    "quick_tunnel_required": false,
+    "resident_http_topology_superseded": false,
+    "resident_http_topology_remains_separate": true
+  },
+  "next_integration": {
+    "task": "Bind one real consumer/provider adapter to GovernedTransitionPackage transport and execute/evaluate locally without public StegGate ingress.",
+    "candidate_consumers": ["Ecosystem Chat", "VACC", "Math Solver", "HIL"],
+    "owner": "StegCore#68 plus the selected consumer's canonical repository/handoff",
+    "collision_rule": "Do not reproduce StegGate policy logic in the consumer; consumer only constructs/transports the package and supplies a bounded consequence adapter."
+  }
+}
