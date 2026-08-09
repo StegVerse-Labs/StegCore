@@ -42,8 +42,22 @@
   },
   "applications": {
     "ecosystem_chat": {
-      "owner": "StegVerse-Labs/Site#242",
-      "binding_state": "PENDING_DIRECT_EVIDENCE"
+      "owner": "StegVerse-Labs/Site#242 + StegVerse-org/LLM-adapter#18",
+      "binding_state": "CI_BOUND_PUBLIC_EVIDENCE_PENDING",
+      "consumer_commits": [
+        "d9727c490368a4196718f9652d8ab7fedc344a2f",
+        "8d9a114ff954986661e481fbe5ce67e818acf06d",
+        "2d957a6d1c1e49a4f071310667cd81eb61e43abd"
+      ],
+      "validation": {
+        "workflow": "StegGate Portable Consumer Integration",
+        "run_id": 31339336399,
+        "job_id": 93310410095,
+        "conclusion": "SUCCESS",
+        "artifact_id": 9045322524,
+        "artifact_digest": "sha256:611eee0419dbf82fc8ab026ae192c4cbcbe5e2953f5f068dd27c98c1caa95373",
+        "public_provider_execution_proven": false
+      }
     },
     "vacc": {
       "owner": "StegVerse-Labs/Site#241",
@@ -75,11 +89,11 @@
   },
   "binding_progress": {
     "core_contract": "COMPLETE",
-    "applications_ci_or_stronger": 1,
+    "applications_ci_or_stronger": 2,
     "applications_public_direct": 0,
     "required_applications": 4
   },
   "state": "ACTIVE_INTEGRATION",
   "goal_complete": false,
-  "next_executable_action": "Bind the common runtime identity into the next non-conflicting application path while preserving HIL upload ownership; public evidence remains required for Math Solver before counting direct integration completion."
+  "next_executable_action": "Bind VACC through its canonical governed runtime path while preserving HIL upload ownership; Ecosystem Chat and Math Solver public evidence remain machine-owned and pending."
 }
