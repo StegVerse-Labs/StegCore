@@ -1,26 +1,43 @@
 {
-  "inventory_version": "1.0",
+  "inventory_version": "1.1",
   "goal_id": "STEGCORE-NEURAL-ENDTOEND-002",
   "originating_session_goal": "Build a full testable governance system plus a physical transmit/receive model for specifically addressed neural micro-node transport.",
   "repository": "StegVerse-Labs/StegCore",
   "branch": "main",
   "canonical_handoff": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
   "predecessor_issue": 71,
+  "successor_issue": 72,
+  "hardware_blocker_issue": 73,
   "claim": {
-    "state": "CLAIMED_FOR_VALIDATION",
+    "state": "COMPLETE_SOFTWARE_MODEL",
     "implementation": "INSTALLED_ON_MAIN",
-    "validation": "MACHINE_OWNED",
+    "validation": "COMPLETE_HOSTED",
     "claim_created": "2026-08-09",
+    "claim_release_evidence": {
+      "workflow": ".github/workflows/neural-end-to-end.yml",
+      "reference_model_run_id": 31290171371,
+      "reference_model_job_id": 93185871445,
+      "canonical_handoff_run_id": 31290198826,
+      "canonical_handoff_job_id": 93185939693,
+      "conclusion": "SUCCESS",
+      "tests": "15 passed",
+      "full_governance_composition_check": "PASS",
+      "physical_non_activation_boundary_check": "PASS",
+      "reference_bidirectional_transceiver_check": "PASS"
+    },
     "collision_boundary": [
       "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
       "docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md",
+      "docs/NEURAL_REFERENCE_BIDIRECTIONAL_ULTRASOUND_MODEL.md",
+      "docs/NEURAL_END_TO_END_VALIDATION_PLAN.md",
       "src/stegcore/neural_physical_channel.py",
       "src/stegcore/neural_governance_system.py",
       "tests/test_neural_end_to_end.py",
       ".github/workflows/neural-end-to-end.yml",
       "data/neural-end-to-end-session-inventory.json"
     ],
-    "release_condition": "Hosted neural-end-to-end workflow succeeds; job/log evidence is inspected; successor issue and handoff are reconciled; no software result is represented as biological activation."
+    "release_condition": "SATISFIED_FOR_SOFTWARE_MODEL_ONLY",
+    "biological_activation": "BLOCKED_BY_ISSUE_73"
   },
   "goals": [
     {
@@ -35,74 +52,87 @@
       "goal": "Define an adapter-neutral physical bidirectional transmit/receive model.",
       "destination": "docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md",
       "state": "COMPLETE",
-      "validation": "HOSTED_PENDING"
+      "validation": "HOSTED_PASS"
     },
     {
       "id": "NE2E-03",
       "goal": "Implement deterministic physical channel eligibility for READ and WRITE paths.",
       "destination": "src/stegcore/neural_physical_channel.py",
       "state": "COMPLETE",
-      "validation": "HOSTED_PENDING"
+      "validation": "HOSTED_PASS"
     },
     {
       "id": "NE2E-04",
       "goal": "Compose neural evidence, physical eligibility, canonical StegGate, commit coherence, and modeled consequence into one receipt-producing system.",
       "destination": "src/stegcore/neural_governance_system.py",
       "state": "COMPLETE",
-      "validation": "HOSTED_PENDING"
+      "validation": "HOSTED_PASS"
     },
     {
       "id": "NE2E-05",
       "goal": "Test positive and fail-closed paths across candidate binding, neural authority separation, physical envelope, policy, and commit coherence.",
       "destination": "tests/test_neural_end_to_end.py",
       "state": "COMPLETE",
-      "validation": "HOSTED_PENDING"
+      "validation": "HOSTED_PASS_15_TOTAL_WITH_PREDECESSOR"
     },
     {
       "id": "NE2E-06",
       "goal": "Automate hosted validation of predecessor + full end-to-end composition and non-activation boundaries.",
       "destination": ".github/workflows/neural-end-to-end.yml",
       "state": "COMPLETE",
-      "validation": "MACHINE_OWNED"
+      "validation": "HOSTED_PASS"
     },
     {
       "id": "NE2E-07",
       "goal": "Persist complete execution inventory and release conditions.",
       "destination": "data/neural-end-to-end-session-inventory.json",
       "state": "COMPLETE",
-      "validation": "HOSTED_PENDING"
+      "validation": "COMMITTED"
     },
     {
       "id": "NE2E-08",
-      "goal": "Bind the successor work to a durable issue and close it only on hosted evidence.",
-      "destination": "StegVerse-Labs/StegCore issue successor to #71",
-      "state": "PENDING",
-      "validation": "NOT_STARTED"
+      "goal": "Bind successor work to a durable issue and close it only on hosted evidence.",
+      "destination": "StegVerse-Labs/StegCore#72",
+      "state": "COMPLETE_PENDING_ISSUE_CLOSURE",
+      "validation": "HOSTED_EVIDENCE_AVAILABLE"
     },
     {
       "id": "NE2E-09",
       "goal": "Inspect hosted workflow jobs/logs and reconcile final handoff state.",
       "destination": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
-      "state": "PENDING",
-      "validation": "NOT_STARTED"
+      "state": "COMPLETE_PENDING_FINAL_HANDOFF_WRITE",
+      "validation": "RUN_31290198826_SUCCESS"
     },
     {
       "id": "NE2E-10",
       "goal": "Preserve absence of real neural hardware as an explicit non-activation boundary with a machine-observable release condition.",
-      "destination": "docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md",
+      "destination": "StegVerse-Labs/StegCore#73",
+      "state": "MERGED_INTO_CANONICAL_BLOCKER",
+      "validation": "DURABLE_BLOCKED_STATE"
+    },
+    {
+      "id": "NE2E-11",
+      "goal": "Instantiate the generic physical model against a concrete bidirectional non-invasive reference transceiver architecture.",
+      "destination": "docs/NEURAL_REFERENCE_BIDIRECTIONAL_ULTRASOUND_MODEL.md",
       "state": "COMPLETE",
-      "validation": "COMMITTED"
+      "validation": "HOSTED_PASS"
     }
   ],
   "hardware_integration": {
     "state": "BLOCKED",
-    "owner": "future named neural adapter repository",
-    "release_condition": "A specific adapter/device repository exists and supplies empirical locator, calibration, physical-unit to governed-envelope mapping, targeting/coupling/noise/latency evidence, safety evidence, and post-consequence observation capability.",
+    "owner": "StegVerse-Labs/StegCore#73",
+    "release_condition": "A specific adapter/device repository exists and supplies empirical locator, calibration, physical-unit to governed-envelope mapping, targeting/coupling/noise/latency evidence, applicable safety evidence, and post-consequence observation capability, then passes hosted adapter conformance against the canonical neural governance surfaces.",
     "software_model_is_not_activation": true
   },
   "cross_repository": {
     "ara_admissibility_interop": "DESTINATION_OWNED_AFTER_HANDOFF_ADMISSION",
     "site_publisher_wikis": "NOT_REQUIRED_UNTIL_PUBLICATION_OR_RELEASE_CLAIM"
   },
-  "archive_condition": "Successor hosted validation and handoff reconciliation complete; real-hardware absence remains durably assigned and no unique session information remains only in chat."
+  "session_consolidation": {
+    "session_goals": 11,
+    "complete_or_transferred": 11,
+    "unique_untransferred": 0,
+    "remaining_execution_owner": "StegVerse-Labs/StegCore#73 only when release condition becomes true"
+  },
+  "archive_condition": "Final handoff records hosted success and issue #72 is closed. Real-hardware activation remains durably blocked in #73 and does not require this conversation."
 }
