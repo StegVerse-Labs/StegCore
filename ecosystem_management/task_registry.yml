@@ -1,4 +1,4 @@
-version: 0.5
+version: 0.6
 goal: ecosystem_managed_task_handoff_and_completion
 
 assessment_rule: >-
@@ -59,21 +59,29 @@ parallel_chains:
     completion_criteria: verifier-green-site-main-verified-downstream-dependency-bound-activation-receipt-created
   - chain_id: governed-correctability-layer
     owner_repo: StegCore
-    status: building-and-activated-repository-conformance
+    status: hosted-validation-complete-machine-owned-propagation
     issue: StegVerse-Labs/StegCore#43
     handoff: docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md
     state: ecosystem_management/correctability_layer.v0.1.json
     schema: docs/spec/schemas/correction_request.schema.json
     verification_command: python tools/verify_correctability_layer.py
     workflow: .github/workflows/correctability-layer.yml
+    hosted_validation_run: 30774680694
+    hosted_validation_job: 91567818006
+    hosted_validation_result: success-10-of-10
     report_artifact: brain_reports/correctability_layer_report.json
-    next_integration_candidate: StegVerse-Labs/admissibility-wiki
+    workflow_artifact_id: 8841612361
+    workflow_artifact_digest: sha256:030f22b998a6f9c382db5463a4cc55f6d70132d5dd20d880778b5efda9844536
+    propagation_task: receipts/correctability-propagation-task.json
+    next_integration_candidate: target-native-orchestrators-evaluate-C06
     downstream_candidates:
-      - StegVerse-002/stegguardian-wiki
-      - GCAT-BCAT-Engine/Publisher
       - StegVerse-Labs/Site
-    non_overlap: correction-semantics-and-repository-conformance-only
-    completion_criteria: verifier-green-workflow-green-report-artifact-present-downstream-semantics-reviewed
+      - GCAT-BCAT-Engine/Publisher
+      - StegVerse-Labs/admissibility-wiki
+      - StegVerse-002/stegguardian-wiki
+    non_overlap: correction-semantics-and-source-conformance-complete; downstream-only-through-target-native-orchestration
+    completion_criteria: four-destination-target-native-propagation-evidence-or-durable-blockers-recorded-and-source-registry-reconciled
+    archive_readiness: originating-correctability-and-external-convergence-chats-independent
   - chain_id: child-mode-authority-runtime
     owner_repo: StegCore
     status: machine-owned-propagation-review
@@ -131,11 +139,12 @@ managed_repos:
     ownership: coordination-and-verification-only
     non_overlap: no-formalism-allocation-execution-custody-publication-or-release-authority
   - name: StegCore-Correctability
-    status: building-and-activated-repository-conformance
+    status: hosted-validation-complete-machine-owned-propagation
     handoff: docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md
-    next_candidate: StegVerse-Labs/admissibility-wiki
-    ownership: correction-request-semantics-and-conformance
-    non_overlap: no-runtime-deployment-financial-legal-or-physical-authority
+    next_candidate: target-native-orchestrators-evaluate-C06
+    propagation_task: receipts/correctability-propagation-task.json
+    ownership: correction-request-semantics-source-conformance-and-propagation-coordination
+    non_overlap: no-runtime-deployment-financial-legal-physical-guardian-publication-or-release-authority
   - name: StegCore-Personal-Data-Control-Consolidation
     status: complete-archive-ready
     handoff: docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md
@@ -151,6 +160,7 @@ artifacts:
   rtg_tt_operational_report: brain_reports/rtg_tt_operational_layer_report.json
   correctability_state: ecosystem_management/correctability_layer.v0.1.json
   correctability_report: brain_reports/correctability_layer_report.json
+  correctability_propagation_task: receipts/correctability-propagation-task.json
   personal_data_control_consolidation_state: ecosystem_management/personal_data_control_session_consolidation.v1.json
   personal_data_control_consolidation_report: brain_reports/personal_data_control_session_consolidation_report.json
   child_mode_authority_runtime_state: ecosystem_management/child_mode_authority_runtime.v0.1.json
