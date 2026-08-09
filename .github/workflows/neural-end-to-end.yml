@@ -5,6 +5,8 @@ on:
     paths:
       - 'docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md'
       - 'docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md'
+      - 'docs/NEURAL_REFERENCE_BIDIRECTIONAL_ULTRASOUND_MODEL.md'
+      - 'docs/NEURAL_END_TO_END_VALIDATION_PLAN.md'
       - 'src/stegcore/neural_micronode.py'
       - 'src/stegcore/neural_physical_channel.py'
       - 'src/stegcore/neural_governance_system.py'
@@ -16,6 +18,8 @@ on:
     paths:
       - 'docs/NEURAL_MICRONODE_GOVERNANCE_MIRROR_HANDOFF.md'
       - 'docs/NEURAL_BIDIRECTIONAL_PHYSICAL_MODEL.md'
+      - 'docs/NEURAL_REFERENCE_BIDIRECTIONAL_ULTRASOUND_MODEL.md'
+      - 'docs/NEURAL_END_TO_END_VALIDATION_PLAN.md'
       - 'src/stegcore/neural_micronode.py'
       - 'src/stegcore/neural_physical_channel.py'
       - 'src/stegcore/neural_governance_system.py'
@@ -70,4 +74,18 @@ jobs:
           ):
               assert required in text, required
           print('physical non-activation boundary present')
+          PY
+      - name: Verify reference transceiver separates read, write, and biological response
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('docs/NEURAL_REFERENCE_BIDIRECTIONAL_ULTRASOUND_MODEL.md').read_text()
+          for required in (
+              'y_r(t) = H_r(theta_r, target) [x(t)] + n_r(t)',
+              'e(target,t) = H_w(theta_w, target) [u(t)]',
+              'x_after = B(x_before, e, biological_context)',
+              'physical_focus_established != desired_neural_state_established',
+          ):
+              assert required in text, required
+          print('reference bidirectional physical model present')
           PY
