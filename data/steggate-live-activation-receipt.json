@@ -1,0 +1,334 @@
+{
+  "archive_allowed": true,
+  "canonical_issue": "StegVerse-Labs/StegCore#68",
+  "deployment_source": "heartbeat_ephemeral_micronode",
+  "evaluate": {
+    "error": null,
+    "pass": true,
+    "request": {
+      "approval": {
+        "required": false
+      },
+      "candidate": {
+        "action": "live_observer",
+        "actor_class": "system",
+        "parameters": {
+          "purpose": "verify-complete-hosted-matrix"
+        },
+        "scope": "activation-observation",
+        "target": "steggate-core"
+      },
+      "capability": {
+        "allowed": true
+      },
+      "continuity": {
+        "previous_receipt_hash": "observer:receipt:v0",
+        "previous_receipt_verified": true,
+        "required": true
+      },
+      "declared_context": {
+        "observer": "steggate-live-observer-v1"
+      },
+      "execution": {
+        "actor_authority_current": true,
+        "affected_entity_conditions_represented": true,
+        "delegation_current": true,
+        "delegation_ref": "observer:delegation:v1",
+        "evidence_current": true,
+        "evidence_refs": [
+          "observer:execution:v1"
+        ],
+        "policy_current": true,
+        "policy_ref": "observer:policy:v1",
+        "recoverability_profile": "recoverable",
+        "validity_window_open": true
+      },
+      "judgment": {
+        "evidence_refs": [
+          "observer:judgment:v1"
+        ],
+        "isolation_state": "supported",
+        "operator_recoverability": "available",
+        "refusal_available": true,
+        "time_pressure": "normal",
+        "workload_state": "supported"
+      },
+      "permission_present": false,
+      "signal": {
+        "admitted_signal_refs": [
+          "observer:signal:v1"
+        ],
+        "expected_reference_state_hash": "observer-state-v1",
+        "missing_inputs": [],
+        "reconstruction_available": true,
+        "reference_state_hash": "observer-state-v1",
+        "transformation_provenance_complete": true,
+        "transformations": [
+          "observer:v1"
+        ],
+        "uncertainty_state": "bounded"
+      }
+    },
+    "response": {
+      "artifact_type": "stegcore.steggate_admissibility_evaluation",
+      "candidate_hash": "4a67dc91719ff09d16fba242fdd45f0e9ad85ed49c92d046c2e4bb9890f56e42",
+      "canonical_three_layer_decision": "ALLOW",
+      "canonical_three_layer_reason": "ok",
+      "canonical_three_layer_receipt_hash": "af956622958ce7a86d8329b876df9af967ef9fa01dc48da14153c62df06024ae",
+      "canonical_three_layer_request_hash": "00990c3cecde6abfefd0421d45dd50eee4b1951ccc1c0c7a6fbb4664dcd80d10",
+      "continuity_receipt_minted": false,
+      "decision_state_hash": "cf244cf694db35cff4e22df9d42d96245cd53e92ee1ca3f8d52ef61f4e888906",
+      "disposition": "ALLOW",
+      "evaluated_at": "2026-08-09T09:14:06.569765+00:00",
+      "external_execution_performed": false,
+      "matrix": [
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "judgment.refusal_available",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "available",
+          "predicate": "judgment.operator_recoverability",
+          "reason": "operator_recoverability_current",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "supported",
+          "predicate": "judgment.workload_state",
+          "reason": "workload_supported",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "normal",
+          "predicate": "judgment.time_pressure",
+          "reason": "time_pressure_supported",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": 1,
+          "predicate": "signal.admitted_signal_refs",
+          "reason": "signals_admitted",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": [],
+          "predicate": "signal.missing_inputs",
+          "reason": "no_material_inputs_missing",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "bounded",
+          "predicate": "signal.uncertainty_state",
+          "reason": "uncertainty_bounded",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "signal.reconstruction_available",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "signal.transformation_provenance_complete",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "observer-state-v1",
+          "predicate": "signal.reference_state_hash_present",
+          "reason": "reference_state_present",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "observer-state-v1",
+          "predicate": "signal.expected_reference_state_hash_present",
+          "reason": "expected_reference_state_present",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": {
+            "current": "observer-state-v1",
+            "expected": "observer-state-v1"
+          },
+          "predicate": "signal.reference_state_match",
+          "reason": "reference_state_matches",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "execution.actor_authority_current",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "execution.policy_current",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "execution.delegation_current",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "execution.evidence_current",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "execution.affected_entity_conditions_represented",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "recoverable",
+          "predicate": "execution.recoverability_profile",
+          "reason": "recoverability_declared",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": true,
+          "predicate": "execution.validity_window_open",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "observer:policy:v1",
+          "predicate": "execution.policy_ref_present",
+          "reason": "policy_ref_present",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "three_layer",
+          "observed": "observer:delegation:v1",
+          "predicate": "execution.delegation_ref_present",
+          "reason": "delegation_ref_present",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "runtime_adapter",
+          "observed": true,
+          "predicate": "capability.allowed",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "runtime",
+          "observed": true,
+          "predicate": "continuity.previous_receipt_verified",
+          "reason": "predicate_satisfied",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "runtime_adapter",
+          "observed": "observer:receipt:v0",
+          "predicate": "continuity.previous_receipt_hash_present",
+          "reason": "continuity_pointer_present",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "steggate_review",
+          "observed": "not_required",
+          "predicate": "approval.valid",
+          "reason": "human_approval_not_required",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "steggate_review",
+          "observed": "not_required",
+          "predicate": "approval.candidate_hash_binding",
+          "reason": "human_approval_not_required",
+          "state": "PASS"
+        },
+        {
+          "authority_surface": "permission_admissibility_contract",
+          "observed": false,
+          "predicate": "permission.present",
+          "reason": "permission_recorded_independently_of_admissibility",
+          "state": "PASS"
+        }
+      ],
+      "permission_is_not_admissibility": true,
+      "permission_present": false,
+      "reasons": [
+        "canonical_three_layer_allow_and_all_precommit_bindings_satisfied"
+      ],
+      "schema_version": "2.0"
+    }
+  },
+  "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
+  "health": {
+    "error": null,
+    "pass": true,
+    "response": {
+      "admissibility_matrix": "active",
+      "canonical_three_layer_bound": true,
+      "fail_closed": true,
+      "service": "StegGate",
+      "state": "healthy",
+      "version": "0.2.0"
+    }
+  },
+  "named_stable_route_required_for_this_goal": false,
+  "observation_digest": "sha256:4159d510a8c8e2d941f8c5efb8355f95ce651c328b41e22abb8be7e97b799506",
+  "observed_at": "2026-08-09T09:14:06.578269Z",
+  "origin": "https://face-treaty-kinds-virginia.trycloudflare.com",
+  "persistent_host_required_for_this_goal": false,
+  "receipt_digest": "sha256:8fa34d07283a48e5aacf71f8f11242371de5e997b61f16b055e403c10a07df13",
+  "schema": "stegverse.steggate_live_activation_receipt.v1",
+  "self_test": {
+    "error": null,
+    "pass": true,
+    "response": {
+      "canonical_three_layer_bound": true,
+      "expected": {
+        "ALLOW": "ALLOW",
+        "DENY": "DENY",
+        "FAIL_CLOSED": "FAIL_CLOSED",
+        "REVIEW": "REVIEW"
+      },
+      "matrix_rows": {
+        "ALLOW": 27,
+        "DENY": 27,
+        "FAIL_CLOSED": 27,
+        "REVIEW": 27
+      },
+      "observed": {
+        "ALLOW": "ALLOW",
+        "DENY": "DENY",
+        "FAIL_CLOSED": "FAIL_CLOSED",
+        "REVIEW": "REVIEW"
+      },
+      "service": "StegGate",
+      "state": "PASS"
+    }
+  },
+  "state": "COMPLETE"
+}
