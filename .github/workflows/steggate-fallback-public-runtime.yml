@@ -1,9 +1,9 @@
-name: StegGate Fallback Public Runtime
+name: StegGate Heartbeat Public Runtime
 
 on:
+  repository_dispatch:
+    types: [stegverse-heartbeat]
   workflow_dispatch:
-  schedule:
-    - cron: "7 * * * *"
   push:
     branches: [main]
     paths:
@@ -19,12 +19,18 @@ permissions:
   contents: write
   issues: write
 
+concurrency:
+  group: steggate-heartbeat-public-runtime
+  cancel-in-progress: false
+
 jobs:
   public-runtime:
     runs-on: ubuntu-latest
     timeout-minutes: 75
     env:
       REGISTRY_COMMENT_ID: "5228464425"
+      HEARTBEAT_EPOCH: ${{ github.event.client_payload.epoch || 'bootstrap' }}
+      HEARTBEAT_ID: ${{ github.event.client_payload.heartbeat_id || github.run_id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,6 +39,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Record heartbeat claim
+        run: |
+          mkdir -p build
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('build/steggate-heartbeat-claim.json').write_text(json.dumps({
+            'schema': 'stegverse.steggate_heartbeat_claim.v1',
+            'heartbeat_id': os.environ['HEARTBEAT_ID'],
+            'heartbeat_epoch': os.environ['HEARTBEAT_EPOCH'],
+            'goal_id': 'STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001',
+            'authority_effect': False,
+            'scheduler': 'stegverse-heartbeat'
+          }, indent=2, sort_keys=True) + '\n')
+          PY
 
       - name: Install canonical StegCore
         run: python -m pip install -e .
@@ -43,9 +65,7 @@ jobs:
           nohup uvicorn stegcore.service:app --host 127.0.0.1 --port 8000 > build/steggate-fallback-app.log 2>&1 &
           echo $! > build/steggate-fallback-app.pid
           for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:8000/health > build/steggate-fallback-local-health.json; then
-              exit 0
-            fi
+            if curl --fail --silent http://127.0.0.1:8000/health > build/steggate-fallback-local-health.json; then exit 0; fi
             sleep 1
           done
           cat build/steggate-fallback-app.log
@@ -62,38 +82,35 @@ jobs:
       - name: Open zero-credential public tunnel and wait for edge readiness
         id: tunnel
         run: |
-          nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 \
-            > build/steggate-fallback-tunnel.log 2>&1 &
+          nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 > build/steggate-fallback-tunnel.log 2>&1 &
           echo $! > build/steggate-fallback-tunnel.pid
           ORIGIN=""
           for attempt in $(seq 1 60); do
             ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/steggate-fallback-tunnel.log | tail -1 || true)"
-            if [ -n "$ORIGIN" ]; then break; fi
+            [ -n "$ORIGIN" ] && break
             sleep 1
           done
           test -n "$ORIGIN" || { cat build/steggate-fallback-tunnel.log; exit 1; }
           echo "$ORIGIN" > build/steggate-fallback-origin.txt
-          EDGE_READY=0
           for attempt in $(seq 1 90); do
             if curl --fail --silent --show-error --max-time 10 "$ORIGIN/health" > build/steggate-fallback-public-health.json 2>build/steggate-fallback-public-health.err; then
-              EDGE_READY=1
-              break
+              echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"
+              exit 0
             fi
             sleep 2
           done
-          test "$EDGE_READY" -eq 1 || { cat build/steggate-fallback-tunnel.log; cat build/steggate-fallback-public-health.err || true; exit 1; }
-          echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"
+          cat build/steggate-fallback-tunnel.log
+          cat build/steggate-fallback-public-health.err || true
+          exit 1
 
       - name: Verify full public StegGate acceptance contract
-        id: observe
         env:
           STEGGATE_ORIGIN: ${{ steps.tunnel.outputs.origin }}
         run: |
-          python scripts/observe_steggate_live_service.py > build/steggate-fallback-observer.stdout 2>&1
-          cat build/steggate-fallback-observer.stdout
+          python scripts/observe_steggate_live_service.py | tee build/steggate-fallback-observer.stdout
           cp build/steggate-live-observation.json build/steggate-fallback-live-proof.json
 
-      - name: Update stable fallback runtime registry
+      - name: Update verified runtime registry
         env:
           GH_TOKEN: ${{ github.token }}
           ORIGIN: ${{ steps.tunnel.outputs.origin }}
@@ -101,48 +118,42 @@ jobs:
           python - <<'PY' > "$RUNNER_TEMP/registry.md"
           import json, os
           from pathlib import Path
-          proof = json.loads(Path("build/steggate-fallback-live-proof.json").read_text())
-          print("## StegGate fallback public-runtime registry")
+          proof=json.loads(Path('build/steggate-fallback-live-proof.json').read_text())
+          print('## StegGate heartbeat public-runtime registry')
           print()
-          print("State: `LIVE_ACCEPTANCE_PASS`")
+          print('State: `LIVE_ACCEPTANCE_PASS`')
           print()
+          print(f"Heartbeat epoch: `{os.environ['HEARTBEAT_EPOCH']}`")
+          print(f"Heartbeat id: `{os.environ['HEARTBEAT_ID']}`")
           print(f"Current public origin: `{os.environ['ORIGIN']}`")
-          print(f"Workflow run: `{os.environ['GITHUB_RUN_ID']}` attempt `{os.environ['GITHUB_RUN_ATTEMPT']}`")
+          print(f"Workflow run: `{os.environ['GITHUB_RUN_ID']}`")
           print(f"StegCore commit: `{os.environ['GITHUB_SHA']}`")
           print()
-          print("Acceptance: `/health` PASS; `/v1/self-test` exact four-disposition PASS; `/v1/evaluate` complete-matrix PASS.")
-          print()
-          print("The origin is supervised by this scheduled run. If its tunnel degrades, the workflow recreates the tunnel, repeats the full acceptance contract, and updates this registry before advertising the replacement.")
-          print()
+          print('Acceptance: `/health` PASS; `/v1/self-test` exact four-disposition PASS; `/v1/evaluate` complete-matrix PASS.')
           print(f"Observed at: `{proof.get('observed_at')}`")
           PY
           gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${REGISTRY_COMMENT_ID}" --method PATCH --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
 
       - name: Finalize functional activation immediately after hosted PASS
         env:
-          STEGGATE_DEPLOYMENT_SOURCE: github_actions_fallback_registry
-        run: python scripts/finalize_steggate_live_activation.py
+          STEGGATE_DEPLOYMENT_SOURCE: heartbeat_ephemeral_micronode
+        run: python scripts/finalize_steggate_live_activation.py | tee build/steggate-finalization.json
 
       - name: Persist canonical activation state
         run: |
           set -euo pipefail
-          git config user.name 'stegverse-automation'
-          git config user.email 'stegverse-automation@users.noreply.github.com'
+          git config user.name 'stegverse-heartbeat-worker'
+          git config user.email '210078727+StegVerse@users.noreply.github.com'
           git add data/steggate-live-activation-receipt.json data/steggate-session-context.json management/steggate-full-functional-activation.json STEGCORE_MIRROR_HANDOFF.md
-          if git diff --cached --quiet; then
-            echo 'Activation state already persisted.'
-          else
-            git commit -m 'Finalize StegGate functional activation from autonomous fallback runtime'
-            for attempt in 1 2 3 4; do
-              if git push origin HEAD:main; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase origin/main
-              sleep $((attempt * 3))
-            done
-            exit 1
-          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Finalize StegGate activation from heartbeat worker'
+          for attempt in 1 2 3 4; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+            sleep $((attempt * 3))
+          done
+          exit 1
 
       - name: Close canonical activation issue
         env:
@@ -150,69 +161,41 @@ jobs:
           ORIGIN: ${{ steps.tunnel.outputs.origin }}
         run: |
           if gh issue view 68 --repo StegVerse-Labs/StegCore --json state --jq '.state' | grep -q '^OPEN$'; then
-            gh issue comment 68 --repo StegVerse-Labs/StegCore --body "Autonomous scheduled fallback runtime produced full hosted PASS at ${ORIGIN}, persisted the canonical activation receipt, and completed/superseded the remaining activation tasks. Named persistent/rendezvous hosting remains non-blocking hardening."
+            gh issue comment 68 --repo StegVerse-Labs/StegCore --body "Heartbeat-owned ephemeral StegGate runtime produced full hosted PASS at ${ORIGIN}, persisted the canonical activation receipt, and completed the functional activation path. Heartbeat epoch: ${HEARTBEAT_EPOCH}; heartbeat id: ${HEARTBEAT_ID}."
             gh issue close 68 --repo StegVerse-Labs/StegCore --reason completed
           fi
 
       - name: Preserve activation evidence
         uses: actions/upload-artifact@v4
         with:
-          name: steggate-fallback-live-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          name: steggate-heartbeat-live-proof-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
+            build/steggate-heartbeat-claim.json
             build/steggate-fallback-*
             build/steggate-live-observation.json
+            build/steggate-finalization.json
             data/steggate-live-activation-receipt.json
           if-no-files-found: error
           retention-days: 90
 
-      - name: Supervise and self-heal public runtime through overlap window
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Supervise and self-heal runtime through heartbeat lease window
         run: |
           END=$(( $(date +%s) + 3900 ))
           while [ "$(date +%s)" -lt "$END" ]; do
             ORIGIN="$(cat build/steggate-fallback-origin.txt)"
-            if curl --fail --silent --max-time 10 "$ORIGIN/health" >/dev/null 2>&1; then
-              sleep 30
-              continue
-            fi
-
-            echo "Public fallback degraded; rotating tunnel."
+            if curl --fail --silent --max-time 10 "$ORIGIN/health" >/dev/null 2>&1; then sleep 30; continue; fi
             kill "$(cat build/steggate-fallback-tunnel.pid)" 2>/dev/null || true
             : > build/steggate-fallback-tunnel.log
             nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 > build/steggate-fallback-tunnel.log 2>&1 &
             echo $! > build/steggate-fallback-tunnel.pid
-
             NEW_ORIGIN=""
             for attempt in $(seq 1 60); do
               NEW_ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/steggate-fallback-tunnel.log | tail -1 || true)"
               if [ -n "$NEW_ORIGIN" ] && curl --fail --silent --max-time 10 "$NEW_ORIGIN/health" >/dev/null 2>&1; then break; fi
               sleep 2
             done
-            if [ -z "$NEW_ORIGIN" ]; then
-              sleep 30
-              continue
-            fi
-
-            STEGGATE_ORIGIN="$NEW_ORIGIN" python scripts/observe_steggate_live_service.py > build/steggate-fallback-observer.stdout 2>&1 || { sleep 30; continue; }
-            cp build/steggate-live-observation.json build/steggate-fallback-live-proof.json
+            [ -n "$NEW_ORIGIN" ] || { sleep 30; continue; }
+            STEGGATE_ORIGIN="$NEW_ORIGIN" python scripts/observe_steggate_live_service.py >/dev/null 2>&1 || { sleep 30; continue; }
             echo "$NEW_ORIGIN" > build/steggate-fallback-origin.txt
-            OBSERVED_AT="$(python -c 'import json; print(json.load(open("build/steggate-fallback-live-proof.json"))["observed_at"])')"
-            cat > "$RUNNER_TEMP/registry.md" <<EOF
-          ## StegGate fallback public-runtime registry
-
-          State: \`LIVE_ACCEPTANCE_PASS\`
-
-          Current public origin: \`$NEW_ORIGIN\`
-          Workflow run: \`$GITHUB_RUN_ID\` attempt \`$GITHUB_RUN_ATTEMPT\`
-          StegCore commit: \`$GITHUB_SHA\`
-
-          Acceptance: \`/health\` PASS; \`/v1/self-test\` exact four-disposition PASS; \`/v1/evaluate\` complete-matrix PASS.
-
-          The origin is supervised by this run and was automatically rotated after a failed public health check.
-
-          Observed at: \`$OBSERVED_AT\`
-          EOF
-            gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${REGISTRY_COMMENT_ID}" --method PATCH --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
             sleep 30
           done
