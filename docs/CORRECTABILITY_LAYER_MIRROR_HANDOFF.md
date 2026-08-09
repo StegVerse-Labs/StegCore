@@ -7,20 +7,20 @@ goal_id: CORRECTABILITY-LAYER-001
 originating_goal: distinguish reconstructability from timely, authorized, enforceable correction and build the missing layer
 repository: StegVerse-Labs/StegCore
 branch: main
-state: MACHINE_OWNED_VALIDATION_AND_PROPAGATION
+state: MACHINE_OWNED_PROPAGATION
 issue: StegVerse-Labs/StegCore#43
 canonical_owner: StegVerse-Labs/StegCore correctability workflow lane
 implementation_claim: COMPLETE_AT_REPOSITORY_FILE_LEVEL
-validation_claim: CLAIMED_FOR_HOSTED_VALIDATION
-integration_claim: CLAIMED_FOR_DOWNSTREAM_PROPAGATION_AFTER_GREEN_RUN
-claim_release_condition: inspected green workflow run, jobs, logs and artifact followed by four downstream receipts
+validation_claim: RELEASED_HOSTED_VALIDATION_COMPLETE
+integration_claim: MACHINE_OWNED_C06_DOWNSTREAM_PROPAGATION
+claim_release_condition: four destination propagation receipts or durable target-native blockers are recorded and task registry reconciled
 ```
 
 ## Determination
 
-The layer originally existed only as recoverability, rollback, compensation, containment, and commit-time blocking scaffolding. It now has canonical authority resolution, fail-closed correction predicates, explicit ADMIT/DENY decisions, post-irreversibility compensation semantics, a canonical specification section, fixtures, a repository workflow observer, a durable task surface, and a session-consolidation record.
+The governed correctability layer is implemented and hosted-validated. It provides canonical authority resolution, fail-closed correction predicates, explicit ADMIT/DENY behavior, before-irreversible-boundary enforcement, and post-irreversibility compensation semantics. Hosted workflow evidence now proves the compensation-aware implementation passes all ten canonical cases.
 
-No production, deployment, financial, legal, or physical execution authority is claimed.
+No production, deployment, financial, legal, physical, Guardian, publication, custody, release, or execution authority is claimed.
 
 ## Authoritative files
 
@@ -41,7 +41,8 @@ Authority records: tests/fixtures/correctability/authority_records.json
 Correction matrix: tests/fixtures/correctability/v2/cases.json
 Compensation matrix: tests/fixtures/correctability/v2/compensation_cases.json
 Workflow: .github/workflows/correctability-layer.yml
-Receipt: brain_reports/correctability_layer_report.json
+Committed report path: brain_reports/correctability_layer_report.json
+Propagation task: receipts/correctability-propagation-task.json
 ```
 
 ## Completed implementation
@@ -51,13 +52,14 @@ COMPLETE: dedicated correction, authority, delegation, commit-time and compensat
 COMPLETE: canonical authority_reference resolution
 COMPLETE: subject, scope, intervention, validity, revocation, reachability, enforceability, evidence and timing predicates
 COMPLETE: explicit ADMIT and DENY correction decisions
-COMPLETE: eight-case authority-resolved correction matrix
-COMPLETE: earlier deterministic verifier execution PASS 8/8 with committed receipt
+COMPLETE: authority-resolved correction matrix
 COMPLETE: post-irreversibility compensation cases with PARTIAL and IMPOSSIBLE outcomes
 COMPLETE: compensation-aware verifier distinguishes timely correction from compensation
 COMPLETE: compensation receipt vocabulary aligned to COMPLETE, PARTIAL, FAILED and IMPOSSIBLE
-COMPLETE: canonical staged specification defines correctability separately from admissibility, reconstructability, replayability, recoverability, rollback and compensation
-COMPLETE: unique session requirements and history consolidated into repository state
+COMPLETE: canonical staged specification separates correctability from admissibility, reconstructability, replayability, recoverability, rollback and compensation
+COMPLETE: session requirements/history consolidated into repository state
+COMPLETE: hosted validation and report-artifact inspection
+ACTIVATED: C-06 machine-owned downstream propagation task
 ```
 
 ## Evidence commits
@@ -73,64 +75,68 @@ compensation_schema_alignment: cbc3bb2e33a4960c7a8551091412125185101e92
 compensation_authority_binding: d9975c0bdffe0efe482127fd4e89552d962df2db
 canonical_spec_integration: 0db2ab026a5ddacdd0f37283ee09e87c5c251e06
 session_consolidation: c45cfe33d13e81db1f58a06cf12a5813a16d3c77
+propagation_activation: 83d1dfeb31227f4bfc5895c01f6da56f1c268a09
 ```
 
-## Validation state
+## Hosted validation evidence — C-05 COMPLETE
 
 ```text
-file_presence: PASS
-prior_verifier_syntactic_execution: PASS
-prior_authority_resolved_deterministic_execution: PASS (8/8)
-compensation_aware_hosted_workflow_execution: BLOCKED_PENDING_OBSERVED_RUN
-workflow_jobs_logs_artifact_inspection: BLOCKED_PENDING_OBSERVED_RUN
-latest_spec_commit_combined_status: no statuses exposed at inspection time
-cross_repository_integration: 0/4
-runtime_activation: NOT CLAIMED
+workflow: Correctability Layer
+run_id: 30774680694
+run_number: 19
+head_sha: 21cf5ddfe3f58da270718b4c627a2f56adb580eb
+job_id: 91567818006
+job: verify
+status: completed
+conclusion: success
+verification_command: python tools/verify_correctability_layer.py
+fixture_count: 10
+passed_count: 10
+reported_state: COMPLETE
+reported_status: pass
+artifact_id: 8841612361
+artifact_name: correctability-layer-report
+artifact_digest: sha256:030f22b998a6f9c382db5463a4cc55f6d70132d5dd20d880778b5efda9844536
+artifact_expired: false
 ```
 
-The compensation-aware implementation is installed but is not represented as hosted-validated until its workflow run, jobs, logs, and artifact are directly inspected.
+Direct job-log inspection confirmed all ten cases passed, including valid timely correction, late correction denial, revoked/unknown authority denial, scope/intervention/reachability/evidence failures, PARTIAL post-irreversibility compensation, and IMPOSSIBLE compensation denial. The uploaded report artifact was directly inspected at the workflow metadata layer.
 
-## Machine-owned continuation
+C-05 release condition is therefore SATISFIED and the validation claim is RELEASED.
 
-### C-05 — hosted validation and receipt refresh
+## C-06 — machine-owned downstream propagation
+
+Canonical durable task:
 
 ```text
-claim_state: MACHINE_OWNED
-owner: StegVerse-Labs/StegCore
-observer: .github/workflows/correctability-layer.yml
-command: python tools/verify_correctability_layer.py
-inputs:
-  tests/fixtures/correctability/authority_records.json
-  tests/fixtures/correctability/v2/cases.json
-  tests/fixtures/correctability/v2/compensation_cases.json
-output: brain_reports/correctability_layer_report.json
-artifact: correctability-layer-report
-release_condition: workflow succeeds and its run, jobs, logs and artifact are directly inspected
-failure_state: FAILED when verifier predicates or expected decisions diverge
-retry_state: RETRY when infrastructure permits rerun without semantic changes
-blocked_state: BLOCKED while no observable run is available
-next_task_after_release: C-06 downstream propagation
+receipts/correctability-propagation-task.json
 ```
 
-### C-06 — downstream propagation
+Current target states:
 
 ```text
-claim_state: MACHINE_OWNED_AFTER_C-05
-canonical_source: StegVerse-Labs/StegCore
-source_contracts:
-  docs/spec/STEGVERSE_SPEC_V1_3.md
-  docs/spec/schemas/correction_request.schema.json
-  docs/spec/schemas/authority_record.schema.json
-  docs/spec/schemas/compensation_receipt.schema.json
-  brain_reports/correctability_layer_report.json
-destinations:
-  StegVerse-Labs/admissibility-wiki
-  StegVerse-002/stegguardian-wiki
-  GCAT-BCAT-Engine/Publisher
-  StegVerse-Labs/Site
-required_per_destination: applicable mirror handoff read, consumer contract or import validation, propagation receipt, and destination handoff update
-release_condition: four destination receipts committed and task registry updated
+StegVerse-Labs/Site
+  state: BLOCKED
+  owner: Site repository orchestrator
+  release: orchestrator admits a nonconflicting correctability projection and target-native validation records the result
+
+GCAT-BCAT-Engine/Publisher
+  state: BLOCKED
+  owner: Publisher repository automation
+  release: active source chain admits bounded correctability publication semantics and Publisher records target-native propagation evidence
+
+StegVerse-Labs/admissibility-wiki
+  state: BLOCKED
+  owner: issue #50 canonical validation task mesh
+  release: canonical mesh records correctability ingestion or a precise dependency blocker and target-native validation outcome
+
+StegVerse-002/stegguardian-wiki
+  state: BLOCKED
+  owner: Guardian orchestration
+  release: verified upstream admissibility evidence exists, Guardian orchestration admits the projection, and Guardian validation succeeds
 ```
+
+All four blockers are durable and machine-observable. No destination mutation is authorized from this source lane while its target handoff reports an overlapping active claim or dependency block.
 
 ## Anti-collision and anti-stall rules
 
@@ -140,16 +146,16 @@ Do not trust request-local authority booleans where canonical authority records 
 Do not label a late request as timely correction.
 Do not label FAILED or IMPOSSIBLE compensation as successful remediation.
 Do not treat a missing workflow run or artifact as success.
-Do not begin downstream propagation until C-05 is green and inspected.
+Do not bypass a destination orchestrator or active claim.
+Do not convert propagation, documentation, verification, or transport into runtime authority.
 ```
-
-The repository-native workflow, issue, task registry, report, and this handoff preserve `COMPLETE`, `BLOCKED`, `RETRY`, `REVIEW_REQUIRED`, `FAILED`, `CLAIMED`, `SUPERSEDED`, and `MERGED` continuation states. Unresolved work has named owners and machine-observable release conditions.
 
 ## Session consolidation
 
 ```text
 MERGED INTO: StegVerse-Labs/StegCore/docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md
 consolidation_record: docs/CORRECTABILITY_SESSION_CONSOLIDATION_2026-08-02.md
+external-convergence transfer record: StegVerse-Labs/StegCore#69
 unique_requirements_transferred: all
 session_specific_unassigned_work: none
 session_role_after_transfer: none
@@ -159,19 +165,19 @@ session_role_after_transfer: none
 
 ```text
 thread_archive_ready: true
-archive_basis: all unique goals, decisions, implementation history, unresolved tasks, owners, claims, collision boundaries, evidence and release conditions are repository-resident; machine-owned work no longer requires conversation context
+archive_basis: all unique goals, decisions, implementation history, hosted validation evidence, unresolved propagation tasks, owners, collision boundaries and release conditions are repository-resident; C-06 is machine-owned and does not require conversation context
 ```
 
 ## Progress denominator
 
 ```text
 required_deliverables: 18
-task_completion: 14/18
-developed_files_complete: 16/18
+task_completion: 15/18
+developed_files_complete: 17/18
 scaffolding_or_stubs: 0
 missing_required_files: 0
-validation_completion: 2/4 levels complete
+validation_completion: 4/4 levels complete
 integration_completion: 0/4 destinations complete
-goal_activation: 14/18
+goal_activation: 15/18
 session_consolidation: 8/8 goals transferred or complete
 ```
