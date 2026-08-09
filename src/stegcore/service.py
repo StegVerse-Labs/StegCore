@@ -16,9 +16,16 @@ from .steggate import (
     evaluate_admissibility,
 )
 
+SERVICE_VERSION = "0.2.0"
+RUNTIME_CONTRACT_VERSION = "stegverse.steggate.runtime-identity.v1"
+RUNTIME_IDENTITY = "stegverse:steggate:canonical:three-layer:v1"
+CANONICAL_OWNER = "StegVerse-Labs/StegCore"
+CANONICAL_ADMISSIBILITY_RUNTIME = "stegcore.three_layer.evaluate_three_layer"
+DISPOSITIONS = ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"]
+
 app = FastAPI(
     title="StegGate",
-    version="0.2.0",
+    version=SERVICE_VERSION,
     description=(
         "StegCore StegGate evaluation service. The service composes the existing "
         "three-layer admissibility runtime with pre-commit capability, continuity, "
@@ -27,17 +34,48 @@ app = FastAPI(
 )
 
 
+def runtime_identity() -> dict[str, object]:
+    """Return the transport-independent identity consumed by reference applications."""
+    return {
+        "service": "StegGate",
+        "service_version": SERVICE_VERSION,
+        "contract_version": RUNTIME_CONTRACT_VERSION,
+        "runtime_identity": RUNTIME_IDENTITY,
+        "canonical_owner": CANONICAL_OWNER,
+        "canonical_admissibility_runtime": CANONICAL_ADMISSIBILITY_RUNTIME,
+        "evaluation_endpoint": "/v1/evaluate",
+        "capabilities_endpoint": "/v1/capabilities",
+        "dispositions": DISPOSITIONS,
+        "canonical_three_layer_bound": True,
+        "complete_matrix_output": True,
+        "candidate_hash_binding": True,
+        "permission_distinct_from_admissibility": True,
+        "application_specific_policy_authority": False,
+        "transport_identity_authoritative": False,
+        "execution_authority": False,
+        "continuity_receipt_minting_authority": False,
+        "binding_fields": [
+            "contract_version",
+            "runtime_identity",
+            "canonical_owner",
+            "canonical_admissibility_runtime",
+        ],
+    }
+
+
 @app.get("/")
 def root() -> dict[str, object]:
     return {
         "service": "StegGate",
-        "version": "0.2.0",
+        "version": SERVICE_VERSION,
         "state": "ACTIVE",
         "health": "/health",
+        "runtime_identity": "/v1/runtime-identity",
+        "capabilities": "/v1/capabilities",
         "evaluate": "/v1/evaluate",
         "self_test": "/v1/self-test",
         "docs": "/docs",
-        "canonical_admissibility_runtime": "stegcore.three_layer.evaluate_three_layer",
+        "canonical_admissibility_runtime": CANONICAL_ADMISSIBILITY_RUNTIME,
         "execution_authority": False,
         "continuity_receipt_minting_authority": False,
     }
@@ -48,24 +86,36 @@ def health() -> dict[str, object]:
     return {
         "service": "StegGate",
         "state": "healthy",
-        "version": "0.2.0",
+        "version": SERVICE_VERSION,
+        "runtime_identity": RUNTIME_IDENTITY,
         "canonical_three_layer_bound": True,
         "admissibility_matrix": "active",
         "fail_closed": True,
     }
 
 
+@app.get("/v1/runtime-identity")
+def runtime_identity_endpoint() -> dict[str, object]:
+    return runtime_identity()
+
+
 @app.get("/v1/capabilities")
 def capabilities() -> dict[str, object]:
     return {
         "service": "StegGate",
-        "dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
+        "contract_version": RUNTIME_CONTRACT_VERSION,
+        "runtime_identity": RUNTIME_IDENTITY,
+        "canonical_owner": CANONICAL_OWNER,
+        "canonical_admissibility_runtime": CANONICAL_ADMISSIBILITY_RUNTIME,
+        "dispositions": DISPOSITIONS,
         "canonical_three_layer_bound": True,
         "complete_matrix_output": True,
         "candidate_hash_binding": True,
         "approval_candidate_hash_binding": True,
         "continuity_input_supported": True,
         "permission_distinct_from_admissibility": True,
+        "application_specific_policy_authority": False,
+        "transport_identity_authoritative": False,
         "arbitrary_external_execution_exposed": False,
         "continuity_receipt_minting_authority": False,
     }
@@ -161,6 +211,7 @@ def self_test() -> dict[str, object]:
     return {
         "service": "StegGate",
         "state": "PASS" if observed == expected else "FAIL",
+        "runtime_identity": RUNTIME_IDENTITY,
         "canonical_three_layer_bound": all(
             result.canonical_three_layer_request_hash
             for result in (allow_result, deny_result, review_result, fail_closed_result)
