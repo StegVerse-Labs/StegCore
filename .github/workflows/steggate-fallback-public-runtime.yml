@@ -4,16 +4,6 @@ on:
   repository_dispatch:
     types: [stegverse-heartbeat]
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/steggate-fallback-public-runtime.yml"
-      - "src/stegcore/steggate.py"
-      - "src/stegcore/steggate_runtime.py"
-      - "src/stegcore/service.py"
-      - "scripts/observe_steggate_live_service.py"
-      - "scripts/finalize_steggate_live_activation.py"
-      - "pyproject.toml"
 
 permissions:
   contents: write
@@ -30,7 +20,7 @@ jobs:
     timeout-minutes: 75
     env:
       REGISTRY_COMMENT_ID: "5228464425"
-      HEARTBEAT_EPOCH: ${{ github.event.client_payload.epoch || 'bootstrap' }}
+      HEARTBEAT_EPOCH: ${{ github.event.client_payload.epoch || 'diagnostic' }}
       HEARTBEAT_ID: ${{ github.event.client_payload.heartbeat_id || github.run_id }}
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +30,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Read canonical activation state
+        id: activation
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          p=Path('data/steggate-live-activation-receipt.json')
+          complete=False
+          if p.exists():
+              try:
+                  complete=json.loads(p.read_text()).get('state') == 'COMPLETE'
+              except Exception:
+                  complete=False
+          print(f"complete={'true' if complete else 'false'}")
+          PY
 
       - name: Record heartbeat claim
         run: |
@@ -135,13 +141,14 @@ jobs:
           PY
           gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${REGISTRY_COMMENT_ID}" --method PATCH --raw-field body="$(cat "$RUNNER_TEMP/registry.md")" >/dev/null
 
-      - name: Finalize functional activation immediately after hosted PASS
+      - name: Finalize first functional activation after hosted PASS
+        if: steps.activation.outputs.complete != 'true'
         env:
           STEGGATE_DEPLOYMENT_SOURCE: heartbeat_ephemeral_micronode
         run: python scripts/finalize_steggate_live_activation.py | tee build/steggate-finalization.json
 
-      - name: Persist canonical activation through protected-main PR
-        id: persist
+      - name: Stage first activation state on protected-main branch
+        if: steps.activation.outputs.complete != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -149,46 +156,14 @@ jobs:
           git config user.name 'stegverse-heartbeat-worker'
           git config user.email '210078727+StegVerse@users.noreply.github.com'
           git add data/steggate-live-activation-receipt.json data/steggate-session-context.json management/steggate-full-functional-activation.json STEGCORE_MIRROR_HANDOFF.md
-          if git diff --cached --quiet; then
-            echo 'pr_number=' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          git diff --cached --quiet && exit 0
           BRANCH="automation/steggate-activation-${HEARTBEAT_ID}"
           git checkout -b "$BRANCH"
           git commit -m 'Finalize StegGate activation from heartbeat worker'
           git push --force-with-lease origin "$BRANCH"
-          PR_URL="$(gh pr create --repo StegVerse-Labs/StegCore --base main --head "$BRANCH" --title 'Finalize StegGate activation from heartbeat worker' --body "Heartbeat-owned ephemeral StegGate produced full hosted acceptance PASS. Heartbeat id: ${HEARTBEAT_ID}; epoch: ${HEARTBEAT_EPOCH}. This PR persists the canonical activation receipt and reconciled state through the protected-main path.")"
-          PR_NUMBER="${PR_URL##*/}"
-          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          gh pr merge "$PR_NUMBER" --repo StegVerse-Labs/StegCore --auto --squash
+          gh pr create --repo StegVerse-Labs/StegCore --base main --head "$BRANCH" --title 'Finalize StegGate activation from heartbeat worker' --body "Heartbeat-owned ephemeral StegGate produced full hosted acceptance PASS. Heartbeat id: ${HEARTBEAT_ID}; epoch: ${HEARTBEAT_EPOCH}. Protected-main merge remains governed by repository branch policy." || true
 
-      - name: Wait for protected-main activation merge
-        if: steps.persist.outputs.pr_number != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.persist.outputs.pr_number }}
-        run: |
-          set -euo pipefail
-          for attempt in $(seq 1 100); do
-            STATE="$(gh pr view "$PR_NUMBER" --repo StegVerse-Labs/StegCore --json state,mergedAt --jq 'if .mergedAt then "MERGED" else .state end')"
-            if [ "$STATE" = "MERGED" ]; then exit 0; fi
-            if [ "$STATE" = "CLOSED" ]; then exit 1; fi
-            sleep 20
-          done
-          echo "Activation PR did not merge within the heartbeat lease."
-          exit 1
-
-      - name: Close canonical activation issue
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ORIGIN: ${{ steps.tunnel.outputs.origin }}
-        run: |
-          if gh issue view 68 --repo StegVerse-Labs/StegCore --json state --jq '.state' | grep -q '^OPEN$'; then
-            gh issue comment 68 --repo StegVerse-Labs/StegCore --body "Heartbeat-owned ephemeral StegGate runtime produced full hosted PASS at ${ORIGIN}, persisted the canonical activation receipt through protected-main PR checks, and completed the functional activation path. Heartbeat epoch: ${HEARTBEAT_EPOCH}; heartbeat id: ${HEARTBEAT_ID}."
-            gh issue close 68 --repo StegVerse-Labs/StegCore --reason completed
-          fi
-
-      - name: Preserve activation evidence
+      - name: Preserve heartbeat runtime evidence
         uses: actions/upload-artifact@v4
         with:
           name: steggate-heartbeat-live-proof-${{ github.run_id }}-${{ github.run_attempt }}
@@ -198,7 +173,7 @@ jobs:
             build/steggate-live-observation.json
             build/steggate-finalization.json
             data/steggate-live-activation-receipt.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 90
 
       - name: Supervise and self-heal runtime through heartbeat lease window
