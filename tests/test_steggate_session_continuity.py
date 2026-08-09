@@ -43,7 +43,7 @@ def base_context():
             "provisional_files": ["src/stegcore/steggate.py"],
         },
         "worker_policy": {
-            "archive_status_when_active": "DO_NOT_ARCHIVE_UNTIL_GOAL_ACTIVATED",
+            "archive_status_when_active": "DO_NOT_ARCHIVE_UNTIL_GOAL_ACTIVATED_OR_DURABLY_TRANSFERRED",
             "next_action": "trace call graph",
             "machine_observable_release_conditions": ["architecture complete"],
         },
@@ -65,11 +65,54 @@ def base_architecture():
     }
 
 
-def test_incomplete_goal_passes_context_but_archive_remains_false():
+def complete_architecture():
+    architecture = base_architecture()
+    architecture.update(
+        state="COMPLETE",
+        canonical_call_graph=["three_layer", "steggate", "commit"],
+        reconciled_live_service={"classification": "adapter"},
+        removed_duplication=["duplicate evaluator removed"],
+    )
+    architecture.pop("provisional_layers", None)
+    architecture.pop("required_classifications", None)
+    architecture.pop("verified_findings", None)
+    architecture.pop("archive_allowed", None)
+    return architecture
+
+
+def test_incomplete_goal_passes_context_but_archive_remains_false_while_active():
     receipt = module.build_receipt(base_context(), base_architecture())
     assert receipt["state"] == "PASS"
     assert receipt["archive_allowed"] is False
     assert receipt["goal_activation_complete"] is False
+
+
+def test_incomplete_goal_can_archive_after_all_unique_work_is_durably_transferred():
+    context = base_context()
+    context["session_state"] = "MERGED_INTO_CANONICAL_WORKSTREAM"
+    context["archive_allowed"] = True
+    context["conversation_archive_allowed"] = True
+    context["session_consolidation"] = {
+        "all_unique_context_transferred": True,
+        "machine_owned_continuation": True,
+        "canonical_locations": ["StegVerse-Labs/StegCore#68", "StegVerse-Labs/Site#24"],
+        "remaining_tasks": ["stable endpoint activation"],
+    }
+    receipt = module.build_receipt(context, complete_architecture())
+    assert receipt["state"] == "PASS"
+    assert receipt["archive_allowed"] is True
+    assert receipt["goal_activation_complete"] is False
+    assert receipt["session_state"] == "MERGED_INTO_CANONICAL_WORKSTREAM"
+
+
+def test_merged_session_without_transfer_evidence_fails_closed():
+    context = base_context()
+    context["session_state"] = "MERGED_INTO_CANONICAL_WORKSTREAM"
+    context["archive_allowed"] = True
+    context["conversation_archive_allowed"] = True
+    receipt = module.build_receipt(context, complete_architecture())
+    assert receipt["state"] == "FAIL_CLOSED"
+    assert "merged_session_unique_context_not_transferred" in receipt["findings"]
 
 
 def test_missing_anti_duplication_context_fails_closed():
@@ -80,20 +123,12 @@ def test_missing_anti_duplication_context_fails_closed():
     assert "anti_duplication_context_missing" in receipt["findings"]
 
 
-def test_incomplete_goal_cannot_mark_conversation_archive_allowed():
+def test_active_incomplete_goal_cannot_mark_conversation_archive_allowed():
     context = base_context()
     context["conversation_archive_allowed"] = True
     receipt = module.build_receipt(context, base_architecture())
     assert receipt["state"] == "FAIL_CLOSED"
-    assert "incomplete_goal_conversation_archive_must_be_false" in receipt["findings"]
-
-
-def test_incomplete_goal_cannot_merge_session_out_of_active_state():
-    context = base_context()
-    context["session_state"] = "MERGED_INTO_CANONICAL_WORKSTREAM"
-    receipt = module.build_receipt(context, base_architecture())
-    assert receipt["state"] == "FAIL_CLOSED"
-    assert "incomplete_goal_session_state_must_be_active" in receipt["findings"]
+    assert "active_incomplete_goal_conversation_archive_must_be_false" in receipt["findings"]
 
 
 def test_complete_decision_surface_is_required():
