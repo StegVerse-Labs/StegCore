@@ -4,101 +4,95 @@
   "state": "MACHINE_OWNED",
   "owner_repository": "StegVerse-Labs/StegCore",
   "owner_component": "ecosystem-management",
-  "trigger": "C-05 hosted correctability validation has succeeded and its job logs and artifact have been directly inspected.",
-  "trigger_state": "SATISFIED",
   "source_handoff": "docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md",
-  "source_evidence": {
-    "workflow": ".github/workflows/correctability-layer.yml",
-    "run_id": 30774680694,
+  "source_validation": {
+    "workflow_run_id": 30774680694,
     "job_id": 91567818006,
-    "head_sha": "21cf5ddfe3f58da270718b4c627a2f56adb580eb",
-    "verifier_result": "PASS_10_OF_10",
+    "result": "SUCCESS_10_OF_10",
     "artifact_id": 8841612361,
-    "artifact_name": "correctability-layer-report",
     "artifact_digest": "sha256:030f22b998a6f9c382db5463a4cc55f6d70132d5dd20d880778b5efda9844536"
   },
-  "source_contracts": [
-    "docs/spec/STEGVERSE_SPEC_V1_3.md",
-    "docs/spec/schemas/correction_request.schema.json",
-    "docs/spec/schemas/authority_record.schema.json",
-    "docs/spec/schemas/compensation_receipt.schema.json",
-    "brain_reports/correctability_layer_report.json"
-  ],
   "targets": [
     {
-      "repository": "StegVerse-Labs/Site",
-      "canonical_handoff": "docs/SITE_MIRROR_HANDOFF.md",
-      "state": "BLOCKED",
-      "owner": "StegVerse-Labs/Site repository orchestrator",
-      "reason": "Active Site sequence is observed-blocked and external session ownership/external tasks are disabled; source semantics must not bypass repository admission.",
-      "release_condition": "Site orchestrator admits a nonconflicting correctability projection task and target-native validation records the result.",
-      "next_action": "Repository-native Site admission/observation controllers evaluate the correctability projection after the active sequence permits it."
-    },
-    {
       "repository": "GCAT-BCAT-Engine/Publisher",
-      "canonical_handoff": "PUBLISHER_MIRROR_HANDOFF.md",
       "state": "COMPLETE",
-      "owner": "GCAT-BCAT-Engine/Publisher repository automation",
       "evidence": {
         "data": "data/correctability-projection.json",
         "validator": "scripts/check_correctability_projection.py",
         "workflow": ".github/workflows/check-correctability-projection.yml",
         "workflow_run_id": 31290000111,
         "job_id": 93185432929,
-        "head_sha": "0c6f5d3958151306c1bdf84d081fa5f2a252b8dd",
-        "conclusion": "success",
-        "handoff_commit": "01457223625016e37fe47135d25428d85cfb09f7"
-      },
-      "release_condition": "SATISFIED",
-      "next_action": "None for Publisher correctability propagation; preserve bounded semantics."
+        "conclusion": "success"
+      }
     },
     {
       "repository": "StegVerse-Labs/admissibility-wiki",
-      "canonical_handoff": "docs/CORRECTABILITY_PROJECTION_MIRROR_HANDOFF.md",
       "state": "COMPLETE",
-      "owner": "StegVerse-Labs/admissibility-wiki bounded integration support lane",
       "evidence": {
+        "handoff": "docs/CORRECTABILITY_PROJECTION_MIRROR_HANDOFF.md",
         "data": "data/correctability-projection.json",
         "validator": "scripts/check_correctability_projection.py",
         "workflow": ".github/workflows/check-correctability-projection.yml",
         "workflow_run_id": 31290068860,
         "job_id": 93185607425,
-        "head_sha": "9e9f0e5d7c9f42015c7f831500d1c6723f48d746",
-        "conclusion": "success",
-        "handoff_commit": "e12f087d6a6f40f9d1926d043c7f14e7972d9838"
-      },
-      "release_condition": "SATISFIED",
-      "next_action": "None for bounded correctability ingestion; issue #50 remains separately fail-closed for unrelated repository-wide validation."
+        "conclusion": "success"
+      }
     },
     {
       "repository": "StegVerse-002/stegguardian-wiki",
-      "canonical_handoff": "docs/CORRECTABILITY_AWARENESS_MIRROR_HANDOFF.md",
       "state": "COMPLETE",
-      "owner": "StegVerse-002/stegguardian-wiki bounded awareness lane",
       "evidence": {
+        "handoff": "docs/CORRECTABILITY_AWARENESS_MIRROR_HANDOFF.md",
         "data": "data/correctability-awareness-status.json",
         "validator": "scripts/check_correctability_awareness.py",
         "workflow": ".github/workflows/check-correctability-awareness.yml",
         "workflow_run_id": 31290120403,
         "job_id": 93185742651,
-        "head_sha": "b722e6f105f7f5b93c05fbba886c6a8a0f25c39a",
-        "conclusion": "success",
-        "handoff_commit": "1015ba3681cfde853fd0e286720a0adfa64019e3",
-        "orchestration_commit": "82c58a47241dea9ced746d17e07d370f135fd7ee"
+        "conclusion": "success"
+      }
+    },
+    {
+      "repository": "StegVerse-Labs/Site",
+      "state": "BLOCKED",
+      "owner": "StegVerse-Labs/Site repository-native orchestrator",
+      "canonical_handoff": "docs/SITE_MIRROR_HANDOFF.md",
+      "machine_observable_release_condition": "data/site-orchestration-state.json reports admission of a nonconflicting correctability projection task and target-native validation can execute",
+      "last_observation": {
+        "decision": "BLOCKED_BY_SITE_ORCHESTRATION",
+        "site_active_sequence_state": "OBSERVED_BLOCKED",
+        "external_tasks_allowed": false,
+        "external_session_ownership_allowed": false,
+        "admitted_tasks": [],
+        "active_task_count": 8,
+        "blocker_count": 8
       },
-      "release_condition": "SATISFIED",
-      "next_action": "None for bounded correctability awareness; GUARDIAN-HIL-0001 remains separately dependency-blocked."
+      "observer": {
+        "owner_repository": "StegVerse-Labs/StegCore",
+        "script": "tools/observe_correctability_site_admission.py",
+        "workflow": ".github/workflows/observe-correctability-site-admission.yml",
+        "schedule": "hourly",
+        "first_run_id": 31290213557,
+        "first_job_id": 93185975026,
+        "first_conclusion": "success",
+        "artifact_id": 9031121532,
+        "artifact_digest": "sha256:a68e23fc1cbe5b20a3a1823d2b15db03bd20a5f5554c952372a427cd1b4b50c7",
+        "manual_user_action_required": false
+      },
+      "next_action": "When Site admission becomes true, Site repository-native orchestration owns installation and target-native validation; do not bypass admission."
     }
   ],
   "progress": {
-    "completed_targets": 3,
+    "complete_and_target_validated": 3,
     "required_targets": 4,
-    "integration_percent": 75
+    "integration_percent": 75,
+    "remaining_target_is_durably_observed": true
   },
-  "allowed_states": ["COMPLETE", "BLOCKED", "RETRY", "REVIEW_REQUIRED", "FAILED", "CLAIMED", "SUPERSEDED", "MERGED"],
-  "duplicate_prevention": "Do not mutate a target when its canonical handoff or orchestrator reports an overlapping active claim; merge only the missing correctability requirement into the admitted target-native workstream.",
-  "authority_boundary": "Correctability conformance, workflow success, artifacts, and propagation records do not create deployment, financial, legal, physical, Guardian, publication, release, custody, or execution authority.",
-  "release_condition": "All four destinations have verified target-native propagation evidence or durable blockers with named owners and machine-observable release conditions, and the source handoff/task registry are reconciled.",
+  "duplicate_prevention": "Do not mutate a target when its canonical handoff or orchestrator reports an overlapping active claim; merge only missing correctability requirements into the admitted target-native workstream.",
+  "authority_boundary": "Correctability conformance, workflow success, artifacts, observers, and propagation records do not create deployment, financial, legal, physical, Guardian, publication, release, custody, or execution authority.",
+  "release_condition": "Site target-native admission and validation completes the fourth destination; until then the task remains MACHINE_OWNED and BLOCKED at Site with an active observer.",
   "next_executable_task": "SITE_REPOSITORY_NATIVE_ORCHESTRATOR_ADMISSION_AND_TARGET_NATIVE_VALIDATION",
-  "session_dependency": true
+  "session_dependency": false,
+  "session_transfer_state": "MERGED_INTO_CANONICAL_WORKSTREAM",
+  "canonical_continuation": "StegVerse-Labs/StegCore/receipts/correctability-propagation-task.json",
+  "archive_safe": true
 }
