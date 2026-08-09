@@ -1,0 +1,37 @@
+name: Observe Correctability Site Admission
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - tools/observe_correctability_site_admission.py
+      - .github/workflows/observe-correctability-site-admission.yml
+      - receipts/correctability-propagation-task.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: correctability-site-admission-observer
+  cancel-in-progress: true
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Observe Site repository admission state
+        run: python tools/observe_correctability_site_admission.py
+      - name: Upload admission observation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: correctability-site-admission-observer
+          path: brain_reports/correctability_site_admission_observer.json
+          if-no-files-found: error
+          retention-days: 30
