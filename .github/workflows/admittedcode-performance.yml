@@ -19,6 +19,7 @@ on:
       - "src/stegcore/**"
       - "benchmarks/**"
       - "tools/run_admittedcode_benchmarks.py"
+      - "tools/compare_admittedcode_baseline.py"
       - "tests/test_admittedcode_performance.py"
       - "examples/steggate_allow_request.json"
       - "management/steggate-four-app-runtime-binding.json"
@@ -55,7 +56,23 @@ jobs:
       - name: Run benchmark contract tests
         run: pytest -q tests/test_admittedcode_performance.py
 
-      - name: Run canonical performance benchmark
+      - name: Start canonical local HTTP service
+        shell: bash
+        run: |
+          set -euo pipefail
+          steggate serve --host 127.0.0.1 --port 8000 > /tmp/steggate-benchmark.log 2>&1 &
+          echo $! > /tmp/steggate-benchmark.pid
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/health >/dev/null; then
+              curl --fail --silent http://127.0.0.1:8000/v1/runtime-identity
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/steggate-benchmark.log
+          exit 1
+
+      - name: Run canonical performance benchmark with HTTP path
         env:
           ITERATIONS: ${{ github.event.inputs.iterations || '500' }}
           THROUGHPUT_REQUESTS: ${{ github.event.inputs.throughput_requests || '500' }}
@@ -65,7 +82,22 @@ jobs:
             --replay-iterations 100 \
             --throughput-requests "$THROUGHPUT_REQUESTS" \
             --concurrency 1,10,50 \
+            --url http://127.0.0.1:8000 \
             --output artifacts/admittedcode-performance-receipt.json
+
+      - name: Stop canonical local HTTP service
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/steggate-benchmark.pid ]; then
+            kill "$(cat /tmp/steggate-benchmark.pid)" || true
+          fi
+
+      - name: Compare provisional hosted regression baseline
+        run: |
+          python tools/compare_admittedcode_baseline.py \
+            artifacts/admittedcode-performance-receipt.json \
+            --output artifacts/admittedcode-performance-regression.json
 
       - name: Verify receipt release-blocking assessment
         run: |
@@ -74,18 +106,27 @@ jobs:
           from pathlib import Path
           p = Path('artifacts/admittedcode-performance-receipt.json')
           data = json.loads(p.read_text())
+          regression = json.loads(Path('artifacts/admittedcode-performance-regression.json').read_text())
           assert data['policy_assessment']['release_blocking_pass'] is True
+          assert data['live_http']['runtime_identity_consistent'] is True
+          assert data['live_http']['canonical_runtime_consistent'] is True
+          assert data['live_http']['correctness_rate'] == 1.0
           print('AdmittedCode release-blocking performance checks: PASS')
           print('p95 core latency ms:', data['latency_and_resources']['core_wall_latency']['p95_ms'])
           print('p95 governance overhead ms:', data['governance_overhead']['governance_overhead']['p95_ms'])
+          print('p95 localhost HTTP round trip ms:', data['live_http']['network_round_trip_latency']['p95_ms'])
+          print('regression warning pass:', regression['regression_warning_pass'])
+          print('regression warnings:', regression['warnings'])
           print('CI integration:', f"{data['consumer_integration']['ci_or_stronger']}/{data['consumer_integration']['required']}")
           print('Public direct:', f"{data['consumer_integration']['public_direct']}/{data['consumer_integration']['required']}")
           PY
 
-      - name: Upload performance receipt
+      - name: Upload performance receipt and regression report
         uses: actions/upload-artifact@v4
         with:
           name: admittedcode-performance-${{ github.sha }}
-          path: artifacts/admittedcode-performance-receipt.json
+          path: |
+            artifacts/admittedcode-performance-receipt.json
+            artifacts/admittedcode-performance-regression.json
           if-no-files-found: error
           retention-days: 90
