@@ -21,6 +21,7 @@ permissions:
 jobs:
   bump:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,6 +32,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Bump all portable product version surfaces
         run: |
@@ -40,6 +42,29 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
           python scripts/release/update_changelog.py "$NEW_VERSION" "${{ inputs.summary }}"
           python scripts/verify_product_consistency.py
+
+      - name: Install release candidate
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+
+      - name: Run release-candidate correctness and performance gates
+        run: |
+          pytest -q tests/test_admittedcode_performance.py
+          python tools/run_admittedcode_benchmarks.py \
+            --iterations 500 \
+            --replay-iterations 100 \
+            --throughput-requests 500 \
+            --concurrency 1,10,50 \
+            --output artifacts/admittedcode-performance-release-candidate.json
+
+      - name: Upload release-candidate performance receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: admittedcode-performance-release-candidate-${{ github.run_id }}
+          path: artifacts/admittedcode-performance-release-candidate.json
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Create release branch and commit
         run: |
@@ -65,7 +90,7 @@ jobs:
             --base main \
             --head "$BRANCH" \
             --title "chore(release): v${NEW_VERSION}" \
-            --body "Portable product release bump. Updates VERSION, pyproject.toml, src/stegcore/version.py, and CHANGELOG.md as one version identity. Required checks must pass before merge." || true
+            --body "Portable product release bump. Updates VERSION, pyproject.toml, src/stegcore/version.py, and CHANGELOG.md as one version identity. Product consistency and AdmittedCode release-blocking benchmark gates passed before this PR was opened. Required repository checks must also pass before merge." || true
 
       - name: Add release label when available
         env:
