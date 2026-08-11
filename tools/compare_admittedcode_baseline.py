@@ -53,22 +53,23 @@ def compare(receipt: dict, baseline: dict) -> dict:
         if not passed:
             warnings.append(name)
 
-    compatible = (
-        receipt.get("product_version") == baseline.get("product_version")
-        and receipt.get("runtime_identity", {}).get("observed") == baseline.get("runtime_identity")
+    runtime_compatible = (
+        receipt.get("runtime_identity", {}).get("observed") == baseline.get("runtime_identity")
         and receipt.get("runtime_identity", {}).get("canonical_runtime_observed") == baseline.get("canonical_runtime")
     )
     return {
         "schema_version": "stegverse.admittedcode.performance-regression.v1",
         "baseline_state": baseline.get("baseline_state"),
+        "baseline_product_version": baseline.get("product_version"),
+        "observed_product_version": receipt.get("product_version"),
         "baseline_sample_count": baseline.get("sample_count"),
-        "compatible_baseline": compatible,
+        "compatible_baseline": runtime_compatible,
         "checks": checks,
         "warning_count": len(warnings),
         "warnings": warnings,
-        "regression_warning_pass": compatible and not warnings,
+        "regression_warning_pass": runtime_compatible and not warnings,
         "release_blocking_correctness_pass": receipt.get("policy_assessment", {}).get("release_blocking_pass") is True,
-        "note": "Regression bands are provisional warnings until baseline promotion criteria are met; correctness/security gates remain authoritative.",
+        "note": "Regression bands may compare compatible successor product versions when canonical runtime identity is unchanged. Bands are provisional warnings until promotion criteria are met; correctness/security gates remain authoritative.",
     }
 
 
