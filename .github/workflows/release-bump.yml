@@ -48,21 +48,69 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e . pytest
 
+      - name: Run release-candidate benchmark contract tests
+        run: pytest -q tests/test_admittedcode_performance.py
+
+      - name: Start release-candidate HTTP service
+        shell: bash
+        run: |
+          set -euo pipefail
+          steggate serve --host 127.0.0.1 --port 8000 > /tmp/steggate-release.log 2>&1 &
+          echo $! > /tmp/steggate-release.pid
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/health >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/steggate-release.log
+          exit 1
+
       - name: Run release-candidate correctness and performance gates
         run: |
-          pytest -q tests/test_admittedcode_performance.py
           python tools/run_admittedcode_benchmarks.py \
             --iterations 500 \
             --replay-iterations 100 \
             --throughput-requests 500 \
             --concurrency 1,10,50 \
+            --url http://127.0.0.1:8000 \
             --output artifacts/admittedcode-performance-release-candidate.json
+          python tools/compare_admittedcode_baseline.py \
+            artifacts/admittedcode-performance-release-candidate.json \
+            --output artifacts/admittedcode-performance-release-regression.json
 
-      - name: Upload release-candidate performance receipt
+      - name: Stop release-candidate HTTP service
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/steggate-release.pid ]; then
+            kill "$(cat /tmp/steggate-release.pid)" || true
+          fi
+
+      - name: Verify release-candidate live HTTP identity and correctness
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          receipt = json.loads(Path('artifacts/admittedcode-performance-release-candidate.json').read_text())
+          assert receipt['policy_assessment']['release_blocking_pass'] is True
+          assert receipt['live_http']['runtime_identity_consistent'] is True
+          assert receipt['live_http']['canonical_runtime_consistent'] is True
+          assert receipt['live_http']['correctness_rate'] == 1.0
+          regression = json.loads(Path('artifacts/admittedcode-performance-release-regression.json').read_text())
+          assert regression['compatible_baseline'] is True
+          print('release blocking correctness: PASS')
+          print('baseline regression warning pass:', regression['regression_warning_pass'])
+          print('baseline warnings:', regression['warnings'])
+          PY
+
+      - name: Upload release-candidate performance evidence
         uses: actions/upload-artifact@v4
         with:
           name: admittedcode-performance-release-candidate-${{ github.run_id }}
-          path: artifacts/admittedcode-performance-release-candidate.json
+          path: |
+            artifacts/admittedcode-performance-release-candidate.json
+            artifacts/admittedcode-performance-release-regression.json
           if-no-files-found: error
           retention-days: 90
 
@@ -90,7 +138,7 @@ jobs:
             --base main \
             --head "$BRANCH" \
             --title "chore(release): v${NEW_VERSION}" \
-            --body "Portable product release bump. Updates VERSION, pyproject.toml, src/stegcore/version.py, and CHANGELOG.md as one version identity. Product consistency and AdmittedCode release-blocking benchmark gates passed before this PR was opened. Required repository checks must also pass before merge." || true
+            --body "Portable product release bump. Updates VERSION, pyproject.toml, src/stegcore/version.py, and CHANGELOG.md as one version identity. Product consistency, AdmittedCode release-blocking benchmark gates, localhost HTTP identity/correctness proof, and provisional baseline regression comparison ran before this PR was opened. Required repository checks must also pass before merge." || true
 
       - name: Add release label when available
         env:
