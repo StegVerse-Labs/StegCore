@@ -1,0 +1,53 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+from stegcore import __version__
+from stegcore.cli import main as cli_main
+from stegcore.service import SERVICE_VERSION, runtime_identity
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_portable_product_versions_are_aligned():
+    assert (ROOT / "VERSION").read_text(encoding="utf-8").strip() == "0.2.0"
+    assert __version__ == "0.2.0"
+    assert SERVICE_VERSION == __version__
+
+
+def test_runtime_identity_is_canonical_and_transport_independent():
+    identity = runtime_identity()
+    assert identity["runtime_identity"] == "stegverse:steggate:canonical:three-layer:v1"
+    assert identity["canonical_admissibility_runtime"] == "stegcore.three_layer.evaluate_three_layer"
+    assert identity["transport_identity_authoritative"] is False
+
+
+def test_cli_self_test_uses_live_runtime(capsys):
+    assert cli_main(["self-test"]) == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["state"] == "PASS"
+    assert output["observed"] == output["expected"]
+
+
+def test_cli_example_evaluates_allow(capsys):
+    request = ROOT / "examples" / "steggate_allow_request.json"
+    assert cli_main(["evaluate", str(request)]) == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["disposition"] == "ALLOW"
+    assert output["canonical_three_layer_decision"] == "ALLOW"
+    assert output["external_execution_performed"] is False
+    assert output["continuity_receipt_minted"] is False
+
+
+def test_repository_consistency_verifier_passes():
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "verify_product_consistency.py")],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
