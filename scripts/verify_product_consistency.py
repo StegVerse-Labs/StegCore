@@ -23,6 +23,9 @@ REQUIRED_CURRENT_PATHS = (
     "docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md",
     "STEGCORE_MIRROR_HANDOFF.md",
     "management/steggate-four-app-runtime-binding.json",
+    "scripts/release/bump_version.py",
+    "scripts/release/update_changelog.py",
+    ".github/workflows/release-bump.yml",
 )
 
 
@@ -96,6 +99,22 @@ def check() -> list[str]:
     scripts = pyproject["project"].get("scripts", {})
     if scripts.get("steggate") != "stegcore.cli:main":
         failures.append("pyproject must expose steggate = stegcore.cli:main")
+
+    bump_script = _read("scripts/release/bump_version.py")
+    for required_surface in ("VERSION", "pyproject.toml", "src/stegcore/version.py"):
+        if required_surface not in bump_script:
+            failures.append(f"release bump script does not manage {required_surface}")
+
+    release_workflow = _read(".github/workflows/release-bump.yml")
+    required_git_add = "git add VERSION pyproject.toml src/stegcore/version.py CHANGELOG.md"
+    if required_git_add not in release_workflow:
+        failures.append("release workflow does not commit all portable product version surfaces")
+    if "python scripts/verify_product_consistency.py" not in release_workflow:
+        failures.append("release workflow does not run product consistency verification")
+
+    changelog = _read("CHANGELOG.md")
+    if f"## [{version_file}]" not in changelog:
+        failures.append(f"CHANGELOG.md has no entry for current product version {version_file}")
 
     return failures
 
