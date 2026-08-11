@@ -7,7 +7,7 @@ Canonical admissibility runtime: `stegcore.three_layer.evaluate_three_layer`
 
 ## Purpose
 
-AdmittedCode performance is measured as correctness, fail-closed safety, deterministic semantics, interface equivalence, runtime cost, operational portability, and consumer integration. Raw speed never outranks correctness or governance integrity.
+AdmittedCode performance is measured as correctness, fail-closed safety, deterministic semantics, interface equivalence, runtime cost, operational portability, consumer integration, and newcomer usability. Raw speed never outranks correctness or governance integrity.
 
 The canonical benchmark runner is:
 
@@ -15,112 +15,109 @@ The canonical benchmark runner is:
 python tools/run_admittedcode_benchmarks.py
 ```
 
-It emits:
-
-```text
-artifacts/admittedcode-performance-receipt.json
-```
-
-The receipt schema identifier is `stegverse.admittedcode.performance-receipt.v1`.
+It emits `artifacts/admittedcode-performance-receipt.json` using schema `stegverse.admittedcode.performance-receipt.v1`.
 
 ## Release-blocking correctness measures
 
-The policy in `benchmarks/admittedcode-performance-policy.json` makes these release blocking:
+`benchmarks/admittedcode-performance-policy.json` makes these release blocking:
 
 - false-ALLOW rate = 0;
 - four-disposition correctness = 100%;
 - FAIL_CLOSED integrity = 100%;
 - candidate/approval binding integrity = 100%;
-- deterministic semantic replay = 100%;
+- deterministic stable-semantic replay = 100%;
 - Python/service/CLI semantic equivalence = 100%;
 - canonical runtime identity consistency = 100%;
 - known parallel-evaluator escapes = 0;
 - predicate-matrix completeness = 100%;
 - reason-code presence = 100%.
 
-False DENY is measured separately. It is not treated as equivalent to false ALLOW because a false ALLOW crosses the governance boundary while a false DENY primarily harms availability/usability.
+False DENY is measured separately. A false ALLOW crosses the governance boundary; a false DENY primarily harms availability/usability.
 
-## Timing and resource measures
+## Timing, resources, and throughput
 
-The benchmark records direct core evaluation latency as min, mean, p50, p95, p99, and max. CPU time per evaluation, Python traced memory peak, and process `ru_maxrss` are also retained.
-
-Throughput is measured at bounded concurrency levels (default 1, 10, and 50 workers) and always reports correctness under load with requests/second. A faster result that changes dispositions is a failed benchmark.
-
-Cold-start measurements record fresh CLI process time to canonical runtime identity and deterministic self-test.
+The benchmark records direct core evaluation latency as min, mean, p50, p95, p99, and max, plus CPU time/evaluation, Python traced memory, and process max-RSS observation. Throughput is measured at bounded concurrency levels 1, 10, and 50 with correctness under load. Cold-start measurements record fresh CLI process time to runtime identity and self-test.
 
 ## Governance overhead
 
-The benchmark separately measures:
+The benchmark separately measures canonical three-layer evaluator latency and full StegGate admissibility latency. Their difference is the incremental governance-composition overhead for capability, continuity, approval, matrix, and result composition. It is not model/provider latency.
 
-```text
-canonical three-layer evaluator latency
-full StegGate admissibility latency
-difference = governance composition overhead
-```
+## Hosted HTTP measurement
 
-This is a local evaluator comparison, not provider/model execution latency. It makes the incremental cost of capability, continuity, approval, matrix, and result composition visible without conflating it with network or model-provider time.
-
-## Network measurements
-
-A live runtime can be measured without changing the local benchmark semantics:
+The hosted performance workflow starts the packaged HTTP service on `127.0.0.1:8000`, verifies `/health` and `/v1/runtime-identity`, and runs the benchmark with:
 
 ```bash
-python tools/run_admittedcode_benchmarks.py --url https://<steggate-host>
+python tools/run_admittedcode_benchmarks.py --url http://127.0.0.1:8000
 ```
 
-The live lane first verifies runtime identity, then records `/v1/evaluate` network round-trip latency and correctness. Transport latency remains separate from core evaluator latency because transport is not governance authority.
+The resulting `live_http` section records HTTP round-trip p50/p95/p99/max latency, runtime identity consistency, canonical-runtime consistency, and response correctness. This proves the packaged HTTP path without claiming public-Internet transport performance.
+
+When a currently selected public transport endpoint exists, the same runner may be pointed at that endpoint. Historical tunnel URLs are evidence, not current endpoints, and must not be reused as if they were live.
 
 ## Determinism rule
 
-`decision_state_hash` contains `evaluated_at`, so it is intentionally time-specific and is not the semantic replay comparator. The canonical three-layer receipt hash is also time-bound provenance and is required to be present, but it is not required to repeat across independent evaluations.
+`decision_state_hash` and the canonical three-layer receipt hash are time-bound provenance. They are required to exist but are not required to repeat across independent evaluations.
 
-Semantic replay requires equality of the stable material decision surface:
-
-- disposition;
-- candidate hash;
-- reason codes;
-- canonical three-layer decision and reason;
-- canonical request hash;
-- permission/admissibility boundary fields;
-- continuity/execution non-authority fields;
-- complete predicate matrix semantics.
-
-Receipt-hash presence is measured separately so deterministic semantics never erase per-evaluation provenance.
+Stable semantic replay compares disposition, candidate hash, reason codes, canonical three-layer decision/reason, canonical request hash, permission/admissibility boundary fields, continuity/execution non-authority fields, and complete predicate-matrix semantics. Receipt-hash presence is measured separately.
 
 ## Cross-interface equivalence
 
-The benchmark sends the same candidate through:
+The same candidate is evaluated through direct Python `evaluate_admissibility`, the service evaluation function used by `/v1/evaluate`, and `steggate evaluate`. Those surfaces must be semantically identical on the stable material decision surface. Browser, SDK, API, and application consumers must preserve the same rule and must not implement a parallel evaluator.
 
-1. direct Python `evaluate_admissibility`;
-2. the service evaluation function used by `/v1/evaluate`;
-3. the `steggate evaluate` CLI.
+## Provisional hosted regression baseline
 
-These must be semantically identical on the stable material decision surface. Time-bound receipt/state hashes may differ while still retaining required provenance. Browser, SDK, API, or application consumers must preserve the same rule and must not implement a parallel admissibility engine.
+The accepted initial baseline is:
 
-## Developer-experience measures
+```text
+benchmarks/admittedcode-baseline-v0.2.0.json
+```
 
-Two human-observation fields are reserved in every receipt:
+It is grounded in two successful comparable hosted receipts:
 
-- install-to-first-ALLOW time, target <= 5 minutes;
-- failed-request diagnosis time, target <= 15 minutes.
+```text
+run 31507071754 / artifact 9107472044
+run 31507106362 / artifact 9107494384
+```
 
-They remain `null` until measured by an actual unfamiliar operator. CI does not fabricate these numbers.
+Observed initial hosted envelope:
+
+```text
+core p95 latency:               0.773312 .. 1.129262 ms
+governance-overhead p95:        0.131866 .. 0.225686 ms
+throughput concurrency 1:       2948.276 .. 4752.710 req/s
+throughput concurrency 10:      2826.126 .. 4615.006 req/s
+throughput concurrency 50:      2692.303 .. 4467.080 req/s
+identity cold start:            254.511 .. 394.152 ms
+self-test cold start:           254.632 .. 381.578 ms
+```
+
+Because two hosted samples are too few for a hard performance SLO, the baseline establishes provisional warning bands rather than release-blocking timing thresholds. `tools/compare_admittedcode_baseline.py` writes a versioned regression report. Timing/throughput bands may only be promoted toward release-blocking status after at least 10 comparable successful receipts across at least 3 distinct commits or release candidates. Correctness/security gates remain release blocking throughout.
+
+## Newcomer / developer experience
+
+The automated mechanical rehearsal is:
+
+```bash
+python tools/run_admittedcode_onboarding_rehearsal.py
+```
+
+It creates a fresh virtual environment, installs the local package, resolves runtime identity, obtains a first ALLOW, induces a stale-policy DENY, and confirms reason evidence. This measures packaging mechanics, not human comprehension.
+
+Actual unfamiliar-human measures remain separate:
+
+- install-to-first-ALLOW target <= 5 minutes;
+- deliberate-failure diagnosis target <= 15 minutes.
+
+Use `benchmarks/admittedcode-stranger-observation-template.json`. Those fields remain null until an actual unfamiliar operator performs the exercise. CI and automated rehearsal timings must never be substituted for human usability data.
 
 ## Consumer portability measures
 
-The receipt reads `management/steggate-four-app-runtime-binding.json` and records:
-
-- required application count;
-- CI-or-stronger binding count/rate;
-- public-direct binding count/rate;
-- known parallel-evaluator escape count.
-
-The final target is 4/4 canonical integrations, 4/4 public-direct proofs, and zero parallel evaluators.
+The benchmark reads `management/steggate-four-app-runtime-binding.json` and records required application count, CI-or-stronger binding count/rate, public-direct binding count/rate, and known parallel-evaluator escape count. Final target: 4/4 canonical integrations, 4/4 public-direct proofs, zero parallel evaluators.
 
 ## Release use
 
-The hosted workflow `.github/workflows/admittedcode-performance.yml` runs on relevant product changes and manual dispatch. It uploads the JSON receipt as immutable workflow evidence. The portable-product release-bump workflow also runs the release-blocking benchmark contract before opening a release PR.
+`.github/workflows/admittedcode-performance.yml` produces the benchmark receipt, localhost HTTP evidence, baseline regression report, and automated onboarding rehearsal as retained workflow artifacts. `.github/workflows/release-bump.yml` runs the same correctness/performance and compatible-baseline comparison before opening a release PR.
 
-Release candidates should compare the new receipt with the prior accepted baseline and investigate regressions even when a non-blocking latency guardrail still passes.
+Regression warnings are visible even while provisional timing bands are non-blocking. An incompatible canonical runtime identity is not treated as a performance regression; it requires an explicitly versioned successor baseline/contract review.
 
-Performance numbers are environment-specific. Receipts therefore include Python version, platform, machine architecture, processor metadata, and CPU count. Never compare raw latency numbers across unlike environments without qualification.
+Performance numbers are environment-specific. Receipts include Python version, platform, machine architecture, processor metadata, and CPU count. Never compare raw latency numbers across unlike environments without qualification.
