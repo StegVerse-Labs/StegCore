@@ -38,7 +38,6 @@ SEMANTIC_FIELDS = (
     "canonical_three_layer_decision",
     "canonical_three_layer_reason",
     "canonical_three_layer_request_hash",
-    "canonical_three_layer_receipt_hash",
     "permission_present",
     "permission_is_not_admissibility",
     "continuity_receipt_minted",
@@ -118,6 +117,7 @@ def correctness_metrics(vectors: list[dict[str, Any]]) -> dict[str, Any]:
     fail_closed_correct = 0
     matrix_complete = 0
     reasons_present = 0
+    receipt_hash_present = 0
     for vector in vectors:
         result = evaluate_payload(vector["payload"])
         expected = vector["expected"]
@@ -135,6 +135,7 @@ def correctness_metrics(vectors: list[dict[str, Any]]) -> dict[str, Any]:
         )
         matrix_complete += int(matrix_ok)
         reasons_present += int(bool(result["reasons"]) and all(isinstance(x, str) and x for x in result["reasons"]))
+        receipt_hash_present += int(bool(result.get("canonical_three_layer_receipt_hash")))
         rows.append({
             "name": vector["name"],
             "expected": expected,
@@ -151,6 +152,7 @@ def correctness_metrics(vectors: list[dict[str, Any]]) -> dict[str, Any]:
         "fail_closed_integrity_rate": fail_closed_correct / max(1, fail_closed_total),
         "matrix_completeness_rate": matrix_complete / total,
         "reason_code_presence_rate": reasons_present / total,
+        "canonical_receipt_hash_presence_rate": receipt_hash_present / total,
     }
 
 
@@ -409,7 +411,9 @@ def main() -> int:
         receipt["live_http"] = live_http_metrics(args.url, base, max(1, args.http_iterations))
     receipt["policy_assessment"] = policy_assessment(receipt)
 
-    output = ROOT / args.output
+    output = Path(args.output)
+    if not output.is_absolute():
+        output = ROOT / output
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(receipt, indent=2, sort_keys=True))
