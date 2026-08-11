@@ -21,10 +21,10 @@ STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001 / issue #68: COMPLETE
 STEGGATE-HEARTBEAT-CREDENTIAL-INTEGRATION-001 / issue #75: COMPLETE
 STEGGATE-TUNNEL-CONTINUITY-HARDENING: MACHINE-OWNED CONTINUATION
 STEGGATE-FOUR-APP-RUNTIME-BINDING-001 / issue #70: ACTIVE
-STEGGATE-PORTABLE-PRODUCT-CONSISTENCY-001: IMPLEMENTED; CI OBSERVATION PENDING
+STEGGATE-PORTABLE-PRODUCT-CONSISTENCY-001: COMPLETE + HOSTED VALIDATED
 ```
 
-The active #70 claim remains `current-session-common-runtime-binding / CLAIMED_FOR_IMPLEMENTATION`. The consistency sweep does not create a second admissibility engine or modify application-specific HIL-owned Site paths.
+The active #70 claim remains `current-session-common-runtime-binding / CLAIMED_FOR_IMPLEMENTATION`. The completed consistency sweep does not create a second admissibility engine or modify application-specific HIL-owned Site paths.
 
 ## Canonical authority chain
 
@@ -43,7 +43,7 @@ Transport discovery, heartbeat cadence, leases, UI state, CLI state, provider st
 
 ## Portable product boundary — 0.2.0
 
-Current supported product surfaces:
+Supported current-product surfaces:
 
 ```text
 Python: stegcore.AdmissibilityRequest + stegcore.evaluate_admissibility
@@ -53,7 +53,7 @@ HTTP:   /health | /v1/runtime-identity | /v1/capabilities | /v1/self-test | /v1/
 
 All supported surfaces terminate in the same canonical evaluation composition. A CLI, browser, SDK, API route, or consumer application must not carry a parallel policy/admissibility engine and claim canonical equivalence.
 
-Canonical current-product documentation:
+Current product documentation:
 
 ```text
 README.md
@@ -62,52 +62,115 @@ docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md
 CHANGELOG.md
 ```
 
-Canonical machine-checkable consistency surfaces:
+Machine-checkable consistency and release surfaces:
 
 ```text
 VERSION
 pyproject.toml
 src/stegcore/version.py
+src/stegcore/service.py
+src/stegcore/cli.py
 scripts/verify_product_consistency.py
 tests/test_product_consistency.py
 examples/steggate_allow_request.json
+scripts/release/bump_version.py
+scripts/release/update_changelog.py
+.github/workflows/release-bump.yml
 ```
 
 Historical receipt/schema/review/constitutional versions remain independent and are not rewritten to match product version `0.2.0`.
 
-## Consistency sweep — 2026-08-10
+## Consistency sweep — COMPLETE
 
-Completed on `main`:
+The 2026-08-10 sweep reconciled the current product surface on `main`:
 
 ```text
-src/stegcore/version.py          -> canonical package/service version source
-VERSION                           -> 0.2.0
-pyproject.toml                    -> 0.2.0 + steggate console entry point
-src/stegcore/service.py           -> SERVICE_VERSION derives from __version__
-src/stegcore/__init__.py          -> exports current StegGate evaluation API
-src/stegcore/cli.py               -> real portable product CLI; legacy demo removed
-README.md                         -> current runtime/product posture replaces scaffold framing
-CHANGELOG.md                      -> 0.2.0 product history and version-domain distinction
-examples/steggate_allow_request.json -> stranger-runnable canonical request
-docs/STEGGATE_PORTABLE_PRODUCT.md -> concise supported-surface/compatibility contract
-scripts/verify_product_consistency.py -> drift guard
-tests/test_product_consistency.py -> version, identity, CLI, example, verifier tests
+VERSION + pyproject.toml + src/stegcore/version.py
+  -> one portable product version: 0.2.0
+
+src/stegcore/service.py
+  -> service version derives from canonical __version__
+
+src/stegcore/__init__.py
+  -> exports current StegGate evaluation API
+
+src/stegcore/cli.py
+  -> real portable CLI replacing the legacy in-memory node demo
+
+README.md
+  -> current implemented runtime/product posture replaces stale documentation-first scaffold framing
+
+CHANGELOG.md
+  -> 0.2.0 current-product history and explicit version-domain distinction
+
+examples/steggate_allow_request.json
+  -> stranger-runnable canonical ALLOW request
+
+docs/STEGGATE_PORTABLE_PRODUCT.md
+  -> supported surfaces, semantics, compatibility rules, and source order
+
+docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md
+  -> product-version vs contract-version distinction and consumer acceptance rules
+
+scripts/verify_product_consistency.py
+  -> drift guard across documentation, runtime identity, CLI, packaging, examples, and release automation
+
+tests/test_product_consistency.py
+  -> executable version, identity, CLI, example, and verifier checks
+
+scripts/release/bump_version.py
+  -> updates VERSION, pyproject.toml, and source __version__ as one fail-closed release operation
+
+scripts/release/update_changelog.py
+  -> duplicate-safe Unreleased promotion into one versioned release section
+
+.github/workflows/release-bump.yml
+  -> updates and commits every portable-product version surface and runs the consistency verifier before opening a release PR
 ```
 
-The verifier checks:
+The consistency verifier now rejects:
 
-- current-product path existence;
-- `VERSION`, package metadata, and source-version equality;
-- service version derivation from the source version;
-- canonical runtime identity and evaluator identity;
-- required CLI commands;
-- absence of stale README scaffold claims;
-- presence/shape of the canonical example request;
-- installed `steggate` console entry point.
+- missing current-product paths;
+- drift among `VERSION`, package metadata, and source version;
+- service-version divergence;
+- canonical runtime identity/evaluator divergence;
+- missing supported CLI commands;
+- stale README scaffold claims;
+- missing/invalid stranger-runnable example sections;
+- missing `steggate` package entry point;
+- release scripts/workflows that fail to manage all current product version surfaces;
+- a changelog with no entry for the current product version.
 
-This sweep deliberately did **not** rewrite historical artifacts whose `0.1`, schema, receipt, review, or constitutional version is part of their provenance.
+Historical artifacts whose `0.1`, schema, receipt, review, or constitutional version is provenance remain unchanged by design.
 
-## Functional activation — complete
+## Hosted validation — COMPLETE for consistency sweep
+
+Fresh hosted evidence after the consistency changes:
+
+```text
+StegCore Tests
+run: 31454425034
+head: 228923a8ea97d6986449b34283fe50dff2c3f93f
+conclusion: SUCCESS
+scope: expanded product consistency guard including release automation
+
+StegCore Tests
+run: 31454452751
+job: 93665269287
+head: 38533b0d1a8b195ff12c7dc95b658e0734006ea9
+conclusion: SUCCESS
+scope: runtime identity contract/product-version-domain clarification
+
+BCAT Gate
+run: 31454275378
+head: dbebe6c014aaf327704fcd678d7c6ca18d6a880c
+conclusion: SUCCESS
+scope: product consistency test addition checkpoint
+```
+
+The final handoff reconciliation is documentation/state transfer only; it does not change the tested runtime or version semantics above.
+
+## Functional activation — COMPLETE
 
 Issue #68 is closed. Canonical first activation was merged through PR #74 / commit:
 
@@ -126,7 +189,7 @@ observed_at: 2026-08-09T09:14:06.578269Z
 
 That receipt proves the recorded activation event. It is not a continuously rewritten health record.
 
-## Runtime identity contract — complete
+## Runtime identity contract — COMPLETE
 
 ```text
 GET /v1/runtime-identity
@@ -137,52 +200,38 @@ canonical_admissibility_runtime: stegcore.three_layer.evaluate_three_layer
 transport_identity_authoritative: false
 ```
 
-Direct validation already recorded before this sweep:
-
-```text
-workflow: StegCore Tests
-run: 31338809707
-job: 93308982069
-conclusion: SUCCESS
-artifact: 9045154237
-artifact digest: sha256:e59d08fc0de1a4c4fdf893c5db1d857e20fe7e3fa77dc3cde44c1e6f4b2f6ab2
-```
-
-The 2026-08-10 consistency commits triggered fresh repository CI; do not count those new runs as successful until their hosted conclusions are observed.
+Portable product version `0.2.0` and runtime identity contract version `v1` are separate version domains. A compatible product release does not silently change the binding contract; a breaking binding change requires an explicitly versioned successor contract.
 
 ## Heartbeat transport and lease semantics
 
 Canonical transport remains a heartbeat-owned zero-credential public tunnel. Persistent Render authority is `NONE`.
 
-Canonical lease:
+Canonical lease lineage:
 
 ```text
 StegVerse-Labs/.github/control/heartbeat-subsignals.json
 subsignal: steggate_transport_lease
 lease_id: STEGGATE-TUNNEL-LEASE-001
-state last recorded in this handoff lineage: OPEN
 lease_is_per_heartbeat: false
 wall_clock_expiry_authority: false
 ```
 
-A heartbeat may open, extend, hand off, or close the lease. A heartbeat epoch is not the lease lifetime. Release occurs through explicit CLOSE, accepted successor handoff, or completion of all declared lease-dependent tasks under the canonical lifecycle rules.
-
-Durable org-level continuation remains owned by:
+A heartbeat may open, extend, hand off, or close the lease. A heartbeat epoch is not the lease lifetime. Durable carrier/reconstruction continuation remains owned by:
 
 ```text
 StegVerse-Labs/.github/handoffs/SHWP-DURABLE-RUNTIME-ACTIVATION.json
 StegVerse-Labs/.github/control/worker-registry.json#SHWP-DURABLE-RUNTIME-ACTIVATION
 ```
 
-## Four-app canonical runtime integration — active
+## Four-app canonical runtime integration — ACTIVE
 
-Canonical state file:
+Canonical state:
 
 ```text
 management/steggate-four-app-runtime-binding.json
 ```
 
-Last durable state read for this sweep:
+Last durable state read during this sweep:
 
 ```text
 core contract: COMPLETE
@@ -204,18 +253,18 @@ Collision boundaries:
 
 ## Architecture and research documents
 
-Use current-state sources before review/formalism documents.
+Current-state sources take precedence over review/formalism documents:
 
 ```text
 docs/STEGGATE_PRODUCT_REVIEW_V4.md -> implemented network-governance architecture context
-docs/STEGGATE_PRODUCT_REVIEW_V5.md -> formalism/research expansion; does not replace live runtime contracts
+docs/STEGGATE_PRODUCT_REVIEW_V5.md -> formalism/research expansion; not a replacement for live runtime contracts
 ```
 
-No v5 concept becomes runtime authority merely because it is documented. It must be implemented, validated, and admitted through the canonical owner/interop boundaries.
+No v5 concept becomes runtime authority merely because it is documented. It must be implemented, validated, and admitted through canonical owner/interop boundaries.
 
 ## Version-domain rule
 
-The following are intentionally distinct:
+Keep these identities separate and internally coherent:
 
 ```text
 portable package/service version
@@ -226,34 +275,31 @@ historical release/tag versions
 architecture review versions
 ```
 
-Do not mechanically replace one domain's version with another. Product consistency means each domain is internally coherent and its authority is explicit.
+Do not mechanically replace one domain's version with another.
 
-## Remaining work
+## Remaining work and owners
 
 ```text
 StegVerse-Labs/StegCore
-  -> observe fresh CI caused by the 0.2.0 consistency sweep
-  -> correct any test/BCAT failure before claiming validated consistency
-  -> continue #70 without parallel evaluators
+  -> continue issue #70 without parallel evaluators
+  -> do not cut a runtime product tag until applicable release authority and release gates are satisfied
 
 StegVerse-Labs/Site + named consumer owners
-  -> produce direct public/runtime evidence for Ecosystem Chat, VACC, Math Solver, HIL
+  -> produce direct public/runtime evidence for Ecosystem Chat, VACC, Math Solver, and HIL
 
 StegVerse-Labs/.github
   -> continue sovereign carrier restart/reconstruction and lease lifecycle under canonical worker ownership
 
-Release/propagation destinations after a governed runtime product release is actually authorized:
+On a future governed runtime product release, destination-owned propagation/reconciliation is required for:
   -> StegVerse-Labs/Site
   -> GCAT-BCAT-Engine/Publisher
   -> StegVerse-Labs/admissibility-wiki
   -> StegVerse-002/stegguardian-wiki
 ```
 
-No new runtime product tag/release is claimed by this sweep. A release requires successful fresh hosted evidence plus the applicable release authority and destination-owned propagation review.
+No new runtime product tag/release is claimed by this sweep. Current four-app public-direct evidence is still `0/4`, so the product-integration release objective is not terminal.
 
-## Validation
-
-Local/repository commands:
+## Validation commands
 
 ```bash
 pytest -q
@@ -262,30 +308,19 @@ steggate self-test
 steggate evaluate examples/steggate_allow_request.json
 ```
 
-Required release evidence:
-
-```text
-full test suite PASS
-BCAT/repository governance gates PASS
-product consistency verifier PASS
-four-disposition self-test PASS
-canonical example request -> ALLOW
-runtime identity unchanged or explicitly versioned successor
-```
-
 ## Completion
 
 ```text
 functional StegGate runtime: 100%
 portable product consistency implementation: 100%
-portable product consistency hosted validation: PENDING OBSERVATION
+portable product consistency hosted validation: 100%
 runtime identity core contract: 100%
+current portable-product files developed: 100%
+scaffolding/stubs in current portable StegGate path: 0
 four-app CI-or-stronger binding: 3/4
 four-app public-direct evidence: 0/4
-scaffolding/stubs in current portable StegGate product path: 0
-historical/legacy substrate: preserved, non-authoritative for current product behavior
 parent four-app goal: NOT COMPLETE
-archive readiness for active #70 parent goal: NO
+consistency-sweep session transfer: COMPLETE
 ```
 
 ## Canonical continuation
@@ -298,3 +333,5 @@ StegVerse-Labs/StegCore/docs/STEGGATE_PORTABLE_PRODUCT.md
 StegVerse-Labs/StegCore/management/steggate-four-app-runtime-binding.json
 StegVerse-Labs/.github/handoffs/SHWP-DURABLE-RUNTIME-ACTIVATION.json
 ```
+
+The consistency-sweep work is fully installed, hosted-validated, and durably transferred. No unique state from this conversation is required to continue issue #70 or the machine-owned runtime-continuity work.
