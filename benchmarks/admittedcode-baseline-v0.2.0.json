@@ -5,7 +5,7 @@
   "runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
   "canonical_runtime": "stegcore.three_layer.evaluate_three_layer",
   "baseline_state": "PROVISIONAL_HOSTED_BASELINE",
-  "sample_count": 2,
+  "sample_count": 3,
   "sample_policy": "Comparable GitHub-hosted Ubuntu x86_64 / Python 3.11 receipts with release-blocking correctness PASS. Bands are regression-warning thresholds, not safety substitutes.",
   "samples": [
     {
@@ -31,20 +31,54 @@
       "governance_overhead_p95_ms": 0.225686,
       "throughput_rps": {"1": 2948.276, "10": 2826.126, "50": 2692.303},
       "cold_start_ms": {"identity": 394.152, "self_test": 381.578}
+    },
+    {
+      "workflow_run": 31508213959,
+      "head_sha": "90281fdbab51b9baaa41f25ce3203198f515f97a",
+      "artifact_id": 9107938760,
+      "artifact_digest": "sha256:02c63deec5408aeee4909c6bd1e28f6558c36c8562729524700c05ce1d097f1d",
+      "python": "3.11",
+      "platform_family": "Linux x86_64 GitHub-hosted",
+      "core_p95_ms": 1.142945,
+      "governance_overhead_p95_ms": 0.222102,
+      "throughput_rps": {"1": 2961.059, "10": 2765.099, "50": 2635.831},
+      "cold_start_ms": {"identity": 376.214, "self_test": 379.304},
+      "localhost_http_p95_ms": 1.861632,
+      "localhost_http_correctness_rate": 1.0,
+      "regression_warning_pass": true,
+      "automated_onboarding_rehearsal": {
+        "venv_create_ms": 3544.609,
+        "editable_install_ms": 5208.122,
+        "identity_ms": 384.354,
+        "first_allow_ms": 386.922,
+        "induced_deny_ms": 381.966,
+        "total_rehearsal_ms": 9972.057,
+        "allow_correct": true,
+        "deny_correct": true,
+        "measurement_type": "AUTOMATED_MECHANICAL_REHEARSAL_NOT_HUMAN_USABILITY"
+      }
     }
   ],
   "observed_envelope": {
-    "core_p95_ms": {"min": 0.773312, "max": 1.129262},
+    "core_p95_ms": {"min": 0.773312, "max": 1.142945},
     "governance_overhead_p95_ms": {"min": 0.131866, "max": 0.225686},
     "throughput_rps": {
       "1": {"min": 2948.276, "max": 4752.71},
-      "10": {"min": 2826.126, "max": 4615.006},
-      "50": {"min": 2692.303, "max": 4467.08}
+      "10": {"min": 2765.099, "max": 4615.006},
+      "50": {"min": 2635.831, "max": 4467.08}
     },
     "cold_start_ms": {
       "identity": {"min": 254.511, "max": 394.152},
       "self_test": {"min": 254.632, "max": 381.578}
     }
+  },
+  "hosted_http_observation": {
+    "sample_count": 1,
+    "localhost_p95_ms": 1.861632,
+    "correctness_rate": 1.0,
+    "runtime_identity_consistent": true,
+    "canonical_runtime_consistent": true,
+    "status": "MEASURED_NOT_YET_ENOUGH_SAMPLES_FOR_REGRESSION_BAND"
   },
   "regression_warning_bands": {
     "core_p95_ms_max": 2.5,
@@ -53,8 +87,9 @@
     "cold_start_identity_ms_max": 750.0,
     "cold_start_self_test_ms_max": 750.0
   },
-  "promotion_rule": "Do not make these timing/throughput bands release-blocking until at least 10 comparable successful hosted receipts exist across at least 3 distinct commits or release candidates. Correctness/security invariants remain release-blocking independently.",
+  "promotion_rule": "Do not make timing/throughput bands release-blocking until at least 10 comparable successful hosted receipts exist across at least 3 distinct commits or release candidates. Correctness/security invariants remain release-blocking independently. HTTP regression bands require their own sufficient comparable sample history.",
   "developer_experience": {
+    "automated_mechanical_rehearsal_status": "HOSTED_PASS",
     "human_install_to_first_allow_minutes": null,
     "human_failed_request_diagnosis_minutes": null,
     "status": "UNMEASURED_REQUIRES_UNFAMILIAR_OPERATOR",
