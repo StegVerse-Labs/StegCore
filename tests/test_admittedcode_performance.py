@@ -9,13 +9,17 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _load_benchmark_module():
-    path = ROOT / "tools" / "run_admittedcode_benchmarks.py"
-    spec = importlib.util.spec_from_file_location("admittedcode_benchmarks", path)
+def _load_module(relative: str, name: str):
+    path = ROOT / relative
+    spec = importlib.util.spec_from_file_location(name, path)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def _load_benchmark_module():
+    return _load_module("tools/run_admittedcode_benchmarks.py", "admittedcode_benchmarks")
 
 
 def test_correctness_and_binding_metrics_are_fail_closed():
@@ -27,6 +31,7 @@ def test_correctness_and_binding_metrics_are_fail_closed():
     assert metrics["fail_closed_integrity_rate"] == 1.0
     assert metrics["matrix_completeness_rate"] == 1.0
     assert metrics["reason_code_presence_rate"] == 1.0
+    assert metrics["canonical_receipt_hash_presence_rate"] == 1.0
     assert bench.candidate_binding_metric(base) == 1.0
 
 
@@ -50,6 +55,41 @@ def test_performance_policy_has_release_blocking_security_kpis():
     assert kpis["deterministic_semantic_replay_rate"]["target_min"] == 1.0
     assert kpis["cross_interface_equivalence_rate"]["target_min"] == 1.0
     assert kpis["parallel_evaluator_escape_count"]["target_max"] == 0
+
+
+def test_provisional_hosted_baseline_is_versioned_and_non_fabricated():
+    baseline = json.loads((ROOT / "benchmarks/admittedcode-baseline-v0.2.0.json").read_text(encoding="utf-8"))
+    assert baseline["schema_version"] == "stegverse.admittedcode.performance-baseline.v1"
+    assert baseline["product_version"] == "0.2.0"
+    assert baseline["sample_count"] == len(baseline["samples"]) == 2
+    assert baseline["developer_experience"]["human_install_to_first_allow_minutes"] is None
+    assert baseline["developer_experience"]["human_failed_request_diagnosis_minutes"] is None
+    assert baseline["developer_experience"]["status"] == "UNMEASURED_REQUIRES_UNFAMILIAR_OPERATOR"
+
+
+def test_baseline_comparator_accepts_observed_band_values():
+    comparator = _load_module("tools/compare_admittedcode_baseline.py", "admittedcode_baseline")
+    baseline = json.loads((ROOT / "benchmarks/admittedcode-baseline-v0.2.0.json").read_text(encoding="utf-8"))
+    receipt = {
+        "product_version": "0.2.0",
+        "runtime_identity": {
+            "observed": baseline["runtime_identity"],
+            "canonical_runtime_observed": baseline["canonical_runtime"],
+        },
+        "latency_and_resources": {"core_wall_latency": {"p95_ms": 1.5}},
+        "governance_overhead": {"governance_overhead": {"p95_ms": 0.4}},
+        "cold_start": {"identity_ms": 500.0, "self_test_ms": 500.0},
+        "throughput": {
+            "1": {"requests_per_second": 2500.0},
+            "10": {"requests_per_second": 2500.0},
+            "50": {"requests_per_second": 2500.0},
+        },
+        "policy_assessment": {"release_blocking_pass": True},
+    }
+    report = comparator.compare(receipt, baseline)
+    assert report["compatible_baseline"] is True
+    assert report["regression_warning_pass"] is True
+    assert report["warning_count"] == 0
 
 
 def test_benchmark_runner_emits_versioned_receipt(tmp_path):
