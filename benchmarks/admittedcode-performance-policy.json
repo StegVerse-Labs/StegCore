@@ -1,0 +1,42 @@
+{
+  "schema_version": "stegverse.admittedcode.performance-policy.v1",
+  "product": "AdmittedCode / StegGate portable runtime",
+  "product_version_source": "VERSION",
+  "runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
+  "canonical_runtime": "stegcore.three_layer.evaluate_three_layer",
+  "headline_kpis": {
+    "false_allow_rate": {"target_max": 0.0, "release_blocking": true},
+    "four_disposition_correctness_rate": {"target_min": 1.0, "release_blocking": true},
+    "fail_closed_integrity_rate": {"target_min": 1.0, "release_blocking": true},
+    "candidate_binding_integrity_rate": {"target_min": 1.0, "release_blocking": true},
+    "deterministic_semantic_replay_rate": {"target_min": 1.0, "release_blocking": true},
+    "cross_interface_equivalence_rate": {"target_min": 1.0, "release_blocking": true},
+    "runtime_identity_consistency_rate": {"target_min": 1.0, "release_blocking": true},
+    "parallel_evaluator_escape_count": {"target_max": 0, "release_blocking": true},
+    "matrix_completeness_rate": {"target_min": 1.0, "release_blocking": true},
+    "reason_code_presence_rate": {"target_min": 1.0, "release_blocking": true},
+    "core_latency_p95_ms": {"target_max": 50.0, "release_blocking": false},
+    "governance_overhead_p95_ms": {"target_max": 50.0, "release_blocking": false}
+  },
+  "load_profiles": {
+    "iterations_default": 300,
+    "concurrency_levels": [1, 10, 50],
+    "throughput_duration_mode": "fixed_request_count"
+  },
+  "developer_experience_targets": {
+    "install_to_first_allow_minutes_max": 5,
+    "failed_request_diagnosis_minutes_max": 15,
+    "measurement_mode": "manual_observation_required"
+  },
+  "consumer_integration_targets": {
+    "ci_or_stronger": "4/4",
+    "public_direct": "4/4",
+    "parallel_evaluators": 0
+  },
+  "notes": [
+    "Latency targets are initial guardrails, not historical claims.",
+    "Decision-state hashes include evaluated_at and are therefore not used for semantic replay equivalence.",
+    "Semantic replay compares disposition, candidate hash, canonical request/receipt hashes, reasons, and predicate matrix semantics.",
+    "Network latency is measured separately from core evaluator latency when --url is supplied."
+  ]
+}
