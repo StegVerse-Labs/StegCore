@@ -5,8 +5,12 @@ Historical governance, schema, receipt, and research artifact versions retain th
 
 ## [Unreleased]
 
+### Added
+- AdmittedCode performance policy, benchmark runner, hosted benchmark workflow, benchmark contract tests, and versioned JSON performance receipts.
+- Measurement coverage for decision correctness, false ALLOW/DENY behavior, FAIL_CLOSED integrity, candidate binding, semantic replay, cross-interface equivalence, latency percentiles, throughput, CPU/memory observations, cold start, governance overhead, runtime identity, and four-application integration progress.
+
 ### Changed
-- Keep live product documentation, runtime identity, packaging, and consumer evidence aligned through the repository consistency verifier.
+- Keep live product documentation, runtime identity, packaging, consumer evidence, and performance/release measurement surfaces aligned through repository consistency verification.
 
 ## [0.2.0] - 2026-08-10
 
