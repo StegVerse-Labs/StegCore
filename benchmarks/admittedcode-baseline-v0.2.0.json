@@ -1,0 +1,63 @@
+{
+  "schema_version": "stegverse.admittedcode.performance-baseline.v1",
+  "product": "AdmittedCode / StegGate portable runtime",
+  "product_version": "0.2.0",
+  "runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
+  "canonical_runtime": "stegcore.three_layer.evaluate_three_layer",
+  "baseline_state": "PROVISIONAL_HOSTED_BASELINE",
+  "sample_count": 2,
+  "sample_policy": "Comparable GitHub-hosted Ubuntu x86_64 / Python 3.11 receipts with release-blocking correctness PASS. Bands are regression-warning thresholds, not safety substitutes.",
+  "samples": [
+    {
+      "workflow_run": 31507071754,
+      "head_sha": "59ad67d6432f223387232fa05cc71dabf780ac74",
+      "artifact_id": 9107472044,
+      "artifact_digest": "sha256:dfd1610c1093e0dbeaf220dd981c85e7ce8241256f1cfdfc039db4f3199fafa2",
+      "python": "3.11.15",
+      "platform_family": "Linux x86_64 GitHub-hosted",
+      "core_p95_ms": 0.773312,
+      "governance_overhead_p95_ms": 0.131866,
+      "throughput_rps": {"1": 4752.71, "10": 4615.006, "50": 4467.08},
+      "cold_start_ms": {"identity": 254.511, "self_test": 254.632}
+    },
+    {
+      "workflow_run": 31507106362,
+      "head_sha": "b40bcbcb6649ed943acbcbd032aa89c93f6f6a0f",
+      "artifact_id": 9107494384,
+      "artifact_digest": "sha256:fbf052e8a9fcda7279137742d5faac04b206889566979d6d5334a7e244285e80",
+      "python": "3.11.15",
+      "platform_family": "Linux x86_64 GitHub-hosted",
+      "core_p95_ms": 1.129262,
+      "governance_overhead_p95_ms": 0.225686,
+      "throughput_rps": {"1": 2948.276, "10": 2826.126, "50": 2692.303},
+      "cold_start_ms": {"identity": 394.152, "self_test": 381.578}
+    }
+  ],
+  "observed_envelope": {
+    "core_p95_ms": {"min": 0.773312, "max": 1.129262},
+    "governance_overhead_p95_ms": {"min": 0.131866, "max": 0.225686},
+    "throughput_rps": {
+      "1": {"min": 2948.276, "max": 4752.71},
+      "10": {"min": 2826.126, "max": 4615.006},
+      "50": {"min": 2692.303, "max": 4467.08}
+    },
+    "cold_start_ms": {
+      "identity": {"min": 254.511, "max": 394.152},
+      "self_test": {"min": 254.632, "max": 381.578}
+    }
+  },
+  "regression_warning_bands": {
+    "core_p95_ms_max": 2.5,
+    "governance_overhead_p95_ms_max": 0.75,
+    "throughput_rps_min": {"1": 1500.0, "10": 1500.0, "50": 1500.0},
+    "cold_start_identity_ms_max": 750.0,
+    "cold_start_self_test_ms_max": 750.0
+  },
+  "promotion_rule": "Do not make these timing/throughput bands release-blocking until at least 10 comparable successful hosted receipts exist across at least 3 distinct commits or release candidates. Correctness/security invariants remain release-blocking independently.",
+  "developer_experience": {
+    "human_install_to_first_allow_minutes": null,
+    "human_failed_request_diagnosis_minutes": null,
+    "status": "UNMEASURED_REQUIRES_UNFAMILIAR_OPERATOR",
+    "targets": {"install_to_first_allow_minutes_max": 5, "failed_request_diagnosis_minutes_max": 15}
+  }
+}
