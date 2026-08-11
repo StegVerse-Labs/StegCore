@@ -72,18 +72,20 @@ The live lane first verifies runtime identity, then records `/v1/evaluate` netwo
 
 ## Determinism rule
 
-`decision_state_hash` contains `evaluated_at`, so it is intentionally time-specific and is not the semantic replay comparator.
+`decision_state_hash` contains `evaluated_at`, so it is intentionally time-specific and is not the semantic replay comparator. The canonical three-layer receipt hash is also time-bound provenance and is required to be present, but it is not required to repeat across independent evaluations.
 
-Semantic replay requires equality of the material decision surface:
+Semantic replay requires equality of the stable material decision surface:
 
 - disposition;
 - candidate hash;
 - reason codes;
 - canonical three-layer decision and reason;
-- canonical request and receipt hashes;
+- canonical request hash;
 - permission/admissibility boundary fields;
 - continuity/execution non-authority fields;
 - complete predicate matrix semantics.
+
+Receipt-hash presence is measured separately so deterministic semantics never erase per-evaluation provenance.
 
 ## Cross-interface equivalence
 
@@ -93,7 +95,7 @@ The benchmark sends the same candidate through:
 2. the service evaluation function used by `/v1/evaluate`;
 3. the `steggate evaluate` CLI.
 
-These must be semantically identical. Browser, SDK, API, or application consumers must preserve the same rule and must not implement a parallel admissibility engine.
+These must be semantically identical on the stable material decision surface. Time-bound receipt/state hashes may differ while still retaining required provenance. Browser, SDK, API, or application consumers must preserve the same rule and must not implement a parallel admissibility engine.
 
 ## Developer-experience measures
 
@@ -117,6 +119,8 @@ The final target is 4/4 canonical integrations, 4/4 public-direct proofs, and ze
 
 ## Release use
 
-The hosted workflow `.github/workflows/admittedcode-performance.yml` runs on relevant product changes and manual dispatch. It uploads the JSON receipt as immutable workflow evidence. Release candidates should compare the new receipt with the prior accepted baseline and investigate regressions even when a non-blocking latency guardrail still passes.
+The hosted workflow `.github/workflows/admittedcode-performance.yml` runs on relevant product changes and manual dispatch. It uploads the JSON receipt as immutable workflow evidence. The portable-product release-bump workflow also runs the release-blocking benchmark contract before opening a release PR.
+
+Release candidates should compare the new receipt with the prior accepted baseline and investigate regressions even when a non-blocking latency guardrail still passes.
 
 Performance numbers are environment-specific. Receipts therefore include Python version, platform, machine architecture, processor metadata, and CPU count. Never compare raw latency numbers across unlike environments without qualification.
