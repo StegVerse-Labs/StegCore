@@ -21,6 +21,11 @@ REQUIRED_CURRENT_PATHS = (
     "examples/steggate_allow_request.json",
     "docs/STEGGATE_PORTABLE_PRODUCT.md",
     "docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md",
+    "docs/ADMITTEDCODE_PERFORMANCE.md",
+    "benchmarks/admittedcode-performance-policy.json",
+    "tools/run_admittedcode_benchmarks.py",
+    "tests/test_admittedcode_performance.py",
+    ".github/workflows/admittedcode-performance.yml",
     "STEGCORE_MIRROR_HANDOFF.md",
     "management/steggate-four-app-runtime-binding.json",
     "scripts/release/bump_version.py",
@@ -80,14 +85,62 @@ def check() -> list[str]:
     for stale in stale_current_claims:
         if stale in readme:
             failures.append(f"README contains stale current-product claim: {stale}")
-    for required in (version_file, CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME):
+    for required in (version_file, CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME, "run_admittedcode_benchmarks.py"):
         if required not in readme:
-            failures.append(f"README missing current-product identity: {required}")
+            failures.append(f"README missing current-product identity/performance surface: {required}")
 
     portable_doc = _read("docs/STEGGATE_PORTABLE_PRODUCT.md")
     for required in (version_file, CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME):
         if required not in portable_doc:
             failures.append(f"portable product doc missing identity: {required}")
+
+    performance_doc = _read("docs/ADMITTEDCODE_PERFORMANCE.md")
+    for required in (CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME, "false-ALLOW", "p95", "admittedcode-performance-receipt.json"):
+        if required not in performance_doc:
+            failures.append(f"performance contract missing required concept: {required}")
+
+    policy = json.loads(_read("benchmarks/admittedcode-performance-policy.json"))
+    if policy.get("runtime_identity") != CANONICAL_RUNTIME_IDENTITY:
+        failures.append("performance policy runtime identity drift")
+    if policy.get("canonical_runtime") != CANONICAL_RUNTIME:
+        failures.append("performance policy canonical runtime drift")
+    blocking_required = {
+        "false_allow_rate",
+        "four_disposition_correctness_rate",
+        "fail_closed_integrity_rate",
+        "candidate_binding_integrity_rate",
+        "deterministic_semantic_replay_rate",
+        "cross_interface_equivalence_rate",
+        "runtime_identity_consistency_rate",
+        "parallel_evaluator_escape_count",
+        "matrix_completeness_rate",
+        "reason_code_presence_rate",
+    }
+    headline = policy.get("headline_kpis", {})
+    for name in blocking_required:
+        if name not in headline or headline[name].get("release_blocking") is not True:
+            failures.append(f"performance policy missing release-blocking KPI: {name}")
+
+    benchmark = _read("tools/run_admittedcode_benchmarks.py")
+    for required in (
+        "stegverse.admittedcode.performance-receipt.v1",
+        "deterministic_semantic_replay_rate",
+        "cross_interface_equivalence_rate",
+        "core_wall_latency",
+        "throughput",
+        "cold_start",
+        "governance_overhead",
+        "developer_experience",
+        "consumer_integration",
+    ):
+        if required not in benchmark:
+            failures.append(f"benchmark runner missing measurement surface: {required}")
+
+    performance_workflow = _read(".github/workflows/admittedcode-performance.yml")
+    if "python tools/run_admittedcode_benchmarks.py" not in performance_workflow:
+        failures.append("hosted performance workflow does not run canonical benchmark")
+    if "actions/upload-artifact@v4" not in performance_workflow:
+        failures.append("hosted performance workflow does not retain benchmark receipt")
 
     example = json.loads(_read("examples/steggate_allow_request.json"))
     required_sections = {"candidate", "judgment", "signal", "execution", "capability", "continuity", "approval"}
@@ -115,6 +168,8 @@ def check() -> list[str]:
     changelog = _read("CHANGELOG.md")
     if f"## [{version_file}]" not in changelog:
         failures.append(f"CHANGELOG.md has no entry for current product version {version_file}")
+    if "AdmittedCode performance policy" not in changelog:
+        failures.append("CHANGELOG.md does not record performance tracking installation")
 
     return failures
 
@@ -130,6 +185,7 @@ def main() -> int:
     print(f"version: {_read('VERSION').strip()}")
     print(f"runtime_identity: {CANONICAL_RUNTIME_IDENTITY}")
     print(f"canonical_runtime: {CANONICAL_RUNTIME}")
+    print("admittedcode_performance_tracking: ACTIVE")
     return 0
 
 
