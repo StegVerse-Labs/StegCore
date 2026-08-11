@@ -24,8 +24,10 @@ REQUIRED_CURRENT_PATHS = (
     "docs/ADMITTEDCODE_PERFORMANCE.md",
     "benchmarks/admittedcode-performance-policy.json",
     "benchmarks/admittedcode-baseline-v0.2.0.json",
+    "benchmarks/admittedcode-stranger-observation-template.json",
     "tools/run_admittedcode_benchmarks.py",
     "tools/compare_admittedcode_baseline.py",
+    "tools/run_admittedcode_onboarding_rehearsal.py",
     "tests/test_admittedcode_performance.py",
     ".github/workflows/admittedcode-performance.yml",
     "STEGCORE_MIRROR_HANDOFF.md",
@@ -88,7 +90,7 @@ def check() -> list[str]:
             failures.append(f"portable product doc missing identity: {required}")
 
     performance_doc = _read("docs/ADMITTEDCODE_PERFORMANCE.md")
-    for required in (CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME, "false-ALLOW", "p95", "admittedcode-performance-receipt.json", "admittedcode-baseline-v0.2.0.json"):
+    for required in (CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME, "false-ALLOW", "p95", "admittedcode-performance-receipt.json", "admittedcode-baseline-v0.2.0.json", "admittedcode-stranger-observation-template.json"):
         if required not in performance_doc:
             failures.append(f"performance contract missing required concept: {required}")
 
@@ -116,6 +118,10 @@ def check() -> list[str]:
     if baseline.get("developer_experience", {}).get("status") != "UNMEASURED_REQUIRES_UNFAMILIAR_OPERATOR":
         failures.append("human developer-experience baseline must not be fabricated by CI")
 
+    stranger = json.loads(_read("benchmarks/admittedcode-stranger-observation-template.json"))
+    if stranger.get("status") != "UNMEASURED":
+        failures.append("canonical stranger-observation template must remain unmeasured until an actual observer supplies evidence")
+
     benchmark = _read("tools/run_admittedcode_benchmarks.py")
     for required in ("stegverse.admittedcode.performance-receipt.v1", "deterministic_semantic_replay_rate", "cross_interface_equivalence_rate", "core_wall_latency", "throughput", "cold_start", "governance_overhead", "live_http", "developer_experience", "consumer_integration"):
         if required not in benchmark:
@@ -126,8 +132,13 @@ def check() -> list[str]:
         if required not in comparator:
             failures.append(f"baseline comparator missing contract surface: {required}")
 
+    onboarding = _read("tools/run_admittedcode_onboarding_rehearsal.py")
+    for required in ("stegverse.admittedcode.onboarding-rehearsal.v1", "AUTOMATED_MECHANICAL_REHEARSAL_NOT_HUMAN_USABILITY", "REQUIRES_UNFAMILIAR_OPERATOR"):
+        if required not in onboarding:
+            failures.append(f"onboarding rehearsal missing contract surface: {required}")
+
     performance_workflow = _read(".github/workflows/admittedcode-performance.yml")
-    for required in ("python tools/run_admittedcode_benchmarks.py", "--url http://127.0.0.1:8000", "python tools/compare_admittedcode_baseline.py", "actions/upload-artifact@v4"):
+    for required in ("python tools/run_admittedcode_benchmarks.py", "--url http://127.0.0.1:8000", "python tools/compare_admittedcode_baseline.py", "python tools/run_admittedcode_onboarding_rehearsal.py", "actions/upload-artifact@v4"):
         if required not in performance_workflow:
             failures.append(f"hosted performance workflow missing surface: {required}")
 
@@ -173,7 +184,7 @@ def main() -> int:
     print(f"version: {_read('VERSION').strip()}")
     print(f"runtime_identity: {CANONICAL_RUNTIME_IDENTITY}")
     print(f"canonical_runtime: {CANONICAL_RUNTIME}")
-    print("admittedcode_performance_tracking: ACTIVE_WITH_HOSTED_BASELINE")
+    print("admittedcode_performance_tracking: ACTIVE_WITH_HOSTED_BASELINE_AND_ONBOARDING_REHEARSAL")
     return 0
 
 
