@@ -52,6 +52,8 @@ python tools/run_admittedcode_benchmarks.py --url http://127.0.0.1:8000
 
 The resulting `live_http` section records HTTP round-trip p50/p95/p99/max latency, runtime identity consistency, canonical-runtime consistency, and response correctness. This proves the packaged HTTP path without claiming public-Internet transport performance.
 
+The first retained hosted HTTP observation is run `31508213959`, artifact `9107938760`: localhost HTTP p95 `1.861632 ms`, correctness `1.0`, canonical runtime identity consistent, and canonical runtime implementation consistent.
+
 When a currently selected public transport endpoint exists, the same runner may be pointed at that endpoint. Historical tunnel URLs are evidence, not current endpoints, and must not be reused as if they were live.
 
 ## Determinism rule
@@ -72,26 +74,27 @@ The accepted initial baseline is:
 benchmarks/admittedcode-baseline-v0.2.0.json
 ```
 
-It is grounded in two successful comparable hosted receipts:
+It is currently grounded in three successful comparable hosted receipts:
 
 ```text
 run 31507071754 / artifact 9107472044
 run 31507106362 / artifact 9107494384
+run 31508213959 / artifact 9107938760
 ```
 
-Observed initial hosted envelope:
+Observed hosted envelope across those three retained samples:
 
 ```text
-core p95 latency:               0.773312 .. 1.129262 ms
+core p95 latency:               0.773312 .. 1.142945 ms
 governance-overhead p95:        0.131866 .. 0.225686 ms
 throughput concurrency 1:       2948.276 .. 4752.710 req/s
-throughput concurrency 10:      2826.126 .. 4615.006 req/s
-throughput concurrency 50:      2692.303 .. 4467.080 req/s
+throughput concurrency 10:      2765.099 .. 4615.006 req/s
+throughput concurrency 50:      2635.831 .. 4467.080 req/s
 identity cold start:            254.511 .. 394.152 ms
 self-test cold start:           254.632 .. 381.578 ms
 ```
 
-Because two hosted samples are too few for a hard performance SLO, the baseline establishes provisional warning bands rather than release-blocking timing thresholds. `tools/compare_admittedcode_baseline.py` writes a versioned regression report. Timing/throughput bands may only be promoted toward release-blocking status after at least 10 comparable successful receipts across at least 3 distinct commits or release candidates. Correctness/security gates remain release blocking throughout.
+Three hosted samples are still too few for a hard performance SLO. The baseline therefore establishes provisional warning bands rather than release-blocking timing thresholds. `tools/compare_admittedcode_baseline.py` writes a versioned regression report. Timing/throughput bands may only be promoted toward release-blocking status after at least 10 comparable successful receipts across at least 3 distinct commits or release candidates. Correctness/security gates remain release blocking throughout. HTTP regression bands require their own sufficient comparable sample history.
 
 ## Newcomer / developer experience
 
@@ -102,6 +105,8 @@ python tools/run_admittedcode_onboarding_rehearsal.py
 ```
 
 It creates a fresh virtual environment, installs the local package, resolves runtime identity, obtains a first ALLOW, induces a stale-policy DENY, and confirms reason evidence. This measures packaging mechanics, not human comprehension.
+
+The first hosted rehearsal in run `31508213959` completed successfully in `9972.057 ms` total, including temporary environment creation and installation. It correctly resolved canonical runtime identity, returned the expected first ALLOW, and returned the expected induced DENY with reasons. This number must not be presented as a human time-to-understanding result.
 
 Actual unfamiliar-human measures remain separate:
 
