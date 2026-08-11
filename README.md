@@ -1,148 +1,142 @@
-# StegCore
+# StegCore / StegGate
 
-## Position in the StegVerse LLM Communications Stack
+StegCore is the canonical StegVerse commit-time governance runtime. **StegGate** is its portable product surface for evaluating one proposed consequential transition before execution.
 
-- **Stack ID:** `STEGVERSE-LLM-COMMS-STACK-v1`
-- **Component ID:** `stegcore`
-- **Bounded role:** commit-time allow, deny, or defer decision engine
-- **Consumes:** verified continuity, action intent, policy, consent, and delegation evidence
-- **Produces:** constrained machine-readable permission decisions and reason codes
-- **Does not own:** model inference, provider brokerage, communication normalization, identity, continuity truth, receipt minting, execution, publication, or durable custody
+Current portable product version: **0.2.0**.
 
-See [`docs/LLM_COMMUNICATIONS_STACK.md`](docs/LLM_COMMUNICATIONS_STACK.md) for the complete component boundary.
+## What it does
 
-StegCore decides what actions are permitted, given verified continuity.
-
-StegCore consumes verified continuity output (e.g., from StegID or the Continuity receipt-governance layer) and answers:
-
-- Can this actor do this now?
-- Under what constraints?
-- With whose consent?
-
-StegCore may also maintain **internal state/audit signals** about StegVerse nodes
-(services, agents, devices) to support orchestration and observability — but it is
-**not** the continuity truth system.
-
-## Current goal
-
-Continue building without manual actions until completion, or until task handoff
-and task completion can be handled by the ecosystem's own management.
-
-## Continuity admissibility mapping
-
-StegCore now contains a repository-local mapping from Continuity continuation receipts to StegCore admissibility language:
+StegGate accepts a structured commitment candidate plus current judgment, signal/state, execution, capability, continuity, and approval evidence. It evaluates that request through the canonical StegCore admissibility chain and returns exactly one disposition:
 
 ```text
-docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
+ALLOW | DENY | REVIEW | FAIL_CLOSED
 ```
 
-The mapping defines how a continuation receipt is interpreted as standing evidence for a StegCore proceed, pause, or deny decision.
-
-It is validated by:
+The product boundary is intentionally narrow:
 
 ```text
-python scripts/check_continuity_admissibility_mapping.py docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
+candidate
+  -> stegcore.three_layer.evaluate_three_layer
+  -> stegcore.steggate.evaluate_admissibility
+  -> disposition + reasons + complete predicate matrix + hashes
 ```
 
-This validator is intentionally local and dependency-free. It confirms that the mapping preserves:
+Interfaces may adapt input or presentation, but they must not implement a separate policy or admissibility engine.
 
-- the boundary that StegCore does not mint continuity receipts,
-- required continuation receipt fields,
-- proceed conditions,
-- pause conditions,
-- deny conditions,
-- a commit-time check.
+StegCore does **not** mint continuity receipts, establish identity truth, grant provider authority, execute arbitrary external actions, publish content, or become durable evidence custody.
 
-## Contemporary AI Systems Comparison
+## Install
 
-A maintained comparison package for StegVerse-001 is available under `docs/comparisons/`.
+Python 3.11+ is required.
 
-The comparison does not claim StegVerse-001 is a frontier-model competitor. It frames StegVerse-001 as a governance/control-plane architecture for consequence-bearing AI transitions.
+```bash
+python -m pip install -e .
+```
 
-Contemporary AI systems mostly govern what models may say, access, or call. StegVerse governs whether a proposed transition may become part of system reality.
+This installs the `steggate` CLI.
 
-In this context, an **AI entity** means:
+## Fastest verification
 
-> A bounded, receipt-bearing, consequence-capable work-entity whose authority is externally accredited and revocable.
+```bash
+steggate identity
+steggate self-test
+```
 
-See [`docs/comparisons/STEGVERSE_001_AND_CONTEMPORARY_AI_SYSTEMS.md`](docs/comparisons/STEGVERSE_001_AND_CONTEMPORARY_AI_SYSTEMS.md) for the canonical comparison.
+`self-test` deterministically exercises ALLOW, DENY, REVIEW, and FAIL_CLOSED against the same canonical runtime used by the HTTP service.
 
-## StegBrain provider status
+## Evaluate a candidate
 
-StegCore now emits a StegBrain-compatible provider status artifact at:
+```bash
+steggate evaluate examples/steggate_allow_request.json
+```
+
+The result contains the disposition, reason codes, candidate hash, canonical three-layer request/receipt hashes, decision-state hash, and complete predicate matrix.
+
+## Run the HTTP service
+
+```bash
+steggate serve --host 127.0.0.1 --port 8000
+```
+
+Equivalent direct launch:
+
+```bash
+uvicorn stegcore.service:app --host 127.0.0.1 --port 8000
+```
+
+Canonical endpoints:
 
 ```text
-meta/provider_status.json
+GET  /health
+GET  /v1/runtime-identity
+GET  /v1/capabilities
+GET  /v1/self-test
+POST /v1/evaluate
+GET  /docs
 ```
 
-This status artifact reports StegCore operational posture only. It does not replace:
+The runtime identity is transport-independent:
 
-- StegCore admissibility decisions;
-- StegID continuity receipts;
-- user consent;
-- authority policy;
-- commit-time validation.
+```text
+contract_version: stegverse.steggate.runtime-identity.v1
+runtime_identity: stegverse:steggate:canonical:three-layer:v1
+canonical_owner: StegVerse-Labs/StegCore
+canonical_admissibility_runtime: stegcore.three_layer.evaluate_three_layer
+```
 
-StegBrain may consume this status file as an ecosystem signal, but StegBrain must not treat the status artifact as permission to execute an action.
+A host URL, tunnel, heartbeat, lease, UI, CLI, SDK, or application integration is never policy authority.
 
-## What StegCore does NOT do
-
-StegCore does **not**:
-- verify receipts
-- mint receipts
-- store identity
-
-Continuity receipts and verification belong to StegID and the Continuity receipt-governance layer.
-
-> ⚠️ StegCore is **not** a medical or diagnostic system. It is infrastructure used
-> for orchestration, security, and observability.
-
-## v0.1 Scope (tight)
-
-v0.1 is **documentation-first**. The authoritative spec lives in `/docs`:
-
-- `docs/DECISION_MODEL.md`
-- `docs/POLICY_SHAPES.md`
-- `docs/WHY_STEGCORE_EXISTS.md`
-- `docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md`
-
-Code in `src/stegcore/` is scaffolding and substrate for future runtimes. It must
-eventually conform to the docs (docs win if there is disagreement).
-
-## Concepts
-
-- **VerifiedReceipt** – verified continuity evidence provided by StegID or Continuity (input)
-- **Actor class** – human / ai / system (context, not identity)
-- **Action intent** – structured request describing what is being attempted
-- **Decision** – allow / deny / defer + machine-readable reason code
-- **Policy shapes** – quorum / guardian / veto / time-lock / escalation (structure only in v0)
-- **Continuation receipt** – repository-local handoff evidence used to reconstruct why a follow-on task had standing
-
-### Supporting substrate (non-authoritative in v0)
-- **Node** – a service, AI entity, device, or process in StegVerse
-- **NodeState** – a snapshot of a node's status (health, version, metadata)
-- **StateEvent** – append-only record describing a node state change
-- **StateEngine** – in-memory state graph + event log (scaffolding)
-
-## Quickstart (scaffold: node state signals)
-
-This example demonstrates internal state/audit signals only, not permission decisions.
+## Python API
 
 ```python
-from stegcore import StateEngine, NodeState
+from stegcore import AdmissibilityRequest, evaluate_admissibility
 
-engine = StateEngine()
-
-engine.apply_event(
-    node="CosDenOS",
-    state=NodeState(
-        status="healthy",
-        version="0.1.0",
-        metadata={"endpoint": "https://cosden.stegverse.internal"},
-    ),
-    reason="initial_register",
-)
-
-snapshot = engine.get_node_state("CosDenOS")
-print(snapshot)
+request = AdmissibilityRequest.model_validate(payload)
+result = evaluate_admissibility(request)
+print(result.disposition)
 ```
+
+The Python API, CLI, and HTTP service all terminate in the same canonical evaluation composition.
+
+## Runtime authority chain
+
+```text
+Governance policy/evidence
+  -> stegcore.three_layer.evaluate_three_layer
+  -> stegcore.steggate.evaluate_admissibility
+  -> ALLOW | DENY | REVIEW | FAIL_CLOSED
+  -> governed execution boundary, when separately authorized
+  -> observation / reconciliation
+```
+
+`ALLOW` is admissibility, not proof that execution occurred. `FAIL_CLOSED` applies when required authority or evidence cannot be established safely.
+
+## Canonical documentation map
+
+Read current-state documents before historical review material:
+
+- `STEGCORE_MIRROR_HANDOFF.md` — live repository source of truth, active claims, validation, and continuation.
+- `docs/STEGGATE_PORTABLE_PRODUCT.md` — supported portable product surface and compatibility rules.
+- `docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md` — transport-independent runtime identity contract.
+- `docs/STEGGATE_PRODUCT_REVIEW_V4.md` — network-governance architecture that the live runtime follows.
+- `docs/STEGGATE_PRODUCT_REVIEW_V5.md` — formalism/research expansion; **not** a replacement for live runtime contracts.
+- `management/steggate-four-app-runtime-binding.json` — current cross-application integration state.
+
+Historical receipts, review documents, activation artifacts, and schema-versioned files remain evidence of their own point in time. Their embedded versions must not be interpreted as the current package/service version unless they explicitly say so.
+
+## Current product status
+
+The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, and initial live activation are implemented. Current integration work is proving that named consumer applications traverse this same runtime rather than carrying per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` for the exact machine-owned state.
+
+## Development verification
+
+```bash
+pytest -q
+python scripts/verify_product_consistency.py
+```
+
+The consistency verifier fails when current package/service/CLI documentation drifts from the portable product version or canonical runtime identity.
+
+## Legacy substrate
+
+StegCore also contains earlier node-state, registry, orchestration, research, historical release, and ecosystem-management surfaces. They remain available for compatibility and provenance but are not the primary StegGate product entry point. Current product behavior is defined by the canonical files above.
