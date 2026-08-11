@@ -98,6 +98,26 @@ print(result.disposition)
 
 The Python API, CLI, and HTTP service all terminate in the same canonical evaluation composition.
 
+## Performance and benchmark tracking
+
+Run the canonical AdmittedCode benchmark suite with:
+
+```bash
+python tools/run_admittedcode_benchmarks.py
+```
+
+It emits `artifacts/admittedcode-performance-receipt.json` and measures correctness, false-ALLOW/false-DENY behavior, FAIL_CLOSED integrity, candidate binding, deterministic semantic replay, cross-interface equivalence, p50/p95/p99 latency, throughput under bounded concurrency, CPU/memory observations, cold start, governance overhead, runtime identity consistency, and four-application integration progress.
+
+A live deployment can be measured separately with:
+
+```bash
+python tools/run_admittedcode_benchmarks.py --url https://<steggate-host>
+```
+
+Release-blocking benchmark policy is in `benchmarks/admittedcode-performance-policy.json`. False ALLOW, disposition correctness, FAIL_CLOSED integrity, candidate binding, semantic replay, interface equivalence, runtime identity, matrix/reason completeness, and parallel-evaluator escape checks are fail-closed release measures. Hosted receipts are produced by `.github/workflows/admittedcode-performance.yml`.
+
+See `docs/ADMITTEDCODE_PERFORMANCE.md` for the measurement contract and interpretation rules.
+
 ## Runtime authority chain
 
 ```text
@@ -118,6 +138,7 @@ Read current-state documents before historical review material:
 - `STEGCORE_MIRROR_HANDOFF.md` — live repository source of truth, active claims, validation, and continuation.
 - `docs/STEGGATE_PORTABLE_PRODUCT.md` — supported portable product surface and compatibility rules.
 - `docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md` — transport-independent runtime identity contract.
+- `docs/ADMITTEDCODE_PERFORMANCE.md` — canonical performance, benchmark, and release-measurement contract.
 - `docs/STEGGATE_PRODUCT_REVIEW_V4.md` — network-governance architecture that the live runtime follows.
 - `docs/STEGGATE_PRODUCT_REVIEW_V5.md` — formalism/research expansion; **not** a replacement for live runtime contracts.
 - `management/steggate-four-app-runtime-binding.json` — current cross-application integration state.
@@ -126,16 +147,17 @@ Historical receipts, review documents, activation artifacts, and schema-versione
 
 ## Current product status
 
-The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, and initial live activation are implemented. Current integration work is proving that named consumer applications traverse this same runtime rather than carrying per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` for the exact machine-owned state.
+The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, and AdmittedCode performance benchmark lane are implemented. Current integration work is proving that named consumer applications traverse this same runtime rather than carrying per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
 
 ## Development verification
 
 ```bash
 pytest -q
 python scripts/verify_product_consistency.py
+python tools/run_admittedcode_benchmarks.py --iterations 25 --replay-iterations 10 --throughput-requests 50 --concurrency 1,5
 ```
 
-The consistency verifier fails when current package/service/CLI documentation drifts from the portable product version or canonical runtime identity.
+The consistency verifier fails when current package/service/CLI documentation drifts from the portable product version or canonical runtime identity. The benchmark exits non-zero when a release-blocking performance invariant fails.
 
 ## Legacy substrate
 
