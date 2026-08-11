@@ -25,7 +25,7 @@ from .three_layer import (
     evaluate_three_layer,
 )
 from .auri_gateway import AuriGatewayResult, canonical_sha256, evaluate_auri_candidate
-from .steggate import AdmissibilityRequest, AdmissibilityResult, evaluate_admissibility
+from .steggate import AdmissibilityRequest, AdmissibilityEvaluation, evaluate_admissibility
 
 __all__ = [
     "__version__",
@@ -53,6 +53,6 @@ __all__ = [
     "canonical_sha256",
     "evaluate_auri_candidate",
     "AdmissibilityRequest",
-    "AdmissibilityResult",
+    "AdmissibilityEvaluation",
     "evaluate_admissibility",
 ]
