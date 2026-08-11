@@ -12,7 +12,7 @@ canonical runtime identity: stegverse:steggate:canonical:three-layer:v1
 canonical admissibility runtime: stegcore.three_layer.evaluate_three_layer
 ```
 
-Live repository/workflow evidence supersedes chat summaries. This file is the canonical continuation source for current StegCore runtime, portable-product, benchmark, release, and cross-application integration work.
+Live repository/workflow evidence supersedes chat summaries. This file is the canonical continuation source for current StegCore runtime, portable-product, benchmark, release, reviewer-readiness, and cross-application integration work.
 
 ## Current goals
 
@@ -21,6 +21,7 @@ STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001 / issue #68: COMPLETE
 STEGGATE-HEARTBEAT-CREDENTIAL-INTEGRATION-001 / issue #75: COMPLETE
 STEGGATE-PORTABLE-PRODUCT-CONSISTENCY-001: COMPLETE + HOSTED VALIDATED
 ADMITTEDCODE-PERFORMANCE-BENCHMARK-001: COMPLETE + HOSTED VALIDATED
+ADMITTEDCODE-PRE-REVIEW-HARDENING-001: COMPLETE + HOSTED VALIDATED
 STEGGATE-TUNNEL-CONTINUITY-HARDENING: MACHINE-OWNED CONTINUATION
 STEGGATE-FOUR-APP-RUNTIME-BINDING-001 / issue #70: ACTIVE
 ```
@@ -40,7 +41,7 @@ Governance policy/evidence
   -> observation / reconciliation
 ```
 
-Transport discovery, heartbeat cadence, leases, UI state, CLI state, provider state, benchmark state, and application integration do not grant policy or execution authority.
+Transport discovery, heartbeat cadence, leases, UI/CLI state, provider state, benchmark state, and application integration do not grant policy or execution authority.
 
 ## Portable product boundary — 0.2.0
 
@@ -54,7 +55,7 @@ HTTP:   /health | /v1/runtime-identity | /v1/capabilities | /v1/self-test | /v1/
 
 All supported surfaces terminate in the same canonical evaluation composition.
 
-Current product documentation and machine checks:
+Canonical current-product documentation and machine checks:
 
 ```text
 README.md
@@ -71,52 +72,26 @@ tests/test_product_consistency.py
 
 Historical receipt/schema/review/constitutional versions remain independent provenance domains and are not rewritten to match product version `0.2.0`.
 
-## AdmittedCode performance benchmark — COMPLETE + HOSTED VALIDATED
+## AdmittedCode performance and pre-review hardening — COMPLETE + HOSTED VALIDATED
 
-Installed canonical performance surfaces:
+Installed measurement and review-readiness surfaces:
 
 ```text
 benchmarks/admittedcode-performance-policy.json
+benchmarks/admittedcode-baseline-v0.2.0.json
+benchmarks/admittedcode-stranger-observation-template.json
 tools/run_admittedcode_benchmarks.py
+tools/compare_admittedcode_baseline.py
+tools/run_admittedcode_onboarding_rehearsal.py
 tests/test_admittedcode_performance.py
 docs/ADMITTEDCODE_PERFORMANCE.md
 .github/workflows/admittedcode-performance.yml
 .github/workflows/release-bump.yml
 ```
 
-The benchmark emits a versioned JSON receipt:
+The benchmark receipt schema is `stegverse.admittedcode.performance-receipt.v1`. It measures correctness, false ALLOW/DENY, four-disposition behavior, FAIL_CLOSED integrity, candidate/approval binding, reason/matrix completeness, canonical receipt-hash presence, stable-semantic replay, Python/service/CLI equivalence, runtime identity, latency percentiles, CPU/memory observations, bounded-concurrency throughput with correctness, cold start, governance composition overhead, optional HTTP round-trip performance, four-app integration progress, and explicitly separate human usability fields.
 
-```text
-schema: stegverse.admittedcode.performance-receipt.v1
-default path: artifacts/admittedcode-performance-receipt.json
-```
-
-Measured dimensions:
-
-```text
-decision correctness
-false ALLOW / false DENY
-four-disposition correctness
-FAIL_CLOSED integrity
-candidate/approval hash binding
-reason-code presence
-predicate-matrix completeness
-canonical receipt-hash presence
-deterministic stable-semantic replay
-Python / service / CLI semantic equivalence
-runtime identity consistency
-p50 / p95 / p99 / max core latency
-CPU time per evaluation
-Python traced memory and process max-RSS observation
-bounded-concurrency throughput + correctness under load
-CLI cold-start identity and self-test time
-governance-composition overhead versus canonical three-layer evaluator
-optional live HTTP round-trip latency via --url
-four-application integration progress
-manual developer-experience fields for install-to-first-ALLOW and failed-request diagnosis time
-```
-
-Release-blocking benchmark invariants:
+Release-blocking invariants remain:
 
 ```text
 false_allow_rate = 0
@@ -131,46 +106,87 @@ matrix_completeness_rate = 1.0
 reason_code_presence_rate = 1.0
 ```
 
-Initial latency guardrails are recorded but non-blocking until enough historical receipts exist for a defensible regression policy.
+`decision_state_hash` and canonical three-layer receipt hash are time-bound provenance. They must exist but are excluded from stable semantic replay equality.
 
-Determinism rule: `decision_state_hash` and canonical three-layer receipt hash are time-bound provenance. They are required to exist but are not required to repeat across independent evaluations. Semantic replay compares the stable material decision surface, including disposition, candidate hash, reasons, canonical request hash, authority-boundary fields, and predicate matrix semantics.
+### Provisional hosted baseline
 
-Hosted validation:
+`benchmarks/admittedcode-baseline-v0.2.0.json` now retains three successful comparable hosted samples:
 
 ```text
-workflow: AdmittedCode Performance
-run: 31507071754
-head: 59ad67d6432f223387232fa05cc71dabf780ac74
-conclusion: SUCCESS
-artifact: 9107472044
-artifact digest: sha256:dfd1610c1093e0dbeaf220dd981c85e7ce8241256f1cfdfc039db4f3199fafa2
-
-workflow: AdmittedCode Performance
-run: 31507106362
-head: b40bcbcb6649ed943acbcbd032aa89c93f6f6a0f
-conclusion: SUCCESS
-artifact: 9107494384
-artifact digest: sha256:fbf052e8a9fcda7279137742d5faac04b206889566979d6d5334a7e244285e80
+run 31507071754 / artifact 9107472044
+run 31507106362 / artifact 9107494384
+run 31508213959 / artifact 9107938760
 ```
 
-The first workflow attempt failed because it incorrectly treated the time-bound canonical receipt hash as stable replay material. That defect was corrected; later hosted runs prove the corrected contract. Do not regress to comparing time-bound receipt/state hashes as semantic equivalence.
+Observed envelope:
+
+```text
+core p95 latency:          0.773312 .. 1.142945 ms
+governance p95 overhead:   0.131866 .. 0.225686 ms
+throughput c=1:            2948.276 .. 4752.710 req/s
+throughput c=10:           2765.099 .. 4615.006 req/s
+throughput c=50:           2635.831 .. 4467.080 req/s
+identity cold start:       254.511 .. 394.152 ms
+self-test cold start:      254.632 .. 381.578 ms
+```
+
+The timing/throughput baseline is intentionally provisional. Promotion toward release-blocking performance thresholds requires at least 10 comparable successful receipts across at least 3 distinct commits or release candidates. Security/correctness invariants remain release blocking independently.
+
+### HTTP-path proof
+
+The hosted workflow now starts the packaged StegGate HTTP service locally and benchmarks the actual `/v1/evaluate` path after validating `/health` and `/v1/runtime-identity`.
+
+First retained HTTP observation:
+
+```text
+run: 31508213959
+artifact: 9107938760
+localhost HTTP p95: 1.861632 ms
+HTTP correctness: 1.0
+runtime identity consistent: true
+canonical runtime consistent: true
+```
+
+This is packaged HTTP-path evidence, not a public-Internet transport claim. Historical tunnel URLs must not be treated as current endpoints.
+
+### Newcomer mechanical proof and human-observer boundary
+
+The hosted workflow now executes `tools/run_admittedcode_onboarding_rehearsal.py` in a fresh temporary virtual environment. Run `31508213959` completed the full mechanical path in `9972.057 ms`, including environment creation, local package install, canonical identity resolution, first ALLOW, and an induced stale-policy DENY with reason evidence.
+
+This is deliberately **not** a human usability score. The two human targets remain:
+
+```text
+unfamiliar-human install -> first ALLOW: <= 5 minutes
+unfamiliar-human deliberate-failure diagnosis: <= 15 minutes
+```
+
+Canonical observation form:
+
+```text
+benchmarks/admittedcode-stranger-observation-template.json
+status: UNMEASURED
+```
+
+Do not fabricate, estimate, or substitute CI/onboarding rehearsal timing for these human observations. They can only be completed by an actual unfamiliar operator. A reviewer should perform this blind measurement before receiving a detailed implementation walkthrough if the measurement is intended to remain independent.
 
 ## Release integration
 
-The portable-product release bump now:
+The portable-product release workflow now:
 
 ```text
-1. updates VERSION + pyproject.toml + src/stegcore/version.py;
+1. aligns VERSION + pyproject.toml + src/stegcore/version.py;
 2. updates CHANGELOG.md;
 3. runs product consistency verification;
 4. installs the release candidate;
 5. runs AdmittedCode benchmark contract tests;
-6. runs the release-blocking benchmark suite;
-7. uploads the release-candidate performance receipt;
-8. only then creates/pushes the release branch and opens the release PR.
+6. starts and validates the candidate HTTP service;
+7. runs release-blocking correctness/performance checks through the HTTP-capable benchmark lane;
+8. compares the compatible hosted regression baseline;
+9. retains performance + regression evidence;
+10. only then creates/pushes a release branch and opens the release PR.
 ```
 
-A release-candidate benchmark failure therefore prevents the release PR from being opened.
+Performance regression bands remain warning-only while provisional; canonical identity incompatibility and correctness/security failures fail closed.
 
 ## Runtime identity contract — COMPLETE
 
@@ -187,25 +203,11 @@ Portable product version and runtime identity contract version are distinct comp
 
 ## Functional activation and transport
 
-Issue #68 remains complete. Historical activation evidence:
-
-```text
-data/steggate-live-activation-receipt.json
-state: COMPLETE
-deployment_source: heartbeat_ephemeral_micronode
-observed_at: 2026-08-09T09:14:06.578269Z
-```
-
-Canonical transport remains heartbeat-owned zero-credential public transport. Persistent Render authority is `NONE`. Lease/reconstruction continuation remains machine-owned under:
-
-```text
-StegVerse-Labs/.github/handoffs/SHWP-DURABLE-RUNTIME-ACTIVATION.json
-StegVerse-Labs/.github/control/worker-registry.json#SHWP-DURABLE-RUNTIME-ACTIVATION
-```
+Issue #68 remains complete. Historical activation evidence is retained at `data/steggate-live-activation-receipt.json`; it is not a continuously rewritten health record. Canonical transport continuity remains machine-owned under the StegVerse-Labs `.github` durable runtime activation handoff/worker registry. Persistent Render authority remains `NONE` for this boundary.
 
 ## Four-app canonical runtime integration — ACTIVE
 
-Canonical state:
+Canonical state remains:
 
 ```text
 management/steggate-four-app-runtime-binding.json
@@ -225,7 +227,8 @@ Issue #70 remains open until each named application retains direct evidence that
 ```text
 StegVerse-Labs/StegCore
   -> continue issue #70 without parallel evaluators
-  -> accumulate benchmark receipts across releases before making latency guardrails release-blocking
+  -> accumulate comparable benchmark receipts to >=10 before considering performance-band promotion
+  -> collect unfamiliar-human usability evidence from an actual reviewer/operator; never fabricate it
   -> do not cut a runtime product tag until applicable release authority and release gates are satisfied
 
 StegVerse-Labs/Site + named consumer owners
@@ -249,7 +252,8 @@ python scripts/verify_product_consistency.py
 steggate self-test
 steggate evaluate examples/steggate_allow_request.json
 python tools/run_admittedcode_benchmarks.py
-python tools/run_admittedcode_benchmarks.py --url https://<live-steggate-host>
+python tools/run_admittedcode_onboarding_rehearsal.py
+python tools/compare_admittedcode_baseline.py artifacts/admittedcode-performance-receipt.json
 ```
 
 ## Completion
@@ -261,9 +265,13 @@ portable product consistency hosted validation: 100%
 runtime identity core contract: 100%
 AdmittedCode benchmark implementation: 100%
 AdmittedCode benchmark hosted validation: 100%
-release-candidate benchmark gate: INSTALLED
-current portable-product files developed: 100%
-scaffolding/stubs in current portable StegGate path: 0
+hosted local HTTP performance path: 100%
+provisional baseline/regression machinery: 100%
+automated clean-environment onboarding rehearsal: 100%
+human unfamiliar-operator measurement: UNMEASURED BY DESIGN
+release-candidate benchmark/regression gate: INSTALLED
+current portable-product/benchmark files developed: 100%
+scaffolding/stubs in current portable StegGate/benchmark path: 0
 four-app CI-or-stronger binding: 3/4
 four-app public-direct evidence: 0/4
 parent four-app goal: NOT COMPLETE
@@ -278,8 +286,10 @@ StegVerse-Labs/StegCore/STEGCORE_MIRROR_HANDOFF.md
 StegVerse-Labs/StegCore/docs/STEGGATE_PORTABLE_PRODUCT.md
 StegVerse-Labs/StegCore/docs/ADMITTEDCODE_PERFORMANCE.md
 StegVerse-Labs/StegCore/benchmarks/admittedcode-performance-policy.json
+StegVerse-Labs/StegCore/benchmarks/admittedcode-baseline-v0.2.0.json
+StegVerse-Labs/StegCore/benchmarks/admittedcode-stranger-observation-template.json
 StegVerse-Labs/StegCore/management/steggate-four-app-runtime-binding.json
 StegVerse-Labs/.github/handoffs/SHWP-DURABLE-RUNTIME-ACTIVATION.json
 ```
 
-The performance/benchmark-tracking goal is installed, hosted-validated, release-integrated, and durably transferred. No unique chat state is required to continue it.
+All executable pre-review performance, baseline, HTTP-path, release-gate, and mechanical-onboarding hardening is installed and durably transferred. The only intentionally uncompleted performance item is an unfamiliar-human observation that cannot be validly self-generated by the implementation session.
