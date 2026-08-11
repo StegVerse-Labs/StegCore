@@ -20,6 +20,7 @@ on:
       - "benchmarks/**"
       - "tools/run_admittedcode_benchmarks.py"
       - "tools/compare_admittedcode_baseline.py"
+      - "tools/run_admittedcode_onboarding_rehearsal.py"
       - "tests/test_admittedcode_performance.py"
       - "examples/steggate_allow_request.json"
       - "management/steggate-four-app-runtime-binding.json"
@@ -55,6 +56,9 @@ jobs:
 
       - name: Run benchmark contract tests
         run: pytest -q tests/test_admittedcode_performance.py
+
+      - name: Run mechanical fresh-environment onboarding rehearsal
+        run: python tools/run_admittedcode_onboarding_rehearsal.py --output artifacts/admittedcode-onboarding-rehearsal.json
 
       - name: Start canonical local HTTP service
         shell: bash
@@ -104,29 +108,35 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          p = Path('artifacts/admittedcode-performance-receipt.json')
-          data = json.loads(p.read_text())
+          data = json.loads(Path('artifacts/admittedcode-performance-receipt.json').read_text())
           regression = json.loads(Path('artifacts/admittedcode-performance-regression.json').read_text())
+          onboarding = json.loads(Path('artifacts/admittedcode-onboarding-rehearsal.json').read_text())
           assert data['policy_assessment']['release_blocking_pass'] is True
           assert data['live_http']['runtime_identity_consistent'] is True
           assert data['live_http']['canonical_runtime_consistent'] is True
           assert data['live_http']['correctness_rate'] == 1.0
+          assert onboarding['runtime_identity_correct'] is True
+          assert onboarding['allow_correct'] is True
+          assert onboarding['deny_correct'] is True
           print('AdmittedCode release-blocking performance checks: PASS')
           print('p95 core latency ms:', data['latency_and_resources']['core_wall_latency']['p95_ms'])
           print('p95 governance overhead ms:', data['governance_overhead']['governance_overhead']['p95_ms'])
           print('p95 localhost HTTP round trip ms:', data['live_http']['network_round_trip_latency']['p95_ms'])
           print('regression warning pass:', regression['regression_warning_pass'])
           print('regression warnings:', regression['warnings'])
+          print('mechanical onboarding total ms:', onboarding['total_rehearsal_ms'])
+          print('human usability observation:', onboarding['human_measurement_status'])
           print('CI integration:', f"{data['consumer_integration']['ci_or_stronger']}/{data['consumer_integration']['required']}")
           print('Public direct:', f"{data['consumer_integration']['public_direct']}/{data['consumer_integration']['required']}")
           PY
 
-      - name: Upload performance receipt and regression report
+      - name: Upload performance evidence
         uses: actions/upload-artifact@v4
         with:
           name: admittedcode-performance-${{ github.sha }}
           path: |
             artifacts/admittedcode-performance-receipt.json
             artifacts/admittedcode-performance-regression.json
+            artifacts/admittedcode-onboarding-rehearsal.json
           if-no-files-found: error
           retention-days: 90
