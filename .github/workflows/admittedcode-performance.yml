@@ -1,0 +1,91 @@
+name: AdmittedCode Performance
+
+on:
+  workflow_dispatch:
+    inputs:
+      iterations:
+        description: "Core latency iterations"
+        required: false
+        default: "500"
+        type: string
+      throughput_requests:
+        description: "Requests per concurrency profile"
+        required: false
+        default: "500"
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - "src/stegcore/**"
+      - "benchmarks/**"
+      - "tools/run_admittedcode_benchmarks.py"
+      - "tests/test_admittedcode_performance.py"
+      - "examples/steggate_allow_request.json"
+      - "management/steggate-four-app-runtime-binding.json"
+      - "docs/ADMITTEDCODE_PERFORMANCE.md"
+      - ".github/workflows/admittedcode-performance.yml"
+      - "VERSION"
+      - "pyproject.toml"
+
+permissions:
+  contents: read
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install product and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+
+      - name: Run benchmark contract tests
+        run: pytest -q tests/test_admittedcode_performance.py
+
+      - name: Run canonical performance benchmark
+        env:
+          ITERATIONS: ${{ github.event.inputs.iterations || '500' }}
+          THROUGHPUT_REQUESTS: ${{ github.event.inputs.throughput_requests || '500' }}
+        run: |
+          python tools/run_admittedcode_benchmarks.py \
+            --iterations "$ITERATIONS" \
+            --replay-iterations 100 \
+            --throughput-requests "$THROUGHPUT_REQUESTS" \
+            --concurrency 1,10,50 \
+            --output artifacts/admittedcode-performance-receipt.json
+
+      - name: Verify receipt release-blocking assessment
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/admittedcode-performance-receipt.json')
+          data = json.loads(p.read_text())
+          assert data['policy_assessment']['release_blocking_pass'] is True
+          print('AdmittedCode release-blocking performance checks: PASS')
+          print('p95 core latency ms:', data['latency_and_resources']['core_wall_latency']['p95_ms'])
+          print('p95 governance overhead ms:', data['governance_overhead']['governance_overhead']['p95_ms'])
+          print('CI integration:', f"{data['consumer_integration']['ci_or_stronger']}/{data['consumer_integration']['required']}")
+          print('Public direct:', f"{data['consumer_integration']['public_direct']}/{data['consumer_integration']['required']}")
+          PY
+
+      - name: Upload performance receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: admittedcode-performance-${{ github.sha }}
+          path: artifacts/admittedcode-performance-receipt.json
+          if-no-files-found: error
+          retention-days: 90
