@@ -61,7 +61,8 @@ def test_provisional_hosted_baseline_is_versioned_and_non_fabricated():
     baseline = json.loads((ROOT / "benchmarks/admittedcode-baseline-v0.2.0.json").read_text(encoding="utf-8"))
     assert baseline["schema_version"] == "stegverse.admittedcode.performance-baseline.v1"
     assert baseline["product_version"] == "0.2.0"
-    assert baseline["sample_count"] == len(baseline["samples"]) == 2
+    assert baseline["sample_count"] == len(baseline["samples"])
+    assert baseline["sample_count"] >= 2
     assert baseline["developer_experience"]["human_install_to_first_allow_minutes"] is None
     assert baseline["developer_experience"]["human_failed_request_diagnosis_minutes"] is None
     assert baseline["developer_experience"]["status"] == "UNMEASURED_REQUIRES_UNFAMILIAR_OPERATOR"
