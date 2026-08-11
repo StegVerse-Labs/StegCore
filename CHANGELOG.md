@@ -8,9 +8,13 @@ Historical governance, schema, receipt, and research artifact versions retain th
 ### Added
 - AdmittedCode performance policy, benchmark runner, hosted benchmark workflow, benchmark contract tests, and versioned JSON performance receipts.
 - Measurement coverage for decision correctness, false ALLOW/DENY behavior, FAIL_CLOSED integrity, candidate binding, semantic replay, cross-interface equivalence, latency percentiles, throughput, CPU/memory observations, cold start, governance overhead, runtime identity, and four-application integration progress.
+- Provisional hosted performance baseline grounded in two successful comparable workflow receipts, with versioned regression reports and conservative warning bands.
+- Hosted localhost HTTP-path timing/identity/correctness measurement for the packaged service surface.
+- Automated clean-environment onboarding rehearsal plus a separate unfamiliar-human observation template; CI is explicitly prohibited from fabricating human usability timing.
 
 ### Changed
-- Keep live product documentation, runtime identity, packaging, consumer evidence, and performance/release measurement surfaces aligned through repository consistency verification.
+- Keep live product documentation, runtime identity, packaging, consumer evidence, performance baselines, onboarding evidence, and release measurement surfaces aligned through repository consistency verification.
+- Release candidates now compare against the compatible AdmittedCode hosted baseline and retain HTTP/performance regression evidence before a release PR is opened.
 
 ## [0.2.0] - 2026-08-10
 
