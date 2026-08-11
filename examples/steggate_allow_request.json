@@ -1,0 +1,61 @@
+{
+  "candidate": {
+    "actor_class": "ai",
+    "action": "publish_candidate",
+    "target": "example-record",
+    "scope": "example",
+    "parameters": {
+      "record_id": "r-1"
+    }
+  },
+  "judgment": {
+    "refusal_available": true,
+    "operator_recoverability": "available",
+    "workload_state": "supported",
+    "time_pressure": "normal",
+    "isolation_state": "supported",
+    "evidence_refs": [
+      "judgment:e1"
+    ]
+  },
+  "signal": {
+    "admitted_signal_refs": [
+      "signal:s1"
+    ],
+    "transformations": [
+      "canonicalize:v1"
+    ],
+    "missing_inputs": [],
+    "uncertainty_state": "bounded",
+    "reference_state_hash": "state:1",
+    "expected_reference_state_hash": "state:1",
+    "reconstruction_available": true,
+    "transformation_provenance_complete": true
+  },
+  "execution": {
+    "actor_authority_current": true,
+    "policy_current": true,
+    "delegation_current": true,
+    "evidence_current": true,
+    "affected_entity_conditions_represented": true,
+    "recoverability_profile": "recoverable",
+    "validity_window_open": true,
+    "policy_ref": "policy:p1",
+    "delegation_ref": "delegation:d1",
+    "evidence_refs": [
+      "execution:e1"
+    ]
+  },
+  "capability": {
+    "allowed": true
+  },
+  "continuity": {
+    "required": true,
+    "previous_receipt_verified": true,
+    "previous_receipt_hash": "receipt:r0"
+  },
+  "approval": {
+    "required": false
+  },
+  "permission_present": false
+}
