@@ -15,8 +15,9 @@ from .steggate import (
     SignalState,
     evaluate_admissibility,
 )
+from .version import __version__
 
-SERVICE_VERSION = "0.2.0"
+SERVICE_VERSION = __version__
 RUNTIME_CONTRACT_VERSION = "stegverse.steggate.runtime-identity.v1"
 RUNTIME_IDENTITY = "stegverse:steggate:canonical:three-layer:v1"
 CANONICAL_OWNER = "StegVerse-Labs/StegCore"
