@@ -1,18 +1,8 @@
 from __future__ import annotations
 
-"""
-StegCore – constraint and governance layer for StegVerse.
+"""StegCore package: canonical governed admissibility runtime for StegVerse."""
 
-This package currently includes:
-- state/audit substrate (NodeState, StateEvent, StateEngine)
-- minimal decision interface (docs-aligned)
-- fail-closed governed runtime binding
-- three-layer judgment, signal-state, and execution admissibility evaluator
-- AURI-L1 external admissibility gateway
-
-Continuity receipts and verification belong to StegID.
-"""
-
+from .version import __version__
 from .models import NodeState, StateEvent
 from .state_engine import StateEngine
 from .registry import Registry
@@ -35,8 +25,10 @@ from .three_layer import (
     evaluate_three_layer,
 )
 from .auri_gateway import AuriGatewayResult, canonical_sha256, evaluate_auri_candidate
+from .steggate import AdmissibilityRequest, AdmissibilityResult, evaluate_admissibility
 
 __all__ = [
+    "__version__",
     "NodeState",
     "StateEvent",
     "StateEngine",
@@ -60,4 +52,7 @@ __all__ = [
     "AuriGatewayResult",
     "canonical_sha256",
     "evaluate_auri_candidate",
+    "AdmissibilityRequest",
+    "AdmissibilityResult",
+    "evaluate_admissibility",
 ]
