@@ -23,7 +23,9 @@ REQUIRED_CURRENT_PATHS = (
     "docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md",
     "docs/ADMITTEDCODE_PERFORMANCE.md",
     "benchmarks/admittedcode-performance-policy.json",
+    "benchmarks/admittedcode-baseline-v0.2.0.json",
     "tools/run_admittedcode_benchmarks.py",
+    "tools/compare_admittedcode_baseline.py",
     "tests/test_admittedcode_performance.py",
     ".github/workflows/admittedcode-performance.yml",
     "STEGCORE_MIRROR_HANDOFF.md",
@@ -47,11 +49,9 @@ def _source_version() -> str:
 
 def check() -> list[str]:
     failures: list[str] = []
-
     for relative in REQUIRED_CURRENT_PATHS:
         if not (ROOT / relative).exists():
             failures.append(f"missing current-product path: {relative}")
-
     if failures:
         return failures
 
@@ -59,10 +59,7 @@ def check() -> list[str]:
     package_version = tomllib.loads(_read("pyproject.toml"))["project"]["version"]
     source_version = _source_version()
     if len({version_file, package_version, source_version}) != 1:
-        failures.append(
-            "portable product version drift: "
-            f"VERSION={version_file}, pyproject={package_version}, source={source_version}"
-        )
+        failures.append(f"portable product version drift: VERSION={version_file}, pyproject={package_version}, source={source_version}")
 
     service = _read("src/stegcore/service.py")
     if "SERVICE_VERSION = __version__" not in service:
@@ -78,11 +75,7 @@ def check() -> list[str]:
             failures.append(f"portable CLI missing command {command}")
 
     readme = _read("README.md")
-    stale_current_claims = (
-        "v0.1 is **documentation-first**",
-        "Code in `src/stegcore/` is scaffolding and substrate for future runtimes",
-    )
-    for stale in stale_current_claims:
+    for stale in ("v0.1 is **documentation-first**", "Code in `src/stegcore/` is scaffolding and substrate for future runtimes"):
         if stale in readme:
             failures.append(f"README contains stale current-product claim: {stale}")
     for required in (version_file, CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME, "run_admittedcode_benchmarks.py"):
@@ -95,7 +88,7 @@ def check() -> list[str]:
             failures.append(f"portable product doc missing identity: {required}")
 
     performance_doc = _read("docs/ADMITTEDCODE_PERFORMANCE.md")
-    for required in (CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME, "false-ALLOW", "p95", "admittedcode-performance-receipt.json"):
+    for required in (CANONICAL_RUNTIME_IDENTITY, CANONICAL_RUNTIME, "false-ALLOW", "p95", "admittedcode-performance-receipt.json", "admittedcode-baseline-v0.2.0.json"):
         if required not in performance_doc:
             failures.append(f"performance contract missing required concept: {required}")
 
@@ -105,42 +98,38 @@ def check() -> list[str]:
     if policy.get("canonical_runtime") != CANONICAL_RUNTIME:
         failures.append("performance policy canonical runtime drift")
     blocking_required = {
-        "false_allow_rate",
-        "four_disposition_correctness_rate",
-        "fail_closed_integrity_rate",
-        "candidate_binding_integrity_rate",
-        "deterministic_semantic_replay_rate",
-        "cross_interface_equivalence_rate",
-        "runtime_identity_consistency_rate",
-        "parallel_evaluator_escape_count",
-        "matrix_completeness_rate",
-        "reason_code_presence_rate",
+        "false_allow_rate", "four_disposition_correctness_rate", "fail_closed_integrity_rate",
+        "candidate_binding_integrity_rate", "deterministic_semantic_replay_rate",
+        "cross_interface_equivalence_rate", "runtime_identity_consistency_rate",
+        "parallel_evaluator_escape_count", "matrix_completeness_rate", "reason_code_presence_rate",
     }
     headline = policy.get("headline_kpis", {})
     for name in blocking_required:
         if name not in headline or headline[name].get("release_blocking") is not True:
             failures.append(f"performance policy missing release-blocking KPI: {name}")
 
+    baseline = json.loads(_read("benchmarks/admittedcode-baseline-v0.2.0.json"))
+    if baseline.get("runtime_identity") != CANONICAL_RUNTIME_IDENTITY or baseline.get("canonical_runtime") != CANONICAL_RUNTIME:
+        failures.append("performance baseline canonical runtime identity drift")
+    if baseline.get("sample_count", 0) < 2:
+        failures.append("performance baseline must retain at least two successful hosted samples")
+    if baseline.get("developer_experience", {}).get("status") != "UNMEASURED_REQUIRES_UNFAMILIAR_OPERATOR":
+        failures.append("human developer-experience baseline must not be fabricated by CI")
+
     benchmark = _read("tools/run_admittedcode_benchmarks.py")
-    for required in (
-        "stegverse.admittedcode.performance-receipt.v1",
-        "deterministic_semantic_replay_rate",
-        "cross_interface_equivalence_rate",
-        "core_wall_latency",
-        "throughput",
-        "cold_start",
-        "governance_overhead",
-        "developer_experience",
-        "consumer_integration",
-    ):
+    for required in ("stegverse.admittedcode.performance-receipt.v1", "deterministic_semantic_replay_rate", "cross_interface_equivalence_rate", "core_wall_latency", "throughput", "cold_start", "governance_overhead", "live_http", "developer_experience", "consumer_integration"):
         if required not in benchmark:
             failures.append(f"benchmark runner missing measurement surface: {required}")
 
+    comparator = _read("tools/compare_admittedcode_baseline.py")
+    for required in ("stegverse.admittedcode.performance-regression.v1", "regression_warning_pass", "compatible_baseline"):
+        if required not in comparator:
+            failures.append(f"baseline comparator missing contract surface: {required}")
+
     performance_workflow = _read(".github/workflows/admittedcode-performance.yml")
-    if "python tools/run_admittedcode_benchmarks.py" not in performance_workflow:
-        failures.append("hosted performance workflow does not run canonical benchmark")
-    if "actions/upload-artifact@v4" not in performance_workflow:
-        failures.append("hosted performance workflow does not retain benchmark receipt")
+    for required in ("python tools/run_admittedcode_benchmarks.py", "--url http://127.0.0.1:8000", "python tools/compare_admittedcode_baseline.py", "actions/upload-artifact@v4"):
+        if required not in performance_workflow:
+            failures.append(f"hosted performance workflow missing surface: {required}")
 
     example = json.loads(_read("examples/steggate_allow_request.json"))
     required_sections = {"candidate", "judgment", "signal", "execution", "capability", "continuity", "approval"}
@@ -149,8 +138,7 @@ def check() -> list[str]:
         failures.append(f"example request missing sections: {', '.join(missing_sections)}")
 
     pyproject = tomllib.loads(_read("pyproject.toml"))
-    scripts = pyproject["project"].get("scripts", {})
-    if scripts.get("steggate") != "stegcore.cli:main":
+    if pyproject["project"].get("scripts", {}).get("steggate") != "stegcore.cli:main":
         failures.append("pyproject must expose steggate = stegcore.cli:main")
 
     bump_script = _read("scripts/release/bump_version.py")
@@ -159,11 +147,11 @@ def check() -> list[str]:
             failures.append(f"release bump script does not manage {required_surface}")
 
     release_workflow = _read(".github/workflows/release-bump.yml")
-    required_git_add = "git add VERSION pyproject.toml src/stegcore/version.py CHANGELOG.md"
-    if required_git_add not in release_workflow:
+    if "git add VERSION pyproject.toml src/stegcore/version.py CHANGELOG.md" not in release_workflow:
         failures.append("release workflow does not commit all portable product version surfaces")
-    if "python scripts/verify_product_consistency.py" not in release_workflow:
-        failures.append("release workflow does not run product consistency verification")
+    for required in ("python scripts/verify_product_consistency.py", "python tools/run_admittedcode_benchmarks.py", "python tools/compare_admittedcode_baseline.py", "--url http://127.0.0.1:8000"):
+        if required not in release_workflow:
+            failures.append(f"release workflow missing benchmark/release surface: {required}")
 
     changelog = _read("CHANGELOG.md")
     if f"## [{version_file}]" not in changelog:
@@ -185,7 +173,7 @@ def main() -> int:
     print(f"version: {_read('VERSION').strip()}")
     print(f"runtime_identity: {CANONICAL_RUNTIME_IDENTITY}")
     print(f"canonical_runtime: {CANONICAL_RUNTIME}")
-    print("admittedcode_performance_tracking: ACTIVE")
+    print("admittedcode_performance_tracking: ACTIVE_WITH_HOSTED_BASELINE")
     return 0
 
 
