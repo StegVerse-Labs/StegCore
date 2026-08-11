@@ -18,15 +18,32 @@
     "core_latency_p95_ms": {"target_max": 50.0, "release_blocking": false},
     "governance_overhead_p95_ms": {"target_max": 50.0, "release_blocking": false}
   },
+  "hosted_regression_baseline": {
+    "path": "benchmarks/admittedcode-baseline-v0.2.0.json",
+    "state": "PROVISIONAL",
+    "comparison_tool": "tools/compare_admittedcode_baseline.py",
+    "promotion_min_successful_receipts": 10,
+    "promotion_min_distinct_commits_or_release_candidates": 3,
+    "warning_bands_release_blocking": false
+  },
   "load_profiles": {
     "iterations_default": 300,
     "concurrency_levels": [1, 10, 50],
     "throughput_duration_mode": "fixed_request_count"
   },
+  "network_measurement": {
+    "hosted_local_http_required": true,
+    "hosted_local_http_url": "http://127.0.0.1:8000",
+    "public_http_measurement": "run against the currently selected public runtime only when a live authoritative transport endpoint exists",
+    "transport_is_not_runtime_identity": true
+  },
   "developer_experience_targets": {
     "install_to_first_allow_minutes_max": 5,
     "failed_request_diagnosis_minutes_max": 15,
-    "measurement_mode": "manual_observation_required"
+    "human_measurement_mode": "manual_observation_required",
+    "automated_mechanical_rehearsal": "tools/run_admittedcode_onboarding_rehearsal.py",
+    "human_observation_template": "benchmarks/admittedcode-stranger-observation-template.json",
+    "rule": "Automated fresh-environment timing is a packaging/mechanical signal and must never be substituted for unfamiliar-human usability timing."
   },
   "consumer_integration_targets": {
     "ci_or_stronger": "4/4",
@@ -34,9 +51,10 @@
     "parallel_evaluators": 0
   },
   "notes": [
-    "Latency targets are initial guardrails, not historical claims.",
-    "Decision-state hashes include evaluated_at and are therefore not used for semantic replay equivalence.",
-    "Semantic replay compares disposition, candidate hash, canonical request/receipt hashes, reasons, and predicate matrix semantics.",
-    "Network latency is measured separately from core evaluator latency when --url is supplied."
+    "Safety/correctness invariants outrank speed and remain release-blocking independently of performance bands.",
+    "Decision-state hashes and canonical three-layer receipt hashes are time-bound provenance and are excluded from stable semantic replay equality; receipt-hash presence is measured separately.",
+    "Semantic replay compares disposition, candidate hash, canonical request hash, reasons, authority-boundary fields, and predicate matrix semantics.",
+    "Hosted localhost HTTP timing proves the packaged HTTP path without claiming public transport performance.",
+    "Public network latency is measured separately from core evaluator latency when --url points at the currently selected live transport."
   ]
 }
