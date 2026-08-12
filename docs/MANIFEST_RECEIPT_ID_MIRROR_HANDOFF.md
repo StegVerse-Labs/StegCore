@@ -22,14 +22,18 @@ The identifier is a locator only and grants no authority.
 
 ```text
 src/stegcore/manifest_receipts.py
+src/stegcore/manifest_receipt_provider.py
 tests/test_manifest_receipts.py
+tests/test_manifest_receipt_provider.py
 ```
 
 Installation commits:
 
 ```text
 02e15e9b0311f261742db911451e3914ad806e03  registry + replay/reconstruction contract
-1c19e2cb8aafd8529f411396dc91b2653b59df92  tests
+1c19e2cb8aafd8529f411396dc91b2653b59df92  registry tests
+729bd52382a9ef0a67bcce91514dc390e230e8a9  Master Records provider contract
+1968ca420d2e0d7d21754f57584f379ccdf31c7f  provider contract tests
 ```
 
 ## Canonical semantics
@@ -48,9 +52,11 @@ replay(manifest_receipt_id, replay_handler)
 
 Registration requires an already verified transaction chain. Duplicate IDs with different immutable content fail closed. Unknown IDs fail closed. Replay is prohibited from claiming consequence re-execution and checks the original retained record for mutation. Reconstruction distinguishes persisted historical receipt evidence from reconstructed summary material and records `consequence_reexecuted: false`.
 
+`manifest_receipt_provider.py` now installs the shared-backing contract. `build_master_records_submission()` promotes the exact run identity into the Master Records manifest-receipt custody envelope, while `MasterRecordsManifestReceiptProvider` validates custody, evidence retrieval, and reconstruction responses without selecting credentials/providers or granting authority.
+
 ## Shared backing progress
 
-`master-records/orchestration` has now installed the provider-neutral exact-run custody and authenticated HTTP primitives needed by this handoff:
+`master-records/orchestration` has installed the exact-run custody and authenticated HTTP primitives required by this provider:
 
 ```text
 services/manifest_receipt_custody.py
@@ -62,19 +68,31 @@ MANIFEST_RECEIPT_CUSTODY_MIRROR_HANDOFF.md
 
 Those surfaces preserve one receipt ID -> one immutable retained run, fail closed on conflicting bindings, expose evidence retrieval/reconstruction, and do not grant execution/admissibility authority.
 
-## Worker continuation boundary
-
-Do not create a second receipt-ID algorithm or local authority store. The remaining StegCore work is integration and proof:
+## Completed handoff tasks
 
 ```text
-1. serialize `ManifestReceiptRecord` / `evidence_package()` into the Master Records manifest-receipt custody submission contract;
-2. bind the provider through an explicit interface so local JSONL and Master Records backing share the same canonical semantics;
-3. prove one canonical ID resolves to one immutable retained run through the shared backing;
-4. prove replay leaves the retained original unchanged and never re-executes consequence;
-5. prove reconstruction distinguishes persisted historical evidence from reconstructed summary material;
-6. expose the same provider contract to SDK and LLM-adapter callers;
-7. run canonical sovereign/local validation and record inspectable PASS evidence;
-8. only then update `docs/TRANSACTION_CONTINUITY_MIRROR_HANDOFF.md` and issue #85 completion state.
+[done] canonical MR-<SHA256> identifier semantics
+[done] append-only local/provider-neutral registry
+[done] evidence package retrieval
+[done] replay receipt semantics with original immutability check
+[done] reconstruction receipt semantics without consequence re-execution
+[done] Master Records submission serialization contract
+[done] explicit shared-backing provider interface
+[done] shared-backing authority-boundary verification tests installed
+```
+
+## Worker continuation boundary
+
+Do not create another receipt-ID algorithm, local authority store, or parallel evaluator. Remaining work is integration proof:
+
+```text
+1. connect `MasterRecordsManifestReceiptProvider` to an admitted transport for the installed Master Records manifest-receipt API;
+2. prove one canonical ID resolves to one immutable retained run through that shared backing;
+3. prove replay leaves the retained original unchanged and never re-executes consequence;
+4. prove reconstruction distinguishes persisted historical evidence from reconstructed summary material;
+5. expose the same provider contract to SDK and LLM-adapter callers;
+6. run canonical sovereign/local validation and record inspectable PASS evidence;
+7. only then update `docs/TRANSACTION_CONTINUITY_MIRROR_HANDOFF.md` and issue #85 completion state.
 ```
 
 ## Activation boundary
