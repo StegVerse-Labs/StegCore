@@ -35,6 +35,11 @@ from .transaction_lifecycle import (
     manifest_transaction,
     run_manifested_transaction,
 )
+from .transaction_discovery import (
+    DiscoveryRecord,
+    DiscoveryQuery,
+    TransactionDiscoveryIndex,
+)
 
 __all__ = [
     "__version__",
@@ -71,4 +76,7 @@ __all__ = [
     "TransactionLedger",
     "manifest_transaction",
     "run_manifested_transaction",
+    "DiscoveryRecord",
+    "DiscoveryQuery",
+    "TransactionDiscoveryIndex",
 ]
