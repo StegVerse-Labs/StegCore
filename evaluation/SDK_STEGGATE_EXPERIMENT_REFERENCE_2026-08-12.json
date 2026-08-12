@@ -1,0 +1,104 @@
+{
+  "schema": "stegverse.sdk_steggate_experiment_reference.v1",
+  "reference_id": "SDK-STEGGATE-BOUNDARY-2026-08-12",
+  "created_at": "2026-08-12T09:22:00-05:00",
+  "purpose": "Freeze the exact multi-repository source state used for the post-baseline SDK manifested-transaction / AdmittedCode-StegGate boundary experiment and future replay of evaluator findings.",
+  "release_semantics": {
+    "is_product_release": false,
+    "is_release_tag": false,
+    "reason": "Repository handoffs do not currently authorize product/release tags for all participating components; exact commit SHAs are immutable and evaluation branches are convenience refs only.",
+    "authoritative_identity": "exact_commit_sha"
+  },
+  "canonical_runtime": {
+    "runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
+    "evaluator": "stegcore.three_layer.evaluate_three_layer",
+    "manifest_grants_authority": false,
+    "discovery_grants_authority": false,
+    "github_token_runtime_authority": "NONE",
+    "credential_authority": "TV/TVC"
+  },
+  "components": [
+    {
+      "repository": "StegVerse-Labs/StegCore",
+      "role": "canonical AdmittedCode/StegGate runtime and manifested transaction lifecycle",
+      "commit": "26ad1f586092ccca8e399e13ae2e30e28dd35ca9",
+      "evaluation_branch": "eval/sdk-steggate-boundary-2026-08-12",
+      "existing_product_tag_relation": "current experiment state is newer than v0.1.0; Mansoor frozen baseline remains separate at 5d86d7999199b9403a05320710c4d1bb95527327"
+    },
+    {
+      "repository": "StegVerse-org/StegVerse-SDK",
+      "role": "generic public SDK entry and AdmittedCode surface",
+      "commit": "d13e3d7e20893be08b4eef561ed5e5fc07cb536a",
+      "evaluation_branch": "eval/sdk-steggate-boundary-2026-08-12",
+      "existing_product_tag_relation": "newer than v1.0.13; release/tag authority not granted by SDK handoff"
+    },
+    {
+      "repository": "StegVerse-org/LLM-adapter",
+      "role": "canonical governed provider transport/evidence adapter and same-carrier executor",
+      "commit": "70fb19c3c0be49e231a7ce68bb304113f06f6f2d",
+      "evaluation_branch": "eval/sdk-steggate-boundary-2026-08-12",
+      "existing_product_tag_relation": "newer than v1.0.0; release/tag explicitly blocked until canonical activation criteria"
+    },
+    {
+      "repository": "AdmittedCode/code-admit-gate",
+      "role": "historical/reference governance-structure guard; not canonical current evaluator",
+      "commit": "576d40e0f7a178c0f52146a68cf5a491b28921d5",
+      "evaluation_branch": "eval/sdk-steggate-boundary-2026-08-12",
+      "existing_product_tag_relation": "v1.0.0 is historical; current runtime authority is StegVerse-Labs/StegCore"
+    },
+    {
+      "repository": "StegVerse-Labs/TV",
+      "role": "policy/credential authority component",
+      "commit": "a6af854204712030c6575b3e4f8666cdc06b8438",
+      "evaluation_branch": "eval/sdk-steggate-boundary-2026-08-12",
+      "existing_product_tag_relation": "no product tag used for this experiment reference"
+    },
+    {
+      "repository": "StegVerse-Labs/TVC",
+      "role": "route authority and sovereign local-model admission",
+      "commit": "711b19ef9b65df8ee33f20e68496328be097ad52",
+      "evaluation_branch": "eval/sdk-steggate-boundary-2026-08-12",
+      "existing_product_tag_relation": "no product tag; live route observation remains machine-owned"
+    },
+    {
+      "repository": "StegVerse-002/micro-node-runtime",
+      "role": "formally developed local reference model plus discovery/launch/inference/proof runtime",
+      "commit": "46593a57e53e1d511cfc6fff67e9e51213607d8d",
+      "evaluation_branch": "eval/sdk-steggate-boundary-2026-08-12",
+      "existing_product_tag_relation": "no product tag; source model/runtime is COMPLETE_RELEASED under repository handoff"
+    },
+    {
+      "repository": "master-records/orchestration",
+      "role": "custody and same-execution reconstruction reference",
+      "commit": "1b601dd6d0298726c103cfa379049e5891307313",
+      "evaluation_branch": "eval/sdk-steggate-boundary-2026-08-12",
+      "existing_product_tag_relation": "no product tag; custody/reconstruction does not grant release or execution authority"
+    }
+  ],
+  "mansoor_baseline": {
+    "repository": "StegVerse-Labs/StegCore",
+    "branch": "eval/mansoor-admittedcode-0.2.0-2026-08-11",
+    "commit": "5d86d7999199b9403a05320710c4d1bb95527327",
+    "immutable_and_separate_from_post_baseline_experiment": true
+  },
+  "experiment_contract": {
+    "required_route": [
+      "sdk_manifestation",
+      "ingestion",
+      "canonical_steggate",
+      "commit_coherence",
+      "return_ingestion",
+      "discovery",
+      "replay_reconstruction"
+    ],
+    "longitudinal_cases": [
+      "T0 valid 420 candidate -> ALLOW",
+      "T1 same candidate with policy_current=false -> DENY",
+      "T1 mutated 4200 candidate with prior 420 approval hash -> DENY"
+    ],
+    "demo_specific_evaluator_prohibited": true,
+    "parallel_evaluator_prohibited": true
+  },
+  "replay_rule": "A finding is replay-referenced by this manifest plus exact component commit SHA(s), transaction/manifest/receipt identifiers, and evaluator-authored finding reference. Branch names are convenience pointers and are not the immutable identity.",
+  "status": "REFERENCE_FROZEN"
+}
