@@ -48,10 +48,39 @@ replay(manifest_receipt_id, replay_handler)
 
 Registration requires an already verified transaction chain. Duplicate IDs with different immutable content fail closed. Unknown IDs fail closed. Replay is prohibited from claiming consequence re-execution and checks the original retained record for mutation. Reconstruction distinguishes persisted historical receipt evidence from reconstructed summary material and records `consequence_reexecuted: false`.
 
-## Remaining production dependency
+## Shared backing progress
 
-`master-records/orchestration` remains the owner for durable shared ecosystem backing and production resolution. The current registry is provider-neutral and suitable for binding to that backing, but this commit does not by itself prove production master-record service activation.
+`master-records/orchestration` has now installed the provider-neutral exact-run custody and authenticated HTTP primitives needed by this handoff:
+
+```text
+services/manifest_receipt_custody.py
+services/manifest_receipt_custody_api.py
+tests/test_manifest_receipt_custody.py
+tests/test_manifest_receipt_custody_api.py
+MANIFEST_RECEIPT_CUSTODY_MIRROR_HANDOFF.md
+```
+
+Those surfaces preserve one receipt ID -> one immutable retained run, fail closed on conflicting bindings, expose evidence retrieval/reconstruction, and do not grant execution/admissibility authority.
+
+## Worker continuation boundary
+
+Do not create a second receipt-ID algorithm or local authority store. The remaining StegCore work is integration and proof:
+
+```text
+1. serialize `ManifestReceiptRecord` / `evidence_package()` into the Master Records manifest-receipt custody submission contract;
+2. bind the provider through an explicit interface so local JSONL and Master Records backing share the same canonical semantics;
+3. prove one canonical ID resolves to one immutable retained run through the shared backing;
+4. prove replay leaves the retained original unchanged and never re-executes consequence;
+5. prove reconstruction distinguishes persisted historical evidence from reconstructed summary material;
+6. expose the same provider contract to SDK and LLM-adapter callers;
+7. run canonical sovereign/local validation and record inspectable PASS evidence;
+8. only then update `docs/TRANSACTION_CONTINUITY_MIRROR_HANDOFF.md` and issue #85 completion state.
+```
+
+## Activation boundary
+
+Shared backing primitives are installed, but `master-records/orchestration` remains repository-wide activation-blocked pending its existing persistent-storage, backup/restore, and live-authenticated round-trip readiness evidence. This StegCore handoff must not convert installed backing into a production-activation claim.
 
 ## Validation status
 
-Implementation and tests are installed. No sovereign/local test execution receipt was produced in this change session. Do not claim COMPLETE, VALIDATED, RELEASED, or activated until the canonical validation path records evidence and master-record shared backing is bound.
+Implementation and tests are installed. No sovereign/local test execution receipt was produced in this change session. Do not claim COMPLETE, VALIDATED, RELEASED, or activated until the canonical validation path records evidence and shared backing integration is proven.
