@@ -1,0 +1,27 @@
+{
+  "schema": "stegverse.repo-heartbeat-adapter/v0.1",
+  "repo_id": "stegcore",
+  "org": "StegVerse-Labs",
+  "repository": "StegVerse-Labs/StegCore",
+  "participant_class": "RUNTIME",
+  "runtime_id": "stegcore-runtime",
+  "handoff_path": "docs/STEGCORE_MIRROR_HANDOFF.md",
+  "capabilities": [
+    "admissibility_evaluation",
+    "external_evidence_mapping",
+    "organization_heartbeat_claimant"
+  ],
+  "dependencies": [
+    {"repo_id": "tvc", "required": true},
+    {"repo_id": "continuity", "required": true}
+  ],
+  "status_source": "repository_and_runtime_state",
+  "freshness_seconds": 300,
+  "authority": {
+    "credential_authority": "TV/TVC",
+    "heartbeat_grants_execution_authority": false,
+    "github_token_required": false
+  },
+  "central_contract": "StegVerse-Labs/.github/schemas/repo-heartbeat-manifest.schema.json",
+  "central_owner": "StegVerse-Labs/.github#81"
+}
