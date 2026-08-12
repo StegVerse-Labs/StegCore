@@ -27,15 +27,6 @@ tests/test_manifest_receipts.py
 tests/test_manifest_receipt_provider.py
 ```
 
-Installation commits:
-
-```text
-02e15e9b0311f261742db911451e3914ad806e03  registry + replay/reconstruction contract
-1c19e2cb8aafd8529f411396dc91b2653b59df92  registry tests
-729bd52382a9ef0a67bcce91514dc390e230e8a9  Master Records provider contract
-1968ca420d2e0d7d21754f57584f379ccdf31c7f  provider contract tests
-```
-
 ## Canonical semantics
 
 `manifest_receipt_id_for(result)` derives an `MR-<SHA256>` locator from exact transaction identity, manifest hash, receipt-chain head, and canonical runtime identity.
@@ -54,9 +45,35 @@ Registration requires an already verified transaction chain. Duplicate IDs with 
 
 `manifest_receipt_provider.py` installs the shared-backing contract. `build_master_records_submission()` promotes the exact run identity into the Master Records manifest-receipt custody envelope, while `MasterRecordsManifestReceiptProvider` validates custody, evidence retrieval, and reconstruction responses without selecting credentials/providers or granting authority.
 
+## Full custody before caller projection
+
+The SDK/LLM-adapter manifest may request caller-facing return projection modes `ALL`, `SELECTED`, or `NONE`. StegCore must treat those as post-governance disclosure/egress preferences, not as transition-recording authority.
+
+Required ordering:
+
+```text
+canonical manifested transaction
+-> canonical governance/state transitions
+-> complete exact-run result + receipt chain
+-> canonical manifest_receipt_id
+-> retain full canonical evidence package in Master Records shared backing
+-> apply caller return projection (ALL | SELECTED | NONE)
+-> return permitted caller-facing result
+```
+
+Mandatory invariant:
+
+```text
+caller_return_projection_cannot_change_canonical_run_identity: true
+caller_return_projection_cannot_suppress_master_records_custody: true
+caller_return_projection_cannot_erase_transition_history: true
+```
+
+`NONE` therefore means no transition-detail projection to the caller. It does not mean the transition chain is absent from the canonical run or Master Records backing.
+
 ## Shared backing progress
 
-`master-records/orchestration` has now installed and composed the exact-run custody surface into its canonical deployment target:
+`master-records/orchestration` has installed and composed the exact-run custody surface into its canonical deployment target:
 
 ```text
 services/manifest_receipt_custody.py
@@ -69,7 +86,7 @@ render-custody.yaml -> services.canonical_custody_app:app
 MANIFEST_RECEIPT_CUSTODY_MIRROR_HANDOFF.md
 ```
 
-The canonical Master Records deployment surface now contains the authenticated manifest-receipt POST/GET/reconstruction routes instead of requiring a parallel service. Exact-run immutability, fail-closed conflicts, evidence retrieval, reconstruction, and non-authority semantics remain preserved.
+The canonical Master Records deployment surface contains the authenticated manifest-receipt POST/GET/reconstruction routes. Exact-run immutability, fail-closed conflicts, evidence retrieval, reconstruction, and non-authority semantics remain preserved.
 
 ## Completed handoff tasks
 
@@ -84,6 +101,7 @@ The canonical Master Records deployment surface now contains the authenticated m
 [done] shared-backing authority-boundary verification tests installed
 [done] Master Records exact-run API primitives installed
 [done] Master Records exact-run routes composed into canonical custody deployment target
+[done] full-custody-before-caller-projection invariant recorded
 ```
 
 ## Worker continuation boundary
@@ -93,11 +111,13 @@ Do not create another receipt-ID algorithm, local authority store, custody servi
 ```text
 1. connect `MasterRecordsManifestReceiptProvider` to an admitted transport for the canonical Master Records custody deployment;
 2. prove one canonical ID resolves to one immutable retained run through that transport;
-3. prove replay leaves the retained original unchanged and never re-executes consequence;
-4. prove reconstruction distinguishes persisted historical evidence from reconstructed summary material;
-5. expose the same provider contract to SDK and LLM-adapter callers;
-6. run canonical sovereign/local validation and record inspectable PASS evidence;
-7. only then update `docs/TRANSACTION_CONTINUITY_MIRROR_HANDOFF.md` and issue #85 completion state.
+3. prove full canonical evidence retention occurs before caller projection;
+4. prove ALL/SELECTED/NONE caller projection cannot change run identity or Master Records custody;
+5. prove replay leaves the retained original unchanged and never re-executes consequence;
+6. prove reconstruction distinguishes persisted historical evidence from reconstructed summary material;
+7. expose the same provider contract to SDK and LLM-adapter callers;
+8. run canonical sovereign/local validation and record inspectable PASS evidence;
+9. only then update `docs/TRANSACTION_CONTINUITY_MIRROR_HANDOFF.md` and issue #85 completion state.
 ```
 
 ## Activation boundary
