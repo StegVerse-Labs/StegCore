@@ -26,6 +26,15 @@ from .three_layer import (
 )
 from .auri_gateway import AuriGatewayResult, canonical_sha256, evaluate_auri_candidate
 from .steggate import AdmissibilityRequest, AdmissibilityEvaluation, evaluate_admissibility
+from .transaction_lifecycle import (
+    TransactionManifest,
+    TransitionReceipt,
+    ReplayDescriptor,
+    ManifestedTransactionResult,
+    TransactionLedger,
+    manifest_transaction,
+    run_manifested_transaction,
+)
 
 __all__ = [
     "__version__",
@@ -55,4 +64,11 @@ __all__ = [
     "AdmissibilityRequest",
     "AdmissibilityEvaluation",
     "evaluate_admissibility",
+    "TransactionManifest",
+    "TransitionReceipt",
+    "ReplayDescriptor",
+    "ManifestedTransactionResult",
+    "TransactionLedger",
+    "manifest_transaction",
+    "run_manifested_transaction",
 ]
