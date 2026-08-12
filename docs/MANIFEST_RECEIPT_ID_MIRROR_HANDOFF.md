@@ -52,21 +52,24 @@ replay(manifest_receipt_id, replay_handler)
 
 Registration requires an already verified transaction chain. Duplicate IDs with different immutable content fail closed. Unknown IDs fail closed. Replay is prohibited from claiming consequence re-execution and checks the original retained record for mutation. Reconstruction distinguishes persisted historical receipt evidence from reconstructed summary material and records `consequence_reexecuted: false`.
 
-`manifest_receipt_provider.py` now installs the shared-backing contract. `build_master_records_submission()` promotes the exact run identity into the Master Records manifest-receipt custody envelope, while `MasterRecordsManifestReceiptProvider` validates custody, evidence retrieval, and reconstruction responses without selecting credentials/providers or granting authority.
+`manifest_receipt_provider.py` installs the shared-backing contract. `build_master_records_submission()` promotes the exact run identity into the Master Records manifest-receipt custody envelope, while `MasterRecordsManifestReceiptProvider` validates custody, evidence retrieval, and reconstruction responses without selecting credentials/providers or granting authority.
 
 ## Shared backing progress
 
-`master-records/orchestration` has installed the exact-run custody and authenticated HTTP primitives required by this provider:
+`master-records/orchestration` has now installed and composed the exact-run custody surface into its canonical deployment target:
 
 ```text
 services/manifest_receipt_custody.py
 services/manifest_receipt_custody_api.py
+services/canonical_custody_app.py
 tests/test_manifest_receipt_custody.py
 tests/test_manifest_receipt_custody_api.py
+tests/test_canonical_custody_app.py
+render-custody.yaml -> services.canonical_custody_app:app
 MANIFEST_RECEIPT_CUSTODY_MIRROR_HANDOFF.md
 ```
 
-Those surfaces preserve one receipt ID -> one immutable retained run, fail closed on conflicting bindings, expose evidence retrieval/reconstruction, and do not grant execution/admissibility authority.
+The canonical Master Records deployment surface now contains the authenticated manifest-receipt POST/GET/reconstruction routes instead of requiring a parallel service. Exact-run immutability, fail-closed conflicts, evidence retrieval, reconstruction, and non-authority semantics remain preserved.
 
 ## Completed handoff tasks
 
@@ -79,15 +82,17 @@ Those surfaces preserve one receipt ID -> one immutable retained run, fail close
 [done] Master Records submission serialization contract
 [done] explicit shared-backing provider interface
 [done] shared-backing authority-boundary verification tests installed
+[done] Master Records exact-run API primitives installed
+[done] Master Records exact-run routes composed into canonical custody deployment target
 ```
 
 ## Worker continuation boundary
 
-Do not create another receipt-ID algorithm, local authority store, or parallel evaluator. Remaining work is integration proof:
+Do not create another receipt-ID algorithm, local authority store, custody service, or parallel evaluator. Remaining StegCore work is integration proof:
 
 ```text
-1. connect `MasterRecordsManifestReceiptProvider` to an admitted transport for the installed Master Records manifest-receipt API;
-2. prove one canonical ID resolves to one immutable retained run through that shared backing;
+1. connect `MasterRecordsManifestReceiptProvider` to an admitted transport for the canonical Master Records custody deployment;
+2. prove one canonical ID resolves to one immutable retained run through that transport;
 3. prove replay leaves the retained original unchanged and never re-executes consequence;
 4. prove reconstruction distinguishes persisted historical evidence from reconstructed summary material;
 5. expose the same provider contract to SDK and LLM-adapter callers;
@@ -97,7 +102,7 @@ Do not create another receipt-ID algorithm, local authority store, or parallel e
 
 ## Activation boundary
 
-Shared backing primitives are installed, but `master-records/orchestration` remains repository-wide activation-blocked pending its existing persistent-storage, backup/restore, and live-authenticated round-trip readiness evidence. This StegCore handoff must not convert installed backing into a production-activation claim.
+Shared backing and canonical route composition are installed, but `master-records/orchestration` remains repository-wide activation-blocked pending its existing persistent-storage, backup/restore, and live-authenticated round-trip readiness evidence. This StegCore handoff must not convert installed backing into a production-activation claim.
 
 ## Validation status
 
