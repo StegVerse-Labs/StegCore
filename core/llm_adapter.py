@@ -1,39 +1,53 @@
-"""
-StegVerse LLM Adapter v1.0
-Converts user prompts into Triad candidate vectors.
-Routes outputs through sandbox or ingestion.
-Prevents LLM responses from becoming trusted state without Triad validation.
-Integrates with existing triad_validator.py in GCAT-BCAT-Engine/workflows.
+"""StegVerse legacy LLM adapter compatibility surface.
+
+This module retains prompt classification and historical Triad candidate shaping,
+but it is no longer an admissibility authority. The previous adapter-local inline
+evaluator could mint ALLOW when the external validator was unavailable; that path
+is intentionally removed.
+
+Consequential evaluation now requires an explicit canonical
+``stegcore.AdmissibilityRequest`` and traverses the same manifested transaction,
+ingestion, StegGate, commit-coherence, return-ingestion path used by ordinary
+StegVerse governed runtimes.
 """
 
-import json
+from __future__ import annotations
+
 import hashlib
-import uuid
+import json
 from datetime import datetime, timezone
-from typing import Optional
 from pathlib import Path
+from typing import Any, Callable, Mapping, Optional
+import uuid
 
-# ── Triad candidate vector schema ───────────────────────────────────────────
-# Matches GCAT-BCAT-Engine/workflows/triad_validator.py candidate format
+from stegcore.steggate import AdmissibilityRequest
+from stegcore.transaction_lifecycle import (
+    ManifestedTransactionResult,
+    TransactionLedger,
+    run_manifested_transaction,
+)
+
 
 def make_triad_candidate(
     prompt: str,
     user_id: str,
     entity_subject_id: str,
     action_intent: str,
-    action_class: str,       # observe|queue|route|install|confirm|promote|vault_write|finco
+    action_class: str,
     gcat_state: dict,
     bcat_params: dict,
     ecat_entity: dict,
     icat_params: dict,
     pe_observations: list,
     iw_budget: float = 1.0,
-    context: dict = None,
+    context: dict | None = None,
 ) -> dict:
+    """Build a non-authoritative historical Triad-shaped candidate.
+
+    This helper exists for compatibility, audit, and input shaping only. Its
+    output must not be treated as an executable authorization or StegGate result.
     """
-    Build a Triad candidate vector from user context.
-    This is the bridge between a natural language request and the formal gate.
-    """
+
     candidate_id = f"CAND-{uuid.uuid4().hex[:8].upper()}"
     return {
         "candidate_id": candidate_id,
@@ -44,44 +58,29 @@ def make_triad_candidate(
         "action_intent": action_intent,
         "action_class": action_class,
         "context": context or {},
-        # GCAT sub-object
         "gcat": {
             "state": gcat_state,
             "params": {
                 "governance_threshold": bcat_params.get("governance_threshold", 0.5),
-                "control_threshold":    bcat_params.get("control_threshold", 0.5),
-                "autonomy_threshold":   bcat_params.get("autonomy_threshold", 0.5),
-                "trust_threshold":      bcat_params.get("trust_threshold", 0.5),
-            }
+                "control_threshold": bcat_params.get("control_threshold", 0.5),
+                "autonomy_threshold": bcat_params.get("autonomy_threshold", 0.5),
+                "trust_threshold": bcat_params.get("trust_threshold", 0.5),
+            },
         },
-        # BCAT sub-object
-        "bcat": {
-            "state": gcat_state,  # BCAT uses same state vector, different params
-            "params": bcat_params,
-        },
-        # ECAT sub-object
+        "bcat": {"state": gcat_state, "params": bcat_params},
         "ecat": {
             "entity": ecat_entity,
             "params": {
-                "stress_threshold":   ecat_entity.get("stress_threshold", 0.7),
-                "coherence_floor":    ecat_entity.get("coherence_floor", 0.3),
+                "stress_threshold": ecat_entity.get("stress_threshold", 0.7),
+                "coherence_floor": ecat_entity.get("coherence_floor", 0.3),
                 "manipulation_limit": ecat_entity.get("manipulation_limit", 0.2),
-            }
+            },
         },
-        # ICAT sub-object
-        "icat": {
-            "entity": ecat_entity,
-            "params": icat_params,
-        },
-        # PE sub-object
+        "icat": {"entity": ecat_entity, "params": icat_params},
         "pe": {
             "observations": pe_observations,
-            "params": {
-                "existence_threshold": 0.6,
-                "min_observations": 1,
-            }
+            "params": {"existence_threshold": 0.6, "min_observations": 1},
         },
-        # IW sub-object
         "iw": {
             "inference_window": {
                 "start": datetime.now(timezone.utc).isoformat(),
@@ -90,78 +89,78 @@ def make_triad_candidate(
             },
             "params": {"coherence_threshold": 0.5, "depth_minimum": 1},
             "budget": iw_budget,
-        }
+        },
+        "admissibility_authority": False,
+        "canonical_runtime_required": True,
     }
 
 
-# ── Action classifier ────────────────────────────────────────────────────────
-
 ACTION_SCOPE_MAP = {
-    "observe":        ("ALLOW_OBSERVE",        0.3, 0.3, 0.3, 0.3),
-    "queue":          ("ALLOW_QUEUE",           0.4, 0.4, 0.4, 0.4),
-    "route":          ("ALLOW_ROUTE",           0.45, 0.45, 0.45, 0.45),
-    "vault_write":    ("ALLOW_VAULT_WRITE",     0.5, 0.5, 0.5, 0.5),
-    "vault_read":     ("ALLOW_VAULT_READ",      0.35, 0.35, 0.35, 0.35),
-    "install":        ("ALLOW_INSTALL",         0.6, 0.6, 0.6, 0.6),
-    "confirm":        ("ALLOW_CONFIRM",         0.65, 0.65, 0.65, 0.65),
-    "promote":        ("ALLOW_PROMOTE",         0.7, 0.7, 0.7, 0.7),
-    "finco":          ("ALLOW_FINCO_TRANSITION", 0.75, 0.75, 0.75, 0.75),
-    "consent_grant":  ("ALLOW_CONSENT_GRANT",   0.7, 0.7, 0.7, 0.7),
-    "repair":         ("ALLOW_REPAIR_CANDIDATE", 0.55, 0.55, 0.55, 0.55),
-    "quarantine":     ("ALLOW_QUARANTINE",      0.5, 0.5, 0.5, 0.5),
+    "observe": ("ALLOW_OBSERVE", 0.3, 0.3, 0.3, 0.3),
+    "queue": ("ALLOW_QUEUE", 0.4, 0.4, 0.4, 0.4),
+    "route": ("ALLOW_ROUTE", 0.45, 0.45, 0.45, 0.45),
+    "vault_write": ("ALLOW_VAULT_WRITE", 0.5, 0.5, 0.5, 0.5),
+    "vault_read": ("ALLOW_VAULT_READ", 0.35, 0.35, 0.35, 0.35),
+    "install": ("ALLOW_INSTALL", 0.6, 0.6, 0.6, 0.6),
+    "confirm": ("ALLOW_CONFIRM", 0.65, 0.65, 0.65, 0.65),
+    "promote": ("ALLOW_PROMOTE", 0.7, 0.7, 0.7, 0.7),
+    "finco": ("ALLOW_FINCO_TRANSITION", 0.75, 0.75, 0.75, 0.75),
+    "consent_grant": ("ALLOW_CONSENT_GRANT", 0.7, 0.7, 0.7, 0.7),
+    "repair": ("ALLOW_REPAIR_CANDIDATE", 0.55, 0.55, 0.55, 0.55),
+    "quarantine": ("ALLOW_QUARANTINE", 0.5, 0.5, 0.5, 0.5),
 }
 
-def classify_action(action_intent: str, activation_tier: str = "assist") -> dict:
-    """
-    Map a natural language action intent to an action class and threshold requirements.
-    Conservative by default — higher-consequence actions require higher thresholds.
-    """
-    intent_lower = action_intent.lower()
 
-    if any(w in intent_lower for w in ["read", "check", "look", "view", "get", "list", "show"]):
+def classify_action(action_intent: str, activation_tier: str = "assist") -> dict:
+    """Classify intent for candidate shaping; classification is not authority."""
+
+    intent_lower = action_intent.lower()
+    if any(word in intent_lower for word in ["read", "check", "look", "view", "get", "list", "show"]):
         action_class = "vault_read" if "vault" in intent_lower else "observe"
-    elif any(w in intent_lower for w in ["write", "save", "store", "update", "remember"]):
+    elif any(word in intent_lower for word in ["write", "save", "store", "update", "remember"]):
         action_class = "vault_write"
-    elif any(w in intent_lower for w in ["install", "deploy", "bootstrap"]):
+    elif any(word in intent_lower for word in ["install", "deploy", "bootstrap"]):
         action_class = "install"
-    elif any(w in intent_lower for w in ["pay", "transfer", "token", "coin", "finco"]):
+    elif any(word in intent_lower for word in ["pay", "transfer", "token", "coin", "finco"]):
         action_class = "finco"
-    elif any(w in intent_lower for w in ["consent", "allow", "permit", "grant"]):
+    elif any(word in intent_lower for word in ["consent", "allow", "permit", "grant"]):
         action_class = "consent_grant"
-    elif any(w in intent_lower for w in ["promote", "release", "publish"]):
+    elif any(word in intent_lower for word in ["promote", "release", "publish"]):
         action_class = "promote"
-    elif any(w in intent_lower for w in ["repair", "fix", "heal", "patch"]):
+    elif any(word in intent_lower for word in ["repair", "fix", "heal", "patch"]):
         action_class = "repair"
-    elif any(w in intent_lower for w in ["queue", "schedule", "plan"]):
+    elif any(word in intent_lower for word in ["queue", "schedule", "plan"]):
         action_class = "queue"
     else:
-        action_class = "observe"  # default conservative
+        action_class = "observe"
 
-    # StegClaw tier can attempt higher-consequence actions
     if activation_tier == "observe":
-        action_class = "observe"  # lock to observe
+        action_class = "observe"
 
-    scope, g, c, a, t = ACTION_SCOPE_MAP.get(action_class, ACTION_SCOPE_MAP["observe"])
+    scope, governance, control, autonomy, trust = ACTION_SCOPE_MAP.get(
+        action_class, ACTION_SCOPE_MAP["observe"]
+    )
     return {
         "action_class": action_class,
         "required_scope": scope,
-        "thresholds": {"governance": g, "control": c, "autonomy": a, "trust": t},
+        "thresholds": {
+            "governance": governance,
+            "control": control,
+            "autonomy": autonomy,
+            "trust": trust,
+        },
+        "admissibility_authority": False,
     }
 
 
-# ── Default state vectors by tier ────────────────────────────────────────────
-
 def default_gcat_state(activation_tier: str, user_trust_score: float = 0.7) -> dict:
-    """
-    Build a default GCAT state vector from user context.
-    In production: derive from user's actual governance posture.
-    """
     tier_caps = {
-        "observe":  {"governance": 0.4, "control": 0.4, "autonomy": 0.2, "trust": user_trust_score},
-        "assist":   {"governance": 0.6, "control": 0.6, "autonomy": 0.5, "trust": user_trust_score},
+        "observe": {"governance": 0.4, "control": 0.4, "autonomy": 0.2, "trust": user_trust_score},
+        "assist": {"governance": 0.6, "control": 0.6, "autonomy": 0.5, "trust": user_trust_score},
         "stegclaw": {"governance": 0.8, "control": 0.8, "autonomy": 0.75, "trust": user_trust_score},
     }
     return tier_caps.get(activation_tier, tier_caps["assist"])
+
 
 def default_ecat_entity(stress_level: float = 0.2, coherence: float = 0.8) -> dict:
     return {
@@ -175,54 +174,49 @@ def default_ecat_entity(stress_level: float = 0.2, coherence: float = 0.8) -> di
     }
 
 
-# ── LLM Adapter ──────────────────────────────────────────────────────────────
-
 class LLMAdapter:
-    """
-    Bridges user/LLM prompts to the Triad gate.
-    Every proposed action is evaluated before it can commit.
-    Receipts are emitted for all decisions.
-    """
+    """Compatibility adapter that cannot independently mint admissibility."""
 
     def __init__(
         self,
-        triad_validator_path: str = None,
+        triad_validator_path: str | None = None,
         receipts_path: str = "./llm_adapter_receipts.jsonl",
         candidates_path: str = "./llm_adapter_candidates/",
-    ):
+        transaction_ledger_path: str | None = None,
+    ) -> None:
+        # ``triad_validator_path`` is retained for API compatibility only. The
+        # adapter does not delegate execution authority to a parallel validator.
+        self.triad_validator_path = triad_validator_path
         self.receipts_path = Path(receipts_path)
         self.candidates_dir = Path(candidates_path)
         self.candidates_dir.mkdir(parents=True, exist_ok=True)
+        self.transaction_ledger = TransactionLedger(transaction_ledger_path)
 
-        # Try to import the existing triad_validator
-        self._triad_available = False
-        if triad_validator_path:
-            import sys
-            sys.path.insert(0, triad_validator_path)
-            try:
-                from triad_validator import TriadValidator
-                self._triad = TriadValidator()
-                self._triad_available = True
-            except ImportError:
-                pass
+    def _emit_receipt(self, receipt: dict) -> None:
+        self.receipts_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.receipts_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(receipt, sort_keys=True) + "\n")
 
-    def _emit_receipt(self, receipt: dict):
-        with open(self.receipts_path, "a") as f:
-            f.write(json.dumps(receipt) + "\n")
-
-    def _make_receipt(self, candidate_id: str, decision: str, reason: str,
-                      actor: str, next_route: str, unknowns: list = None) -> dict:
+    def _make_legacy_receipt(
+        self,
+        candidate_id: str,
+        *,
+        actor: str,
+        action_intent: str,
+    ) -> dict:
         return {
-            "schema": "stegverse_llm_adapter_receipt.v1",
+            "schema": "stegverse_llm_adapter_receipt.v2",
             "generated_at": datetime.now(timezone.utc).isoformat(),
-            "engine": "llm-adapter",
+            "engine": "llm-adapter-compatibility",
             "input_ref": candidate_id,
             "actor_or_source": actor,
-            "decision": decision,
-            "reason": reason,
+            "decision": "FAIL_CLOSED",
+            "reason": "canonical_admissibility_request_required",
             "hashes": {"candidate_hash": hashlib.sha256(candidate_id.encode()).hexdigest()},
-            "unknowns": unknowns or [],
-            "next_route": next_route,
+            "unknowns": [action_intent],
+            "next_route": "canonical_manifested_steggate_required",
+            "admissibility_authority": False,
+            "parallel_evaluator_used": False,
         }
 
     def evaluate_action(
@@ -235,145 +229,92 @@ class LLMAdapter:
         user_trust_score: float = 0.7,
         stress_level: float = 0.2,
         coherence: float = 0.8,
-        pe_observations: list = None,
-        context: dict = None,
+        pe_observations: list | None = None,
+        context: dict | None = None,
     ) -> dict:
+        """Shape legacy input but fail closed until a canonical request exists.
+
+        Historical callers may continue to call this method, but it can no
+        longer produce ALLOW/DENY as an independent policy engine. Use
+        :meth:`evaluate_manifested_action` for consequential evaluation.
         """
-        Main entry point. Takes a prompt and user context, returns ALLOW/DENY/FAIL_CLOSED.
-        This is what the personal entity calls before executing any action.
-        """
-        # 1. Classify the action
+
         classification = classify_action(action_intent, activation_tier)
-        action_class   = classification["action_class"]
-        thresholds     = classification["thresholds"]
-
-        # 2. Build Triad candidate vector
-        gcat_state = default_gcat_state(activation_tier, user_trust_score)
-        ecat_entity = default_ecat_entity(stress_level, coherence)
-
+        thresholds = classification["thresholds"]
         candidate = make_triad_candidate(
             prompt=prompt,
             user_id=user_id,
             entity_subject_id=entity_subject_id,
             action_intent=action_intent,
-            action_class=action_class,
-            gcat_state=gcat_state,
+            action_class=classification["action_class"],
+            gcat_state=default_gcat_state(activation_tier, user_trust_score),
             bcat_params=thresholds,
-            ecat_entity=ecat_entity,
+            ecat_entity=default_ecat_entity(stress_level, coherence),
             icat_params={"coherence_threshold": 0.5, "depth_minimum": 1},
             pe_observations=pe_observations or [{"type": "user_session", "confidence": 0.8}],
             context=context,
         )
+        candidate_path = self.candidates_dir / f"{candidate['candidate_id']}.json"
+        candidate_path.write_text(json.dumps(candidate, indent=2, sort_keys=True), encoding="utf-8")
 
-        # 3. Save candidate vector (for replay and audit)
-        cand_file = self.candidates_dir / f"{candidate['candidate_id']}.json"
-        with open(cand_file, "w") as f:
-            json.dump(candidate, f, indent=2)
-
-        # 4. Run Triad validator if available
-        if self._triad_available:
-            try:
-                triad_result = self._triad.validate(candidate)
-                decision = triad_result.get("decision", "FAIL_CLOSED")
-                reason   = triad_result.get("reason", "Triad evaluation complete.")
-            except Exception as e:
-                decision = "FAIL_CLOSED"
-                reason   = f"Triad validation error: {e}"
-        else:
-            # Inline evaluation when triad_validator not available
-            decision, reason = self._inline_evaluate(candidate, gcat_state, thresholds)
-
-        # 5. Determine next route
-        next_route = {
-            "ALLOW": "vault_write" if "vault" in action_class else "ingestion",
-            "DENY":  "quarantine",
-            "FAIL_CLOSED": "quarantine",
-            "REVIEW_REQUIRED": "review",
-        }.get(decision, "quarantine")
-
-        # 6. Emit receipt
-        receipt = self._make_receipt(
-            candidate["candidate_id"], decision, reason,
-            entity_subject_id, next_route,
-            unknowns=[] if decision == "ALLOW" else [action_intent]
+        receipt = self._make_legacy_receipt(
+            candidate["candidate_id"],
+            actor=entity_subject_id,
+            action_intent=action_intent,
         )
         self._emit_receipt(receipt)
-
         return {
             "candidate_id": candidate["candidate_id"],
-            "action_class": action_class,
-            "decision": decision,
-            "reason": reason,
-            "next_route": next_route,
+            "action_class": classification["action_class"],
+            "decision": "FAIL_CLOSED",
+            "reason": "canonical_admissibility_request_required",
+            "next_route": "canonical_manifested_steggate_required",
             "receipt": receipt,
         }
 
-    def _inline_evaluate(self, candidate: dict, gcat_state: dict, thresholds: dict) -> tuple:
-        """
-        Inline Triad evaluation when external validator not available.
-        Simplified but structurally correct.
-        """
-        issues = []
+    def evaluate_manifested_action(
+        self,
+        request: AdmissibilityRequest,
+        executor: Callable[[], Any],
+        *,
+        prompt: str,
+        entity_subject_id: str,
+        source: str = "llm-adapter",
+        metadata: Optional[Mapping[str, Any]] = None,
+        declared_execution_context: Optional[Mapping[str, Any]] = None,
+        capability_surface: Optional[Mapping[str, Any]] = None,
+        authority_resolution: Optional[Mapping[str, Any]] = None,
+    ) -> ManifestedTransactionResult:
+        """Run an explicit canonical request through the ordinary ecosystem path."""
 
-        # GCAT check
-        for dim, threshold in thresholds.items():
-            actual = gcat_state.get(dim, 0)
-            if actual < threshold:
-                issues.append(f"GCAT/{dim.upper()}: {actual:.2f} < {threshold:.2f}")
+        return run_manifested_transaction(
+            request,
+            executor,
+            input_data={
+                "prompt_hash": hashlib.sha256(prompt.encode()).hexdigest(),
+                "prompt": prompt,
+            },
+            source=source,
+            subject=entity_subject_id,
+            ledger=self.transaction_ledger,
+            metadata={
+                "adapter": "legacy-llm-adapter-compatibility",
+                "parallel_evaluator_used": False,
+                **dict(metadata or {}),
+            },
+            declared_execution_context=declared_execution_context,
+            capability_surface=capability_surface,
+            authority_resolution=authority_resolution,
+        )
 
-        # ECAT check
-        ecat = candidate.get("ecat", {}).get("entity", {})
-        if ecat.get("stress", 0) > ecat.get("stress_threshold", 0.7):
-            issues.append("ECAT: stress exceeds threshold")
-        if ecat.get("coherence", 1) < ecat.get("coherence_floor", 0.3):
-            issues.append("ECAT: coherence below floor")
-        if ecat.get("manipulation_detected"):
-            issues.append("ECAT: manipulation signal detected")
-
-        # PE check
-        pe_obs = candidate.get("pe", {}).get("observations", [])
-        if not pe_obs:
-            issues.append("PE: no observations — existence unverified")
-        else:
-            avg_conf = sum(o.get("confidence", 0) for o in pe_obs) / len(pe_obs)
-            if avg_conf < 0.6:
-                issues.append(f"PE: mean confidence {avg_conf:.2f} below 0.6 threshold")
-
-        if issues:
-            return "FAIL_CLOSED", "Gate failures: " + "; ".join(issues)
-
-        return "ALLOW", f"All gates passed for action class '{candidate.get('action_class')}'."
-
-
-# ── CLI ───────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     adapter = LLMAdapter()
-
-    # Demo evaluation
-    results = []
-    test_cases = [
-        ("Read my genealogy records", "assist",   "observe"),
-        ("Save my session context",   "assist",   "vault_write"),
-        ("Deploy Core-Lite",          "assist",   "install"),
-        ("Transfer 100 StegCoin",     "stegclaw", "finco"),
-        ("Transfer 100 StegCoin",     "observe",  "finco"),  # should fail
-    ]
-
-    for prompt, tier, intent in test_cases:
-        r = adapter.evaluate_action(
-            prompt=prompt,
-            user_id="user_001",
-            entity_subject_id="steg:agent/personal:demo",
-            action_intent=intent,
-            activation_tier=tier,
-        )
-        results.append({
-            "prompt": prompt,
-            "tier": tier,
-            "decision": r["decision"],
-            "action_class": r["action_class"],
-        })
-        print(f"[{r['decision']:<12}] {prompt!r} (tier={tier})")
-
-    print(f"\n{sum(1 for r in results if r['decision'] == 'ALLOW')}/{len(results)} ALLOW")
+    result = adapter.evaluate_action(
+        prompt="Read my genealogy records",
+        user_id="user_001",
+        entity_subject_id="steg:agent/personal:demo",
+        action_intent="observe",
+        activation_tier="assist",
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
