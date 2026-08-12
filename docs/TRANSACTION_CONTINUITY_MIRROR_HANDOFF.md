@@ -10,6 +10,8 @@ issue #79: COMPLETE
 PR #80: MERGED / c227547b1d1e7ce4cce3b8b13c2212ed50a0f116
 issue #81: COMPLETE
 PR #82: MERGED / 04425f592ab2b7bfbd0181fac8511d14b8b08048
+issue #83: ACTIVE — core index merged, shared ecosystem backing/public consumer binding remain
+PR #84: MERGED / ee40743aba893d9e16293cb2521abe58e2abedae
 parent handoff: STEGCORE_MIRROR_HANDOFF.md
 canonical runtime identity: stegverse:steggate:canonical:three-layer:v1
 canonical evaluator: stegcore.three_layer.evaluate_three_layer
@@ -25,8 +27,10 @@ Complete the original SDK/LLM-adapter continuity purpose by ensuring demo/runtim
 
 ```text
 src/stegcore/transaction_lifecycle.py
+src/stegcore/transaction_discovery.py
 src/stegcore/__init__.py
 tests/test_transaction_lifecycle.py
+tests/test_transaction_discovery.py
 tools/run_manifested_transaction_demo.py
 docs/MANIFESTED_TRANSACTION_CONTINUITY.md
 docs/MANSOOR_EVALUATION_BASELINE_DELTA.md
@@ -35,12 +39,15 @@ core/llm_adapter.py
 tests/test_legacy_llm_adapter_canonicalization.py
 StegCore#79
 StegCore#81
+StegCore#83
 ```
 
 ## Boundary invariants
 
 ```text
 manifest grants authority: false
+discovery index grants authority: false
+discovery index discloses payload: false
 required route: ingestion -> steggate -> return_ingestion
 canonical evaluator bypass: prohibited
 demo-specific evaluator: prohibited
@@ -62,6 +69,7 @@ external input
   -> bounded executor only when governance + coherence allow
   -> RESULT_INGESTED receipt
   -> SDK result bundle
+  -> TransactionDiscoveryIndex registration
   -> discover / verify_chain / reconstruct / replay descriptor
 ```
 
@@ -86,6 +94,36 @@ legacy evaluate_manifested_action(explicit AdmissibilityRequest)
 
 The old adapter-local inline evaluator that could mint ALLOW when no external validator was available has been removed.
 
+## Durable discovery/index core
+
+`src/stegcore/transaction_discovery.py` adds provider-neutral append-only discovery metadata with optional JSONL persistence/reload. It indexes transaction identity without storing protected payload content.
+
+Queryable fields include:
+
+```text
+transaction_id
+manifest_hash
+candidate_hash
+request_hash
+canonical runtime identity
+source / subject
+stage / state
+finding_ref
+remediation_ref
+verification_ref
+receipt_chain_head
+```
+
+`safe_summary()` returns route/state/lineage metadata while explicitly preserving `payload_disclosed=false` and `discovery_grants_authority=false`.
+
+Reviewer lineage is now representable as:
+
+```text
+finding -> evidence transaction(s) -> replay -> remediation -> verification
+```
+
+without turning the reviewer finding or discovery index into policy authority.
+
 ## Longitudinal proof cases
 
 ```text
@@ -98,17 +136,7 @@ The earlier transaction remains discoverable and chain-verifiable after the late
 
 ## Validation evidence
 
-PR #80 required workflows all passed before merge:
-
-```text
-Validate StegCore Runtime: success
-StegCore Tests: success
-Test Readiness: success
-Validate StegVerse 001 002 Baseline: success
-BCAT Gate: success
-```
-
-PR #82 required workflows all passed before merge:
+PR #80, PR #82, and PR #84 each passed the required repository workflows before merge:
 
 ```text
 Validate StegCore Runtime: success
@@ -126,9 +154,9 @@ Mansoor's evaluation target remains the frozen AdmittedCode / StegGate 0.2.0 bra
 
 ```text
 StegVerse-Labs/StegCore
-  -> define durable ecosystem discovery/index backing beyond local/in-process or JSONL ledger;
-  -> bind packaged SDK/browser consumer surfaces to transaction discovery where continuity envelopes are required;
-  -> preserve finding -> evidence -> replay -> remediation -> verification lineage for reviewer findings.
+  -> issue #83: bind TransactionDiscoveryIndex to a durable shared ecosystem backing/provider beyond local JSONL;
+  -> bind packaged SDK/browser consumer surfaces to discovery where continuity envelopes are required;
+  -> retain reviewer finding/remediation/verification lineage against shared discovery records.
 
 StegVerse-Labs/Site
   -> consume canonical transaction identity/trajectory for public application proof.
@@ -146,15 +174,18 @@ StegVerse-002/stegguardian-wiki
 ## Completion status
 
 ```text
-core continuity module: 100% MERGED
-public SDK exports: 100% MERGED
-longitudinal tests: 100% MERGED
+core manifested continuity: 100% MERGED
+public SDK lifecycle exports: 100% MERGED
+longitudinal boundary tests: 100% MERGED
 demo runner: 100% MERGED
 legacy LLM-adapter parallel ALLOW escape removal: 100% MERGED
 legacy manifested canonical path: 100% MERGED
+provider-neutral discovery/index contract: 100% MERGED
+local durable JSONL discovery persistence/reload: 100% MERGED
+reviewer finding/remediation/verification lineage fields: 100% MERGED
 Mansoor baseline delta preservation: 100%
-CI validation: 100% PASS
-core merge: 100%
-durable cross-ecosystem discovery index: NEXT INTEGRATION GOAL
+CI validation for merged work: 100% PASS
+shared cross-ecosystem discovery backing: ACTIVE / issue #83
+public consumer discovery binding: PENDING #83 FOLLOW-ON
 release propagation: NOT YET ELIGIBLE
 ```
