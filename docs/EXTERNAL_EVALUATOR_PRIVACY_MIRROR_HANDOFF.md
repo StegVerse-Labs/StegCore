@@ -5,9 +5,10 @@
 ```text
 goal_id: EXTERNAL-EVALUATOR-PRIVACY-001
 repository: StegVerse-Labs/StegCore
-branch: fix/external-evaluator-privacy
+branch: main
 parent_handoffs: docs/SDK_STEGGATE_EXPERIMENT_REFERENCE_MIRROR_HANDOFF.md, docs/TRANSACTION_CONTINUITY_MIRROR_HANDOFF.md
-state: INSTALLED_PENDING_VALIDATION
+state: COMPLETE_VALIDATED_MERGED
+merge_commit: 112ee948c9482323dda1740c6280cf3b169d1db1
 ```
 
 ## Rule
@@ -18,33 +19,37 @@ The rule applies to filenames, workflow names, test subjects, manifest subjects,
 
 External identity is not runtime authority and must not be required for submission, replay, reconstruction, or custody resolution.
 
+## Completed correction
+
+```text
+person-named evaluator response path: removed from main
+replacement: docs/EXTERNAL_EVALUATOR_RESPONSE_2026-08-12.md
+transaction test subjects: neutralized
+evaluator notification material: neutralized
+manifested-transaction example: neutralized
+SDK experiment handoff readiness label: neutralized
+PR #86 title/body: neutralized
+PR #86: closed with zero changed files after branch reset
+```
+
+The prior branch ref was moved to the current neutralized `main`, so it no longer exposes person-specific harness contents at its branch head. Historical GitHub event/log retention is a platform-history issue rather than a current repository-source issue.
+
 ## Public inspection entry point
 
-A public PR may provide a visible, durable inspection record, but untrusted PR code must never become the evaluator implementation or runtime authority.
-
-Safe shape:
+The safe public entry shape is now implemented in `StegVerse-org/StegVerse-SDK` under `docs/PUBLIC_INSPECTION_ENTRY_MIRROR_HANDOFF.md`.
 
 ```text
-untrusted PR supplies bounded declarative case data
--> trusted base-repository workflow validates schema
--> trusted pinned evaluator/runtime processes the case
--> governed receipts are emitted
--> public check/run records the observation
+public PR supplies bounded declarative request data
+-> repository-native schema/validator checks the request
+-> trusted SDK/StegGate processing occurs independently of untrusted PR code
+-> receipt identifiers may be posted back to the PR
+-> canonical custody remains separately governed
 ```
 
-Prohibited shape:
+No automatic PR workflow authority, GitHub credential authority, TV/TVC credential transport, or Master Records authority is introduced.
 
-```text
-untrusted PR code
--> executed as evaluator/runtime
-```
+## Validation
 
-Fork PRs must not receive secrets, write authority, TV/TVC credentials, or Master Records custody authority. Public records are observations only until separately admitted into canonical custody.
+StegCore privacy PR #87 passed StegCore tests, runtime validation, Test Readiness, BCAT Gate, and StegVerse 001/002 baseline validation before merge.
 
-## Remaining work
-
-1. remove personal evaluator identifiers from current public files and active PR surfaces;
-2. replace the person-specific frozen-case harness with a neutral external-inspection harness;
-3. ensure the PR-triggered lane consumes only bounded declarative data and trusted base code;
-4. validate no public source file on the active branch contains the removed personal identifier;
-5. preserve the distinction between public inspection evidence and canonical Master Records custody.
+The privacy goal is complete for active repository source and current public PR metadata. Historical platform logs/branch naming generated before this correction cannot be fully erased with the available repository connector and must not be treated as current project attribution.
