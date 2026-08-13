@@ -85,7 +85,7 @@ def test_manifest_declares_route_but_never_grants_authority():
         request,
         {"payment": 420},
         source="sdk:test",
-        subject="evaluation:eduardo",
+        subject="evaluation:external",
     )
     assert manifest.manifest_grants_authority is False
     assert manifest.declared_route == [
@@ -107,7 +107,7 @@ def test_manifest_rejects_test_route_that_bypasses_ingestion():
             request,
             {"payment": 420},
             source="sdk:test",
-            subject="evaluation:eduardo",
+            subject="evaluation:external",
             declared_route=("sdk", "steggate", "return_ingestion"),
         )
     except ValueError as exc:
@@ -125,7 +125,7 @@ def test_normal_manifested_allow_traverses_canonical_runtime_and_returns():
         lambda: calls.append("executed") or {"payment": "committed"},
         input_data={"payment": 420},
         source="sdk:test",
-        subject="evaluation:eduardo",
+        subject="evaluation:external",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -154,7 +154,7 @@ def test_prior_validity_can_remain_replayable_while_current_execution_is_refused
         lambda: {"payment": "committed"},
         input_data={"payment": 420, "phase": "t0"},
         source="sdk:test",
-        subject="evaluation:eduardo",
+        subject="evaluation:external",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -170,7 +170,7 @@ def test_prior_validity_can_remain_replayable_while_current_execution_is_refused
         lambda: calls.append("executed"),
         input_data={"payment": 420, "phase": "t1", "policy_current": False},
         source="sdk:test",
-        subject="evaluation:eduardo",
+        subject="evaluation:external",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -204,7 +204,7 @@ def test_candidate_mutation_breaks_prior_approval_binding_without_erasing_prior_
         lambda: {"payment": "committed"},
         input_data={"payment": 420},
         source="sdk:test",
-        subject="evaluation:eduardo",
+        subject="evaluation:external",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
     )
@@ -220,7 +220,7 @@ def test_candidate_mutation_breaks_prior_approval_binding_without_erasing_prior_
         lambda: calls.append("executed"),
         input_data={"payment": 4200},
         source="sdk:test",
-        subject="evaluation:eduardo",
+        subject="evaluation:external",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
     )

@@ -88,13 +88,13 @@ A replay consumer can rerun the retained request against the preserved runtime/v
 
 `TransactionLedger.reconstruct(transaction_id)` emits the ordered state trajectory and verifies the receipt chain. Reconstruction therefore answers what processors and states the transaction traversed without relying on an application narrative.
 
-## Eduardo longitudinal boundary test
+## External longitudinal boundary test
 
 The canonical demonstration uses ordinary manifested transactions rather than privileged fixtures:
 
 1. T0: manifest and ingest a valid $420 candidate; canonical StegGate returns ALLOW and consequence executes.
-2. T1a: retain the candidate but make policy/delegation/evidence/validity state stale; canonical StegGate refuses consequence.
-3. T1b: mutate the candidate to $4,200 while retaining the original approval binding; candidate binding fails and consequence is refused.
+2. T1-A: retain the candidate but make policy/delegation/evidence/validity state stale; canonical StegGate refuses consequence.
+3. T1-B: mutate the candidate to $4,200 while retaining the original approval binding; candidate binding fails and consequence is refused.
 4. Preserve both historical chains and reconstruct them independently.
 
 The proof is not merely `ALLOW -> DENY`. It is that prior validity remains independently discoverable and replayable while present execution authority is separately refused.
@@ -120,6 +120,10 @@ run_manifested_transaction
 ```
 
 `run_manifested_transaction` is the common path for demos/tests that need full transaction continuity. It calls the same `governed_steggate_execute` used by ordinary governed runtime integration.
+
+## Public attribution boundary
+
+Public fixtures, workflow names, subjects, receipt metadata, PR descriptions, evaluator handoffs, examples, and inspection records use neutral role identifiers unless the named individual has explicitly agreed to public attribution. Personal identity is not runtime authority and is not required for replay, reconstruction, or custody resolution.
 
 ## Acceptance conditions
 

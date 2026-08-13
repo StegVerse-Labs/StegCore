@@ -1,10 +1,10 @@
-# Eduardo Evaluator Response — 2026-08-12
+# External Evaluator Response — 2026-08-12
 
 ## Purpose
 
-Durably record the external evaluator's requested evidence surface and interpretation constraints for the frozen longitudinal StegGate boundary experiment.
+Durably record an external evaluator's requested evidence surface and interpretation constraints for the frozen longitudinal StegGate boundary experiment without attaching a personal identity to public repository records.
 
-This record does **not** alter the frozen T0 / T1-A / T1-B cases. It constrains how the completed runs are presented to the evaluator.
+This record does **not** alter the frozen T0 / T1-A / T1-B cases. It constrains how the completed runs are presented to an external evaluator.
 
 ## Evaluator-requested evidence surface
 
@@ -57,7 +57,7 @@ frozen T0 / T1-A / T1-B runs: EXECUTED THROUGH ORDINARY INTERFACE
 canonical manifest_receipt_id returned for each run
 ```
 
-The evaluator explicitly agreed that premature release language is unnecessary and should be avoided.
+Premature release language is unnecessary and should be avoided.
 
 ## Interpretation neutrality
 
@@ -84,6 +84,10 @@ After final validation, provide:
 ```
 
 No bespoke reviewer packet is required.
+
+## Public attribution boundary
+
+Public filenames, subjects, workflow names, receipt metadata, and durable handoffs use neutral role identifiers unless the individual has explicitly agreed to public attribution. Personal identity is not runtime authority and is not required for replay, reconstruction, or custody resolution.
 
 ## Worker continuation constraints
 

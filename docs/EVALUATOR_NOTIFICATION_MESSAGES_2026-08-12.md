@@ -12,9 +12,9 @@ Canonical experiment reference:
 
 This communication record grants no runtime, policy, execution, release, or reviewer authority.
 
-## Eduardo — experiment invitation
+## External evaluator — experiment invitation
 
-Eduardo — I have the experiment reference frozen now, so we're no longer asking you to evaluate a moving `main`.
+The experiment reference is frozen now, so the evaluator is no longer being asked to evaluate a moving `main`.
 
 The case is available through the ordinary SDK/AdmittedCode/StegGate transaction path rather than a purpose-built evaluator. The reference set fixes the exact participating repository commits before the experiment is run, which means any resulting manifest, receipt chain, state transition, or finding can later be replayed against the same source state.
 
@@ -30,9 +30,9 @@ The question is not simply whether the later cases are refused. It is whether th
 
 The path records manifestation, ingestion, canonical evaluation, commit coherence, return ingestion, discovery, and replay/reconstruction evidence. There is no alternate demo evaluator, and the manifest itself grants no authority.
 
-Please approach the resulting evidence without assuming that our interpretation is correct. If you find the boundary, fail to find it, or identify a different explanation for the transition, that is the useful result.
+The evaluator should approach the resulting evidence without assuming that our interpretation is correct. If the boundary is found, not found, or a different explanation for the transition is identified, that is the useful result.
 
-The exact source reference for the exercise is `SDK-STEGGATE-BOUNDARY-2026-08-12`, so anything you identify can subsequently be replayed against the same state.
+The exact source reference for the exercise is `SDK-STEGGATE-BOUNDARY-2026-08-12`, so anything identified can subsequently be replayed against the same state.
 
 ## Mansoor — baseline-preservation notice
 
@@ -57,3 +57,7 @@ If Mansoor's blind newcomer observations are still pending, do not disclose the 
 ## Finding provenance rule
 
 If either evaluator independently identifies a condition already discovered or corrected by development, preserve the evaluator's finding as independently attributable. Bind the finding to the exact experiment reference plus transaction/manifest/receipt identifiers so later replay, remediation, and verification can distinguish evaluator interpretation from ecosystem evidence.
+
+## Public attribution boundary
+
+Public evaluator records use neutral role identifiers unless the named individual has explicitly agreed to public attribution. Personal identity is not runtime authority and is not required for replay, reconstruction, or custody resolution.

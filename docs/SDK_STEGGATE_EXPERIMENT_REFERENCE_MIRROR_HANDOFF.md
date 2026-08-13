@@ -112,10 +112,14 @@ The source components were already validated under their owning handoffs. This l
 ## Evaluator readiness
 
 ```text
-Eduardo experiment package: READY_TO_SEND
+External evaluator experiment package: READY_TO_SEND
 Mansoor baseline-preservation notification: READY_TO_SEND
 Mansoor detailed post-baseline architecture disclosure: HOLD_UNTIL_BLIND_NEWCOMER_OBSERVATION_IF_STILL_PENDING
 ```
+
+## Public attribution boundary
+
+Public evaluator records use neutral role identifiers unless the named individual has explicitly agreed to public attribution. Personal identity is not runtime authority and is not required for replay, reconstruction, or custody resolution.
 
 ## Cross-repository propagation
 
