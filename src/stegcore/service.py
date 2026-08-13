@@ -2,7 +2,10 @@ from __future__ import annotations
 
 """HTTP service for the reconciled canonical StegGate evaluation chain."""
 
+from typing import Any
+
 from fastapi import FastAPI
+from pydantic import BaseModel, Field
 
 from .steggate import (
     AdmissibilityRequest,
@@ -15,6 +18,7 @@ from .steggate import (
     SignalState,
     evaluate_admissibility,
 )
+from .transaction_lifecycle import TransactionLedger, run_manifested_transaction
 from .version import __version__
 
 SERVICE_VERSION = __version__
@@ -23,6 +27,25 @@ RUNTIME_IDENTITY = "stegverse:steggate:canonical:three-layer:v1"
 CANONICAL_OWNER = "StegVerse-Labs/StegCore"
 CANONICAL_ADMISSIBILITY_RUNTIME = "stegcore.three_layer.evaluate_three_layer"
 DISPOSITIONS = ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"]
+
+
+class ManifestedValidationRequest(BaseModel):
+    """Bounded production-route validation request.
+
+    This surface preserves a transaction identity established by the upstream
+    manifest/ingestion carrier while still running the canonical governed
+    StegGate path. The embedded consequence is always simulated and carries no
+    external side effect or execution authority.
+    """
+
+    transaction_id: str = Field(min_length=1)
+    request: AdmissibilityRequest
+    input_data: Any = Field(default_factory=dict)
+    source: str = Field(default="stegverse-sdk:production-validation", min_length=1)
+    subject: str = Field(default="external-validation", min_length=1)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    external_side_effects_enabled: bool = False
+
 
 app = FastAPI(
     title="StegGate",
@@ -36,7 +59,6 @@ app = FastAPI(
 
 
 def runtime_identity() -> dict[str, object]:
-    """Return the transport-independent identity consumed by reference applications."""
     return {
         "service": "StegGate",
         "service_version": SERVICE_VERSION,
@@ -45,6 +67,7 @@ def runtime_identity() -> dict[str, object]:
         "canonical_owner": CANONICAL_OWNER,
         "canonical_admissibility_runtime": CANONICAL_ADMISSIBILITY_RUNTIME,
         "evaluation_endpoint": "/v1/evaluate",
+        "manifested_validation_endpoint": "/v1/manifested-validation",
         "capabilities_endpoint": "/v1/capabilities",
         "dispositions": DISPOSITIONS,
         "canonical_three_layer_bound": True,
@@ -74,6 +97,7 @@ def root() -> dict[str, object]:
         "runtime_identity": "/v1/runtime-identity",
         "capabilities": "/v1/capabilities",
         "evaluate": "/v1/evaluate",
+        "manifested_validation": "/v1/manifested-validation",
         "self_test": "/v1/self-test",
         "docs": "/docs",
         "canonical_admissibility_runtime": CANONICAL_ADMISSIBILITY_RUNTIME,
@@ -91,6 +115,7 @@ def health() -> dict[str, object]:
         "runtime_identity": RUNTIME_IDENTITY,
         "canonical_three_layer_bound": True,
         "admissibility_matrix": "active",
+        "manifested_validation": True,
         "fail_closed": True,
     }
 
@@ -114,6 +139,8 @@ def capabilities() -> dict[str, object]:
         "candidate_hash_binding": True,
         "approval_candidate_hash_binding": True,
         "continuity_input_supported": True,
+        "manifested_validation_supported": True,
+        "external_transaction_identity_supported": True,
         "permission_distinct_from_admissibility": True,
         "application_specific_policy_authority": False,
         "transport_identity_authoritative": False,
@@ -125,6 +152,47 @@ def capabilities() -> dict[str, object]:
 @app.post("/v1/evaluate")
 def evaluate(request: AdmissibilityRequest) -> dict[str, object]:
     return evaluate_admissibility(request).model_dump(mode="json")
+
+
+@app.post("/v1/manifested-validation")
+def manifested_validation(payload: ManifestedValidationRequest) -> dict[str, Any]:
+    if payload.external_side_effects_enabled:
+        raise ValueError("manifested_validation_external_side_effects_prohibited")
+
+    ledger = TransactionLedger()
+
+    def simulated_executor() -> dict[str, Any]:
+        return {
+            "status": "SIMULATED_PRODUCTION_VALIDATION_CONSEQUENCE",
+            "external_side_effect": False,
+            "transaction_id": payload.transaction_id,
+        }
+
+    metadata = dict(payload.metadata)
+    metadata.update(
+        {
+            "service_execution_surface": "StegVerse-Labs/StegCore:/v1/manifested-validation",
+            "external_side_effects_enabled": False,
+            "production_route_validation": True,
+        }
+    )
+
+    result = run_manifested_transaction(
+        payload.request,
+        simulated_executor,
+        input_data=payload.input_data,
+        source=payload.source,
+        subject=payload.subject,
+        ledger=ledger,
+        transaction_id=payload.transaction_id,
+        metadata=metadata,
+    )
+    response = result.model_dump(mode="json")
+    response["service_runtime_identity"] = RUNTIME_IDENTITY
+    response["service_canonical_owner"] = CANONICAL_OWNER
+    response["service_external_side_effect"] = False
+    response["service_execution_authority"] = False
+    return response
 
 
 def _base_request() -> AdmissibilityRequest:
