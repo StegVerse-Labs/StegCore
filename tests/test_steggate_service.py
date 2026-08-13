@@ -9,7 +9,7 @@ from stegcore.steggate import (
     SignalState,
     evaluate_admissibility,
 )
-from stegcore.service import capabilities, health, runtime_identity, self_test
+from stegcore.service import ManifestedValidationRequest, capabilities, health, manifested_validation, runtime_identity, self_test
 
 
 def request_all_pass() -> AdmissibilityRequest:
@@ -115,13 +115,11 @@ def test_required_approval_missing_routes_to_review_after_canonical_allow():
 def test_approval_must_bind_exact_candidate_hash():
     request = request_all_pass()
     preliminary = evaluate_admissibility(request)
-
     request.approval.required = True
     request.approval.valid = True
     request.approval.candidate_hash = preliminary.candidate_hash
     allowed = evaluate_admissibility(request)
     assert allowed.disposition == "ALLOW"
-
     request.approval.candidate_hash = "0" * 64
     denied = evaluate_admissibility(request)
     assert denied.disposition == "DENY"
@@ -144,7 +142,6 @@ def test_permission_is_recorded_but_not_used_as_admissibility_authority():
     denied = evaluate_admissibility(denied_request)
     assert denied.disposition == "DENY"
     assert denied.permission_present is True
-
     allowed_request = request_all_pass()
     allowed_request.permission_present = False
     allowed = evaluate_admissibility(allowed_request)
@@ -157,6 +154,7 @@ def test_live_service_health_and_self_test_contract():
     assert status["state"] == "healthy"
     assert status["canonical_three_layer_bound"] is True
     assert status["runtime_identity"] == "stegverse:steggate:canonical:three-layer:v1"
+    assert status["manifested_validation"] is True
     result = self_test()
     assert result["state"] == "PASS"
     assert result["canonical_three_layer_bound"] is True
@@ -171,18 +169,29 @@ def test_runtime_identity_is_stable_transport_independent_contract():
     assert identity["runtime_identity"] == "stegverse:steggate:canonical:three-layer:v1"
     assert identity["canonical_owner"] == "StegVerse-Labs/StegCore"
     assert identity["canonical_admissibility_runtime"] == "stegcore.three_layer.evaluate_three_layer"
-    assert identity["binding_fields"] == [
-        "contract_version",
-        "runtime_identity",
-        "canonical_owner",
-        "canonical_admissibility_runtime",
-    ]
+    assert identity["manifested_validation_endpoint"] == "/v1/manifested-validation"
+    assert identity["binding_fields"] == ["contract_version", "runtime_identity", "canonical_owner", "canonical_admissibility_runtime"]
     assert identity["application_specific_policy_authority"] is False
     assert identity["transport_identity_authoritative"] is False
     assert identity["execution_authority"] is False
     assert caps["runtime_identity"] == identity["runtime_identity"]
-    assert caps["contract_version"] == identity["contract_version"]
-    assert caps["canonical_owner"] == identity["canonical_owner"]
-    assert caps["canonical_admissibility_runtime"] == identity["canonical_admissibility_runtime"]
-    assert caps["application_specific_policy_authority"] is False
-    assert caps["transport_identity_authoritative"] is False
+    assert caps["manifested_validation_supported"] is True
+    assert caps["external_transaction_identity_supported"] is True
+
+
+def test_manifested_validation_preserves_upstream_transaction_identity_and_is_bounded():
+    payload = ManifestedValidationRequest(
+        transaction_id="TX-PRODUCTION-VALIDATION-001",
+        request=request_all_pass(),
+        input_data={"amount": 420},
+        metadata={"execution_provenance": {"lane_class": "PRODUCTION_VALIDATION"}},
+        external_side_effects_enabled=False,
+    )
+    result = manifested_validation(payload)
+    assert result["transaction_id"] == "TX-PRODUCTION-VALIDATION-001"
+    assert result["manifest"]["transaction_id"] == "TX-PRODUCTION-VALIDATION-001"
+    assert all(receipt["transaction_id"] == "TX-PRODUCTION-VALIDATION-001" for receipt in result["receipts"])
+    assert result["service_runtime_identity"] == "stegverse:steggate:canonical:three-layer:v1"
+    assert result["service_external_side_effect"] is False
+    assert result["service_execution_authority"] is False
+    assert result["execution_observation"]["evaluation"]["disposition"] == "ALLOW"
