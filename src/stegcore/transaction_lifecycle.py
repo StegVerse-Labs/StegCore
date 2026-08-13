@@ -266,14 +266,16 @@ def run_manifested_transaction(
     ledger: Optional[TransactionLedger] = None,
     declared_route: Iterable[str] = ("sdk", "ingestion", "steggate", "return_ingestion", "sdk_output"),
     metadata: Optional[Mapping[str, Any]] = None,
+    transaction_id: Optional[str] = None,
     declared_execution_context: Optional[Mapping[str, Any]] = None,
     capability_surface: Optional[Mapping[str, Any]] = None,
     authority_resolution: Optional[Mapping[str, Any]] = None,
 ) -> ManifestedTransactionResult:
     """Run one ordinary manifested transaction through canonical StegGate.
 
-    No test-only evaluator exists here. Test and demo callers use the same
-    ``governed_steggate_execute`` function as ordinary governed runtime callers.
+    ``transaction_id`` may be supplied by an already-established ecosystem route
+    manifest so ingestion/CGE, StegCore, return ingestion, and downstream custody
+    preserve one transaction identity. Supplying the identifier grants no authority.
     """
 
     ledger = ledger or TransactionLedger()
@@ -284,6 +286,7 @@ def run_manifested_transaction(
         subject=subject,
         declared_route=declared_route,
         metadata=metadata,
+        transaction_id=transaction_id,
     )
 
     admitted = _make_receipt(
