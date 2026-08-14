@@ -1,0 +1,61 @@
+name: SDK Usage Notification
+
+on:
+  repository_dispatch:
+    types: [stegverse_sdk_usage_event]
+  pull_request:
+    paths:
+      - 'src/stegcore/sdk_operation_events.py'
+      - 'scripts/render_sdk_usage_notification.py'
+      - 'tests/test_sdk_operation_events.py'
+      - 'tests/test_sdk_usage_notification.py'
+      - 'docs/SDK_USAGE_OBSERVABILITY_MIRROR_HANDOFF.md'
+      - '.github/workflows/sdk-usage-notification.yml'
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: sdk-usage-notification-${{ github.event_name == 'repository_dispatch' && 'projection' || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e . pytest
+      - name: Validate SDK operation ledger and notification safety
+        run: >-
+          python -m pytest -q
+          tests/test_sdk_operation_events.py
+          tests/test_sdk_usage_notification.py
+
+  notify:
+    if: github.event_name == 'repository_dispatch'
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      SDK_USAGE_PROJECTION: ${{ toJson(github.event.client_payload) }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate disclosure-safe projection and render notification
+        run: |
+          mkdir -p build
+          printf '%s' "$SDK_USAGE_PROJECTION" | python scripts/render_sdk_usage_notification.py > build/sdk-usage-notification.md
+      - name: Preserve rendered notification as workflow evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-usage-notification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/sdk-usage-notification.md
+          retention-days: 90
+      - name: Project SDK activity to canonical notification issue
+        run: gh issue comment 117 --repo StegVerse-Labs/StegCore --body-file build/sdk-usage-notification.md
