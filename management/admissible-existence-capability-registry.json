@@ -85,6 +85,53 @@
         ],
         "continuation_owner": "StegVerse-Labs/.github#60 -> StegVerse-Labs/TVC -> StegVerse-org/LLM-adapter -> master-records/orchestration"
       }
+    },
+    {
+      "declaration": {
+        "artifact_type": "stegcore.capability_existence_declaration",
+        "schema_version": "1.0",
+        "capability_id": "stegverse:capability:transaction-discovery:v1",
+        "capability_version": "1.0.0",
+        "owner_repository": "StegVerse-Labs/StegCore",
+        "purpose": "Provider-neutral durable transaction discovery and lineage indexing",
+        "dependencies": [
+          "stegverse:capability:steggate:canonical:v1"
+        ],
+        "authority": {
+          "credential_authority": "TV/TVC",
+          "github_token_runtime_authority": false,
+          "may": [],
+          "may_not": []
+        },
+        "evidence_refs": [
+          "StegVerse-Labs/StegCore#83",
+          "StegVerse-Labs/StegCore#98",
+          "StegVerse-Labs/StegCore#103",
+          "commit:f8402f5a5f0d9a65825b2a97ce992c63ceaf5117"
+        ],
+        "metadata": {
+          "activation_scope": "consumer/public discovery binding remains pending",
+          "canonical_store": "stegcore.transaction_discovery.SqliteDiscoveryStore"
+        }
+      },
+      "existence_hash": "d21b0d662f01ef5ffdbff205e6f18b5d4e0c8b4898927075e97779ca3cf56e69",
+      "phase": "ADMISSIBLE",
+      "evidence": {
+        "standing_evidence_refs": [
+          "docs/TRANSACTION_DISCOVERY_MIRROR_HANDOFF.md",
+          "StegVerse-Labs/StegCore#83"
+        ],
+        "admissibility_evidence_refs": [
+          "StegVerse-Labs/StegCore#103",
+          "commit:f8402f5a5f0d9a65825b2a97ce992c63ceaf5117"
+        ],
+        "integration_evidence_refs": [],
+        "activation_proof_ref": null,
+        "blockers": [
+          "CONSUMER_PUBLIC_DISCOVERY_BINDING_NOT_YET_PROVEN"
+        ],
+        "continuation_owner": "StegVerse-Labs/StegCore#83"
+      }
     }
   ]
 }

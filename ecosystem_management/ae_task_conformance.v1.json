@@ -1,0 +1,85 @@
+{
+  "artifact_type": "stegcore.ae_task_conformance_manifest",
+  "schema_version": "1.0",
+  "canonical_issue": "StegVerse-Labs/StegCore#106",
+  "canonical_handoff": "docs/STEGVERSE_ECOSYSTEM_MANAGEMENT_MIRROR_HANDOFF.md",
+  "worker_task_registry": "ecosystem_management/task_registry.yml",
+  "capability_registry": "management/admissible-existence-capability-registry.json",
+  "canonical_verifier": "tools/verify_ae_handoff_task_conformance.py",
+  "canonical_admissibility_runtime": "stegcore.steggate.evaluate_admissibility",
+  "credential_authority": "TV/TVC",
+  "github_token_runtime_authority": "NONE",
+  "rules": {
+    "completed_task_requires_evidence_for_claimed_phase": true,
+    "current_task_requires_owner_and_continuation": true,
+    "future_task_requires_capability_binding_before_activation": true,
+    "activated_requires_integration_and_activation_proof": true,
+    "blocked_admissible_requires_continuation_owner": true,
+    "structural_verification_may_widen_authority": false,
+    "handoff_registry_projection_must_match": true,
+    "legacy_unclassified_tasks_are_conformant": false
+  },
+  "tasks": [
+    {
+      "task_id": "TRANSACTION-DISCOVERY-SHARED-STORE-003",
+      "temporal_class": "recently_completed",
+      "relationship": "develops_capability",
+      "capability_id": "stegverse:capability:transaction-discovery:v1",
+      "claimed_phase": "ADMISSIBLE",
+      "target_phase": "ADMISSIBLE",
+      "owner": "StegVerse-Labs/StegCore",
+      "handoff_ref": "docs/TRANSACTION_DISCOVERY_MIRROR_HANDOFF.md",
+      "evidence_refs": [
+        "StegVerse-Labs/StegCore#83",
+        "StegVerse-Labs/StegCore#98",
+        "StegVerse-Labs/StegCore#103",
+        "commit:f8402f5a5f0d9a65825b2a97ce992c63ceaf5117"
+      ],
+      "blockers": [
+        "CONSUMER_PUBLIC_DISCOVERY_BINDING_NOT_YET_PROVEN"
+      ],
+      "continuation_owner": "StegVerse-Labs/StegCore#83",
+      "activation_claimed": false
+    },
+    {
+      "task_id": "STEGGATE-FOUR-APP-RUNTIME-BINDING-001",
+      "temporal_class": "current",
+      "relationship": "integrates_capability",
+      "capability_id": "stegverse:capability:steggate:canonical:v1",
+      "claimed_phase": "ACTIVATED",
+      "target_phase": "ACTIVATED",
+      "owner": "StegVerse-Labs/StegCore#70",
+      "handoff_ref": "management/steggate-four-app-runtime-binding.json",
+      "evidence_refs": [
+        "management/steggate-four-app-runtime-binding.json"
+      ],
+      "blockers": [
+        "PUBLIC_DIRECT_EVIDENCE_PENDING"
+      ],
+      "continuation_owner": "StegVerse-Labs/StegCore#70 + application owners",
+      "activation_claimed": false
+    },
+    {
+      "task_id": "TRANSACTION-DISCOVERY-CONSUMER-BINDING-004",
+      "temporal_class": "future",
+      "relationship": "integrates_capability",
+      "capability_id": "stegverse:capability:transaction-discovery:v1",
+      "claimed_phase": "ADMISSIBLE",
+      "target_phase": "ACTIVATED",
+      "owner": "StegVerse-Labs/StegCore#83",
+      "handoff_ref": "docs/TRANSACTION_DISCOVERY_MIRROR_HANDOFF.md",
+      "evidence_refs": [],
+      "blockers": [
+        "CONSUMER_PUBLIC_DISCOVERY_BINDING_NOT_YET_PROVEN",
+        "ACTIVATION_PROOF_NOT_YET_AVAILABLE"
+      ],
+      "continuation_owner": "StegVerse-Labs/StegCore#83",
+      "activation_claimed": false
+    }
+  ],
+  "legacy_policy": {
+    "records_without_ae_binding": "MIGRATION_REQUIRED",
+    "records_may_continue_existing_authority_while_migrating": false,
+    "future_activation_from_legacy_record": false
+  }
+}

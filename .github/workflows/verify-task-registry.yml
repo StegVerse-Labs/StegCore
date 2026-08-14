@@ -5,19 +5,57 @@ on:
     branches: [main]
     paths:
       - ecosystem_management/task_registry.yml
+      - ecosystem_management/ae_task_conformance.v1.json
+      - management/admissible-existence-capability-registry.json
+      - docs/STEGVERSE_ECOSYSTEM_MANAGEMENT_MIRROR_HANDOFF.md
       - tools/assess_ecosystem_management_readiness.py
-permissions:
-  contents: read
+      - tools/verify_ae_handoff_task_conformance.py
+      - tests/test_ae_handoff_task_conformance.py
+  pull_request:
+    paths:
+      - ecosystem_management/task_registry.yml
+      - ecosystem_management/ae_task_conformance.v1.json
+      - management/admissible-existence-capability-registry.json
+      - docs/STEGVERSE_ECOSYSTEM_MANAGEMENT_MIRROR_HANDOFF.md
+      - tools/assess_ecosystem_management_readiness.py
+      - tools/verify_ae_handoff_task_conformance.py
+      - tests/test_ae_handoff_task_conformance.py
+permissions: {}
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ""
+      GH_TOKEN: ""
+      STEGVERSE_GITHUB_TOKEN: ""
+      TVC_TOKEN: ""
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: python3 tools/assess_ecosystem_management_readiness.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: task-registry-report
-          path: brain_reports/stegverse_ecosystem_management_readiness_report.json
+      - name: Anonymous source acquisition with credential suppression
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "${GITHUB_TOKEN:-}"
+          test -z "${GH_TOKEN:-}"
+          test -z "${STEGVERSE_GITHUB_TOKEN:-}"
+          test -z "${TVC_TOKEN:-}"
+          git init .
+          git -c http.extraheader= -c credential.helper= remote add origin https://github.com/${{ github.repository }}.git
+          git -c http.extraheader= -c credential.helper= fetch --depth=1 origin "${{ github.sha }}"
+          git checkout --detach FETCH_HEAD
+      - name: Verify canonical AE handoff and worker-task conformance
+        run: python3 tools/verify_ae_handoff_task_conformance.py
+      - name: Verify AE capability registry
+        run: PYTHONPATH=src python3 scripts/validate_admissible_existence_registry.py
+      - name: Run AE conformance tests
+        run: PYTHONPATH=src:. python3 -m unittest tests.test_ae_handoff_task_conformance -v
+      - name: Verify ecosystem-management readiness projection
+        run: python3 tools/assess_ecosystem_management_readiness.py
+      - name: Retain report identity in job log without hosted-provider authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum brain_reports/ae_handoff_task_conformance_report.json
+          sha256sum brain_reports/stegverse_ecosystem_management_readiness_report.json
+          echo "hosted_artifact_authority=false"
+          echo "github_token_runtime_authority=NONE"
+          echo "credential_authority=TV/TVC"
