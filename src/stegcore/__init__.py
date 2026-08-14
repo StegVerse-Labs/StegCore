@@ -55,6 +55,7 @@ from .transaction_discovery import (
     DiscoveryQuery,
     TransactionDiscoveryIndex,
 )
+from .transaction_discovery_store import DiscoveryRecordStore, SqliteDiscoveryStore
 
 __all__ = [
     "__version__",
@@ -105,4 +106,6 @@ __all__ = [
     "DiscoveryRecord",
     "DiscoveryQuery",
     "TransactionDiscoveryIndex",
+    "DiscoveryRecordStore",
+    "SqliteDiscoveryStore",
 ]
