@@ -33,6 +33,14 @@ from .admissible_existence import (
     CapabilityExistenceEvaluation,
     evaluate_capability_existence,
 )
+from .capability_registry import (
+    CapabilityPhaseEvidence,
+    CapabilityRegistryEntry,
+    CapabilityExistenceRegistry,
+    CapabilityRegistryValidation,
+    load_capability_registry,
+    validate_capability_registry,
+)
 from .transaction_lifecycle import (
     TransactionManifest,
     TransitionReceipt,
@@ -81,6 +89,12 @@ __all__ = [
     "CapabilityExistenceTransition",
     "CapabilityExistenceEvaluation",
     "evaluate_capability_existence",
+    "CapabilityPhaseEvidence",
+    "CapabilityRegistryEntry",
+    "CapabilityExistenceRegistry",
+    "CapabilityRegistryValidation",
+    "load_capability_registry",
+    "validate_capability_registry",
     "TransactionManifest",
     "TransitionReceipt",
     "ReplayDescriptor",

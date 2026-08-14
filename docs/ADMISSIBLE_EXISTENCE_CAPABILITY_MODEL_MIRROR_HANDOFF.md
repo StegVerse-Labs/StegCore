@@ -5,10 +5,10 @@
 ```text
 organization: StegVerse-Labs
 repository: StegCore
-branch: main
-goal_id: ADMISSIBLE-EXISTENCE-CAPABILITY-MODEL-001
-canonical_issue: #94
-canonical_pr: #95
+active_branch: feat/admissible-existence-capability-registry-002
+active_goal_id: ADMISSIBLE-EXISTENCE-CAPABILITY-REGISTRY-002
+canonical_issue: #96
+predecessor_goal: ADMISSIBLE-EXISTENCE-CAPABILITY-MODEL-001 / issue #94 / PR #95 COMPLETE
 originating_session_goal: make Admissible-Existence the structural form by which StegVerse capability grows
 formalism_authority: Admissible-Existence/AE + RTG + GTG + TT + STCM
 canonical_runtime_authority: stegcore.steggate.evaluate_admissibility
@@ -17,65 +17,11 @@ github_token_runtime_authority: NONE
 archive_ready: false
 ```
 
-This is the canonical continuation record for the first bounded StegCore capability-existence structural primitive. It supplements `STEGCORE_MIRROR_HANDOFF.md` and does not replace AE formalism authority or StegGate runtime authority.
+This is the canonical continuation record for StegCore Admissible-Existence structural adoption. It supplements `STEGCORE_MIRROR_HANDOFF.md` and does not replace AE formalism authority, StegGate runtime authority, or component-owner execution authority.
 
-## Implementation claim
+## Goal 001 — capability-existence primitive — COMPLETE_RELEASED
 
-```text
-task_id: ADMISSIBLE-EXISTENCE-CAPABILITY-MODEL-001
-claimant: current AE structural-integration session
-role: COMPLETE_RELEASED
-claim_created_at: 2026-08-14T11:08:56-05:00
-claim_released_at: 2026-08-14T11:10:52-05:00
-release_evidence: PR #95 merged to main at 7d94908be562f9f9ace05877d4507dc68c984e06 after all five hosted PR gates passed
-collision_scope_released:
-  - src/stegcore/admissible_existence.py
-  - tests/test_admissible_existence.py
-  - src/stegcore/__init__.py AE exports only
-  - docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md
-```
-
-The separate manifold claim continues to own `src/stegcore/manifold_governance.py`, `tests/test_manifold_governance.py`, and `MANIFOLD_GOVERNANCE_MIRROR_HANDOFF.md`. Issue #70 continues to own four-application runtime binding.
-
-## Installed canonical implementation
-
-```text
-src/stegcore/admissible_existence.py
-tests/test_admissible_existence.py
-src/stegcore/__init__.py
-```
-
-The model installs:
-
-1. deterministic first-class capability-existence declarations;
-2. explicit lifecycle phases: DECLARED, STANDING, ADMISSIBLE, ACTIVATED, SUSPENDED, SUPERSEDED, TERMINATED;
-3. bounded structural transition rules;
-4. mandatory canonical StegGate evaluation for every transition;
-5. strict separation between canonical disposition and structural lifecycle outcome;
-6. exact candidate-to-capability binding;
-7. standing verification before STANDING;
-8. integration proof plus activation proof before ACTIVATED;
-9. successor lineage binding before SUPERSEDED;
-10. deterministic replay-stable transition identity excluding time-bound canonical provenance;
-11. no external execution and no continuity-receipt minting;
-12. TV/TVC-only credential authority metadata and zero GitHub-token runtime authority.
-
-## Architectural invariant
-
-```text
-Admissible-Existence formalism
-  -> CapabilityExistenceDeclaration
-  -> canonical StegGate admissibility for requested transition
-  -> structural lifecycle integrity checks
-  -> phase advances only when canonical disposition is ALLOW and structural proof is complete
-  -> separate governed execution / receipt / continuity layers
-```
-
-This module is not a second evaluator. Structural checks can block lifecycle advancement after canonical ALLOW but can never turn DENY, REVIEW, or FAIL_CLOSED into an allowed transition.
-
-## Hosted validation evidence
-
-PR head `9ffe4a1e484586bb7adaa7f1344ec992862006b3` passed all required hosted gates before merge:
+PR #95 merged to `main` as `7d94908be562f9f9ace05877d4507dc68c984e06` after all five hosted validation gates passed:
 
 ```text
 StegCore Tests: 31818067070 SUCCESS
@@ -85,25 +31,95 @@ Test Readiness: 31818067065 SUCCESS
 Validate StegVerse 001 002 Baseline: 31818067010 SUCCESS
 ```
 
-The StegCore Tests job directly completed the repository test suite successfully. PR #95 was then squash-merged to `main` as `7d94908be562f9f9ace05877d4507dc68c984e06`.
+Canonical files:
+
+```text
+src/stegcore/admissible_existence.py
+tests/test_admissible_existence.py
+src/stegcore/__init__.py
+```
+
+The primitive provides deterministic declarations and bounded DECLARED -> STANDING -> ADMISSIBLE -> ACTIVATED lifecycle advancement plus suspension/supersession/termination semantics. Every requested transition traverses canonical StegGate; structural checks can only block and cannot widen canonical authority. Activation requires explicit integration and activation proof. The primitive performs no external execution and mints no continuity receipt.
+
+## Active goal 002 claim — capability registry
+
+```text
+task_id: ADMISSIBLE-EXISTENCE-CAPABILITY-REGISTRY-002
+claimant: current AE structural-integration session
+role: CLAIMED_FOR_IMPLEMENTATION
+claim_created_at: 2026-08-14T11:12:30-05:00
+claim_release_condition: registry + validator + tests are hosted-validated, merged to main, handoff records evidence, and issue #96 is closed or explicitly transferred
+collision_scope:
+  - src/stegcore/capability_registry.py
+  - management/admissible-existence-capability-registry.json
+  - scripts/validate_admissible_existence_registry.py
+  - tests/test_capability_registry.py
+  - src/stegcore/__init__.py registry exports only
+  - this handoff goal-002 sections
+```
+
+The separate manifold claim remains excluded. Issue #70 continues to own four-application runtime binding. The local-model live activation chain remains MACHINE_OWNED by `.github#60 -> TVC -> LLM-adapter -> master-records/orchestration`.
+
+## Goal 002 implemented branch state
+
+```text
+src/stegcore/capability_registry.py
+management/admissible-existence-capability-registry.json
+scripts/validate_admissible_existence_registry.py
+tests/test_capability_registry.py
+src/stegcore/__init__.py registry exports
+```
+
+The registry validator enforces:
+
+1. deterministic declaration-to-existence-hash binding;
+2. unique capability IDs and existence hashes;
+3. explicit standing evidence for STANDING or later;
+4. explicit admissibility evidence for ADMISSIBLE or later;
+5. integration evidence plus activation proof for ACTIVATED/SUSPENDED/SUPERSEDED lineage;
+6. no unresolved activation blockers on an ACTIVATED entry;
+7. a durable continuation owner for blocked ADMISSIBLE entries;
+8. TV/TVC credential authority and no GitHub-token runtime authority through the canonical declaration model;
+9. no policy evaluation, execution, receipt minting, or activation inference from file presence.
+
+Initial registry entries deliberately demonstrate both states:
+
+```text
+stegverse:capability:steggate:canonical:v1
+  owner: StegVerse-Labs/StegCore
+  phase: ACTIVATED
+  activation proof: data/steggate-live-activation-receipt.json
+
+stegverse:capability:sovereign-local-model:v1
+  owner: StegVerse-002/micro-node-runtime
+  phase: ADMISSIBLE
+  source implementation/proof: COMPLETE_RELEASED
+  live activation blocker: RESIDENT_HEARTBEAT_POST_HB29_ROUTE_EXECUTION_NOT_YET_OBSERVED
+  continuation owner: StegVerse-Labs/.github#60 -> TVC -> LLM-adapter -> master-records/orchestration
+```
+
+This prevents source-complete local-model work from being falsely represented as live activated.
 
 ## Local model/runtime convergence
 
-The requirement to replace descriptive local-runtime selection and formally develop the model locally is already canonical and must not be duplicated:
+Canonical owner handoff:
 
 ```text
 StegVerse-002/micro-node-runtime/docs/SOVEREIGN_LOCAL_MODEL_RUNTIME_MIRROR_HANDOFF.md
-source state: COMPLETE_RELEASED
-language-model validation: workflow 31339534741 SUCCESS
-persistent-endpoint validation: workflow 31384116055 SUCCESS
-live activation owner: StegVerse-Labs/.github#60 + resident sovereign heartbeat
-credential authority: TV/TVC
-github_token_runtime_authority: NONE
 ```
 
-Repository-local discovery, private launch, real inference, usage measurement, proof, and formal local reference-model development are complete. Live same-execution activation remains MACHINE_OWNED and is an observation/integration dependency, not a manual source task.
+It proves the former descriptive “select a local model/runtime” step is superseded by executable local discovery, private launch, real inference, measured usage, and proof, with a repository-developed reference model and no third-party inference requirement. Language-model source validation is retained at workflows `31339534741` and `31384116055`. No duplicate model/runtime implementation is authorized here.
 
-## Cross-repository dependencies and propagation
+## Validation commands
+
+```text
+pytest -q tests/test_admissible_existence.py tests/test_capability_registry.py
+python scripts/validate_admissible_existence_registry.py
+pytest -q
+python scripts/verify_product_consistency.py
+```
+
+## Cross-repository dependencies
 
 ```text
 formalism source: Admissible-Existence/AE/AE_MIRROR_HANDOFF.md
@@ -113,33 +129,20 @@ live local-model activation: StegVerse-Labs/.github#60
 credentials/routes: StegVerse-Labs/TV + StegVerse-Labs/TVC
 ```
 
-No Site, Publisher, admissibility-wiki, or stegguardian-wiki publication/release propagation is authorized merely from this structural primitive.
+No Site, Publisher, admissibility-wiki, or stegguardian-wiki release propagation is authorized merely from the registry. After canonical merge, the next integration candidate is a consumer declaration/import contract rather than a parallel evaluator.
 
-## Successor integration goal
-
-The next directly related goal is `ADMISSIBLE-EXISTENCE-CAPABILITY-REGISTRY-002`: install a machine-readable registry and validator so existing StegVerse capabilities can be declared and checked as capability existences without modifying their canonical evaluators. This successor must preserve the same TV/TVC credential boundary and cannot infer activation from file presence alone.
-
-## Validation commands
+## Completion inventory — active goal 002
 
 ```text
-pytest -q tests/test_admissible_existence.py
-pytest -q
-python scripts/verify_product_consistency.py
-```
-
-## Completion inventory — goal 001
-
-```text
-required developed files: 4
-implemented: 4/4
+required developed files: 6
+implemented on branch: 6/6
 scaffolding/stubs: 0
 missing required files: 0
-hosted workflow validation: 5/5 PASS
-canonical merge: COMPLETE
-focused goal activation: COMPLETE
-successor registry/integration goal: ACTIVE_SEPARATE_GOAL
+focused validation: pending hosted workflow execution
+canonical merge: pending
+issue #96 closure: pending
 ```
 
 ## Archive condition
 
-Goal 001 is complete and released. The session remains active only because successor integration goal 002 and the broader session consolidation inventory remain unique work. Once those are completed or durably transferred, this handoff contains sufficient state to continue without chat history.
+Goal 001 is complete and released. Goal 002 remains unique active work until hosted validation, merge, and durable reconciliation are complete. The complete chat is not required to understand either goal because the executable state and collision boundaries are retained here and in issues #94/#96, but this session still owns the active goal-002 claim.
