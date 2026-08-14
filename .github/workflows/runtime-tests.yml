@@ -1,4 +1,4 @@
-name: Validate StegCore Runtime
+name: Validate StegCore Runtime - No Non-TV/TVC Credential Authority
 
 on:
   push:
@@ -31,31 +31,59 @@ concurrency:
   group: stegcore-runtime-validation
   cancel-in-progress: false
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+permissions: {}
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check out StegCore
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Assert credential-clean validation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN; do
+            if [ -n "${!name:-}" ]; then
+              echo "forbidden credential environment variable present: ${name}" >&2
+              exit 1
+            fi
+          done
+          echo "credential_authority=TV/TVC"
+          echo "consumer_credential_present=false"
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: pip
+      - name: Anonymous public repository fetch
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            SOURCE_REF="refs/pull/${PR_NUMBER}/merge"
+          else
+            SOURCE_REF="${GITHUB_SHA}"
+          fi
+          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=50 origin "${SOURCE_REF}"
+          git checkout --detach FETCH_HEAD
+          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
+
+      - name: Select preinstalled Python 3.11
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHON_BIN="$(find /opt/hostedtoolcache/Python -path '*/3.11.*/x64/bin/python' -type f | sort -V | tail -1)"
+          test -n "${PYTHON_BIN}"
+          echo "$(dirname "${PYTHON_BIN}")" >> "${GITHUB_PATH}"
+          "${PYTHON_BIN}" --version
 
       - name: Install package and test dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e . pytest
+
+      - name: Validate no non-TV/TVC validation credential path
+        run: python scripts/validate_no_non_tvtvc_validation_credentials.py
 
       - name: Validate continuity admissibility mapping
         run: python scripts/check_continuity_admissibility_mapping.py docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
@@ -89,13 +117,12 @@ jobs:
       - name: Verify Governance three-layer snapshot through StegCore
         run: python scripts/verify_governance_three_layer_contract.py contracts/governance_snapshot
 
-      - name: Record passing validation and release-readiness evidence
+      - name: Generate non-persistent validation and release-readiness evidence
         id: evidence
         if: github.event_name != 'pull_request'
         env:
           GOVERNANCE_SHA: ${{ steps.governance.outputs.governance_sha }}
         run: |
-          BEFORE="$(cat evidence/runtime-validation.json evidence/release-readiness.json 2>/dev/null | sha256sum | awk '{print $1}' || true)"
           CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
           python scripts/record_runtime_validation.py \
             --output evidence/runtime-validation.json \
@@ -113,118 +140,7 @@ jobs:
           python scripts/assess_release_readiness.py \
             --evidence evidence/runtime-validation.json \
             --output evidence/release-readiness.json
-          AFTER="$(cat evidence/runtime-validation.json evidence/release-readiness.json | sha256sum | awk '{print $1}')"
-          if [ "$BEFORE" != "$AFTER" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          fi
+          sha256sum evidence/runtime-validation.json evidence/release-readiness.json
           echo "contract_sha=$CONTRACT_SHA" >> "$GITHUB_OUTPUT"
-          echo "governance_sha=$GOVERNANCE_SHA" >> "$GITHUB_OUTPUT"
-
-      - name: Persist durable validation evidence through PR
-        if: github.event_name != 'pull_request' && steps.evidence.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          BRANCH="automation/runtime-validation-evidence"
-          git config user.name "stegcore-validation-bot"
-          git config user.email "stegcore-validation-bot@users.noreply.github.com"
-          git checkout -B "$BRANCH"
-          git add evidence/runtime-validation.json evidence/release-readiness.json
-          git commit -m "Record StegCore validation and release-readiness state"
-          git push --force origin HEAD:"$BRANCH"
-
-          PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
-          if [ -z "$PR_NUMBER" ]; then
-            gh pr create \
-              --repo "$GITHUB_REPOSITORY" \
-              --base main \
-              --head "$BRANCH" \
-              --title "Record StegCore runtime validation evidence" \
-              --body "Repository automation generated validated runtime/release-readiness evidence. This PR is a persistence transport only; it grants no release, deployment, continuity-minting, or execution authority. Source validation run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
-            PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
-          fi
-
-          if [ -z "$PR_NUMBER" ]; then
-            echo "Evidence branch was persisted but no open evidence PR could be resolved" >&2
-            exit 1
-          fi
-
-          echo "Runtime validation evidence persisted in PR #${PR_NUMBER}."
-          if ! gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --auto --squash --delete-branch; then
-            echo "Auto-merge is not currently available; durable evidence remains preserved in PR #${PR_NUMBER}."
-          fi
-
-      - name: Reconcile implementation and release-readiness issues
-        if: github.event_name != 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          CONTRACT_SHA: ${{ steps.evidence.outputs.contract_sha }}
-          GOVERNANCE_SHA: ${{ steps.evidence.outputs.governance_sha }}
-        run: |
-          IMPLEMENTATION_STATE="$(gh issue view 22 --repo "$GITHUB_REPOSITORY" --json state --jq '.state')"
-          COMPLETION_COMMENT="Automated validation passed for StegCore contract commit ${CONTRACT_SHA} against pinned Governance evidence commit ${GOVERNANCE_SHA}. Durable evidence is persisted through the repository-owned runtime-validation evidence PR path. Release state remains validated_not_released; Governance freshness is still required before release."
-          if [ "$IMPLEMENTATION_STATE" = "OPEN" ]; then
-            gh issue close 22 --repo "$GITHUB_REPOSITORY" --reason completed --comment "$COMPLETION_COMMENT"
-          fi
-
-          FAILURE_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "StegCore runtime validation failure in:title" --json number --jq '.[0].number // empty')"
-          if [ -n "$FAILURE_NUMBER" ]; then
-            gh issue close "$FAILURE_NUMBER" --repo "$GITHUB_REPOSITORY" --reason completed --comment "Automatic runtime validation recovered. Passing evidence was persisted through the protected-main-compatible evidence PR path."
-          fi
-
-          READINESS_TITLE="[release-readiness] StegCore three-layer candidate"
-          READINESS_BODY=$(cat <<EOF
-          ## State
-
-          validated_not_released
-
-          ## Durable records
-
-          - evidence/runtime-validation.json
-          - evidence/release-readiness.json
-          - evidence/downstream-verification-dispatch.json
-          - contracts/governance_snapshot/manifest.json
-          - StegCore contract commit: ${CONTRACT_SHA}
-          - pinned Governance evidence commit: ${GOVERNANCE_SHA}
-
-          Governance freshness must be independently confirmed before release. Release and tagging remain blocked until independent release policy and all four downstream verification gates are durably recorded as pass.
-
-          Downstream verification is queued in Site #14, Publisher #4, admissibility-wiki #19, and StegGuardian Wiki #4.
-
-          This issue does not grant release, production, continuity, deployment, cross-repository mutation, or receipt-minting authority.
-          EOF
-          )
-          READINESS_NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore three-layer candidate in:title" --json number --jq '.[0].number // empty')"
-          if [ -n "$READINESS_NUMBER" ]; then
-            gh issue edit "$READINESS_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$READINESS_BODY"
-            gh issue reopen "$READINESS_NUMBER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
-          else
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "$READINESS_TITLE" --body "$READINESS_BODY"
-          fi
-
-      - name: Reconcile validation failure issue
-        if: failure() && github.event_name != 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TITLE="[automation] StegCore runtime validation failure"
-          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-          BODY=$(cat <<EOF
-          Automatic StegCore runtime validation failed.
-
-          - Commit: ${GITHUB_SHA}
-          - Event: ${GITHUB_EVENT_NAME}
-          - Run: ${RUN_URL}
-
-          Resolution is owned by repository automation and the next corrective commit. A later successful run closes this issue automatically.
-          EOF
-          )
-          NUMBER="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "StegCore runtime validation failure in:title" --json number --jq '.[0].number // empty')"
-          if [ -n "$NUMBER" ]; then
-            gh issue edit "$NUMBER" --repo "$GITHUB_REPOSITORY" --body "$BODY"
-            gh issue reopen "$NUMBER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || true
-          else
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY"
-          fi
+          echo "persistence_authority=TV/TVC_ONLY_NOT_THIS_WORKFLOW" >> "$GITHUB_STEP_SUMMARY"
+          echo "Generated validation evidence is ephemeral in this credential-clean workflow; durable repository persistence is delegated to the separately governed TV/TVC repository-operation path." >> "$GITHUB_STEP_SUMMARY"
