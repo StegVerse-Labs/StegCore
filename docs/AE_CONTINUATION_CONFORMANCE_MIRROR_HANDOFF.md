@@ -5,22 +5,47 @@
 ```text
 organization: StegVerse-Labs
 repository: StegCore
-branch: feat/ae-continuation-conformance-107
+branch: main
 active_goal_id: AE-CONTINUATION-CONFORMANCE-001
 canonical_issue: #107
 implementation_claim: #108
 validation_claim: #109
 release_task: #110
+release_pr: #114
+release_commit: 78d00ca0e977af3e666c2acec431b111aea0deef
 worker_registry_adoption: StegVerse-Labs/.github#123
 worker_registry_claim: StegVerse-Labs/.github#124
 formalism_authority: Admissible-Existence/AE + RTG + GTG + TT + STCM
 canonical_runtime_authority: stegcore.steggate.evaluate_admissibility
 credential_authority: TV/TVC
 github_token_runtime_authority: NONE
+stegcore_lane: COMPLETE_RELEASED
+worker_registry_ecosystem_adoption: ACTIVE_EXTERNAL_OWNER
 archive_ready: false
 ```
 
 This lane installs a read-only, fail-closed canonical verification procedure for HANDOFF task state and Worker Task Registry state. It verifies recently completed, current, and future work against the newest StegCore Admissible-Existence implementation without changing canonical StegGate semantics or mutating live worker claims/fences/leases.
+
+## Release evidence
+
+PR #114 merged to `main` at `78d00ca0e977af3e666c2acec431b111aea0deef` after all five hosted validation gates passed on head `37ff10af0dc06d71845b4ba4807ca5517998f114`:
+
+```text
+Validate StegCore Runtime - No Non-TV/TVC Credential Authority: 31823782698 SUCCESS
+StegCore Tests - No Non-TV/TVC Credential Authority: 31823782708 SUCCESS
+Test Readiness - No Non-TV/TVC Credential Authority: 31823782709 SUCCESS
+Validate StegVerse 001 002 Baseline - No Non-TV/TVC Credential Authority: 31823782699 SUCCESS
+BCAT Gate - No Non-TV/TVC Credential Authority: 31823782700 SUCCESS
+```
+
+Canonical released files:
+
+```text
+docs/AE_CONTINUATION_CONFORMANCE_MIRROR_HANDOFF.md
+management/ae-continuation-conformance-policy.json
+scripts/validate_ae_continuation_conformance.py
+tests/test_ae_continuation_conformance.py
+```
 
 ## Required invariants
 
@@ -66,6 +91,8 @@ Deterministic tests: `tests/test_ae_continuation_conformance.py`
 - Do not mutate `.github` live worker claim/fence/lease/runtime state while `.github#122` owns the control-plane separation refactor.
 - Do not create a second heartbeat, worker registry, scheduler, transport, custody path, or credential path.
 
-## Completion condition
+## Current continuation
 
-This StegCore lane is complete only after the policy, executable verifier, and tests are merged to `main` with hosted validation evidence. Ecosystem Worker Task Registry adoption remains separately owned by `.github#123/#124` until it can be integrated without colliding with `.github#122`.
+StegCore policy/verifier implementation is COMPLETE_RELEASED. Ecosystem Worker Task Registry adoption is separately active at `StegVerse-Labs/.github#123/#124`; that lane must install a read-only projection/adapter and org-control-plane validation without mutating live claim/fence/lease state owned by `.github#122`.
+
+The session must not declare the ecosystem verification goal fully activated until `.github#123` has direct evidence that the canonical Worker Task Registry is being checked against this released policy.
