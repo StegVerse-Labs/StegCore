@@ -1,61 +1,70 @@
-name: StegCore Tests
+name: StegCore Tests - No Non-TV/TVC Credential Authority
 
 on:
   push:
   pull_request:
   workflow_dispatch: {}
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Assert credential-clean validation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN; do
+            if [ -n "${!name:-}" ]; then
+              echo "forbidden credential environment variable present: ${name}" >&2
+              exit 1
+            fi
+          done
+          echo "credential_authority=TV/TVC"
+          echo "consumer_credential_present=false"
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Anonymous public repository fetch
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then SOURCE_REF="refs/pull/${PR_NUMBER}/merge"; else SOURCE_REF="${GITHUB_SHA}"; fi
+          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "${SOURCE_REF}"
+          git checkout --detach FETCH_HEAD
+          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
+
+      - name: Verify preinstalled Python
+        run: python3 --version
 
       - name: Install deps
         run: |
-          python -m pip install --upgrade pip
-          pip install -e .
-          pip install pytest
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -e . pytest
+
+      - name: Validate no non-TV/TVC validation credential path
+        run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
 
       - name: Validate personal-data control decision boundary
-        run: python scripts/check_personal_data_control_decision.py
+        run: python3 scripts/check_personal_data_control_decision.py
 
-      - name: Run tests and persist diagnostics
-        id: pytest
+      - name: Run tests and persist diagnostics to job log
         shell: bash
         run: |
           set +e
           mkdir -p build/test-diagnostics
-          pytest -q --tb=short 2>&1 | tee build/test-diagnostics/pytest.txt
+          python3 -m pytest -q --tb=short 2>&1 | tee build/test-diagnostics/pytest.txt
           status=${PIPESTATUS[0]}
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           text = Path('build/test-diagnostics/pytest.txt').read_text(encoding='utf-8', errors='replace')
           markers = ('FAILED ', 'ERROR ', 'E   ', 'short test summary info')
           lines = text.splitlines()
           selected = [line for line in lines if line.startswith(markers) or ' failed' in line or ' error' in line]
-          Path('build/test-diagnostics/failure-summary.txt').write_text('\n'.join(selected[-200:]) + '\n', encoding='utf-8')
+          print('\n'.join(selected[-200:]))
           PY
           exit "$status"
-
-      - name: Upload pytest diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: stegcore-pytest-diagnostics-${{ github.run_id }}
-          path: build/test-diagnostics/
-          if-no-files-found: error
-          retention-days: 14

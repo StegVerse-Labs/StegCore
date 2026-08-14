@@ -1,41 +1,63 @@
-name: Test Readiness
+name: Test Readiness - No Non-TV/TVC Credential Authority
 
 on:
   push:
   pull_request:
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   repo-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Assert credential-clean validation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN; do
+            if [ -n "${!name:-}" ]; then
+              echo "forbidden credential environment variable present: ${name}" >&2
+              exit 1
+            fi
+          done
+
+      - name: Anonymous public repository fetch
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then SOURCE_REF="refs/pull/${PR_NUMBER}/merge"; else SOURCE_REF="${GITHUB_SHA}"; fi
+          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "${SOURCE_REF}"
+          git checkout --detach FETCH_HEAD
+          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
+
+      - name: Verify preinstalled Python
+        run: python3 --version
+
+      - name: Validate no non-TV/TVC validation credential path
+        run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
+
       - name: Baseline repository smoke test
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           import json
           import sys
 
           root = Path('.')
           failures = []
-
           if not any((root / name).exists() for name in ('README.md', 'README.MD')):
               failures.append('missing README.md')
-
           workflows = root / '.github' / 'workflows'
           if workflows.exists():
               bad = sorted(p.name for p in workflows.glob('*.ym'))
               if bad:
                   failures.append('workflow files must end in .yml or .yaml: ' + ', '.join(bad))
-
           for path in sorted(root.rglob('*.json')):
               if any(part in {'.git', 'node_modules', '.venv', 'venv'} for part in path.parts):
                   continue
@@ -43,18 +65,12 @@ jobs:
                   json.loads(path.read_text(encoding='utf-8'))
               except Exception as exc:
                   failures.append(f'invalid JSON: {path}: {exc}')
-
           tests = root / 'tests'
-          if tests.exists():
-              print(f'tests directory detected: {tests}')
-          else:
-              print('no tests directory detected; baseline smoke gate only')
-
+          print(f'tests directory detected: {tests}' if tests.exists() else 'no tests directory detected; baseline smoke gate only')
           if failures:
               print('TEST READINESS FAILED')
               for failure in failures:
                   print(f'- {failure}')
               sys.exit(1)
-
           print('TEST READINESS PASSED')
           PY

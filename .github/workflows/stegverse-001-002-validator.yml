@@ -1,4 +1,4 @@
-name: Validate StegVerse 001 002 Baseline
+name: Validate StegVerse 001 002 Baseline - No Non-TV/TVC Credential Authority
 
 on:
   push:
@@ -7,28 +7,49 @@ on:
   pull_request:
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Assert credential-clean validation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN; do
+            if [ -n "${!name:-}" ]; then
+              echo "forbidden credential environment variable present: ${name}" >&2
+              exit 1
+            fi
+          done
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Anonymous public repository fetch
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then SOURCE_REF="refs/pull/${PR_NUMBER}/merge"; else SOURCE_REF="${GITHUB_SHA}"; fi
+          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "${SOURCE_REF}"
+          git checkout --detach FETCH_HEAD
+          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
+
+      - name: Verify preinstalled Python
+        run: python3 --version
+
+      - name: Validate no non-TV/TVC validation credential path
+        run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
 
       - name: Compile source and tests
-        run: python -m compileall src tests
+        run: python3 -m compileall src tests
 
       - name: Validate baseline manifest
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           import json
           from pathlib import Path
           manifest = json.loads(Path('activation_manifest.json').read_text(encoding='utf-8'))

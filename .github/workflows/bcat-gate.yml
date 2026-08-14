@@ -1,4 +1,4 @@
-name: BCAT Gate
+name: BCAT Gate - No Non-TV/TVC Credential Authority
 
 on:
   pull_request:
@@ -6,39 +6,56 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   bcat-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Assert credential-clean validation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN; do
+            if [ -n "${!name:-}" ]; then echo "forbidden credential environment variable present: ${name}" >&2; exit 1; fi
+          done
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Anonymous public repository fetch
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then SOURCE_REF="refs/pull/${PR_NUMBER}/merge"; else SOURCE_REF="${GITHUB_SHA}"; fi
+          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "${SOURCE_REF}"
+          git checkout --detach FETCH_HEAD
+          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
+
+      - name: Verify preinstalled Python
+        run: python3 --version
 
       - name: Install deps
-        run: pip install pyyaml
+        run: python3 -m pip install pyyaml
+
+      - name: Validate no non-TV/TVC validation credential path
+        run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
 
       - name: Validate BCAT declaration
         run: |
-          if [ ! -f bcat.yaml ]; then
-            echo "BCAT declaration (bcat.yaml) missing at repo root."
-            exit 1
-          fi
-          python scripts/validate_bcat.py bcat.yaml
+          test -f bcat.yaml
+          python3 scripts/validate_bcat.py bcat.yaml
 
       - name: Compute BCAT status
         id: status
         run: |
-          STATUS=$(python scripts/bcat_status.py bcat.yaml)
-          echo "status=$STATUS" >> $GITHUB_OUTPUT
-          echo "BCAT_STATUS=$STATUS" >> $GITHUB_ENV
+          STATUS=$(python3 scripts/bcat_status.py bcat.yaml)
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          echo "BCAT_STATUS=$STATUS" >> "$GITHUB_ENV"
 
       - name: Write job summary
         run: |
-          echo "## BCAT Gate" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** $BCAT_STATUS" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "BCAT requires: refusal-as-success, explainable degradation, and inspectable boundaries." >> $GITHUB_STEP_SUMMARY
+          echo "## BCAT Gate" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Status:** $BCAT_STATUS" >> "$GITHUB_STEP_SUMMARY"
+          echo "BCAT requires refusal-as-success, explainable degradation, and inspectable boundaries." >> "$GITHUB_STEP_SUMMARY"
