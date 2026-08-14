@@ -1,0 +1,31 @@
+{
+  "schema_version": "stegverse.session-implementation-claim/v1",
+  "task_id": "ADMISSIBLE-FORMALISM-SOURCE-GENERATION-REGISTRY-003",
+  "goal_id": "ADMISSIBLE-FORMALISM-SOURCE-GENERATION-REGISTRY-003",
+  "issue": 120,
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "feat/register-formalism-source-generation-capability-120",
+  "state": "CLAIMED_FOR_IMPLEMENTATION",
+  "claimant": "current ChatGPT continuation session",
+  "claimed_at": "2026-08-14T16:12:00-05:00",
+  "expires_at": "2026-08-14T19:12:00-05:00",
+  "scope": [
+    "management/admissible-existence-capability-registry.json",
+    "tests/test_capability_registry.py",
+    "docs/FORMALISM_SOURCE_GENERATION_CAPABILITY_MIRROR_HANDOFF.md",
+    "management/formalism-source-generation-capability-claim.json"
+  ],
+  "parent_handoff": "docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md",
+  "collision_exclusions": [
+    "src/stegcore/steggate.py and canonical StegGate semantics",
+    "src/stegcore/admissible_existence.py lifecycle semantics",
+    "StegVerse-Labs/.github#137 worker implementation",
+    "StegVerse-Labs/.github#122 heartbeat/control-plane refactor",
+    "StegVerse-Labs/TVC#19/#20 credential-bearing repository transport",
+    "StegVerse-002/micro-node-runtime source implementation"
+  ],
+  "credential_authority": "TV/TVC",
+  "github_token_runtime_authority": false,
+  "release_condition": "The source-generation capability is canonically registered at the evidence-supported phase, deterministic registry tests and hosted gates pass, changes merge, and the claim is reconciled to COMPLETE_RELEASED.",
+  "next_executable_action": "Validate the DECLARED registry entry and scoped handoff through all canonical StegCore gates without inferring standing, admissibility, or activation."
+}
