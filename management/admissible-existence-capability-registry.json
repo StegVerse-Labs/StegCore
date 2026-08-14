@@ -11,34 +11,16 @@
         "owner_repository": "StegVerse-Labs/StegCore",
         "purpose": "Canonical StegGate admissibility runtime",
         "dependencies": [],
-        "authority": {
-          "credential_authority": "TV/TVC",
-          "github_token_runtime_authority": false,
-          "may": [],
-          "may_not": []
-        },
-        "evidence_refs": [
-          "StegVerse-Labs/StegCore#68",
-          "data/steggate-live-activation-receipt.json"
-        ],
-        "metadata": {
-          "canonical_runtime": "stegcore.steggate.evaluate_admissibility"
-        }
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": []},
+        "evidence_refs": ["StegVerse-Labs/StegCore#68", "data/steggate-live-activation-receipt.json"],
+        "metadata": {"canonical_runtime": "stegcore.steggate.evaluate_admissibility"}
       },
       "existence_hash": "2ae60c6b388f910a57128b52da46c88b7d5eb4e2053e26feec1082d2ead693d7",
       "phase": "ACTIVATED",
       "evidence": {
-        "standing_evidence_refs": [
-          "STEGCORE_MIRROR_HANDOFF.md"
-        ],
-        "admissibility_evidence_refs": [
-          "src/stegcore/steggate.py",
-          "StegVerse-Labs/StegCore#68"
-        ],
-        "integration_evidence_refs": [
-          "data/steggate-live-activation-receipt.json",
-          "src/stegcore/steggate_runtime.py"
-        ],
+        "standing_evidence_refs": ["STEGCORE_MIRROR_HANDOFF.md"],
+        "admissibility_evidence_refs": ["src/stegcore/steggate.py", "StegVerse-Labs/StegCore#68"],
+        "integration_evidence_refs": ["data/steggate-live-activation-receipt.json", "src/stegcore/steggate_runtime.py"],
         "activation_proof_ref": "data/steggate-live-activation-receipt.json",
         "blockers": [],
         "continuation_owner": "StegVerse-Labs/StegCore"
@@ -53,36 +35,18 @@
         "owner_repository": "StegVerse-002/micro-node-runtime",
         "purpose": "Sovereign local language model discovery, launch, inference and proof",
         "dependencies": [],
-        "authority": {
-          "credential_authority": "TV/TVC",
-          "github_token_runtime_authority": false,
-          "may": [],
-          "may_not": []
-        },
-        "evidence_refs": [
-          "docs/SOVEREIGN_LOCAL_MODEL_RUNTIME_MIRROR_HANDOFF.md",
-          "workflow:31339534741",
-          "workflow:31384116055"
-        ],
-        "metadata": {
-          "live_activation_owner": "StegVerse-Labs/.github#60"
-        }
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": []},
+        "evidence_refs": ["docs/SOVEREIGN_LOCAL_MODEL_RUNTIME_MIRROR_HANDOFF.md", "workflow:31339534741", "workflow:31384116055"],
+        "metadata": {"live_activation_owner": "StegVerse-Labs/.github#60"}
       },
       "existence_hash": "afa989ddade267e328820d9e82da90905b3271bc62d870e7add1515453086081",
       "phase": "ADMISSIBLE",
       "evidence": {
-        "standing_evidence_refs": [
-          "StegVerse-002/micro-node-runtime/docs/SOVEREIGN_LOCAL_MODEL_RUNTIME_MIRROR_HANDOFF.md"
-        ],
-        "admissibility_evidence_refs": [
-          "workflow:31339534741",
-          "workflow:31384116055"
-        ],
+        "standing_evidence_refs": ["StegVerse-002/micro-node-runtime/docs/SOVEREIGN_LOCAL_MODEL_RUNTIME_MIRROR_HANDOFF.md"],
+        "admissibility_evidence_refs": ["workflow:31339534741", "workflow:31384116055"],
         "integration_evidence_refs": [],
         "activation_proof_ref": null,
-        "blockers": [
-          "RESIDENT_HEARTBEAT_POST_HB29_ROUTE_EXECUTION_NOT_YET_OBSERVED"
-        ],
+        "blockers": ["CONTROL_PLANE_LOCAL_MODEL_ROUTE_ACTIVATION_PROOF_NOT_YET_OBSERVED"],
         "continuation_owner": "StegVerse-Labs/.github#60 -> StegVerse-Labs/TVC -> StegVerse-org/LLM-adapter -> master-records/orchestration"
       }
     },
@@ -94,44 +58,72 @@
         "capability_version": "1.0.0",
         "owner_repository": "StegVerse-Labs/StegCore",
         "purpose": "Provider-neutral durable transaction discovery and lineage indexing",
-        "dependencies": [
-          "stegverse:capability:steggate:canonical:v1"
-        ],
-        "authority": {
-          "credential_authority": "TV/TVC",
-          "github_token_runtime_authority": false,
-          "may": [],
-          "may_not": []
-        },
-        "evidence_refs": [
-          "StegVerse-Labs/StegCore#83",
-          "StegVerse-Labs/StegCore#98",
-          "StegVerse-Labs/StegCore#103",
-          "commit:f8402f5a5f0d9a65825b2a97ce992c63ceaf5117"
-        ],
-        "metadata": {
-          "activation_scope": "consumer/public discovery binding remains pending",
-          "canonical_store": "stegcore.transaction_discovery.SqliteDiscoveryStore"
-        }
+        "dependencies": ["stegverse:capability:steggate:canonical:v1"],
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": []},
+        "evidence_refs": ["StegVerse-Labs/StegCore#83", "StegVerse-Labs/StegCore#98", "StegVerse-Labs/StegCore#103", "commit:f8402f5a5f0d9a65825b2a97ce992c63ceaf5117"],
+        "metadata": {"activation_scope": "consumer/public discovery binding remains pending", "canonical_store": "stegcore.transaction_discovery.SqliteDiscoveryStore"}
       },
       "existence_hash": "d21b0d662f01ef5ffdbff205e6f18b5d4e0c8b4898927075e97779ca3cf56e69",
       "phase": "ADMISSIBLE",
       "evidence": {
-        "standing_evidence_refs": [
-          "docs/TRANSACTION_DISCOVERY_MIRROR_HANDOFF.md",
-          "StegVerse-Labs/StegCore#83"
-        ],
-        "admissibility_evidence_refs": [
-          "StegVerse-Labs/StegCore#103",
-          "commit:f8402f5a5f0d9a65825b2a97ce992c63ceaf5117"
-        ],
+        "standing_evidence_refs": ["docs/TRANSACTION_DISCOVERY_MIRROR_HANDOFF.md", "StegVerse-Labs/StegCore#83"],
+        "admissibility_evidence_refs": ["StegVerse-Labs/StegCore#103", "commit:f8402f5a5f0d9a65825b2a97ce992c63ceaf5117"],
         "integration_evidence_refs": [],
         "activation_proof_ref": null,
-        "blockers": [
-          "CONSUMER_PUBLIC_DISCOVERY_BINDING_NOT_YET_PROVEN"
-        ],
+        "blockers": ["CONSUMER_PUBLIC_DISCOVERY_BINDING_NOT_YET_PROVEN"],
         "continuation_owner": "StegVerse-Labs/StegCore#83"
       }
+    },
+    {
+      "declaration": {
+        "artifact_type": "stegcore.capability_existence_declaration", "schema_version": "1.0",
+        "capability_id": "stegverse:capability:heartbeat-carrier:v1", "capability_version": "1.0.0",
+        "owner_repository": "StegVerse-Labs/.github", "purpose": "Canonical StegVerse carrier and synchronization continuity signal",
+        "dependencies": [],
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["application_message_transport", "task_dispatch", "claim_or_fence_issuance", "route_execution", "credential_authority", "master_records_custody"]},
+        "evidence_refs": ["StegVerse-Labs/.github#120", "StegVerse-Labs/.github#122"],
+        "metadata": {"canonical_role": "carrier_synchronization_only", "frequency_rule": "gate_passband_derived", "amplitude_rule": "minimum_simultaneous_composite_load_plus_bounded_margin"}
+      },
+      "existence_hash": "33ffe972504ff707f2fe4bd1ba65d85a03a5633ed23344e3ef483c3310eeb6bc", "phase": "DECLARED",
+      "evidence": {"standing_evidence_refs": [], "admissibility_evidence_refs": [], "integration_evidence_refs": [], "activation_proof_ref": null, "blockers": ["CANONICAL_CARRIER_CONTRACT_NOT_MERGED", "RUNTIME_SEMANTIC_SEPARATION_PENDING"], "continuation_owner": "StegVerse-Labs/.github#120 -> StegVerse-Labs/.github#122"}
+    },
+    {
+      "declaration": {
+        "artifact_type": "stegcore.capability_existence_declaration", "schema_version": "1.0",
+        "capability_id": "stegverse:capability:worker-control-plane:v1", "capability_version": "1.0.0",
+        "owner_repository": "StegVerse-Labs/.github", "purpose": "Worker and task coordination, claims, fences, leases and routing control plane separate from heartbeat carrier",
+        "dependencies": ["stegverse:capability:heartbeat-carrier:v1"],
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["credential_authority", "application_payload_transport", "master_records_custody"]},
+        "evidence_refs": ["StegVerse-Labs/.github#122"], "metadata": {"heartbeat_relationship": "observes_synchronization_continuity_only"}
+      },
+      "existence_hash": "b7f97cc01fdc518d3acc0b45c44fe10d6be1c736a53665b9fc26f7bd8a886f7c", "phase": "DECLARED",
+      "evidence": {"standing_evidence_refs": [], "admissibility_evidence_refs": [], "integration_evidence_refs": [], "activation_proof_ref": null, "blockers": ["CONTROL_PLANE_SEPARATION_FROM_HEARTBEAT_RUNTIME_PENDING"], "continuation_owner": "StegVerse-Labs/.github#122"}
+    },
+    {
+      "declaration": {
+        "artifact_type": "stegcore.capability_existence_declaration", "schema_version": "1.0",
+        "capability_id": "stegverse:capability:manifest-communication:v1", "capability_version": "1.0.0",
+        "owner_repository": "StegVerse-Labs/repo-standards", "purpose": "Subsystem communication object composed of manifest packet, expiration wrapper and data packet",
+        "dependencies": [],
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["credential_authority", "heartbeat_authority", "master_records_custody"]},
+        "evidence_refs": ["StegVerse-Labs/.github#120", "StegVerse-Labs/repo-standards#39"],
+        "metadata": {"communication_object": "manifest+expiration_wrapper+data", "terminal_triggers": "endpoint_complete|expired"}
+      },
+      "existence_hash": "0530d8b2c618c16c7f70cfb32bd153da3d4c550ab1e501877e25d96beeafe55f", "phase": "DECLARED",
+      "evidence": {"standing_evidence_refs": [], "admissibility_evidence_refs": [], "integration_evidence_refs": [], "activation_proof_ref": null, "blockers": ["PACKET_STANDARD_RECONCILIATION_PENDING"], "continuation_owner": "StegVerse-Labs/repo-standards#39"}
+    },
+    {
+      "declaration": {
+        "artifact_type": "stegcore.capability_existence_declaration", "schema_version": "1.0",
+        "capability_id": "stegverse:capability:master-records-terminal-custody:v1", "capability_version": "1.0.0",
+        "owner_repository": "master-records/orchestration", "purpose": "Terminal custody of completed or expired Transition Table communication objects as Master Records packets",
+        "dependencies": ["stegverse:capability:manifest-communication:v1"],
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["credential_authority", "heartbeat_transport", "task_dispatch"]},
+        "evidence_refs": ["master-records/orchestration#33", "StegVerse-Labs/repo-standards#39"],
+        "metadata": {"transition_table_eol": "master_records", "terminal_object": "master_records_packet"}
+      },
+      "existence_hash": "6c2cb076589e42e58fd8a4fc2bc69a4db5501d38046609cbb0269967c52374f5", "phase": "DECLARED",
+      "evidence": {"standing_evidence_refs": [], "admissibility_evidence_refs": [], "integration_evidence_refs": [], "activation_proof_ref": null, "blockers": ["MASTER_RECORDS_EOL_PACKET_IMPLEMENTATION_PENDING"], "continuation_owner": "master-records/orchestration#33"}
     }
   ]
 }
