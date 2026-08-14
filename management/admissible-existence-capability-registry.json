@@ -140,7 +140,7 @@
           "may": [],
           "may_not": ["credential_authority", "repository_transport_authority", "merge_authority", "release_authority", "wallet_authority"]
         },
-        "evidence_refs": ["StegVerse-Labs/.github#137", "commit:eb37e12d63850d820054e2c85c1ff35dc666a2c3", "StegVerse-Labs/StegCore#120"],
+        "evidence_refs": ["StegVerse-Labs/.github#137", "commit:eb37e12d63850d820054e2c85c1ff35dc666a2c3", "StegVerse-Labs/StegCore#120", "StegVerse-Labs/StegCore#123"],
         "metadata": {
           "execution_posture": "least_stable_one_shot_or_short_lived",
           "source_packet_schema": "stegverse.owner-source-generation-packet/v0.1",
@@ -148,20 +148,27 @@
         }
       },
       "existence_hash": "5d6c4976e69fa958ddacc417195a9c8604a79931fbe0689a3e469e34064690ca",
-      "phase": "DECLARED",
+      "phase": "ADMISSIBLE",
       "evidence": {
-        "standing_evidence_refs": [],
-        "admissibility_evidence_refs": [],
+        "standing_evidence_refs": [
+          "data/formalism-source-generation-admissibility-evaluation.json",
+          "StegVerse-Labs/.github#137",
+          "StegVerse-Labs/.github#144",
+          "StegVerse-002/micro-node-runtime#32"
+        ],
+        "admissibility_evidence_refs": [
+          "data/formalism-source-generation-admissibility-evaluation.json",
+          "tests/test_formalism_source_generation_admissibility.py",
+          "StegVerse-Labs/StegCore#123"
+        ],
         "integration_evidence_refs": [],
         "activation_proof_ref": null,
         "blockers": [
-          "SOURCE_GENERATION_STANDING_NOT_YET_VERIFIED",
-          "SOURCE_GENERATION_ADMISSIBILITY_NOT_YET_EVALUATED",
           "SOVEREIGN_LOCAL_MODEL_LIVE_ACTIVATION_NOT_YET_OBSERVED",
-          "TVC_REPOSITORY_BROKER_CANONICAL_ADMISSION_NOT_YET_OBSERVED",
+          "FORMALISM_SOURCE_GENERATION_INTEGRATION_PROOF_NOT_YET_OBSERVED",
           "RESIDENT_SOURCE_GENERATION_AND_RECURSIVE_REOBSERVATION_NOT_YET_PROVEN"
         ],
-        "continuation_owner": "StegVerse-Labs/.github#137 -> StegVerse-Labs/StegCore#120 -> TV/TVC repository-operation authority"
+        "continuation_owner": "StegVerse-Labs/.github#137 -> StegVerse-Labs/StegCore lifecycle/registry owner -> TV/TVC repository-operation authority"
       }
     }
   ]
