@@ -28,7 +28,7 @@
       "claimed_phase": "ADMISSIBLE",
       "target_phase": "ADMISSIBLE",
       "owner": "StegVerse-Labs/StegCore",
-      "handoff_ref": "docs/TRANSACTION_DISCOVERY_SHARED_STORE_MIRROR_HANDOFF.md",
+      "handoff_ref": "docs/TRANSACTION_DISCOVERY_MIRROR_HANDOFF.md",
       "evidence_refs": [
         "StegVerse-Labs/StegCore#83",
         "StegVerse-Labs/StegCore#98",
@@ -67,7 +67,7 @@
       "claimed_phase": "ADMISSIBLE",
       "target_phase": "ACTIVATED",
       "owner": "StegVerse-Labs/StegCore#83",
-      "handoff_ref": "docs/TRANSACTION_DISCOVERY_SHARED_STORE_MIRROR_HANDOFF.md",
+      "handoff_ref": "docs/TRANSACTION_DISCOVERY_MIRROR_HANDOFF.md",
       "evidence_refs": [],
       "blockers": [
         "CONSUMER_PUBLIC_DISCOVERY_BINDING_NOT_YET_PROVEN",
