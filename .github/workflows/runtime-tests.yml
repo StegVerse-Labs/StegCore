@@ -59,45 +59,35 @@ jobs:
           set -euo pipefail
           git init .
           git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
-            SOURCE_REF="refs/pull/${PR_NUMBER}/merge"
-          else
-            SOURCE_REF="${GITHUB_SHA}"
-          fi
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then SOURCE_REF="refs/pull/${PR_NUMBER}/merge"; else SOURCE_REF="${GITHUB_SHA}"; fi
           git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=50 origin "${SOURCE_REF}"
           git checkout --detach FETCH_HEAD
           test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
 
-      - name: Select preinstalled Python 3.11
-        shell: bash
-        run: |
-          set -euo pipefail
-          PYTHON_BIN="$(find /opt/hostedtoolcache/Python -path '*/3.11.*/x64/bin/python' -type f | sort -V | tail -1)"
-          test -n "${PYTHON_BIN}"
-          echo "$(dirname "${PYTHON_BIN}")" >> "${GITHUB_PATH}"
-          "${PYTHON_BIN}" --version
+      - name: Verify preinstalled Python
+        run: python3 --version
 
       - name: Install package and test dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e . pytest
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -e . pytest
 
       - name: Validate no non-TV/TVC validation credential path
-        run: python scripts/validate_no_non_tvtvc_validation_credentials.py
+        run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
 
       - name: Validate continuity admissibility mapping
-        run: python scripts/check_continuity_admissibility_mapping.py docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
+        run: python3 scripts/check_continuity_admissibility_mapping.py docs/CONTINUITY_ADMISSIBILITY_RECEIPT_MAPPING.md
 
       - name: Validate downstream verification dispatch
-        run: python scripts/check_downstream_verification_dispatch.py evidence/downstream-verification-dispatch.json
+        run: python3 scripts/check_downstream_verification_dispatch.py evidence/downstream-verification-dispatch.json
 
       - name: Run runtime tests
-        run: pytest -q
+        run: python3 -m pytest -q
 
       - name: Validate pinned Governance snapshot manifest
         id: governance
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           import json
           from pathlib import Path
           manifest = json.loads(Path('contracts/governance_snapshot/manifest.json').read_text())
@@ -115,7 +105,7 @@ jobs:
           echo "governance_sha=$(cat '${{ runner.temp }}/governance_sha')" >> "$GITHUB_OUTPUT"
 
       - name: Verify Governance three-layer snapshot through StegCore
-        run: python scripts/verify_governance_three_layer_contract.py contracts/governance_snapshot
+        run: python3 scripts/verify_governance_three_layer_contract.py contracts/governance_snapshot
 
       - name: Generate non-persistent validation and release-readiness evidence
         id: evidence
@@ -124,7 +114,7 @@ jobs:
           GOVERNANCE_SHA: ${{ steps.governance.outputs.governance_sha }}
         run: |
           CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
-          python scripts/record_runtime_validation.py \
+          python3 scripts/record_runtime_validation.py \
             --output evidence/runtime-validation.json \
             --dispatch evidence/downstream-verification-dispatch.json \
             --stegcore-commit "$CONTRACT_SHA" \
@@ -136,8 +126,8 @@ jobs:
             --ref "${GITHUB_REF}" \
             --event "${GITHUB_EVENT_NAME}" \
             --issue 22
-          python scripts/check_runtime_validation_evidence.py evidence/runtime-validation.json
-          python scripts/assess_release_readiness.py \
+          python3 scripts/check_runtime_validation_evidence.py evidence/runtime-validation.json
+          python3 scripts/assess_release_readiness.py \
             --evidence evidence/runtime-validation.json \
             --output evidence/release-readiness.json
           sha256sum evidence/runtime-validation.json evidence/release-readiness.json
