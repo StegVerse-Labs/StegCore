@@ -17,10 +17,7 @@ jobs:
         run: |
           set -euo pipefail
           for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN; do
-            if [ -n "${!name:-}" ]; then
-              echo "forbidden credential environment variable present: ${name}" >&2
-              exit 1
-            fi
+            if [ -n "${!name:-}" ]; then echo "forbidden credential environment variable present: ${name}" >&2; exit 1; fi
           done
 
       - name: Anonymous public repository fetch
@@ -36,29 +33,24 @@ jobs:
           git checkout --detach FETCH_HEAD
           test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
 
-      - name: Select preinstalled Python 3.11
-        shell: bash
-        run: |
-          set -euo pipefail
-          PYTHON_BIN="$(find /opt/hostedtoolcache/Python -path '*/3.11.*/x64/bin/python' -type f | sort -V | tail -1)"
-          test -n "${PYTHON_BIN}"
-          echo "$(dirname "${PYTHON_BIN}")" >> "${GITHUB_PATH}"
+      - name: Verify preinstalled Python
+        run: python3 --version
 
       - name: Install deps
-        run: python -m pip install pyyaml
+        run: python3 -m pip install pyyaml
 
       - name: Validate no non-TV/TVC validation credential path
-        run: python scripts/validate_no_non_tvtvc_validation_credentials.py
+        run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
 
       - name: Validate BCAT declaration
         run: |
           test -f bcat.yaml
-          python scripts/validate_bcat.py bcat.yaml
+          python3 scripts/validate_bcat.py bcat.yaml
 
       - name: Compute BCAT status
         id: status
         run: |
-          STATUS=$(python scripts/bcat_status.py bcat.yaml)
+          STATUS=$(python3 scripts/bcat_status.py bcat.yaml)
           echo "status=$STATUS" >> "$GITHUB_OUTPUT"
           echo "BCAT_STATUS=$STATUS" >> "$GITHUB_ENV"
 
