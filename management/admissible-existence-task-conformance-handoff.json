@@ -1,0 +1,57 @@
+{
+  "artifact_type": "stegcore.admissible_existence_handoff_conformance_manifest",
+  "schema_version": "1.0",
+  "policy_id": "ADMISSIBLE-EXISTENCE-TASK-CONFORMANCE-003",
+  "canonical_handoff": "docs/ADMISSIBLE_EXISTENCE_TASK_CONFORMANCE_MIRROR_HANDOFF.md",
+  "tasks": [
+    {
+      "goal_id": "ADMISSIBLE-EXISTENCE-CAPABILITY-MODEL-001",
+      "task_horizon": "recently_completed",
+      "operational_state": "COMPLETE",
+      "ae_phase": "ACTIVATED",
+      "owner": "StegVerse-Labs/StegCore",
+      "collision_boundary": "src/stegcore/admissible_existence.py; tests/test_admissible_existence.py; AE exports only",
+      "next_executable_action": "none; preserve released evidence and prevent contradictory reimplementation",
+      "evidence_refs": ["PR #95", "7d94908be562f9f9ace05877d4507dc68c984e06"],
+      "standing_evidence_refs": ["docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md"],
+      "admissibility_evidence_refs": ["tests/test_admissible_existence.py", "workflow:31818067070"],
+      "activation_proof_ref": "7d94908be562f9f9ace05877d4507dc68c984e06",
+      "blockers": [],
+      "continuation_owner": "StegVerse-Labs/StegCore",
+      "credential_authority": "TV/TVC",
+      "github_token_runtime_authority": false
+    },
+    {
+      "goal_id": "ADMISSIBLE-EXISTENCE-TASK-CONFORMANCE-003",
+      "task_horizon": "current",
+      "operational_state": "ACTIVE",
+      "ae_phase": "ADMISSIBLE",
+      "owner": "StegVerse-Labs/StegCore",
+      "collision_boundary": "canonical HANDOFF/Worker Task Registry conformance policy, verifier, tests, and handoff only",
+      "next_executable_action": "host-validate verifier, merge canonical implementation, then bind Worker Task Registry to this gate",
+      "evidence_refs": ["management/admissible-existence-task-conformance-policy.json", "scripts/verify_admissible_existence_task_conformance.py"],
+      "standing_evidence_refs": ["this manifest", "docs/ADMISSIBLE_EXISTENCE_TASK_CONFORMANCE_MIRROR_HANDOFF.md"],
+      "admissibility_evidence_refs": ["scripts/verify_admissible_existence_task_conformance.py"],
+      "activation_proof_ref": null,
+      "blockers": ["hosted validation and merge not yet evidenced"],
+      "continuation_owner": "StegVerse-Labs/StegCore",
+      "credential_authority": "TV/TVC",
+      "github_token_runtime_authority": false
+    },
+    {
+      "goal_id": "ADMISSIBLE-EXISTENCE-CONSUMER-BINDING-004",
+      "task_horizon": "future",
+      "operational_state": "CLAIMED",
+      "ae_phase": "DECLARED",
+      "owner": "cross-repository component owners",
+      "collision_boundary": "consumer-side declaration/import contracts only; no parallel evaluator and no credential ownership",
+      "next_executable_action": "after conformance gate activation, require each governed worker registry/handoff producer to emit AE phase/evidence fields before claiming archival or activation",
+      "evidence_refs": ["management/admissible-existence-task-conformance-policy.json"],
+      "activation_proof_ref": null,
+      "blockers": ["depends on task-conformance gate activation"],
+      "continuation_owner": "StegVerse-Labs/StegCore",
+      "credential_authority": "TV/TVC",
+      "github_token_runtime_authority": false
+    }
+  ]
+}
