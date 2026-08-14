@@ -1,0 +1,59 @@
+{
+  "artifact_type": "stegcore.admissible_existence_task_conformance_policy",
+  "schema_version": "1.0",
+  "policy_id": "ADMISSIBLE-EXISTENCE-TASK-CONFORMANCE-003",
+  "canonical_runtime_authority": "stegcore.steggate.evaluate_admissibility",
+  "credential_authority": "TV/TVC",
+  "github_token_runtime_authority": false,
+  "task_horizons": ["recently_completed", "current", "future"],
+  "ae_phases": ["DECLARED", "STANDING", "ADMISSIBLE", "ACTIVATED", "SUSPENDED", "SUPERSEDED", "TERMINATED"],
+  "terminal_operational_states": ["COMPLETE", "MERGED", "SUPERSEDED"],
+  "active_operational_states": ["CLAIMED", "ACTIVE", "RETRY", "REVIEW_REQUIRED", "BLOCKED"],
+  "forbidden_completion_inference": [
+    "file_presence",
+    "branch_presence",
+    "pull_request_opened",
+    "workflow_started",
+    "analysis_only",
+    "documentation_only_without_required_runtime_evidence"
+  ],
+  "handoff_required_fields": [
+    "goal_id",
+    "task_horizon",
+    "operational_state",
+    "ae_phase",
+    "owner",
+    "collision_boundary",
+    "next_executable_action",
+    "evidence_refs",
+    "activation_proof_ref",
+    "continuation_owner",
+    "credential_authority",
+    "github_token_runtime_authority"
+  ],
+  "registry_required_fields": [
+    "task_id",
+    "task_horizon",
+    "state",
+    "ae_phase",
+    "owner",
+    "collision_boundary",
+    "next_executable_action",
+    "expected_evidence",
+    "evidence_refs",
+    "activation_proof_ref",
+    "continuation_owner"
+  ],
+  "phase_rules": {
+    "DECLARED": {"standing_required": false, "admissibility_required": false, "activation_required": false},
+    "STANDING": {"standing_required": true, "admissibility_required": false, "activation_required": false},
+    "ADMISSIBLE": {"standing_required": true, "admissibility_required": true, "activation_required": false},
+    "ACTIVATED": {"standing_required": true, "admissibility_required": true, "activation_required": true},
+    "SUSPENDED": {"standing_required": true, "admissibility_required": true, "activation_required": true},
+    "SUPERSEDED": {"standing_required": true, "admissibility_required": true, "activation_required": true},
+    "TERMINATED": {"standing_required": true, "admissibility_required": true, "activation_required": false}
+  },
+  "completion_rule": "A task may be operationally COMPLETE or MERGED without being ACTIVATED, but the handoff and registry must preserve the exact AE phase and must not represent source completion as live activation. ACTIVATED requires explicit activation proof.",
+  "fail_closed_rule": "Missing required evidence, missing continuation ownership, stale authority metadata, or an invalid operational-state/AE-phase combination makes the task nonconformant and prevents archival or activation claims.",
+  "canonical_surfaces": ["HANDOFF", "WORKER_TASK_REGISTRY"]
+}
