@@ -1,10 +1,26 @@
-version: 0.6
+version: 0.7
 goal: ecosystem_managed_task_handoff_and_completion
 
 assessment_rule: >-
   Continue building until the active task chain is complete or until task handoff,
   verification, next-task selection, and archive readiness can be handled by
   ecosystem management receipts.
+
+admissible_existence_conformance:
+  schema_version: 1.0
+  manifest: ecosystem_management/ae_task_conformance.v1.json
+  capability_registry: management/admissible-existence-capability-registry.json
+  canonical_handoff: docs/STEGVERSE_ECOSYSTEM_MANAGEMENT_MIRROR_HANDOFF.md
+  verifier: tools/verify_ae_handoff_task_conformance.py
+  report_artifact: brain_reports/ae_handoff_task_conformance_report.json
+  canonical_admissibility_runtime: stegcore.steggate.evaluate_admissibility
+  credential_authority: TV/TVC
+  github_token_runtime_authority: NONE
+  recently_completed_rule: retained evidence must support the claimed AE phase
+  current_rule: owner, continuation owner, blockers, capability binding, and claimed phase must be coherent
+  future_rule: capability binding and target phase are required before activation work begins
+  legacy_rule: unbound records are MIGRATION_REQUIRED and cannot silently carry activation authority forward
+  structural_authority_effect: NONE
 
 required_management_capabilities:
   - mirror_handoff_present
@@ -15,6 +31,8 @@ required_management_capabilities:
   - report_artifact_declared
   - parallel_session_non_overlap_declared
   - archive_readiness_declared
+  - admissible_existence_capability_binding_declared
+  - ae_conformance_verification_declared
 
 active_chain:
   org: StegVerse-Labs
@@ -23,6 +41,7 @@ active_chain:
   current_goal_activation: complete_when_bootstrap_and_verify_workflow_commits_report
   next_integration_candidate: stegfin-provider-acquisition-close
   parallel_session_overlap_status: no known overlapping session for provider-banking/acquisition-close chain
+  ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
 
 parallel_chains:
   - chain_id: personal-data-control-session-consolidation
@@ -42,6 +61,7 @@ parallel_chains:
     non_overlap: coordination-validation-and-session-consolidation-only-no-external-deletion-identity-legal-deployment-or-publication-authority
     completion_criteria: satisfied-by-complete-inventory-zero-chat-only-requirements-stegtalk-targeted-pass-and-repository-native-continuation
     archive_readiness: ready
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - chain_id: rtg-tt-operational-layer
     owner_repo: StegCore
     status: building
@@ -57,6 +77,7 @@ parallel_chains:
       - GCAT-BCAT-Engine/Publisher#20
     non_overlap: does-not-claim-stegfin-chain-site-hil-paths-or-ae-tt-authority
     completion_criteria: verifier-green-site-main-verified-downstream-dependency-bound-activation-receipt-created
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - chain_id: governed-correctability-layer
     owner_repo: StegCore
     status: hosted-validation-complete-machine-owned-propagation
@@ -82,6 +103,7 @@ parallel_chains:
     non_overlap: correction-semantics-and-source-conformance-complete; downstream-only-through-target-native-orchestration
     completion_criteria: four-destination-target-native-propagation-evidence-or-durable-blockers-recorded-and-source-registry-reconciled
     archive_readiness: originating-correctability-and-external-convergence-chats-independent
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - chain_id: child-mode-authority-runtime
     owner_repo: StegCore
     status: machine-owned-propagation-review
@@ -104,20 +126,24 @@ parallel_chains:
     non_overlap: propagation-review-only-no-legal-pilot-deployment-age-identity-or-site-publication-authority
     completion_criteria: hosted-verifier-pass-and-report-artifact-satisfied; remaining-destination-reviews-owned-by-destination-handoffs
     archive_readiness: originating-child-safety-chat-independent
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
 
 managed_repos:
   - name: stegfin-provider-token-ledger-executor
     status: management-capable
     handoff: live_execution/docs/STEGFIN_LIVE_TOKEN_LEDGER_EXECUTION_SHADOW_MIRROR_HANDOFF.md
     next_candidate: stegfin-provider-treasury-record
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - name: stegfin-provider-treasury-record
     status: management-capable
     handoff: docs/STEGFIN_PROVIDER_TREASURY_RECORD_MIRROR_HANDOFF.md
     next_candidate: stegfin-provider-banking
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - name: stegfin-provider-banking
     status: management-capable-pending-workflow-run
     handoff: docs/STEGFIN_PROVIDER_BANKING_MIRROR_HANDOFF.md
     next_candidate: stegfin-provider-acquisition-close
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - name: StegVA
     status: interim-handoff-recorded-pending-dedicated-repository
     handoff: docs/STEGVA_MIRROR_HANDOFF.md
@@ -126,18 +152,21 @@ managed_repos:
     non_overlap: does-not-claim-active-stegfin-provider-chain
     parallel_dependency: StegVerse-Labs/VAwatchdog
     parallel_boundary: StegVerse-Labs/VAwatchdog/docs/STEGVA_INTEGRATION_BOUNDARY.md
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - name: VAwatchdog
     status: management-capable-stegva-boundary-recorded
     handoff: docs/VAWATCHDOG_MIRROR_HANDOFF.md
     next_candidate: source-hardening-only-when-new-metadata-arrives
     ownership: vawatchdog-evidence-and-accountability-workstream
     non_overlap: does-not-own-stegva-private-claim-service
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - name: StegCore-RTG-TT
     status: building-operational-coordination-layer
     handoff: docs/STEGVERSE_RTG_TT_OPERATIONAL_LAYER_HANDOFF.md
     next_candidate: StegVerse-Labs/Site#125
     ownership: coordination-and-verification-only
     non_overlap: no-formalism-allocation-execution-custody-publication-or-release-authority
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - name: StegCore-Correctability
     status: hosted-validation-complete-machine-owned-propagation
     handoff: docs/CORRECTABILITY_LAYER_MIRROR_HANDOFF.md
@@ -145,15 +174,19 @@ managed_repos:
     propagation_task: receipts/correctability-propagation-task.json
     ownership: correction-request-semantics-source-conformance-and-propagation-coordination
     non_overlap: no-runtime-deployment-financial-legal-physical-guardian-publication-or-release-authority
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
   - name: StegCore-Personal-Data-Control-Consolidation
     status: complete-archive-ready
     handoff: docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md
     next_candidate: StegVerse-Labs/StegID#SID-PDCL-002
     ownership: repository-native-session-consolidation
     non_overlap: no-external-deletion-identity-verification-legal-or-deployment-authority
+    ae_migration_state: MIGRATION_REQUIRED_UNTIL_BOUND_IN_AE_TASK_CONFORMANCE_MANIFEST
 
 artifacts:
   management_report: brain_reports/stegverse_ecosystem_management_readiness_report.json
+  ae_conformance_manifest: ecosystem_management/ae_task_conformance.v1.json
+  ae_conformance_report: brain_reports/ae_handoff_task_conformance_report.json
   stegva_interim_handoff: docs/STEGVA_MIRROR_HANDOFF.md
   stegva_vawatchdog_parallel_work_receipt: docs/STEGVA_VAWATCHDOG_PARALLEL_WORK_RECEIPT.md
   rtg_tt_operational_state: ecosystem_management/rtg_tt_operational_layer.v0.1.json
