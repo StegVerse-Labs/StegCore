@@ -56,6 +56,15 @@ from .transaction_discovery import (
     TransactionDiscoveryIndex,
 )
 from .transaction_discovery_store import DiscoveryRecordStore, SqliteDiscoveryStore
+from .sdk_operation_events import (
+    SDK_CHOICE_CODES,
+    CORE_GOVERNED_CHOICES,
+    CHOICE_LABELS,
+    SDKOperationEvent,
+    SDKChoiceUsage,
+    SDKUsageSummary,
+    SDKOperationEventLedger,
+)
 
 __all__ = [
     "__version__",
@@ -108,4 +117,11 @@ __all__ = [
     "TransactionDiscoveryIndex",
     "DiscoveryRecordStore",
     "SqliteDiscoveryStore",
+    "SDK_CHOICE_CODES",
+    "CORE_GOVERNED_CHOICES",
+    "CHOICE_LABELS",
+    "SDKOperationEvent",
+    "SDKChoiceUsage",
+    "SDKUsageSummary",
+    "SDKOperationEventLedger",
 ]
