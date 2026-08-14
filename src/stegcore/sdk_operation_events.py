@@ -9,7 +9,6 @@ execution, replay, reconstruction, or disclosure authority.
 """
 
 from datetime import datetime, timedelta, timezone
-import json
 from pathlib import Path
 from typing import Literal
 from uuid import uuid4
@@ -167,7 +166,7 @@ class SDKOperationEventLedger:
                 new = getattr(event, field)
                 if old is not None and new is not None and old != new:
                     raise ValueError(f"invocation identity changed across lifecycle: {field}")
-            if first.phase in TERMINAL_PHASES:
+            if events[-1].phase in TERMINAL_PHASES:
                 raise ValueError("cannot append an event after terminal invocation state")
             if event.phase == "STARTED":
                 raise ValueError("invocation cannot contain multiple STARTED events")
@@ -309,14 +308,16 @@ class SDKOperationEventLedger:
 
         invocations: list[tuple[SDKOperationEvent, SDKOperationEvent]] = []
         for events in self._by_invocation.values():
-            if not events:
-                continue
-            invocations.append((events[0], events[-1]))
+            if events:
+                invocations.append((events[0], events[-1]))
 
         total = len(invocations)
-        trailing_total = sum(1 for first, _ in invocations if _parse_iso(first.occurred_at) >= cutoff)
-        observed_since = (
-            min((_parse_iso(first.occurred_at) for first, _ in invocations), default=None)
+        trailing_total = sum(
+            1 for first, _ in invocations if _parse_iso(first.occurred_at) >= cutoff
+        )
+        observed_since = min(
+            (_parse_iso(first.occurred_at) for first, _ in invocations),
+            default=None,
         )
 
         usage_rows: list[SDKChoiceUsage] = []
@@ -350,7 +351,11 @@ class SDKOperationEventLedger:
                 )
             )
 
-        core = [(first, last) for first, last in invocations if first.choice_code in CORE_GOVERNED_CHOICES]
+        core = [
+            (first, last)
+            for first, last in invocations
+            if first.choice_code in CORE_GOVERNED_CHOICES
+        ]
         trailing_core = [
             (first, last)
             for first, last in core
@@ -375,7 +380,7 @@ class SDKOperationEventLedger:
         *,
         now: datetime | None = None,
     ) -> dict[str, object]:
-        """Return the only fields intended for a GitHub notification projection."""
+        """Return only disclosure-safe fields for GitHub notification projection."""
         self._validate_event(event)
         summary = self.summary(now=now)
         return {
