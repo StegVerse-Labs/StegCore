@@ -5,40 +5,55 @@
 ```text
 organization: StegVerse-Labs
 repository: StegCore
-branch: main
-goal_id: ADMISSIBLE-FORMALISM-SOURCE-GENERATION-REGISTRY-003
-issue: #120
-pull_request: #121
-merge_commit: d2fb2437f4554832db386d5291ea15455ec143bb
+branch: feat/formalism-source-generation-admissible-123
+goal_id: ADMISSIBLE-FORMALISM-SOURCE-GENERATION-REGISTRY-004
+issue: #123
 parent_handoff: docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md
+prior_registry_issue: #120
 orchestration_dependency: StegVerse-Labs/.github#137
 orchestration_source_merge: eb37e12d63850d820054e2c85c1ff35dc666a2c3
+local_executor_owner: StegVerse-Labs/.github#144 / main
+local_model_owner: StegVerse-002/micro-node-runtime
 formalism_authority: Admissible-Existence/AE + RTG + GTG + TT + STCM
 canonical_runtime_authority: stegcore.steggate.evaluate_admissibility
 credential_authority: TV/TVC
 github_token_runtime_authority: NONE
-registry_lane_state: COMPLETE_RELEASED
-archive_ready: true_for_this_scoped_registry_lane_only
+registry_lane_state: CANDIDATE_ADMISSIBLE_PENDING_HOSTED_VALIDATION
+archive_ready: false
 ```
 
-This scoped handoff supplements, and does not replace, `docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md`. It owns only canonical registry treatment of `stegverse:capability:formalism-source-generation:v1` and may not modify canonical StegGate or AE lifecycle semantics.
+This scoped handoff supplements, and does not replace, `docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md`. It owns only canonical lifecycle treatment of `stegverse:capability:formalism-source-generation:v1`; it may not alter canonical StegGate/AE semantics or infer activation from source presence, workers, heartbeat, model availability, coherence or gradient observations.
 
-## Current capability existence
+## Current candidate capability existence
 
 ```text
 capability_id: stegverse:capability:formalism-source-generation:v1
 capability_version: 1.0.0
 existence_hash: 5d6c4976e69fa958ddacc417195a9c8604a79931fbe0689a3e469e34064690ca
 owner_repository: StegVerse-Labs/.github
-phase: DECLARED
+candidate_phase: ADMISSIBLE
 target_phase: ACTIVATED
 execution_posture: least-stable one-shot or short-lived worker
 dependencies:
-  - stegverse:capability:steggate:canonical:v1
-  - stegverse:capability:sovereign-local-model:v1
+  - stegverse:capability:steggate:canonical:v1 = ACTIVATED
+  - stegverse:capability:sovereign-local-model:v1 = ADMISSIBLE
 ```
 
-Registration at `DECLARED` records existence only. It does not establish standing, admissibility, integration, execution, repository mutation, or activation authority.
+The current evidence now supports evaluating `DECLARED -> STANDING -> ADMISSIBLE` through canonical `evaluate_capability_existence`. It still does **not** support `ADMISSIBLE -> ACTIVATED`.
+
+## Standing and admissibility evidence
+
+Canonical evidence manifest:
+
+`data/formalism-source-generation-admissibility-evaluation.json`
+
+Deterministic lifecycle tests:
+
+`tests/test_formalism_source_generation_admissibility.py`
+
+Standing is based on independently inspectable canonical owner/purpose/authority, merged `.github#137` source/control implementation, released bounded executor `.github#144`, and released sovereign structured-generation profile in `StegVerse-002/micro-node-runtime#32`.
+
+Admissibility remains subordinate to canonical StegGate. The test lane requires ALLOW for the exact capability target and proves both structural transitions advance while an attempted activation remains structurally blocked without integration evidence and an activation proof.
 
 ## Authority boundary
 
@@ -46,7 +61,6 @@ Registration at `DECLARED` records existence only. It does not establish standin
 admissibility authority: canonical StegGate only
 capability lifecycle authority: StegCore AE lifecycle/registry
 source-generation orchestration owner: StegVerse-Labs/.github#137
-local-model implementation owner: StegVerse-002/micro-node-runtime
 credential/repository-operation authority: TV/TVC only
 heartbeat execution authority: NONE
 GitHub token runtime authority: NONE
@@ -54,73 +68,40 @@ merge/release/publication authority: NONE from this capability
 wallet signing/broadcast authority: NONE
 ```
 
-The capability declaration explicitly forbids `credential_authority`, `repository_transport_authority`, `merge_authority`, `release_authority`, and `wallet_authority` in its own authority envelope.
-
-## Current blockers
+## Activation blockers retained
 
 ```text
-SOURCE_GENERATION_STANDING_NOT_YET_VERIFIED
-SOURCE_GENERATION_ADMISSIBILITY_NOT_YET_EVALUATED
 SOVEREIGN_LOCAL_MODEL_LIVE_ACTIVATION_NOT_YET_OBSERVED
-TVC_REPOSITORY_BROKER_CANONICAL_ADMISSION_NOT_YET_OBSERVED
+FORMALISM_SOURCE_GENERATION_INTEGRATION_PROOF_NOT_YET_OBSERVED
 RESIDENT_SOURCE_GENERATION_AND_RECURSIVE_REOBSERVATION_NOT_YET_PROVEN
 ```
 
-Canonical continuation owner:
+No integration evidence or activation proof is recorded in the registry candidate. No live generation, repository mutation, wallet contact, signing or broadcast is claimed.
+
+## Validation contract
+
+Before merge, all current StegCore product gates and mandatory task-registry conformance must pass. The new deterministic tests must prove:
+
+1. existence identity remains exact and stable;
+2. DECLARED -> STANDING requires standing proof and canonical ALLOW;
+3. STANDING -> ADMISSIBLE requires canonical ALLOW;
+4. ADMISSIBLE -> ACTIVATED remains blocked without integration verification and activation proof;
+5. credential authority remains TV/TVC and GitHub-token runtime authority remains absent.
+
+## Canonical continuation
+
+After a validated merge, this scoped registry lane releases to:
 
 ```text
 StegVerse-Labs/.github#137
--> StegVerse-Labs/StegCore capability lifecycle/registry owner when evidence advances
+-> sovereign-local-model live activation owner (.github#60 -> TVC -> LLM-adapter -> master-records/orchestration)
+-> registered local source-generation executor
+-> existing source-generation binder
 -> TV/TVC repository-operation authority
-```
-
-## Implementation claim — COMPLETE_RELEASED
-
-```text
-claim_ref: management/formalism-source-generation-capability-claim.json
-claimant: current ChatGPT continuation session
-role: COMPLETE_RELEASED
-claimed_at: 2026-08-14T16:12:00-05:00
-released_at: 2026-08-14T16:16:00-05:00
-release_condition: SATISFIED
-```
-
-No StegCore implementation claim remains for the completed DECLARED registration slice. Lifecycle advancement requires new evidence and must not be inferred from this merge.
-
-## Hosted validation evidence
-
-PR #121 head `e301fc73cd9296f491b97deaa5351b1e43b2f256` passed all six observed gates before merge:
-
-```text
-StegCore Tests - No Non-TV/TVC Credential Authority: 31841568033 SUCCESS
-Validate StegCore Runtime - No Non-TV/TVC Credential Authority: 31841568098 SUCCESS
-BCAT Gate - No Non-TV/TVC Credential Authority: 31841568071 SUCCESS
-Test Readiness - No Non-TV/TVC Credential Authority: 31841568089 SUCCESS
-Validate StegVerse 001 002 Baseline - No Non-TV/TVC Credential Authority: 31841568037 SUCCESS
-verify-task-registry: 31841568017 SUCCESS
-```
-
-These gates prove source/registry/handoff conformance only. They do not advance the capability beyond `DECLARED`.
-
-## Next lifecycle transition
-
-`DECLARED -> STANDING` requires independently inspectable standing evidence from the canonical orchestration owner and a valid canonical StegGate lifecycle transition. Later `ADMISSIBLE -> ACTIVATED` remains impossible until integration evidence plus an activation proof exist. In particular, `.github` worker registration, model availability, source tests, or hosted workflow success cannot create activation.
-
-## Completion inventory
-
-```text
-registry declaration: COMPLETE
-existence hash: DETERMINISTIC_AND_TEST_BOUND
-phase: DECLARED
-source validation: 6/6 PASS
-merge: COMPLETE d2fb2437f4554832db386d5291ea15455ec143bb
-claim: COMPLETE_RELEASED
-standing evidence: 0 / required for next phase
-admissibility evidence: 0 / required for later phase
-integration evidence: 0 / required for activation
-activation proof: NONE
+-> owner validation/merge
+-> reconciliation re-observation
 ```
 
 ## Archive condition
 
-This scoped StegCore registry lane is archive-safe because its implementation claim is released and continuation is durably assigned. The wider conversation is not archive-ready while `.github#137` source-generation activation, local-model same-execution activation, TVC broker admission, real owner mutation, trade readiness, or recursive re-observation remain incomplete without a proven active executor.
+This scoped lifecycle-advancement lane becomes archive-safe only after hosted validation and canonical merge. The wider session is not archive-ready until every remaining session goal is complete or an actually executing continuation path is directly evidenced under the strengthened archive rule.
