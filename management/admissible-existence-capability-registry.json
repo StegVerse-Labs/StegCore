@@ -1,0 +1,90 @@
+{
+  "artifact_type": "stegcore.capability_existence_registry",
+  "schema_version": "1.0",
+  "entries": [
+    {
+      "declaration": {
+        "artifact_type": "stegcore.capability_existence_declaration",
+        "schema_version": "1.0",
+        "capability_id": "stegverse:capability:steggate:canonical:v1",
+        "capability_version": "0.2.0",
+        "owner_repository": "StegVerse-Labs/StegCore",
+        "purpose": "Canonical StegGate admissibility runtime",
+        "dependencies": [],
+        "authority": {
+          "credential_authority": "TV/TVC",
+          "github_token_runtime_authority": false,
+          "may": [],
+          "may_not": []
+        },
+        "evidence_refs": [
+          "StegVerse-Labs/StegCore#68",
+          "data/steggate-live-activation-receipt.json"
+        ],
+        "metadata": {
+          "canonical_runtime": "stegcore.steggate.evaluate_admissibility"
+        }
+      },
+      "existence_hash": "2ae60c6b388f910a57128b52da46c88b7d5eb4e2053e26feec1082d2ead693d7",
+      "phase": "ACTIVATED",
+      "evidence": {
+        "standing_evidence_refs": [
+          "STEGCORE_MIRROR_HANDOFF.md"
+        ],
+        "admissibility_evidence_refs": [
+          "src/stegcore/steggate.py",
+          "StegVerse-Labs/StegCore#68"
+        ],
+        "integration_evidence_refs": [
+          "data/steggate-live-activation-receipt.json",
+          "src/stegcore/steggate_runtime.py"
+        ],
+        "activation_proof_ref": "data/steggate-live-activation-receipt.json",
+        "blockers": [],
+        "continuation_owner": "StegVerse-Labs/StegCore"
+      }
+    },
+    {
+      "declaration": {
+        "artifact_type": "stegcore.capability_existence_declaration",
+        "schema_version": "1.0",
+        "capability_id": "stegverse:capability:sovereign-local-model:v1",
+        "capability_version": "1.0.0",
+        "owner_repository": "StegVerse-002/micro-node-runtime",
+        "purpose": "Sovereign local language model discovery, launch, inference and proof",
+        "dependencies": [],
+        "authority": {
+          "credential_authority": "TV/TVC",
+          "github_token_runtime_authority": false,
+          "may": [],
+          "may_not": []
+        },
+        "evidence_refs": [
+          "docs/SOVEREIGN_LOCAL_MODEL_RUNTIME_MIRROR_HANDOFF.md",
+          "workflow:31339534741",
+          "workflow:31384116055"
+        ],
+        "metadata": {
+          "live_activation_owner": "StegVerse-Labs/.github#60"
+        }
+      },
+      "existence_hash": "afa989ddade267e328820d9e82da90905b3271bc62d870e7add1515453086081",
+      "phase": "ADMISSIBLE",
+      "evidence": {
+        "standing_evidence_refs": [
+          "StegVerse-002/micro-node-runtime/docs/SOVEREIGN_LOCAL_MODEL_RUNTIME_MIRROR_HANDOFF.md"
+        ],
+        "admissibility_evidence_refs": [
+          "workflow:31339534741",
+          "workflow:31384116055"
+        ],
+        "integration_evidence_refs": [],
+        "activation_proof_ref": null,
+        "blockers": [
+          "RESIDENT_HEARTBEAT_POST_HB29_ROUTE_EXECUTION_NOT_YET_OBSERVED"
+        ],
+        "continuation_owner": "StegVerse-Labs/.github#60 -> StegVerse-Labs/TVC -> StegVerse-org/LLM-adapter -> master-records/orchestration"
+      }
+    }
+  ]
+}
