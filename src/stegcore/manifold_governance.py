@@ -3,19 +3,19 @@ from __future__ import annotations
 """Deterministic population-level planning over canonical StegGate evaluations.
 
 This module is intentionally *not* an admissibility evaluator and it performs no
-commit.  Each candidate transition is evaluated by the canonical
-``stegcore.steggate.evaluate_admissibility`` function.  The resulting standing is
+commit. Each candidate transition is evaluated by the canonical
+``stegcore.steggate.evaluate_admissibility`` function. The resulting standing is
 then arranged into a deterministic dependency/conflict/bundle plan.
 
 Derived population observations (for example coherence or gradient metadata) are
-carried only as evidence.  They never alter authority, canonical disposition, or
+carried only as evidence. They never alter authority, canonical disposition, or
 commit eligibility.
 """
 
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Literal, Mapping
 
-from .steggate import AdmissibilityRequest, canonical_sha256, evaluate_admissibility
+from .steggate import AdmissibilityEvaluation, AdmissibilityRequest, canonical_sha256, evaluate_admissibility
 
 CanonicalDisposition = Literal["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"]
 PlanState = Literal["READY", "REVIEW_REQUIRED", "FAIL_CLOSED"]
@@ -90,6 +90,38 @@ def _normalize_text(value: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError("identifier/hash values must be non-empty strings")
     return value.strip()
+
+
+def _stable_evaluation_projection(evaluation: AdmissibilityEvaluation) -> dict[str, Any]:
+    """Return the replay-stable semantic portion of one canonical evaluation.
+
+    Canonical StegGate deliberately emits time-bound provenance fields such as
+    ``evaluated_at``, ``decision_state_hash`` and the three-layer receipt hash.
+    Those values remain canonical evaluation evidence, but incorporating them in
+    a population *plan identity* would make an otherwise identical population
+    hash differently merely because candidates were evaluated a few microseconds
+    apart or in a different input permutation.
+
+    The planner therefore binds the stable semantic standing while excluding only
+    those time/provenance-bound values. It never recomputes, replaces or changes
+    the canonical disposition or predicate matrix.
+    """
+
+    return {
+        "artifact_type": evaluation.artifact_type,
+        "schema_version": evaluation.schema_version,
+        "disposition": evaluation.disposition,
+        "candidate_hash": evaluation.candidate_hash,
+        "matrix": [row.model_dump(mode="json") for row in evaluation.matrix],
+        "reasons": list(evaluation.reasons),
+        "canonical_three_layer_decision": evaluation.canonical_three_layer_decision,
+        "canonical_three_layer_reason": evaluation.canonical_three_layer_reason,
+        "canonical_three_layer_request_hash": evaluation.canonical_three_layer_request_hash,
+        "permission_present": evaluation.permission_present,
+        "permission_is_not_admissibility": evaluation.permission_is_not_admissibility,
+        "continuity_receipt_minted": evaluation.continuity_receipt_minted,
+        "external_execution_performed": evaluation.external_execution_performed,
+    }
 
 
 def _fail_closed(reason: str, *, base_manifold_hash: str = "UNRESOLVED") -> ManifoldPlan:
@@ -205,7 +237,7 @@ def _plan_payload(
 def plan_manifold(transitions: Iterable[PopulationTransition]) -> ManifoldPlan:
     """Evaluate and deterministically plan a frozen population of transitions.
 
-    The function never performs a commit.  It is safe to replay with the same
+    The function never performs a commit. It is safe to replay with the same
     declared population: equivalent permutations yield the same ``plan_hash``.
     """
 
@@ -271,12 +303,12 @@ def plan_manifold(transitions: Iterable[PopulationTransition]) -> ManifoldPlan:
     for transition_id in sorted(normalized_by_id):
         item = normalized_by_id[transition_id]
         evaluation = evaluate_admissibility(item.request)
-        evaluation_body = evaluation.model_dump(mode="json")
+        stable_evaluation = _stable_evaluation_projection(evaluation)
         standing_by_id[transition_id] = TransitionStanding(
             transition_id=transition_id,
             disposition=evaluation.disposition,
             candidate_hash=evaluation.candidate_hash,
-            evaluation_hash=canonical_sha256(evaluation_body),
+            evaluation_hash=canonical_sha256(stable_evaluation),
             reasons=tuple(evaluation.reasons),
             depends_on=item.depends_on,
             conflicts_with=item.conflicts_with,
