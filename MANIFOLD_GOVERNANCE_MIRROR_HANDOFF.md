@@ -8,6 +8,7 @@ repository: StegCore
 branch: feat/manifold-governance-runtime-kernel-001
 goal_id: MANIFOLD-GOVERNANCE-RUNTIME-KERNEL-001
 canonical_issue: #91
+pull_request: #92
 originating_goal: formalism/manifold orchestration implementation admitted by StegVerse-Labs/.github
 formalism_authority: Admissible-Existence/AE + RTG + GTG + TT + STCM
 canonical_runtime_authority: stegcore.steggate.evaluate_admissibility
@@ -32,21 +33,69 @@ collision_scope:
   - tests/test_manifold_governance.py
 ```
 
-Existing StegCore issue #70 owns four-application runtime binding and does not overlap these files. This claim must not modify application-specific runtime bindings, public transport identity, canonical three-layer policy logic, HIL paths, release/tag machinery, or deployment authority.
+Existing StegCore issue #70 owns four-application runtime binding and does not overlap these files. This claim does not modify application-specific runtime bindings, public transport identity, canonical three-layer policy logic, HIL paths, release/tag machinery, or deployment authority.
 
-## Required implementation
+## Installed implementation
 
-The kernel must:
+```text
+MANIFOLD_GOVERNANCE_MIRROR_HANDOFF.md
+src/stegcore/manifold_governance.py
+tests/test_manifold_governance.py
+```
 
-1. freeze one immutable `base_manifold_hash` for the candidate population;
-2. evaluate each candidate transition through the existing canonical `evaluate_admissibility` function;
-3. preserve canonical `ALLOW | DENY | REVIEW | FAIL_CLOSED` standing without reinterpretation;
-4. build deterministic dependency/conflict structure and stable bundle ordering;
-5. remain permutation-invariant for equivalent input populations;
-6. fail closed on duplicate identities, stale/mixed base state, unknown dependency/conflict references, and dependency cycles;
-7. expose derived coherence/gradient observations as evidence-only metadata with no authority effect;
-8. distinguish planning from commit and never perform external execution, mint continuity receipts, or create policy/authority;
-9. emit a deterministic plan hash suitable for downstream receipt/reconstruction binding.
+The kernel:
+
+1. freezes one immutable `base_manifold_hash` for the candidate population;
+2. evaluates every candidate transition through existing canonical `evaluate_admissibility`;
+3. preserves canonical `ALLOW | DENY | REVIEW | FAIL_CLOSED` standing without reinterpretation;
+4. builds deterministic dependency/conflict structure and stable bundle ordering;
+5. is permutation-invariant for equivalent input populations;
+6. fails closed on duplicate identities, stale/mixed base state, unknown dependency/conflict references, self references, and dependency cycles;
+7. exposes derived coherence/gradient observations as evidence-only hashes with no authority effect;
+8. separates planning from commit and never performs external execution or mints continuity receipts;
+9. emits a deterministic replay-stable plan hash.
+
+## Replay-stable semantic binding correction
+
+The first hosted test run exposed a real implementation defect: the population plan hash incorporated canonical evaluation fields that are intentionally time-bound (`evaluated_at`, `decision_state_hash`, and canonical three-layer receipt hash), so equivalent candidate permutations produced different plan hashes.
+
+The correction does **not** alter canonical StegGate output. `src/stegcore/manifold_governance.py` now derives its internal `evaluation_hash` from an explicit stable semantic projection containing the canonical disposition, candidate hash, predicate matrix, reasons, canonical three-layer decision/reason/request hash, and permission/continuity/execution flags while excluding only time/provenance-bound values from population-plan identity. Canonical time-bound evaluation evidence remains untouched at its source.
+
+```text
+failing head: 5b7d5adb9bfa7d32a78d0e9213252a611a92376d
+failing StegCore Tests run: 31791001696
+observed result: 1 failed, 218 passed, 144 subtests passed
+failure: permutation invariance plan hash mismatch
+fix commit: 7070ae9cb244a95783ab613e31650eb39c0dde7b
+```
+
+## Hosted validation evidence
+
+All required current-head workflows passed on `7070ae9cb244a95783ab613e31650eb39c0dde7b`:
+
+```text
+StegCore Tests
+run: 31791206611
+result: SUCCESS
+
+Validate StegCore Runtime
+run: 31791206553
+result: SUCCESS
+
+BCAT Gate
+run: 31791206579
+result: SUCCESS
+
+Test Readiness
+run: 31791206582
+result: SUCCESS
+
+Validate StegVerse 001 002 Baseline
+run: 31791206597
+result: SUCCESS
+```
+
+The StegCore Tests job executed the repository test suite successfully after the replay-stability fix. Hosted validation does not create production/runtime/merge authority and does not grant credential authority.
 
 ## Mathematical / functional relationship
 
@@ -109,16 +158,15 @@ After canonical merge, `.github` formalism/manifold implementation admission mus
 ## Completion inventory
 
 ```text
-required developed files: 3
-handoff: 1/1 installed
-runtime module: 0/1
-focused tests: 0/1
-hosted validation: 0/1
-canonical integration: 0/1
+required developed files: 3/3
 scaffolding/stubs: 0
-missing required files: 2
+missing required files: 0
+focused implementation: COMPLETE
+hosted workflow gates: 5/5 PASS
+canonical StegCore merge: PENDING
+upstream .github re-observation: PENDING
 ```
 
 ## Archive condition
 
-This session may release the StegCore implementation claim when all three required files are canonical, focused/full validation passes, and the upstream implementation-admission/reconciliation continuation has a durable re-observation path. Until then, do not archive this session solely because the local-model/runtime implementation is already complete elsewhere.
+The source/validation portion is complete. This session releases the StegCore implementation claim only after PR #92 is admitted to `main` and the upstream `.github` formalism/manifold continuation has a durable re-observation/continuation record. Until then, this session retains a bounded integration role.
