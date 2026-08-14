@@ -26,6 +26,13 @@ from .three_layer import (
 )
 from .auri_gateway import AuriGatewayResult, canonical_sha256, evaluate_auri_candidate
 from .steggate import AdmissibilityRequest, AdmissibilityEvaluation, evaluate_admissibility
+from .admissible_existence import (
+    CapabilityAuthorityEnvelope,
+    CapabilityExistenceDeclaration,
+    CapabilityExistenceTransition,
+    CapabilityExistenceEvaluation,
+    evaluate_capability_existence,
+)
 from .transaction_lifecycle import (
     TransactionManifest,
     TransitionReceipt,
@@ -69,6 +76,11 @@ __all__ = [
     "AdmissibilityRequest",
     "AdmissibilityEvaluation",
     "evaluate_admissibility",
+    "CapabilityAuthorityEnvelope",
+    "CapabilityExistenceDeclaration",
+    "CapabilityExistenceTransition",
+    "CapabilityExistenceEvaluation",
+    "evaluate_capability_existence",
     "TransactionManifest",
     "TransitionReceipt",
     "ReplayDescriptor",
