@@ -31,11 +31,11 @@ def test_local_model_is_not_falsely_marked_activated():
     assert entry.evidence.continuation_owner
 
 
-def test_formalism_source_generation_is_declared_and_non_authorizing():
+def test_formalism_source_generation_is_admissible_and_non_authorizing():
     registry = load_capability_registry(REGISTRY)
     entries = {item.declaration.capability_id: item for item in registry.entries}
     entry = entries["stegverse:capability:formalism-source-generation:v1"]
-    assert entry.phase == "DECLARED"
+    assert entry.phase == "ADMISSIBLE"
     assert entry.existence_hash == "5d6c4976e69fa958ddacc417195a9c8604a79931fbe0689a3e469e34064690ca"
     assert entry.declaration.owner_repository == "StegVerse-Labs/.github"
     assert entry.declaration.dependencies == [
@@ -46,9 +46,12 @@ def test_formalism_source_generation_is_declared_and_non_authorizing():
     assert entry.declaration.authority.github_token_runtime_authority is False
     assert "credential_authority" in entry.declaration.authority.may_not
     assert "repository_transport_authority" in entry.declaration.authority.may_not
+    assert entry.evidence.standing_evidence_refs
+    assert entry.evidence.admissibility_evidence_refs
     assert entry.evidence.activation_proof_ref is None
     assert entry.evidence.integration_evidence_refs == []
     assert "SOVEREIGN_LOCAL_MODEL_LIVE_ACTIVATION_NOT_YET_OBSERVED" in entry.evidence.blockers
+    assert "FORMALISM_SOURCE_GENERATION_INTEGRATION_PROOF_NOT_YET_OBSERVED" in entry.evidence.blockers
     assert entry.evidence.continuation_owner
 
 

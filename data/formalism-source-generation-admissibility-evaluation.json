@@ -1,0 +1,54 @@
+{
+  "artifact_type": "stegcore.capability_existence_progression_evidence",
+  "schema_version": "1.0",
+  "capability_id": "stegverse:capability:formalism-source-generation:v1",
+  "existence_hash": "5d6c4976e69fa958ddacc417195a9c8604a79931fbe0689a3e469e34064690ca",
+  "from_phase": "DECLARED",
+  "evaluated_target_phase": "ADMISSIBLE",
+  "standing": {
+    "verified": true,
+    "evidence_refs": [
+      "StegVerse-Labs/.github#137",
+      "StegVerse-Labs/.github@eb37e12d63850d820054e2c85c1ff35dc666a2c3",
+      "StegVerse-Labs/.github#144",
+      "StegVerse-Labs/.github:LOCAL_SOURCE_GENERATION_EXECUTOR_MIRROR_HANDOFF.md",
+      "StegVerse-002/micro-node-runtime#32",
+      "StegVerse-002/micro-node-runtime@019921e24db988d6e398cdb8e9380994ee9b1cf5"
+    ],
+    "basis": "Canonical owner, purpose, bounded least-stable execution posture, source/control implementation, executable worker registration, deterministic source validation, and released sovereign structured-generation dependency are all independently inspectable."
+  },
+  "admissibility": {
+    "evaluated": true,
+    "required_canonical_runtime": "stegcore.steggate.evaluate_admissibility",
+    "candidate_target": "stegverse:capability:formalism-source-generation:v1",
+    "permission_present": true,
+    "authority_ceiling": {
+      "credential_authority": "TV/TVC",
+      "github_token_runtime_authority": false,
+      "repository_transport_authority": false,
+      "merge_authority": false,
+      "release_authority": false,
+      "wallet_authority": false
+    },
+    "dependency_state": {
+      "stegverse:capability:steggate:canonical:v1": "ACTIVATED",
+      "stegverse:capability:sovereign-local-model:v1": "ADMISSIBLE"
+    },
+    "resulting_phase_if_canonical_evaluation_allows": "ADMISSIBLE"
+  },
+  "activation": {
+    "claimed": false,
+    "integration_verified": false,
+    "activation_proof_ref": null,
+    "blocked_by": [
+      "SOVEREIGN_LOCAL_MODEL_LIVE_ACTIVATION_NOT_YET_OBSERVED",
+      "FORMALISM_SOURCE_GENERATION_INTEGRATION_PROOF_NOT_YET_OBSERVED",
+      "RESIDENT_SOURCE_GENERATION_AND_RECURSIVE_REOBSERVATION_NOT_YET_PROVEN"
+    ]
+  },
+  "credential_authority": "TV/TVC",
+  "non_tv_tvc_secret_or_token_used": false,
+  "github_token_runtime_authority": false,
+  "external_execution_performed": false,
+  "continuation_owner": "StegVerse-Labs/.github#137 + StegVerse-Labs/StegCore#123 + TV/TVC repository-operation authority"
+}
