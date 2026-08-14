@@ -20,6 +20,24 @@ archive_ready: false
 
 This is the canonical continuation record for StegCore Admissible-Existence structural adoption. It supplements `STEGCORE_MIRROR_HANDOFF.md` and does not replace AE formalism authority, StegGate runtime authority, or component-owner execution authority.
 
+## Mandatory handoff + worker-task conformance gate — COMPLETE_RELEASED
+
+StegCore issue #106 / PR #116 installed the canonical procedure that keeps mirror handoffs and worker-task state synchronized with the current Admissible-Existence lifecycle.
+
+```text
+merge: ca484e0786ee4539af06394bc036e6a7624256f8
+canonical handoff: docs/AE_HANDOFF_TASK_CONFORMANCE_MIRROR_HANDOFF.md
+manifest: ecosystem_management/ae_task_conformance.v1.json
+worker registry: ecosystem_management/task_registry.yml
+verifier: tools/verify_ae_handoff_task_conformance.py
+report: brain_reports/ae_handoff_task_conformance_report.json
+merged-main verification: verify-task-registry run 31824167621 / job 94844226969 SUCCESS
+```
+
+Every recently completed, current, and future worker task must now declare its relationship to an AE capability (`develops_capability`, `integrates_capability`, `validates_capability`, or `propagates_capability`) and satisfy the canonical conformance verifier before ecosystem management may treat its handoff/task state as conformant continuation authority. Legacy unbound task records are `MIGRATION_REQUIRED`; historical evidence is retained, but old classifications cannot silently carry activation authority forward.
+
+The first retrospective post-AE reconciliation is `stegverse:capability:transaction-discovery:v1`, recorded as `ADMISSIBLE`, not `ACTIVATED`, while consumer/public discovery binding remains unproven.
+
 ## Goal 001 — capability-existence primitive — COMPLETE_RELEASED
 
 PR #95 merged to `main` as `7d94908be562f9f9ace05877d4507dc68c984e06` after all five hosted validation gates passed:
@@ -115,11 +133,14 @@ GitHub token runtime authority: NONE
 ## Validation commands
 
 ```text
-pytest -q tests/test_admissible_existence.py tests/test_capability_registry.py
+python tools/verify_ae_handoff_task_conformance.py
 python scripts/validate_admissible_existence_registry.py
+pytest -q tests/test_admissible_existence.py tests/test_capability_registry.py
 pytest -q
 python scripts/verify_product_consistency.py
 ```
+
+The handoff/task conformance command is mandatory for ecosystem-management continuation claims; the remaining commands validate the capability model/registry and broader product state.
 
 ## Cross-repository dependencies
 
@@ -142,10 +163,11 @@ goal 001 developed files: 4/4
  goal 002 developed files: 6/6
  goal 002 hosted validation: 5/5 PASS
  goal 002 merge: COMPLETE
+ handoff/task conformance: COMPLETE_RELEASED / merged-main gate PASS
  scaffolding/stubs in goals 001-002: 0
  missing required files in goals 001-002: 0
 ```
 
 ## Next integration candidate and archive condition
 
-The direct code goals introduced by this session are complete. A cross-repository consumer/import contract would be a reasonable future integration, but it must not be invented solely to keep this session active and must first be checked against repository owner claims. The remaining live local-model activation is already machine-owned and has a durable release condition. Session archival now depends on durable session-level consolidation in the organization control plane and confirmation that no unique requirement from this thread remains only in chat.
+The direct AE structural code and canonical handoff/task conformance goals are complete. Existing pre-AE worker/task records now have an explicit migration state and should be bound to capability existences as their owning workstreams next change or advance; they are not silently grandfathered. A cross-repository consumer/import contract remains a reasonable future integration, but it must first be checked against repository owner claims. The remaining live local-model activation is already machine-owned and has a durable release condition. Session archival depends on durable session-level consolidation and confirmation that no other unique requirement from this thread remains only in chat.
