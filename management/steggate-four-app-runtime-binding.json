@@ -7,11 +7,11 @@
   "repository": "StegVerse-Labs/StegCore",
   "branch": "main",
   "claim": {
-    "state": "CLAIMED_FOR_IMPLEMENTATION",
+    "state": "CLAIMED_FOR_INTEGRATION",
     "lane": "current-session-common-runtime-binding",
     "role": "canonical runtime identity contract implementation and cross-application integration validation",
     "created_at": "2026-08-09T17:12:00-05:00",
-    "release_condition": "runtime identity contract validated and each application has a durable consumer/evidence owner; release final implementation claim when application-specific bindings are machine-owned or complete",
+    "release_condition": "runtime identity contract validated and each application has a durable consumer/evidence owner; release final integration claim when application-specific bindings are machine-owned or complete",
     "collision_boundaries": [
       "do not modify HIL upload-owned Site paths",
       "do not create application-specific parallel StegGate evaluators",
@@ -101,17 +101,40 @@
       }
     },
     "hil": {
-      "owner": "StegVerse-Labs/Site#243",
-      "binding_state": "PENDING_DIRECT_EVIDENCE"
+      "owner": "StegVerse-Labs/TVC#22 + StegVerse-Labs/TVC#8 + StegVerse-Labs/Site#243",
+      "binding_state": "SOURCE_BOUND_HOSTED_VALIDATION_UNAVAILABLE_PUBLIC_EVIDENCE_PENDING",
+      "consumer_commits": [
+        "f6ae0b7e338389de4e66b0062daa085deb22f842",
+        "1a542a91ff40a45fff373e0d4e4235766f18268c"
+      ],
+      "binding_evidence": {
+        "runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
+        "canonical_admissibility_runtime": "stegcore.three_layer.evaluate_three_layer",
+        "transport_identity_authoritative": false,
+        "direct_runtime_identity_source_evidence": true,
+        "controlled_cycle_source_complete": true,
+        "independent_validation_receipt": "StegVerse-Labs/TVC/evidence/hil/2026-08-14-controlled-cycle-source-validation.json",
+        "independent_validation_result": "SOURCE_VALIDATED_HOSTED_RUNNER_UNAVAILABLE",
+        "hosted_validation_conclusion": "NOT_RUN_PROVIDER_BILLING_BLOCKER",
+        "hosted_jobs_started": false,
+        "hosted_steps_executed": 0,
+        "github_token_required": false,
+        "public_end_to_end_proven": false,
+        "public_direct_runtime_proven": false,
+        "authenticated_private_review_pending": true,
+        "publication_authorized": false,
+        "master_record_release_proven": false
+      }
     }
   },
   "binding_progress": {
     "core_contract": "COMPLETE",
+    "applications_source_bound_or_stronger": 4,
     "applications_ci_or_stronger": 3,
     "applications_public_direct": 0,
     "required_applications": 4
   },
   "state": "ACTIVE_INTEGRATION",
   "goal_complete": false,
-  "next_executable_action": "Inspect the HIL canonical handoff and active claim boundary; if a nonconflicting runtime integration surface exists, bind it to the common runtime identity. Ecosystem Chat, VACC, and Math Solver public evidence remain machine-owned and pending."
+  "next_executable_action": "HIL source binding is now present; obtain authenticated private-review/Site projection evidence and either hosted validation when provider state permits or stronger direct runtime evidence. Ecosystem Chat, VACC, Math Solver, and HIL public-direct evidence remain pending under their canonical consumer owners."
 }
