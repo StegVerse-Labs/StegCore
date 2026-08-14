@@ -57,7 +57,7 @@
     }
   ],
   "event": "push",
-  "evidence_hash": "7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb",
+  "evidence_hash": "bb8bf66c9efc7b0ea1a52db9adf02190b1f56db3cb0eb4b776e6f52b44261c26",
   "governance_commit": "c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6",
   "governance_repository": "StegVerse-Labs/Governance",
   "hash_convention": {
@@ -79,11 +79,11 @@
   "release_state": "validated_not_released",
   "repository": "StegVerse-Labs/StegCore",
   "run_attempt": "1",
-  "run_id": "31262198018",
+  "run_id": "31819524876",
   "schema_version": "1.1",
   "source_repository": "StegVerse-Labs/StegCore",
   "status": "pass",
-  "stegcore_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
-  "validated_at": "2026-08-08T14:32:49.421754+00:00",
+  "stegcore_commit": "48689ac4b41fada1f545e5a5d393bbbd6ae88321",
+  "validated_at": "2026-08-14T16:29:29.933761+00:00",
   "workflow": "Validate StegCore Runtime"
 }

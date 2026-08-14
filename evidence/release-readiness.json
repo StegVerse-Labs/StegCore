@@ -1,60 +1,41 @@
 {
   "artifact_type": "stegcore.release_readiness_assessment",
-  "assessment_hash": "2cfe93053193d289ca6e21edc53884e303611cb1a8083fdc4098e38c4e1335b3",
-  "completion_event": "authorized annotated tag created; GitHub Release or deployment requires separate authority",
+  "assessment_hash": "eb716d9706709099c8d7e2cad4448ba58be625b2ad0d8798898f83d41e291555",
+  "completion_event": "independent release policy permits a versioned tag, Governance freshness is independently confirmed, and every required downstream verification gate is durably recorded as pass",
   "continuity_authority_claimed": false,
   "destination_repository": "StegVerse-Labs/StegCore",
   "downstream_gates": [
     {
-      "classification": "PASS_AWARENESS_ONLY",
-      "issue_comment_id": 5226561201,
-      "issue_number": 14,
       "repository": "StegVerse-Labs/Site",
       "required": true,
-      "status": "pass",
-      "verification_commit": "2a8a603e4473236c4bfa491b060d54074c8eedb5"
+      "status": "pending"
     },
     {
-      "classification": "PASS_AWARENESS_ONLY",
-      "issue_comment_id": 5226562055,
-      "issue_number": 4,
       "repository": "GCAT-BCAT-Engine/Publisher",
       "required": true,
-      "status": "pass",
-      "verification_commit": "ae42e68e12f8cac0e9051c654e933cbe766fced3"
+      "status": "pending"
     },
     {
-      "classification": "PASS_DOCUMENTATION_AWARENESS_ONLY",
-      "issue_comment_id": 5226562821,
-      "issue_number": 19,
       "repository": "StegVerse-Labs/admissibility-wiki",
       "required": true,
-      "status": "pass",
-      "verification_commit": "302e3155864778fd1d4bc6f865a91dc49a773eca"
+      "status": "pending"
     },
     {
-      "classification": "PASS_EVIDENCE_AWARENESS_ONLY",
-      "issue_comment_id": 5226563561,
-      "issue_number": 4,
       "repository": "StegVerse-002/stegguardian-wiki",
       "required": true,
-      "status": "pass",
-      "verification_commit": "b6a4b117ca88c7d118b76fd53b48ba85fce385cd"
+      "status": "pending"
     }
   ],
   "gates": {
     "canonical_governance_contract": "pass",
     "continuity_mapping": "pass",
-    "downstream_verification": "pass",
+    "downstream_verification": "pending",
     "evidence_integrity": "pass",
-    "governance_freshness": "pass",
-    "independent_release_policy": "pass",
+    "governance_freshness": "pending",
+    "independent_release_policy": "pending",
     "runtime_validation": "pass"
   },
   "governance_commit": "c07b7c6146e0abac7db6fa15a5a0aa7bf23811f6",
-  "governance_freshness_evidence": "evidence/governance-freshness.json",
-  "governance_freshness_evidence_hash": "d305a60a3ee1f39599bec1d07253c36f9b9bb74c5259dcd370d5b46edb2bcc57",
-  "governance_observed_head": "94761bb15b1aac081617774737472b99139729b0",
   "hash_convention": {
     "algorithm": "SHA-256",
     "excluded_field": "assessment_hash",
@@ -68,21 +49,14 @@
       "sort_keys": true
     }
   },
-  "independent_release_policy_decision_hash": "7b90b85d4c9a4fe0666dd72a13dd1e26e672d5cd57aa88ad98b4ac08a23e768c",
-  "independent_release_policy_evidence": "evidence/independent-release-policy.json",
-  "independent_release_policy_source_commit": "d12cfbfec733f601dcf4a97ccf74d0140bfe5f52",
   "production_authority_claimed": false,
   "receipt_minting_authority_claimed": false,
   "record_type": "release_readiness_assessment",
   "release_permitted": false,
-  "runtime_evidence_hash": "7d03c0eb769fafafb57d940465274560e811ebf0850fb2c6e94e96e7b0d2bcfb",
+  "runtime_evidence_hash": "bb8bf66c9efc7b0ea1a52db9adf02190b1f56db3cb0eb4b776e6f52b44261c26",
   "schema_version": "1.1",
   "source_repository": "StegVerse-Labs/StegCore",
-  "state": "authorized_tag_created_release_not_authorized",
-  "stegcore_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af",
-  "tag_created": true,
-  "tag_object_sha": "071109054e212cba7d52544c62b09581c5eac324",
-  "tag_permitted": true,
-  "tag_ref": "refs/tags/v0.1.0",
-  "tag_target_commit": "70bbb0eb8a5dec4f27ee7aca5cf09cdb17a924af"
+  "state": "validated_not_released",
+  "stegcore_commit": "48689ac4b41fada1f545e5a5d393bbbd6ae88321",
+  "tag_permitted": false
 }
