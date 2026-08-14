@@ -1,0 +1,35 @@
+{
+  "artifact_type": "stegcore.ae_continuation_conformance_policy",
+  "schema_version": "1.0",
+  "policy_id": "AE-CONTINUATION-CONFORMANCE-001",
+  "canonical_runtime": "stegcore.steggate.evaluate_admissibility",
+  "credential_authority": "TV/TVC",
+  "github_token_runtime_authority": false,
+  "heartbeat_role": "CARRIER_SYNCHRONIZATION_ONLY",
+  "worker_control_plane_separate": true,
+  "master_records_custody_separate": true,
+  "temporal_classes": ["RECENTLY_COMPLETED", "CURRENT", "FUTURE"],
+  "ae_impacts": ["CAPABILITY", "NONE"],
+  "existence_phases": ["DECLARED", "STANDING", "ADMISSIBLE", "ACTIVATED", "SUSPENDED", "SUPERSEDED", "TERMINATED"],
+  "terminal_task_statuses": ["COMPLETE", "SUPERSEDED", "TERMINATED"],
+  "current_task_statuses": ["ACTIVE_SESSION", "ACTIVE_WORKER", "MACHINE_OWNED", "HANDOFF_READY"],
+  "future_task_statuses": ["PLANNED", "DECLARED", "HANDOFF_READY"],
+  "activation_requires": ["integration_evidence_refs", "activation_proof_ref"],
+  "forbidden_authority_claims": [
+    "HEARTBEAT_WORKER_EXECUTOR_AUTHORITY",
+    "HEARTBEAT_TRANSPORT_AUTHORITY",
+    "HEARTBEAT_CUSTODY_AUTHORITY",
+    "MASTER_RECORDS_EXECUTION_AUTHORITY",
+    "GITHUB_TOKEN_RUNTIME_AUTHORITY",
+    "NON_TV_TVC_CREDENTIAL_AUTHORITY"
+  ],
+  "reconciliation_fields": [
+    "goal_id",
+    "owner_repository",
+    "ae_impact",
+    "capability_id",
+    "existence_phase",
+    "blockers",
+    "continuation_owner"
+  ]
+}
