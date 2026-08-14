@@ -9,35 +9,42 @@ branch: feat/sdk-usage-observability
 parent_handoff: STEGCORE_MIRROR_HANDOFF.md
 issue: #117
 pull_request: #118
-implementation_state: INSTALLED_UNWIRED
-validation_state: HOSTED_TESTS_PASS
+sdk_consumer_repo: StegVerse-org/StegVerse-SDK
+sdk_consumer_pull_request: #27
+implementation_state: INSTALLED_PARTIALLY_WIRED
+validation_state: REVALIDATION_PENDING_AFTER_V1_1
 release_state: NOT_RELEASED
 ```
 
 ## Goal
 
-Install an observation-only SDK operation ledger and GitHub notification projection for the canonical SDK menu choices `000`, `00`, `0`, `1`, and `2`.
+Provide a non-authoritative GitHub notification projection for SDK activity and its five-choice usage census without moving canonical evidence custody out of Master Records.
 
-The observer answers, without consulting Master Records for routine activity visibility:
+## Canonical choice semantics
 
-- which SDK choice was invoked;
-- whether the invocation started, completed, failed, or was cancelled;
-- lifetime observed count for each choice;
-- trailing 30-day count for each choice;
-- each choice's share of all observed SDK invocations;
-- last-used timestamp;
-- unique canonical runtime identities;
-- completed/failed/cancelled/in-progress breakdown;
-- core governed-operation aggregate for `0 + 1 + 2`;
-- all-menu aggregate for `000 + 00 + 0 + 1 + 2`.
+Resolved directly from `StegVerse-org/StegVerse-SDK/stegverse/governance_navigation.py`:
 
-Lifecycle rows do not inflate usage: STARTED + one terminal event count as one invocation.
+```text
+000 = Demo test sequence without user-supplied manifest
+00  = User-defined run parameters
+0   = Submit data for governance
+1   = Replay previously run set
+2   = Reconstruct previously run set
+```
+
+The earlier unresolved-label assumption for `000` and `00` is superseded.
+
+## Counting correction
+
+A menu selection is not proof that a governed operation occurred. Schema v1.1 therefore carries:
+
+```text
+activity_kind: MENU_SELECTION | GOVERNED_OPERATION
+```
+
+The notification census counts all observed uses of each choice while separately reporting `menu_selections` and `governed_operations`. This permits `000` and `00` usefulness to be measured without falsely treating option `1` guidance as a replay run or option `2` guidance as reconstruction.
 
 ## Non-authority boundary
-
-This telemetry is not Master Records, is not an evaluator, and grants no policy, execution, replay, reconstruction, or disclosure authority.
-
-Mandatory invariants:
 
 ```text
 payload_disclosed: false
@@ -47,116 +54,116 @@ master_records_remains_canonical_custody: true
 github_remains_notification_projection_only: true
 ```
 
-No SDK payload, policy body, secret, token, credential, or authority-bearing material may be persisted in the operation ledger or projected to GitHub.
+No SDK payload, policy body, secret, token, credential, or authority-bearing material may enter the GitHub projection.
 
 ## Historical-count boundary
 
-`since inception` may only be claimed when the canonical ledger contains provenance-supported historical observations reaching inception. Otherwise notifications say `observed since <earliest event timestamp>` and do not infer unrecorded historical usage.
-
-Historical backfill is permitted only from deterministic, inspectable evidence that identifies an actual SDK invocation and its time. Guessed or reconstructed counts are prohibited.
-
-## Choice semantics
-
-Known canonical semantics:
+`since inception` may only be claimed after provenance-supported history reaches SDK telemetry inception. Otherwise all notifications report:
 
 ```text
-0 = submit data for governance
-1 = replay a previously governed run
-2 = reconstruct a previously governed run
+historical_coverage: OBSERVED_ONLY
+observed_since: <earliest retained observation>
 ```
 
-`000` and `00` are counted independently but their labels remain observational until resolved from the canonical SDK entry implementation. Telemetry does not invent semantics for them.
+Guessed historical counts are prohibited.
 
-## Installed surfaces
+## Installed StegCore surfaces
 
 ```text
 src/stegcore/sdk_operation_events.py
 src/stegcore/__init__.py
-scripts/render_sdk_usage_notification.py
+scripts/render_sdk_usage_notification.py                  # v1 compatibility
+scripts/render_sdk_usage_notification_v11.py              # canonical SDK v1.1 consumer
 tests/test_sdk_operation_events.py
 tests/test_sdk_usage_notification.py
+tests/test_sdk_usage_notification_v11.py
 .github/workflows/sdk-usage-notification.yml
 docs/SDK_USAGE_OBSERVABILITY_MIRROR_HANDOFF.md
-StegVerse-Labs/StegCore#117  # canonical human-visible notification thread
-StegVerse-Labs/StegCore#118  # implementation PR
+StegVerse-Labs/StegCore#117                               # notification thread
+StegVerse-Labs/StegCore#118                               # implementation PR
 ```
 
-`SDKOperationEventLedger` provides an append-only JSONL-capable lifecycle ledger with deterministic event hashes/IDs, immutable invocation identity, replay/reconstruct receipt-locator requirements, reconstruct no-consequence-reexecution enforcement, five-choice usage aggregation, and a disclosure-safe notification projection.
+The v1.1 renderer uses an explicit allowlist, validates the five canonical labels, requires menu/governed counts to reconcile, permits replay/reconstruct menu selections without a receipt locator, requires a `manifest_receipt_id` for actual governed option `1`/`2` events, and rejects reconstruction claims that consequence was re-executed.
 
-The notification renderer uses an explicit field allowlist. Unknown fields, payload projection, authority projection, incomplete five-choice census data, invalid counts, and reconstruct consequence-reexecution claims fail closed.
+## SDK producer state
+
+`StegVerse-org/StegVerse-SDK#27` now installs the canonical producer side:
+
+```text
+stegverse/sdk_usage_observability.py
+stegverse/cli.py
+tests/test_sdk_usage_observability.py
+tests/test_cli_sdk_usage_observability.py
+SDK_USAGE_OBSERVABILITY_MIRROR_HANDOFF.md
+```
+
+Canonical `stegverse governance --select 000|00|0|1|2` selections are recorded after the existing governance-navigation validator accepts the choice. The SDK writes a local disclosure-safe ledger and notification outbox without holding a GitHub credential.
 
 ## GitHub projection
 
-A TV/TVC-authorized bridge may issue a GitHub `repository_dispatch` event of type:
+A TV/TVC-authorized bridge may issue:
 
 ```text
-stegverse_sdk_usage_event
+repository_dispatch type: stegverse_sdk_usage_event
+client_payload schema: stegcore.sdk_usage_notification.v1.1
 ```
 
-with the disclosure-safe `stegcore.sdk_usage_notification.v1` projection as `client_payload`.
+`.github/workflows/sdk-usage-notification.yml` selects the v1.1 renderer, preserves the rendered message as a workflow artifact, and comments on issue #117. GitHub's ordinary issue-watch/email behavior can then deliver the notification.
 
-`.github/workflows/sdk-usage-notification.yml` validates the implementation/tests, validates and renders the payload, retains the rendered notification as a workflow artifact, and posts it to issue #117. Normal GitHub issue subscription/watching can then provide GitHub email notification.
+The workflow itself introduces no external credential. Repository-native issue posting uses only the workflow-scoped `GITHUB_TOKEN`; external dispatch authorization remains TV/TVC-owned.
 
-The workflow introduces no non-TV/TVC credential. External dispatch authority remains TV/TVC-managed. Repository-native issue posting uses only GitHub's workflow-scoped `GITHUB_TOKEN`.
+## Existing observer boundary
 
-## Existing observer correction
+`.github/workflows/steggate-live-observer.yml` remains the service-health/activation observer. It is not repurposed for SDK menu usage.
 
-StegCore already contains `.github/workflows/steggate-live-observer.yml`. That workflow is the canonical service-health/activation observer. It is not the SDK menu-usage observer and is intentionally not repurposed; this goal remains a separate non-authority usage projection.
+## Validation evidence
 
-## Hosted validation evidence
-
-PR #118 head `926206cfa14f88e1d2ec8e8ff08615cc04778a7f` recorded:
-
-```text
-SDK Usage Notification / validate: PASS
-bcat-check: PASS
-repository smoke checks: PASS
-repository tests: PASS
-```
-
-The PR notification job is correctly skipped on `pull_request`; it runs only for `repository_dispatch` after the workflow exists on the default branch.
+An earlier v1 PR head recorded PASS for the SDK Usage Notification validator, `bcat-check`, repository smoke checks, and repository tests. Schema v1.1 changes now require a fresh green check before merge; the earlier PASS is retained as historical evidence only and is not used to claim the v1.1 head validated.
 
 ## Completion requirements
 
 ```text
-[done] append-only five-choice operation event model installed
-[done] deterministic event integrity verification installed
-[done] invocation lifecycle deduplication installed
-[done] lifetime + trailing-30-day aggregation installed
-[done] last-used + percent-of-total + unique-runtime aggregation installed
-[done] status breakdown installed
-[done] observed-since semantics installed
+[done] five canonical option labels resolved from SDK source
+[done] notification schema distinguishes menu selection from governed operation
+[done] five-choice lifetime + trailing-30-day census contract installed
+[done] percent / last-used / unique-runtime / status metrics installed
+[done] observed-since historical boundary installed
 [done] GitHub repository_dispatch projection installed
-[done] GitHub projection rejects payload/authority-bearing fields
-[done] GitHub issue comment renderer includes current event + five-choice usage census
-[done] tests pass on hosted CI
-[pending] merge #118 to default branch
-[pending] identify canonical SDK menu entry source for `000` and `00`
-[pending] wire all five actual menu invocations to `SDKOperationEventLedger`
-[pending] wire TV/TVC bridge to dispatch the safe projection
-[pending] execute first real dispatch and verify issue #117 notification/artifact
-[pending] determine whether provenance-supported pre-install history can be backfilled
-[pending] update parent handoff after merge/activation-state reconciliation
+[done] v1.1 projection rejects payload/authority-bearing fields
+[done] canonical SDK navigation producer implemented on SDK PR #27
+[pending] fresh StegCore PR #118 checks PASS after v1.1 update
+[pending] fresh SDK PR #27 hosted validation PASS
+[pending] merge both PRs
+[pending] wire actual option 0/1/2 governed execution call sites to governed-operation telemetry
+[pending] implement TV/TVC outbox -> repository_dispatch bridge
+[pending] execute first real end-to-end dispatch and verify issue #117 + email-capable notification surface
+[pending] determine whether deterministic pre-install history can be backfilled
+[pending] reconcile parent handoffs after merge/activation
 ```
 
 ## Activation boundary
 
-The StegCore observer contract is implemented and hosted-test validated, but the goal is not activated yet. Full activation requires the canonical SDK entry surface to call the ledger for every actual `000`, `00`, `0`, `1`, and `2` invocation, and the TV/TVC notification bridge to dispatch the disclosure-safe event projection after recording.
+Menu-selection producer wiring exists on the SDK feature branch, and the StegCore consumer/notification projection exists on its feature branch. Full activation still requires merge, actual governed-operation instrumentation for `0/1/2`, TV/TVC dispatch wiring, and one verified real notification.
 
-Until that source wiring and one real end-to-end dispatch are directly verified, report `INSTALLED_UNWIRED`, not COMPLETE or ACTIVATED.
+Until those conditions are inspectably satisfied, do not report COMPLETE or ACTIVATED.
 
 ## Remaining destination ownership
 
 ```text
+StegVerse-org/StegVerse-SDK
+  -> merge #27 after validation
+  -> record canonical menu selections
+  -> wire actual 0/1/2 governed operations to record_governed_operation
+
 StegVerse-Labs/StegCore
-  -> merge #118 after branch protection remains green
-  -> locate and bind canonical SDK entry to the installed ledger
+  -> merge #118 after fresh checks
+  -> receive/validate v1.1 projection
   -> preserve issue #117 as notification-only observation surface
 
-TV/TVC
+StegVerse-Labs/TV or StegVerse-Labs/TVC
   -> own external GitHub repository_dispatch credential/authorization
-  -> send only `stegcore.sdk_usage_notification.v1` client_payload
+  -> consume only the disclosure-safe SDK notification outbox/projection
 
 Master Records
-  -> remains canonical exact-run/evidence custody; no telemetry authority moves to GitHub
+  -> remains canonical exact-run, route, replay, and reconstruction custody
 ```
