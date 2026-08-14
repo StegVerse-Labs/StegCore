@@ -140,7 +140,7 @@
           "may": [],
           "may_not": ["credential_authority", "repository_transport_authority", "merge_authority", "release_authority", "wallet_authority"]
         },
-        "evidence_refs": ["StegVerse-Labs/.github#137", "commit:eb37e12d63850d820054e2c85c1ff35dc666a2c3", "StegVerse-Labs/StegCore#120", "StegVerse-Labs/StegCore#123"],
+        "evidence_refs": ["StegVerse-Labs/.github#137", "commit:eb37e12d63850d820054e2c85c1ff35dc666a2c3", "StegVerse-Labs/StegCore#120"],
         "metadata": {
           "execution_posture": "least_stable_one_shot_or_short_lived",
           "source_packet_schema": "stegverse.owner-source-generation-packet/v0.1",
