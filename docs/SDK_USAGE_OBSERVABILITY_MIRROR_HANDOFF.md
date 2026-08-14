@@ -12,7 +12,7 @@ pull_request: #118
 sdk_consumer_repo: StegVerse-org/StegVerse-SDK
 sdk_consumer_pull_request: #27
 implementation_state: INSTALLED_PARTIALLY_WIRED
-validation_state: REVALIDATION_PENDING_AFTER_V1_1
+validation_state: HOSTED_TESTS_PASS
 release_state: NOT_RELEASED
 ```
 
@@ -87,13 +87,14 @@ The v1.1 renderer uses an explicit allowlist, validates the five canonical label
 
 ## SDK producer state
 
-`StegVerse-org/StegVerse-SDK#27` now installs the canonical producer side:
+`StegVerse-org/StegVerse-SDK#27` installs the canonical producer side:
 
 ```text
 stegverse/sdk_usage_observability.py
 stegverse/cli.py
 tests/test_sdk_usage_observability.py
 tests/test_cli_sdk_usage_observability.py
+.github/workflows/sdk-usage-observability.yml
 SDK_USAGE_OBSERVABILITY_MIRROR_HANDOFF.md
 ```
 
@@ -118,7 +119,11 @@ The workflow itself introduces no external credential. Repository-native issue p
 
 ## Validation evidence
 
-An earlier v1 PR head recorded PASS for the SDK Usage Notification validator, `bcat-check`, repository smoke checks, and repository tests. Schema v1.1 changes now require a fresh green check before merge; the earlier PASS is retained as historical evidence only and is not used to claim the v1.1 head validated.
+StegCore PR #118 head `5a85d7ea08ea7b12216d91858a7b484aea681412` recorded PASS for the v1.1 `SDK Usage Notification / validate` check, `bcat-check`, repository smoke checks, and repository tests. `notify` is intentionally skipped for pull-request events and is enabled only for repository-dispatch events after the workflow is present on the default branch.
+
+SDK PR #27 head `4ed7bedaa07163a8ddaf4cc998a127aa2454d470` recorded PASS for `SDK Usage Observability Validation / validate`, including anonymous public-source materialization with no `GITHUB_TOKEN` or `GH_TOKEN` available to the SDK validation job.
+
+These PASS records validate the feature heads identified above. Any subsequent functional code change requires fresh validation before merge.
 
 ## Completion requirements
 
@@ -131,8 +136,8 @@ An earlier v1 PR head recorded PASS for the SDK Usage Notification validator, `b
 [done] GitHub repository_dispatch projection installed
 [done] v1.1 projection rejects payload/authority-bearing fields
 [done] canonical SDK navigation producer implemented on SDK PR #27
-[pending] fresh StegCore PR #118 checks PASS after v1.1 update
-[pending] fresh SDK PR #27 hosted validation PASS
+[done] StegCore PR #118 v1.1 checks PASS
+[done] SDK PR #27 hosted validation PASS
 [pending] merge both PRs
 [pending] wire actual option 0/1/2 governed execution call sites to governed-operation telemetry
 [pending] implement TV/TVC outbox -> repository_dispatch bridge
@@ -151,12 +156,12 @@ Until those conditions are inspectably satisfied, do not report COMPLETE or ACTI
 
 ```text
 StegVerse-org/StegVerse-SDK
-  -> merge #27 after validation
+  -> merge #27 after final documentation-only validation refresh
   -> record canonical menu selections
   -> wire actual 0/1/2 governed operations to record_governed_operation
 
 StegVerse-Labs/StegCore
-  -> merge #118 after fresh checks
+  -> merge #118 after final documentation-only validation refresh
   -> receive/validate v1.1 projection
   -> preserve issue #117 as notification-only observation surface
 
