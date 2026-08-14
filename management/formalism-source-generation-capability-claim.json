@@ -12,9 +12,10 @@
   "scope": [
     "management/admissible-existence-capability-registry.json",
     "tests/test_capability_registry.py",
-    "docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md",
+    "docs/FORMALISM_SOURCE_GENERATION_CAPABILITY_MIRROR_HANDOFF.md",
     "management/formalism-source-generation-capability-claim.json"
   ],
+  "parent_handoff": "docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md",
   "collision_exclusions": [
     "src/stegcore/steggate.py and canonical StegGate semantics",
     "src/stegcore/admissible_existence.py lifecycle semantics",
@@ -26,5 +27,5 @@
   "credential_authority": "TV/TVC",
   "github_token_runtime_authority": false,
   "release_condition": "The source-generation capability is canonically registered at the evidence-supported phase, deterministic registry tests and hosted gates pass, changes merge, and the claim is reconciled to COMPLETE_RELEASED.",
-  "next_executable_action": "Register stegverse:capability:formalism-source-generation:v1 at DECLARED with exact existence hash, explicit blockers and continuation owner; validate without inferring activation."
+  "next_executable_action": "Validate the DECLARED registry entry and scoped handoff through all canonical StegCore gates without inferring standing, admissibility, or activation."
 }
