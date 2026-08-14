@@ -6,23 +6,24 @@
 goal_id: HEARTBEAT-CARRIER-AE-INTEGRATION-105
 originating_goal: reconcile the corrected heartbeat carrier architecture through the newest StegCore Admissible-Existence implementation
 repository: StegVerse-Labs/StegCore
-branch: feat/heartbeat-carrier-ae-integration-105
+branch: main
 canonical_issue: StegVerse-Labs/StegCore#105
+canonical_pr: StegVerse-Labs/StegCore#119
 parent_handoff: docs/ADMISSIBLE_EXISTENCE_CAPABILITY_MODEL_MIRROR_HANDOFF.md
 canonical_runtime_authority: stegcore.steggate.evaluate_admissibility
 credential_authority: TV/TVC
 github_token_runtime_authority: NONE
-implementation_claim: current-session / bounded registry-and-test integration
-claim_release_condition: registry separation is implemented, hosted validation passes, PR merges, and issue #105 records release evidence
+implementation_claim: RELEASED
+release_evidence: PR #119 merged as 66d54562aac1ef6bcef9add987425145b1b461c1 after six hosted validation workflows passed on head 5d8db82e91c50ffec46a3c8bb670e5ad02d24de5
 ```
 
 This scoped handoff is subordinate to the canonical Admissible-Existence capability-model handoff. It does not replace canonical StegGate, AE formalism authority, the organization worker-control plane, TV/TVC credential authority, or Master Records custody.
 
-## Required architecture
+## Installed architecture
 
-Heartbeat is a carrier/synchronization capability only. It does not transport application messages, dispatch tasks, issue claims or fences, execute routes, grant credentials, or perform Master Records custody.
+Heartbeat is now explicitly registered as a carrier/synchronization capability only. It does not transport application messages, dispatch tasks, issue claims or fences, execute routes, grant credentials, or perform Master Records custody.
 
-The capability registry must structurally distinguish:
+The canonical capability registry now structurally distinguishes:
 
 ```text
 stegverse:capability:heartbeat-carrier:v1
@@ -30,6 +31,8 @@ stegverse:capability:worker-control-plane:v1
 stegverse:capability:manifest-communication:v1
 stegverse:capability:master-records-terminal-custody:v1
 ```
+
+All four are deliberately `DECLARED`, not falsely advanced. Their owner repositories retain their own standing/admissibility/integration/activation obligations.
 
 The communication object remains:
 
@@ -44,9 +47,15 @@ Carrier continuity may be referenced as synchronization evidence, but it is neve
 
 ## Local-model correction
 
-The sovereign local model remains `ADMISSIBLE`, not `ACTIVATED`. Its blocker must identify missing control-plane route activation proof rather than imply that heartbeat executes the route.
+The sovereign local model remains `ADMISSIBLE`, not `ACTIVATED`. Its canonical blocker is now:
 
-## Files
+```text
+CONTROL_PLANE_LOCAL_MODEL_ROUTE_ACTIVATION_PROOF_NOT_YET_OBSERVED
+```
+
+This removes the former causal wording that implied heartbeat itself executed the route.
+
+## Installed files
 
 ```text
 management/admissible-existence-capability-registry.json
@@ -54,7 +63,27 @@ tests/test_capability_registry.py
 docs/HEARTBEAT_CARRIER_AE_INTEGRATION_MIRROR_HANDOFF.md
 ```
 
-## Cross-repository owners
+## Validation evidence
+
+PR head `5d8db82e91c50ffec46a3c8bb670e5ad02d24de5` passed all hosted gates:
+
+```text
+StegCore Tests: 31840092040 SUCCESS
+Validate StegCore Runtime: 31840092079 SUCCESS
+BCAT Gate: 31840092050 SUCCESS
+Test Readiness: 31840092099 SUCCESS
+Validate StegVerse 001 002 Baseline: 31840092063 SUCCESS
+verify-task-registry: 31840092049 SUCCESS
+```
+
+Merge:
+
+```text
+PR #119
+merge commit: 66d54562aac1ef6bcef9add987425145b1b461c1
+```
+
+## Cross-repository continuation owners
 
 ```text
 heartbeat canonical correction: StegVerse-Labs/.github#120 / PR #121
@@ -64,27 +93,21 @@ Master Records EOL custody: master-records/orchestration#33
 StegCore documentation reconciliation: StegVerse-Labs/StegCore#104
 ```
 
+Those are separate capability-owner continuations. This StegCore integration does not claim their activation or completion.
+
 ## Collision boundaries
 
-Do not alter canonical StegGate evaluation semantics. Do not mutate live worker claims, fences, leases, credentials, routes, provider secrets, or Master Records custody state. Do not introduce any non-TV/TVC secret or token.
+Canonical StegGate evaluation semantics are unchanged. No live worker claims, fences, leases, credentials, routes, provider secrets, or Master Records custody state were mutated. No non-TV/TVC secret or token was introduced.
 
-## Validation
-
-```text
-python scripts/validate_admissible_existence_registry.py
-pytest -q tests/test_capability_registry.py
-pytest -q
-python scripts/verify_product_consistency.py
-```
-
-## Current state
+## Final state
 
 ```text
-handoff: INSTALLED_ON_BRANCH
-registry integration: PENDING
-focused tests: PENDING
-hosted validation: PENDING
-merge: PENDING
-activation: NOT_INFERRED
-archive dependency: release this claim after merged validation; downstream #120/#122/#39/#33 remain separately owned
+handoff: COMPLETE_RELEASED
+registry integration: COMPLETE
+focused tests: COMPLETE
+hosted validation: 6/6 PASS
+merge: COMPLETE
+source activation effect: NONE_BY_ITSELF
+implementation claim: RELEASED
+remaining owner-side activation: .github#120/#122, repo-standards#39, master-records/orchestration#33
 ```
