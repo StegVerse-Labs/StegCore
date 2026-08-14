@@ -36,20 +36,15 @@ jobs:
           git checkout --detach FETCH_HEAD
           test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
 
-      - name: Select preinstalled Python 3.11
-        shell: bash
-        run: |
-          set -euo pipefail
-          PYTHON_BIN="$(find /opt/hostedtoolcache/Python -path '*/3.11.*/x64/bin/python' -type f | sort -V | tail -1)"
-          test -n "${PYTHON_BIN}"
-          echo "$(dirname "${PYTHON_BIN}")" >> "${GITHUB_PATH}"
+      - name: Verify preinstalled Python
+        run: python3 --version
 
       - name: Validate no non-TV/TVC validation credential path
-        run: python scripts/validate_no_non_tvtvc_validation_credentials.py
+        run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
 
       - name: Baseline repository smoke test
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           import json
           import sys
