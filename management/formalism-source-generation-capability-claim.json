@@ -5,10 +5,10 @@
   "issue": 120,
   "repository": "StegVerse-Labs/StegCore",
   "branch": "feat/register-formalism-source-generation-capability-120",
-  "state": "CLAIMED_FOR_IMPLEMENTATION",
+  "state": "COMPLETE_RELEASED",
   "claimant": "current ChatGPT continuation session",
   "claimed_at": "2026-08-14T16:12:00-05:00",
-  "expires_at": "2026-08-14T19:12:00-05:00",
+  "released_at": "2026-08-14T16:16:00-05:00",
   "scope": [
     "management/admissible-existence-capability-registry.json",
     "tests/test_capability_registry.py",
@@ -26,6 +26,22 @@
   ],
   "credential_authority": "TV/TVC",
   "github_token_runtime_authority": false,
-  "release_condition": "The source-generation capability is canonically registered at the evidence-supported phase, deterministic registry tests and hosted gates pass, changes merge, and the claim is reconciled to COMPLETE_RELEASED.",
-  "next_executable_action": "Validate the DECLARED registry entry and scoped handoff through all canonical StegCore gates without inferring standing, admissibility, or activation."
+  "release_condition": "SATISFIED",
+  "release_evidence": {
+    "pull_request": 121,
+    "merge_commit": "d2fb2437f4554832db386d5291ea15455ec143bb",
+    "stegcore_tests": 31841568033,
+    "runtime_validation": 31841568098,
+    "bcat_gate": 31841568071,
+    "test_readiness": 31841568089,
+    "baseline_validation": 31841568037,
+    "task_registry_conformance": 31841568017
+  },
+  "registered_capability": {
+    "capability_id": "stegverse:capability:formalism-source-generation:v1",
+    "existence_hash": "5d6c4976e69fa958ddacc417195a9c8604a79931fbe0689a3e469e34064690ca",
+    "phase": "DECLARED"
+  },
+  "next_owner": "StegVerse-Labs/.github#137 for standing/admissibility/integration/activation evidence; canonical StegCore registry remains lifecycle record owner",
+  "next_executable_action": "Do not infer lifecycle advancement. Consume independently produced standing/admissibility evidence from .github#137, then evaluate any requested phase transition through canonical StegGate."
 }
