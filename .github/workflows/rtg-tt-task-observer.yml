@@ -1,9 +1,9 @@
 name: RTG-TT Task Observer
 
+# Recurring observation is a StegVerse-worker responsibility. GitHub remains an
+# explicit/manual and repository-event validation surface only.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '17 * * * *'
   pull_request:
     paths:
       - ecosystem_management/rtg_tt_task_ledger.v0.1.json

@@ -1,8 +1,9 @@
 name: StegGate Session Continuity Guard
 
+# Continuity is maintained by StegVerse-controlled workers. GitHub validates
+# continuity state on explicit source changes or manual diagnostic runs only.
 on:
-  schedule:
-    - cron: '17 * * * *'
+  workflow_dispatch:
   push:
     branches: [main]
     paths:

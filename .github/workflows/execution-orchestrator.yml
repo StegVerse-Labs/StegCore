@@ -1,8 +1,9 @@
 name: Governed Execution Orchestrator
 
+# Cost-containment / sovereignty rule:
+# GitHub-hosted Actions may validate this surface on explicit repository events,
+# but recurring operational advancement belongs on StegVerse-controlled workers.
 on:
-  schedule:
-    - cron: '47 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
