@@ -6,6 +6,13 @@
 
 Deliver the smallest portable StegVerse ecosystem unit that proves canonical StegGate/AdmittedCode governance can operate as an inspectable local micro-node ecosystem without creating a parallel evaluator, requiring a third-party host, requiring a provider account, or requiring any non-TV/TVC secret.
 
+The portable unit has a mandatory implementation-time deployment choice:
+
+- `S` — **StegVerse S Ecosystem / Sovereign**: an isolated, individually operated sovereign deployment.
+- `NS` — **StegVerse NS Ecosystem / Node Sovereign**: a genuine node of the sovereign StegVerse ecosystem.
+
+The choice selects deployment topology/status. It does not create a second evaluator or change canonical StegGate governance semantics.
+
 ## Canonical owner and source of truth
 
 - Repository: `StegVerse-Labs/StegCore`
@@ -26,14 +33,51 @@ examples/steggate_allow_request.json
 
 The unit imports and exercises the existing canonical StegCore evaluator. It does not fork policy semantics.
 
-## Proof command
+## Mandatory deployment-class choice
+
+A requested implementation must explicitly select one and only one deployment class. No default is permitted.
+
+### `S` — StegVerse S Ecosystem
+
+```text
+sovereignty_class: Sovereign
+genuine_sovereign_ecosystem_node: false
+isolated: true
+individually_operated: true
+ecosystem_membership_required: false
+```
+
+This is a sovereign StegVerse deployment that remains isolated and individually operated. It may use the same portable governance artifacts and runtime contracts but is not represented as a genuine node of the sovereign ecosystem.
+
+### `NS` — StegVerse NS Ecosystem
+
+```text
+sovereignty_class: Node Sovereign
+genuine_sovereign_ecosystem_node: true
+ecosystem_membership_required: true
+```
+
+This is a Node Sovereign deployment and must be represented as a genuine node of the sovereign StegVerse ecosystem. Node membership does not itself grant policy authority, execution authority, continuity-minting authority, custody, or release authority.
+
+## Proof commands
+
+Sovereign isolated deployment:
 
 ```bash
 python tools/run_stegverse_micro_ecosystem.py \
-  --output artifacts/stegverse-micro-ecosystem-proof.json
+  --deployment-class S \
+  --output artifacts/stegverse-s-micro-ecosystem-proof.json
 ```
 
-The command must fail closed with a nonzero exit when any required proof invariant fails.
+Node Sovereign deployment:
+
+```bash
+python tools/run_stegverse_micro_ecosystem.py \
+  --deployment-class NS \
+  --output artifacts/stegverse-ns-micro-ecosystem-proof.json
+```
+
+Omitting `--deployment-class` is an invalid implementation request and the CLI refuses to run. An unknown class fails closed in the callable proof path.
 
 ## Required proof invariants
 
@@ -44,6 +88,11 @@ The command must fail closed with a nonzero exit when any required proof invaria
 - deterministic four-disposition self-test is `PASS`;
 - canonical three-layer binding is present;
 - the canonical ALLOW fixture evaluates `ALLOW`;
+- deployment choice is explicit;
+- selected deployment class is recognized;
+- `S` proves isolated + individually operated + non-node status;
+- `NS` proves genuine sovereign ecosystem node + membership-required status;
+- deployment class does not change canonical governance semantics;
 - runtime exposes no execution authority;
 - runtime exposes no continuity-minting authority;
 - the unit requires no external host;
@@ -57,6 +106,9 @@ The command must fail closed with a nonzero exit when any required proof invaria
 portable unit != policy authority
 portable unit != execution authority
 portable unit != continuity minting
+S sovereign isolation != ecosystem node membership
+NS ecosystem node membership != policy authority
+NS ecosystem node membership != execution authority
 local execution != identity authority
 runtime availability != admissibility
 proof receipt != custody
@@ -69,8 +121,9 @@ No secret or token is embedded in this unit. Any future network, publication, de
 
 ```text
 ASSEMBLY_INSTALLED: manifest + proof runner + test exist
-LOCALLY_PROVABLE: proof runner returns PASS under the packaged canonical runtime
-HOSTED_VALIDATED: repository CI proves the test/runner on the implementation commit
+DUAL_CLASS_IMPLEMENTED: S and NS are explicit, independently testable deployment classes
+LOCALLY_PROVABLE: selected class proof runner returns PASS under the packaged canonical runtime
+HOSTED_VALIDATED: repository CI proves both classes and fail-closed invalid choice on the implementation commit
 MERGED: implementation is on main
 RELEASED: explicit release authority has produced a version/tag or other governed release evidence
 ```
@@ -79,13 +132,14 @@ Do not collapse these states.
 
 ## Remaining work
 
-1. Obtain hosted CI evidence for the implementation branch/PR.
+1. Obtain hosted CI evidence for both `S` and `NS` on the implementation PR head.
 2. Repair only concrete failures without weakening canonical invariants.
 3. Merge after required checks pass and collision review remains clean.
 4. Re-read this handoff and `STEGCORE_MIRROR_HANDOFF.md` on main.
 5. Update completion evidence and percentages.
-6. Consider a governed portable archive/container/native launcher only as a successor goal; do not make a third-party service mandatory.
-7. When release/tag readiness is actually reached, verify downstream reconciliation with `StegVerse-Labs/Site`, `GCAT-BCAT-Engine/Publisher`, `StegVerse-Labs/admissibility-wiki`, and `StegVerse-002/stegguardian-wiki` under their own handoffs.
+6. Successor work for `NS` must bind actual sovereign ecosystem membership/continuity transport through its owning network/continuity contracts; do not fabricate node membership from the local proof alone.
+7. Consider a governed portable archive/container/native launcher only as a successor goal; do not make a third-party service mandatory.
+8. When release/tag readiness is actually reached, verify downstream reconciliation with `StegVerse-Labs/Site`, `GCAT-BCAT-Engine/Publisher`, `StegVerse-Labs/admissibility-wiki`, and `StegVerse-002/stegguardian-wiki` under their own handoffs.
 
 ## Current claim
 
@@ -100,8 +154,8 @@ collision_scope:
   - tests/test_stegverse_micro_ecosystem.py
   - docs/STEGVERSE_MICRO_ECOSYSTEM_MIRROR_HANDOFF.md
 manual_execution_allowed: true
-release_condition: required CI passes and PR is merged without modifying the canonical evaluator authority boundary
-next_executable_action: open PR, inspect CI, repair exact failures, merge when green
+release_condition: required CI proves both deployment classes and the PR is merged without modifying the canonical evaluator authority boundary
+next_executable_action: inspect replacement CI on the dual-class head, repair exact failures, merge when green
 ```
 
 ## Current assessment
@@ -109,12 +163,18 @@ next_executable_action: open PR, inspect CI, repair exact failures, merge when g
 ```text
 canonical runtime reused: complete
 micro-ecosystem manifest: installed on implementation branch
+mandatory S/NS implementation choice: installed
+S isolated sovereign profile: installed
+NS Node Sovereign profile: installed
 portable proof runner: installed on implementation branch
-automated proof test: installed on implementation branch
+automated S proof test: installed
+automated NS proof test: installed
+invalid-class fail-closed test: installed
 non-TV/TVC secret dependency: none introduced
 external host dependency: none introduced
 provider account dependency: none introduced
-hosted CI proof: pending
+actual NS network membership binding: successor integration work, not falsely claimed by local proof
+hosted CI proof on dual-class head: pending
 main-branch activation: pending
 release/tag: not authorized yet
 ```
