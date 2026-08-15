@@ -16,8 +16,6 @@ on:
       - 'docs/PERSONAL_DATA_CONTROL_ECOSYSTEM_MIRROR_HANDOFF.md'
       - 'tools/verify_personal_data_control_session_consolidation.py'
   workflow_dispatch:
-  schedule:
-    - cron: '41 * * * *'
 
 permissions:
   contents: read
