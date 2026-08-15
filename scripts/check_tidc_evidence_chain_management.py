@@ -60,15 +60,19 @@ def main() -> None:
     ], "downstream verification targets drift")
 
     handoff = HANDOFF.read_text(encoding="utf-8")
-    for marker in (
+    required_markers = (
         "SITE_LAYER_ACTIVATED",
         "OBSERVER_ACTIVE",
         "PARALLEL_ADVANCEMENT_ACTIVE",
         "DEVELOPMENT_HALTED=false",
-        "management coordination is not research authority",
         "Do not announce archive readiness",
-    ):
+    )
+    for marker in required_markers:
         require(marker in handoff, f"handoff missing marker: {marker}")
+    require(
+        "management coordination is not research authority" in handoff.lower(),
+        "handoff missing management/research authority boundary",
+    )
 
     print("TIDC_ECOSYSTEM_MANAGEMENT_VALID")
     print("schema=v0.2 runtime=ACTIVE_OBSERVATION_AND_PARALLEL_ADVANCEMENT authority_effect=NONE")
