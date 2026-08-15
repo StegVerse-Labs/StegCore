@@ -2,8 +2,6 @@ name: StegVA Bootstrap Verify
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "23 5 * * *"
   push:
     branches: [main]
     paths:
