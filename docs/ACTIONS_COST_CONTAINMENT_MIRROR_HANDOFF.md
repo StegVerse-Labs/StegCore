@@ -55,11 +55,11 @@ Post-merge GitHub Actions observation reported `total_count: 49`.
 
 The consolidation exposed a stale TIDC v0.1 validator. PR #130 repaired it to current v0.2 semantics; final validation run `31864882005` passed and PR #130 merged at `e1bf1a35fe42c0c43e2143887d27fcc9544f303e`.
 
-## Workflow-surface minimization batch 2 — implementation pending hosted validation
+## Completed workflow-surface minimization batch 2
 
-Branch: `chore/workflow-surface-minimization-002`.
+Merged by PR #131 at merge commit `a1a5507e578f03b1abc414a9c4ab2e5a516176af`.
 
-Two additional bounded validation surfaces are consolidated into the existing credential-clean `runtime-tests.yml` dispatcher:
+Two additional bounded validation surfaces were consolidated into the existing credential-clean `runtime-tests.yml` dispatcher:
 
 - `.github/workflows/governed-runtime-adapters.yml` -> `runtime-tests.yml`
   - preserves Python compilation of `runtime.py` / `runtime_adapters.py`;
@@ -70,30 +70,33 @@ Two additional bounded validation surfaces are consolidated into the existing cr
   - generates the same four deterministic receipt JSON files ephemerally and prints their SHA-256 values;
   - adds `tools/**`, `spec/**`, and originating-choice example paths to stable dispatcher triggers.
 
-The stable dispatcher remains `permissions: {}`, rejects exposed GitHub/GH/PAT/TVC-ephemeral credential variables, acquires repository source anonymously, and grants no production/runtime authority. No NON-TV/TVC secret or token is introduced.
+The stable dispatcher remains `permissions: {}`, rejects exposed GitHub/GH/PAT/TVC-ephemeral credential variables, acquires repository source anonymously, and grants no production/runtime authority. No NON-TV/TVC secret or token was introduced.
 
-Classification: both standalone files are `CONSOLIDATE_INTO_STABLE_DISPATCHER`, not capability eliminations.
+Final-head validation evidence for PR #131:
 
-Expected post-merge workflow count: `47`, subject to direct API observation after all final-head validations pass.
+- `Validate StegCore Runtime - No Non-TV/TVC Credential Authority` run `31872307672`: SUCCESS.
+- Within that run, `Validate consolidated governed runtime adapter conformance`: SUCCESS.
+- Within that run, `Validate consolidated originating-choice contract and routing`: SUCCESS.
+- `Validate no non-TV/TVC validation credential path`: SUCCESS.
+- Full runtime tests, TIDC, criterion-contestability, Governance snapshot and downstream verification checks: SUCCESS.
+- `BCAT Gate - No Non-TV/TVC Credential Authority` run `31872307718`: SUCCESS.
+- `Validate StegVerse 001 002 Baseline - No Non-TV/TVC Credential Authority` run `31872307637`: SUCCESS.
+- `Test Readiness - No Non-TV/TVC Credential Authority` run `31872307617`: SUCCESS.
+- `StegCore Tests - No Non-TV/TVC Credential Authority` run `31872307611`: SUCCESS.
 
-Release conditions for batch 2:
+Direct post-merge GitHub Actions API observation reported `total_count: 47`, proving workflow-file count fell from 49 to 47.
 
-1. exact PR diff contains only stable-dispatcher consolidation, the two standalone workflow deletions, and this handoff update;
-2. `runtime-tests.yml` passes on the final PR head;
-3. adapter and originating-choice validation steps are observed PASS inside the stable dispatcher;
-4. no NON-TV/TVC credential path or GitHub production authority is introduced;
-5. merge completes and direct Actions API reports workflow count `47`;
-6. issue #128 receives the merge/run/count evidence.
+Classification: both removed files are `CONSOLIDATE_INTO_STABLE_DISPATCHER`, not capability eliminations.
 
 ## Current quantitative state
 
 - workflow surfaces at audit start: 51
-- current workflow files on canonical `main`: 49
+- current workflow files on canonical `main`: 47
 - recurring schedules removed in containment batches: 12
-- workflow files consolidated/eliminated on `main`: 2
-- workflow surfaces explicitly classified/remediated on `main`: 14/51
-- batch 2 proposed additional consolidations: 2
-- expected after batch 2 merge: current workflow files 47; classified/remediated 16/51; remaining classification denominator 35/51
+- workflow files consolidated/eliminated on `main`: 4
+- workflow surfaces explicitly classified/remediated on `main`: 16/51 = 31.37%
+- remaining surfaces requiring KEEP_STANDALONE_EXCEPTION / CONSOLIDATE / TRANSFER / ELIMINATE / REVIEW_REQUIRED classification: 35
+- completed minimization batches: 2/2 attempted batches merged and validated
 
 Schedule removal alone does not reduce workflow-file count; consolidation/elimination does.
 
@@ -121,7 +124,7 @@ Canonical continuation is `StegVerse-Labs/.github/docs/ORG_MIRROR_HANDOFF.md` pl
 
 ## StegFin convergence
 
-Trade-readiness execution is not owned by this cleanup branch. Canonical continuation remains `StegVerse-Labs/stegfin-governance/docs/STEGFIN_MIRROR_HANDOFF.md` and `STEGFIN-CONTINUITY-CARRIER-007`; manual provider/wallet execution is prohibited, credential authority is TV/TVC, and signing/broadcast remain USER_ONLY.
+Trade-readiness execution is not owned by this cleanup lane. Canonical continuation remains `StegVerse-Labs/stegfin-governance/docs/STEGFIN_MIRROR_HANDOFF.md` and `STEGFIN-CONTINUITY-CARRIER-007`; manual provider/wallet execution is prohibited, credential authority is TV/TVC, and signing/broadcast remain USER_ONLY.
 
 ## Repository hygiene
 
@@ -132,25 +135,25 @@ Known completed hygiene:
 - duplicate issue #30 closed in favor of #29;
 - duplicate issue #32 closed in favor of #31.
 
-Open legacy PRs require reconciliation rather than age-based closure. In particular PR #27 contains unique evaluator work but also proposes scheduled GitHub-hosted write workflows, `STEGVERSE_CROSS_REPO_TOKEN || github.token`, and a Render-specific provider-state path that conflict with the current workflow-minimization / TV-TVC-only / no-third-party-production architecture. Preserve useful source implementation while reconciling those carrier/credential assumptions before merge or supersession.
+Open legacy PRs require reconciliation rather than age-based closure. In particular PR #27 contains unique evaluator work but also proposes scheduled GitHub-hosted write workflows, `STEGVERSE_CROSS_REPO_TOKEN || github.token`, and a Render-specific provider-state path that conflict with the current workflow-minimization / TV-TVC-only / no-third-party-production architecture. Preserve useful evaluator source while reconciling those carrier/credential assumptions before merge or supersession.
 
 ## Active claims / collision boundary
 
 - cost containment: issue #125;
 - workflow minimization: issue #128 under organization policy #167;
-- workflow minimization batch 2: branch `chore/workflow-surface-minimization-002`, distinct validation-surface integration only;
+- workflow minimization batch 2: COMPLETE / MERGED;
 - live sovereign runtime activation: resident StegVerse workers — observation only here;
 - local model: complete/released — no competing implementation claim;
 - TV/TVC credential/route authority: TV/TVC only.
 
 ## Current state
 
-`ACTIVE_REMEDIATION / BATCH_2_MINIMIZATION_IMPLEMENTED_PENDING_VALIDATION / CANONICAL_MAIN_WORKFLOW_COUNT_49 / FULL_CENSUS_PENDING`
+`ACTIVE_REMEDIATION / WORKFLOW_MINIMIZATION_BATCHES_1_2_VALIDATED / CANONICAL_MAIN_WORKFLOW_COUNT_47 / FULL_CENSUS_PENDING`
 
 ## Next executable action
 
-Validate batch 2 on its final PR head, merge only if the stable dispatcher proves both consolidated capabilities and the credential-clean invariant, directly observe the post-merge workflow count, update issue #128, then classify the next nonoverlapping surfaces. Separately reconcile legacy PR #27 without discarding unique evaluator source.
+Under issue #128, inspect the next bounded, nonoverlapping validation family and consolidate it into the stable credential-clean dispatcher when semantics can be preserved. Necessary recurring operations must transfer to named StegVerse workers before GitHub recurrence is removed. Separately reconcile legacy PR #27 without discarding unique evaluator source, and continue evidence-safe branch/PR/issue hygiene under `.github#165`.
 
 ## Archive condition
 
-The local-model/runtime and trade-readiness requirements are durably transferred to canonical worker chains. This session is not archive-ready while unique workflow minimization and evidence-safe repository hygiene remain executable and untransferred.
+The local-model/runtime and trade-readiness requirements are durably transferred to canonical worker chains. This session is not archive-ready while 35 StegCore audit-start workflow surfaces and repository hygiene remain executable and untransferred.
