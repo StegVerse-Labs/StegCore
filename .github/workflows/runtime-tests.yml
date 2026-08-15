@@ -8,6 +8,9 @@ on:
       - 'src/stegcore/**'
       - 'tests/**'
       - 'scripts/**'
+      - 'tools/**'
+      - 'spec/**'
+      - 'examples/originating-choice*.json'
       - 'docs/**'
       - 'ecosystem_management/tidc_evidence_chain_registry.json'
       - 'contracts/criterion-contestability-boundary.v1.json'
@@ -20,6 +23,9 @@ on:
       - 'src/stegcore/**'
       - 'tests/**'
       - 'scripts/**'
+      - 'tools/**'
+      - 'spec/**'
+      - 'examples/originating-choice*.json'
       - 'docs/**'
       - 'ecosystem_management/tidc_evidence_chain_registry.json'
       - 'contracts/criterion-contestability-boundary.v1.json'
@@ -91,6 +97,37 @@ jobs:
       - name: Validate consolidated criterion contestability boundary
         run: python3 scripts/validate_criterion_contestability_boundary.py
 
+      - name: Validate consolidated governed runtime adapter conformance
+        run: |
+          python3 -m py_compile src/stegcore/runtime.py src/stegcore/runtime_adapters.py
+          python3 -m pytest -q tests/test_runtime_commit_coherence.py tests/test_governed_runtime_adapters.py tests/test_governed_runtime_reconciliation.py
+          python3 - <<'PY'
+          from pathlib import Path
+          source = Path('src/stegcore/runtime_adapters.py').read_text(encoding='utf-8')
+          assert 'governed_execute(' in source
+          assert 'executor()' not in source
+          print('ADAPTER_BYPASS_STATIC_GUARD_PASS')
+          PY
+
+      - name: Validate consolidated originating-choice contract and routing
+        run: |
+          mkdir -p artifacts/originating-choice
+          python3 tools/validate_originating_choice.py \
+            spec/originating-choice.schema.json \
+            examples/originating-choice.valid.json \
+            --receipt-output artifacts/originating-choice/validation-receipt.json
+          python3 tools/validate_originating_choice.py \
+            --self-test \
+            --receipt-output artifacts/originating-choice/self-test-receipt.json
+          python3 tools/consume_originating_choice.py \
+            spec/originating-choice.schema.json \
+            examples/originating-choice.valid.json \
+            --output artifacts/originating-choice/integration-receipt.json
+          python3 tools/consume_originating_choice.py \
+            --self-test \
+            --output artifacts/originating-choice/integration-self-test-receipt.json
+          sha256sum artifacts/originating-choice/*.json
+
       - name: Run runtime tests
         run: python3 -m pytest -q
 
@@ -123,7 +160,7 @@ jobs:
         env:
           GOVERNANCE_SHA: ${{ steps.governance.outputs.governance_sha }}
         run: |
-          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs ecosystem_management/tidc_evidence_chain_registry.json contracts/criterion-contestability-boundary.v1.json contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
+          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts tools spec examples docs ecosystem_management/tidc_evidence_chain_registry.json contracts/criterion-contestability-boundary.v1.json contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
           python3 scripts/record_runtime_validation.py \
             --output evidence/runtime-validation.json \
             --dispatch evidence/downstream-verification-dispatch.json \
