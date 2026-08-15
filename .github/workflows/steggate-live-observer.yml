@@ -1,8 +1,9 @@
 name: StegGate Live Service Observer
 
+# The canonical StegGate runtime is machine-owned by StegVerse. GitHub-hosted
+# polling is no longer a recurring continuity mechanism. Keep this workflow for
+# explicit/manual and source-change verification only.
 on:
-  schedule:
-    - cron: '23 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
