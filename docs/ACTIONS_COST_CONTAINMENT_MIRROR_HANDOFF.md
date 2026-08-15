@@ -42,11 +42,11 @@ The following five additional recurring schedules were removed while preserving 
 
 No NON-TV/TVC secret/token was added by this batch.
 
-## Workflow-surface minimization batch 1
+## Completed workflow-surface minimization batch 1
 
-Active branch: `chore/workflow-surface-minimization-001`.
+Merged by PR #129 at merge commit `8e2f451d49b1ca14bc4ea8678b4dd5aaa8de14fd`.
 
-This batch begins reducing workflow *file count*, not merely cron frequency. Two dedicated validation workflows are consolidated into the existing credential-clean `runtime-tests.yml` dispatcher:
+This batch begins reducing workflow *file count*, not merely cron frequency. Two dedicated validation workflows were consolidated into the existing credential-clean `runtime-tests.yml` dispatcher:
 
 - `.github/workflows/check-tidc-evidence-chain-management.yml` -> `runtime-tests.yml`
   - preserves `scripts/check_tidc_evidence_chain_management.py` compile + deterministic validation;
@@ -54,16 +54,18 @@ This batch begins reducing workflow *file count*, not merely cron frequency. Two
 - `.github/workflows/criterion-contestability-validate.yml` -> `runtime-tests.yml`
   - preserves `scripts/validate_criterion_contestability_boundary.py` and the full runtime test suite that already includes `tests/test_criterion_contestability.py`.
 
-The stable runtime validator now includes the relevant TIDC registry and criterion contract paths in its push/PR trigger set. No third-party action or credential path is added. This batch reduces the StegCore workflow-file count from 51 to 49 when merged.
+The stable runtime validator includes the relevant TIDC registry and criterion contract paths in its push/PR trigger set. No third-party action or credential path was added.
+
+Post-merge GitHub Actions API observation reports `total_count: 49`, confirming the workflow-file count fell from 51 to 49.
 
 Classification: both removed files are `CONSOLIDATE_INTO_STABLE_DISPATCHER`, not capability eliminations.
 
 ## Current quantitative state
 
 - workflow surfaces at audit start: 51
+- current workflow files: 49
 - recurring schedules removed in containment batches: 12
 - workflow files consolidated/eliminated in minimization batch 1: 2
-- expected workflow-file count after minimization batch 1 merge: 49
 - workflow surfaces explicitly classified/remediated: 14/51
 - remaining surfaces requiring KEEP_STANDALONE_EXCEPTION / CONSOLIDATE / TRANSFER / ELIMINATE classification: 37
 
@@ -109,21 +111,13 @@ Known completed hygiene in this workstream:
 
 ## Validation / release condition
 
-Containment batches 1 and 2 are complete and merged.
-
-Workflow minimization batch 1 completes when:
-
-1. `runtime-tests.yml` contains the TIDC management and criterion-contestability validations;
-2. both superseded standalone workflow files are removed;
-3. repository-event/manual runtime validation remains available;
-4. no NON-TV/TVC credential/token path is introduced;
-5. the branch is reviewed/merged and the post-merge workflow count is directly observed as 49.
+Containment batches 1 and 2 and workflow minimization batch 1 are complete and merged.
 
 Full goal completion requires classification of all 51 audit-start surfaces, reduction to the minimum safe workflow count (preferably <=2), evidence-backed exceptions for any retained standalone workflows above that minimum, and bounded issue/PR/branch reconciliation without deleting active evidence or claims.
 
 ## Current state
 
-`ACTIVE_REMEDIATION / CONTAINMENT_BATCHES_1_2_MERGED / WORKFLOW_MINIMIZATION_BATCH_1_IMPLEMENTED_PENDING_MERGE / FULL_CENSUS_PENDING`
+`ACTIVE_REMEDIATION / CONTAINMENT_BATCHES_1_2_MERGED / WORKFLOW_MINIMIZATION_BATCH_1_MERGED / CURRENT_WORKFLOW_COUNT_49 / FULL_CENSUS_PENDING`
 
 ## Session consolidation
 
