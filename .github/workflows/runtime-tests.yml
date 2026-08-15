@@ -9,6 +9,8 @@ on:
       - 'tests/**'
       - 'scripts/**'
       - 'docs/**'
+      - 'ecosystem_management/tidc_evidence_chain_registry.json'
+      - 'contracts/criterion-contestability-boundary.v1.json'
       - 'contracts/governance_snapshot/**'
       - 'evidence/downstream-verification-dispatch.json'
       - 'pyproject.toml'
@@ -19,6 +21,8 @@ on:
       - 'tests/**'
       - 'scripts/**'
       - 'docs/**'
+      - 'ecosystem_management/tidc_evidence_chain_registry.json'
+      - 'contracts/criterion-contestability-boundary.v1.json'
       - 'contracts/governance_snapshot/**'
       - 'evidence/downstream-verification-dispatch.json'
       - 'pyproject.toml'
@@ -79,6 +83,14 @@ jobs:
       - name: Validate downstream verification dispatch
         run: python3 scripts/check_downstream_verification_dispatch.py evidence/downstream-verification-dispatch.json
 
+      - name: Validate consolidated TIDC evidence-chain management
+        run: |
+          python3 -m py_compile scripts/check_tidc_evidence_chain_management.py
+          python3 scripts/check_tidc_evidence_chain_management.py
+
+      - name: Validate consolidated criterion contestability boundary
+        run: python3 scripts/validate_criterion_contestability_boundary.py
+
       - name: Run runtime tests
         run: python3 -m pytest -q
 
@@ -111,7 +123,7 @@ jobs:
         env:
           GOVERNANCE_SHA: ${{ steps.governance.outputs.governance_sha }}
         run: |
-          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
+          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts docs ecosystem_management/tidc_evidence_chain_registry.json contracts/criterion-contestability-boundary.v1.json contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
           python3 scripts/record_runtime_validation.py \
             --output evidence/runtime-validation.json \
             --dispatch evidence/downstream-verification-dispatch.json \
