@@ -46,19 +46,26 @@ No NON-TV/TVC secret/token was added by this batch.
 
 Merged by PR #129 at merge commit `8e2f451d49b1ca14bc4ea8678b4dd5aaa8de14fd`.
 
-This batch begins reducing workflow *file count*, not merely cron frequency. Two dedicated validation workflows were consolidated into the existing credential-clean `runtime-tests.yml` dispatcher:
+Two dedicated validation workflows were consolidated into the existing credential-clean `runtime-tests.yml` dispatcher:
 
 - `.github/workflows/check-tidc-evidence-chain-management.yml` -> `runtime-tests.yml`
-  - preserves `scripts/check_tidc_evidence_chain_management.py` compile + deterministic validation;
-  - removes the separate 3-version runner matrix, including unsupported Python 3.9 (`pyproject.toml` requires Python >=3.11).
 - `.github/workflows/criterion-contestability-validate.yml` -> `runtime-tests.yml`
-  - preserves `scripts/validate_criterion_contestability_boundary.py` and the full runtime test suite that already includes `tests/test_criterion_contestability.py`.
 
-The stable runtime validator includes the relevant TIDC registry and criterion contract paths in its push/PR trigger set. No third-party action or credential path was added.
+The stable runtime validator now includes the relevant TIDC registry and criterion contract paths in its push/PR trigger set. Both removals are `CONSOLIDATE_INTO_STABLE_DISPATCHER`, not capability eliminations. Post-merge GitHub Actions API observation reported `total_count: 49`, confirming workflow-file count fell from 51 to 49.
 
-Post-merge GitHub Actions API observation reports `total_count: 49`, confirming the workflow-file count fell from 51 to 49.
+### Validation defect exposed and repaired
 
-Classification: both removed files are `CONSOLIDATE_INTO_STABLE_DISPATCHER`, not capability eliminations.
+The first consolidated runtime validation exposed a pre-existing stale validator rather than a workflow-consolidation loss: `scripts/check_tidc_evidence_chain_management.py` still required the superseded TIDC v0.1 / idle / five-task model while the canonical registry and handoff are v0.2 / `AUTONOMOUS_OBSERVER_ACTIVATED` / `ACTIVE_OBSERVATION_AND_PARALLEL_ADVANCEMENT` / eight-task state.
+
+Observed validation history:
+
+- PR #129 runtime validation exposed the stale-schema defect.
+- PR #130 repair attempt run `31864807474`: FAIL on stale handoff-marker assumption after the schema/task-state repair.
+- PR #130 repair attempt run `31864846595`: FAIL on a second stale authority-text assumption.
+- PR #130 final repair run `31864882005`: validation job PASS; TIDC management, criterion contestability, full runtime tests, Governance snapshot checks, downstream dispatch, continuity mapping, and no-NON-TV/TVC-credential validation all passed.
+- PR #130 merged at `e1bf1a35fe42c0c43e2143887d27fcc9544f303e`.
+
+The repair updates only the fail-closed TIDC validator to current canonical v0.2 registry/handoff semantics. It does not grant GitHub production/runtime authority and introduces no NON-TV/TVC secret/token path.
 
 ## Current quantitative state
 
@@ -67,6 +74,7 @@ Classification: both removed files are `CONSOLIDATE_INTO_STABLE_DISPATCHER`, not
 - recurring schedules removed in containment batches: 12
 - workflow files consolidated/eliminated in minimization batch 1: 2
 - workflow surfaces explicitly classified/remediated: 14/51
+- workflow-minimization batch 1 validation: PASS after PR #130 repair
 - remaining surfaces requiring KEEP_STANDALONE_EXCEPTION / CONSOLIDATE / TRANSFER / ELIMINATE classification: 37
 
 The classification denominator is the 51 workflow surfaces present at audit start. Schedule removal alone does not reduce workflow-file count; consolidation/elimination does.
@@ -81,7 +89,7 @@ The classification denominator is the 51 workflow surfaces present at audit star
 
 ## Local runtime / formal model convergence
 
-This cost-containment work does not reopen or duplicate the already-complete local-runtime implementation. Organization source of truth records:
+This work does not reopen or duplicate the already-complete local-runtime implementation. Organization source of truth records:
 
 - formal local model: `COMPLETE_RELEASED`;
 - local runtime discovery/launch/inference/proof: `COMPLETE_RELEASED`;
@@ -111,13 +119,13 @@ Known completed hygiene in this workstream:
 
 ## Validation / release condition
 
-Containment batches 1 and 2 and workflow minimization batch 1 are complete and merged.
+Containment batches 1 and 2 and workflow minimization batch 1 are complete, merged, and batch-1 consolidation validation is now PASS after PR #130.
 
 Full goal completion requires classification of all 51 audit-start surfaces, reduction to the minimum safe workflow count (preferably <=2), evidence-backed exceptions for any retained standalone workflows above that minimum, and bounded issue/PR/branch reconciliation without deleting active evidence or claims.
 
 ## Current state
 
-`ACTIVE_REMEDIATION / CONTAINMENT_BATCHES_1_2_MERGED / WORKFLOW_MINIMIZATION_BATCH_1_MERGED / CURRENT_WORKFLOW_COUNT_49 / FULL_CENSUS_PENDING`
+`ACTIVE_REMEDIATION / CONTAINMENT_BATCHES_1_2_MERGED / WORKFLOW_MINIMIZATION_BATCH_1_VALIDATED / CURRENT_WORKFLOW_COUNT_49 / FULL_CENSUS_PENDING`
 
 ## Session consolidation
 
