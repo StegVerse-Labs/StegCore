@@ -13,7 +13,10 @@ on:
       - 'examples/originating-choice*.json'
       - 'docs/**'
       - 'ecosystem_management/tidc_evidence_chain_registry.json'
+      - 'ecosystem_management/correctability_layer.v0.1.json'
+      - 'ecosystem_management/correctability_claim.v0.1.json'
       - 'contracts/criterion-contestability-boundary.v1.json'
+      - 'contracts/permission-admissibility-boundary.v1.json'
       - 'contracts/governance_snapshot/**'
       - 'evidence/downstream-verification-dispatch.json'
       - 'pyproject.toml'
@@ -28,7 +31,10 @@ on:
       - 'examples/originating-choice*.json'
       - 'docs/**'
       - 'ecosystem_management/tidc_evidence_chain_registry.json'
+      - 'ecosystem_management/correctability_layer.v0.1.json'
+      - 'ecosystem_management/correctability_claim.v0.1.json'
       - 'contracts/criterion-contestability-boundary.v1.json'
+      - 'contracts/permission-admissibility-boundary.v1.json'
       - 'contracts/governance_snapshot/**'
       - 'evidence/downstream-verification-dispatch.json'
       - 'pyproject.toml'
@@ -97,6 +103,18 @@ jobs:
       - name: Validate consolidated criterion contestability boundary
         run: python3 scripts/validate_criterion_contestability_boundary.py
 
+      - name: Validate consolidated permission admissibility boundary
+        run: |
+          python3 scripts/validate_permission_admissibility_boundary.py
+          python3 -m pytest -q tests/test_permission_admissibility_boundary.py
+          echo 'PERMISSION_ADMISSIBILITY_TESTS=PASS'
+
+      - name: Validate consolidated correctability layer
+        run: |
+          python3 tools/verify_correctability_layer.py
+          test -f brain_reports/correctability_layer_report.json
+          sha256sum brain_reports/correctability_layer_report.json
+
       - name: Validate consolidated governed runtime adapter conformance
         run: |
           python3 -m py_compile src/stegcore/runtime.py src/stegcore/runtime_adapters.py
@@ -160,7 +178,7 @@ jobs:
         env:
           GOVERNANCE_SHA: ${{ steps.governance.outputs.governance_sha }}
         run: |
-          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts tools spec examples docs ecosystem_management/tidc_evidence_chain_registry.json contracts/criterion-contestability-boundary.v1.json contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
+          CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts tools spec examples docs ecosystem_management/tidc_evidence_chain_registry.json ecosystem_management/correctability_layer.v0.1.json ecosystem_management/correctability_claim.v0.1.json contracts/criterion-contestability-boundary.v1.json contracts/permission-admissibility-boundary.v1.json contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
           python3 scripts/record_runtime_validation.py \
             --output evidence/runtime-validation.json \
             --dispatch evidence/downstream-verification-dispatch.json \
