@@ -1,0 +1,35 @@
+{
+  "schema": "stegverse.micro-ecosystem.manifest.v1",
+  "micro_ecosystem_id": "stegverse:micro-ecosystem:steggate-admittedcode:v0",
+  "product_version": "0.2.0",
+  "canonical_owner": "StegVerse-Labs/StegCore",
+  "canonical_runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
+  "canonical_admissibility_runtime": "stegcore.three_layer.evaluate_three_layer",
+  "purpose": "Portable StegGate/AdmittedCode governance micro-node ecosystem using the canonical StegCore evaluator without a parallel policy authority.",
+  "components": {
+    "runtime": "stegcore",
+    "cli": "steggate",
+    "proof_runner": "tools/run_stegverse_micro_ecosystem.py",
+    "allow_fixture": "examples/steggate_allow_request.json",
+    "handoff": "docs/STEGVERSE_MICRO_ECOSYSTEM_MIRROR_HANDOFF.md"
+  },
+  "required_dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
+  "proof_requirements": {
+    "self_test_state": "PASS",
+    "canonical_three_layer_bound": true,
+    "fixture_disposition": "ALLOW",
+    "runtime_identity_match": true,
+    "manifest_hash_present": true,
+    "request_hash_present": true,
+    "result_hash_present": true
+  },
+  "authority_boundaries": {
+    "creates_policy_authority": false,
+    "creates_execution_authority": false,
+    "creates_continuity_minting_authority": false,
+    "transport_identity_authoritative": false,
+    "requires_external_host": false,
+    "requires_provider_account": false,
+    "requires_non_tv_tvc_secret": false
+  }
+}
