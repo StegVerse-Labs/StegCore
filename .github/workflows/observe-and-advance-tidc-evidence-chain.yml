@@ -1,8 +1,8 @@
 name: Observe and Advance TIDC Evidence Chain
 
+# Recurring evidence-chain advancement belongs on StegVerse-controlled workers.
+# GitHub remains available for explicit diagnostics and source-change validation.
 on:
-  schedule:
-    - cron: '17 * * * *'
   workflow_dispatch:
   push:
     paths:
