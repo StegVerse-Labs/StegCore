@@ -5,7 +5,6 @@
 - Goal ID: `STEGCORE-ACTIONS-COST-CONTAINMENT-001`
 - Repository: `StegVerse-Labs/StegCore`
 - Canonical branch: `main`
-- Active remediation branch: `chore/actions-cost-containment-batch2-20260814`
 - Coordination: `StegVerse-Labs/.github#164`
 - Repository issue: `StegVerse-Labs/StegCore#125`
 - Governing invariant: production/continuity execution must remain `StegVerse -> StegVerse -> StegVerse`; GitHub Actions is not a required production carrier.
@@ -27,9 +26,11 @@ Recurring GitHub-hosted schedules were removed while explicit/manual or reposito
 
 The recurring responsibility of these operational observers/orchestrators is not a GitHub production dependency. Necessary recurring behavior belongs to StegVerse-controlled workers; GitHub is retained for bounded source-change validation and explicit diagnostics.
 
-## Active containment batch 2
+## Completed containment batch 2
 
-The following five additional recurring schedules are removed on `chore/actions-cost-containment-batch2-20260814` while preserving push, pull-request, or explicit/manual validation paths as applicable:
+Merged by PR #127 at merge commit `f410a6d2a71f19742f1110c5c5eeff5404a8f821`.
+
+The following five additional recurring schedules were removed while preserving push, pull-request, or explicit/manual validation paths as applicable:
 
 - `.github/workflows/stegva-bootstrap-verify.yml` — daily bootstrap/session verification is redundant with source-change/manual validation; `KEEP_GITHUB_VALIDATION` for event/manual use, recurring trigger eliminated.
 - `.github/workflows/coordinate-hil-lifecycle.yml` — periodic lifecycle observation/coordination is operational work; recurring ownership is `TRANSFER_TO_STEGVERSE_WORKER`, GitHub retained for source-change/manual validation.
@@ -79,27 +80,20 @@ Known completed hygiene in this workstream:
 
 ## Active claims / collision boundary
 
-- cost containment implementation: this remediation branch and issue #125;
+- cost containment implementation: issue #125 and subsequent bounded remediation branches;
 - live sovereign runtime activation: resident StegVerse workers under `.github` handoff/registry — observation only from this session;
 - local model implementation: complete/released — no competing implementation claim permitted;
 - TV/TVC credential/route authority: TV/TVC only.
 
 ## Validation / release condition
 
-Batch 2 is complete only when:
+Batch 2 is complete: the five workflow mutations are on `main`, repository-event/manual validation semantics remain present, no production/runtime authority moved to GitHub, no NON-TV/TVC token/secret was introduced, and issue #125 records the batch evidence.
 
-1. the five workflow mutations are merged to `main`;
-2. repository-event/manual validation semantics remain present;
-3. no production/runtime authority is moved to GitHub;
-4. no NON-TV/TVC token/secret is introduced;
-5. issue #125 records the batch evidence;
-6. remaining 39 workflow surfaces continue through the full census rather than being falsely declared complete.
-
-Full goal completion additionally requires classification of all 51 workflow surfaces and bounded reconciliation of stale/duplicate issues, PRs, and branches without deleting active evidence or claims.
+Full goal completion still requires classification of the remaining 39 workflow surfaces and bounded reconciliation of stale/duplicate issues, PRs, and branches without deleting active evidence or claims.
 
 ## Current state
 
-`ACTIVE_REMEDIATION / BATCH_1_MERGED / BATCH_2_IMPLEMENTED_PENDING_MERGE / FULL_CENSUS_PENDING`
+`ACTIVE_REMEDIATION / BATCH_1_MERGED / BATCH_2_MERGED / FULL_CENSUS_PENDING`
 
 ## Session consolidation
 
