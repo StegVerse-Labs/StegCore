@@ -23,8 +23,6 @@ on:
       - 'evidence/downstream-verification-dispatch.json'
       - 'pyproject.toml'
       - '.github/workflows/runtime-tests.yml'
-  schedule:
-    - cron: '17 5 * * *'
   workflow_dispatch: {}
 
 concurrency:

@@ -19,8 +19,6 @@ on:
       - 'scripts/verify_governance_external_evidence_contract.py'
       - 'contracts/governance_external_evidence_snapshot/**'
       - '.github/workflows/external-evidence-interop.yml'
-  schedule:
-    - cron: '41 5 * * *'
   workflow_dispatch: {}
 
 concurrency:

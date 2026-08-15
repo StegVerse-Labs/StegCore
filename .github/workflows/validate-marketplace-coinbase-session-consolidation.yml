@@ -13,8 +13,6 @@ on:
       - 'scripts/validate_marketplace_coinbase_session_consolidation.py'
       - 'tests/test_marketplace_coinbase_session_consolidation.py'
       - '.github/workflows/validate-marketplace-coinbase-session-consolidation.yml'
-  schedule:
-    - cron: '17 9 * * *'
 
 permissions:
   contents: write
