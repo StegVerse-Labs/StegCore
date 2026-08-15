@@ -6,9 +6,11 @@
 - Repository: `StegVerse-Labs/StegCore`
 - Canonical branch: `main`
 - Coordination: `StegVerse-Labs/.github#164`
-- Repository issue: `StegVerse-Labs/StegCore#125`
+- Workflow minimization policy: `StegVerse-Labs/.github#167`
+- Repository issues: `StegVerse-Labs/StegCore#125`, `StegVerse-Labs/StegCore#128`
 - Governing invariant: production/continuity execution must remain `StegVerse -> StegVerse -> StegVerse`; GitHub Actions is not a required production carrier.
 - Credential invariant: no NON-TV/TVC secret or token may be introduced; production/control-plane credential authority remains TV/TVC.
+- Preferred GitHub workflow surface: minimum technically necessary; `0/1/2` preferred, `>2` only by evidence-backed standalone exception.
 
 ## Completed containment batch 1
 
@@ -40,21 +42,40 @@ The following five additional recurring schedules were removed while preserving 
 
 No NON-TV/TVC secret/token was added by this batch.
 
+## Workflow-surface minimization batch 1
+
+Active branch: `chore/workflow-surface-minimization-001`.
+
+This batch begins reducing workflow *file count*, not merely cron frequency. Two dedicated validation workflows are consolidated into the existing credential-clean `runtime-tests.yml` dispatcher:
+
+- `.github/workflows/check-tidc-evidence-chain-management.yml` -> `runtime-tests.yml`
+  - preserves `scripts/check_tidc_evidence_chain_management.py` compile + deterministic validation;
+  - removes the separate 3-version runner matrix, including unsupported Python 3.9 (`pyproject.toml` requires Python >=3.11).
+- `.github/workflows/criterion-contestability-validate.yml` -> `runtime-tests.yml`
+  - preserves `scripts/validate_criterion_contestability_boundary.py` and the full runtime test suite that already includes `tests/test_criterion_contestability.py`.
+
+The stable runtime validator now includes the relevant TIDC registry and criterion contract paths in its push/PR trigger set. No third-party action or credential path is added. This batch reduces the StegCore workflow-file count from 51 to 49 when merged.
+
+Classification: both removed files are `CONSOLIDATE_INTO_STABLE_DISPATCHER`, not capability eliminations.
+
 ## Current quantitative state
 
-- active workflows at audit start: 51
-- recurring schedules removed in batch 1: 7
-- recurring schedules removed in batch 2: 5
-- total known recurring schedules removed by this handoff: 12
-- remaining workflow surfaces requiring full KEEP / TRANSFER / ELIMINATE classification: 39
+- workflow surfaces at audit start: 51
+- recurring schedules removed in containment batches: 12
+- workflow files consolidated/eliminated in minimization batch 1: 2
+- expected workflow-file count after minimization batch 1 merge: 49
+- workflow surfaces explicitly classified/remediated: 14/51
+- remaining surfaces requiring KEEP_STANDALONE_EXCEPTION / CONSOLIDATE / TRANSFER / ELIMINATE classification: 37
 
-The count above is workflow-surface classification progress, not a claim that only 39 cron expressions remain. Some remaining workflows may have no schedule and still require classification; some may contain multiple triggers.
+The classification denominator is the 51 workflow surfaces present at audit start. Schedule removal alone does not reduce workflow-file count; consolidation/elimination does.
 
 ## Classification states
 
-- `KEEP_GITHUB_VALIDATION`: necessary repository/CI behavior; recurring trigger justified only by evidence.
-- `TRANSFER_TO_STEGVERSE_WORKER`: necessary operational work, but recurring execution must move to a StegVerse-controlled worker/runtime.
-- `ELIMINATE`: redundant, superseded, completed, or unnecessary workflow.
+- `KEEP_GITHUB_VALIDATION`: necessary repository/CI behavior retained during interim containment.
+- `KEEP_STANDALONE_EXCEPTION`: workflow must remain standalone because a concrete technical/authority requirement prevents safe consolidation; evidence required.
+- `CONSOLIDATE_INTO_STABLE_DISPATCHER`: useful GitHub-bound behavior retained behind the minimum stable workflow doorway.
+- `TRANSFER_TO_STEGVERSE_WORKER`: necessary operational work whose recurring execution belongs to a StegVerse-controlled worker/runtime.
+- `ELIMINATE`: redundant, superseded, completed, or unnecessary workflow/capability surface.
 
 ## Local runtime / formal model convergence
 
@@ -81,20 +102,29 @@ Known completed hygiene in this workstream:
 ## Active claims / collision boundary
 
 - cost containment implementation: issue #125 and subsequent bounded remediation branches;
+- workflow minimization implementation: issue #128 under organization policy #167;
 - live sovereign runtime activation: resident StegVerse workers under `.github` handoff/registry — observation only from this session;
 - local model implementation: complete/released — no competing implementation claim permitted;
 - TV/TVC credential/route authority: TV/TVC only.
 
 ## Validation / release condition
 
-Batch 2 is complete: the five workflow mutations are on `main`, repository-event/manual validation semantics remain present, no production/runtime authority moved to GitHub, no NON-TV/TVC token/secret was introduced, and issue #125 records the batch evidence.
+Containment batches 1 and 2 are complete and merged.
 
-Full goal completion still requires classification of the remaining 39 workflow surfaces and bounded reconciliation of stale/duplicate issues, PRs, and branches without deleting active evidence or claims.
+Workflow minimization batch 1 completes when:
+
+1. `runtime-tests.yml` contains the TIDC management and criterion-contestability validations;
+2. both superseded standalone workflow files are removed;
+3. repository-event/manual runtime validation remains available;
+4. no NON-TV/TVC credential/token path is introduced;
+5. the branch is reviewed/merged and the post-merge workflow count is directly observed as 49.
+
+Full goal completion requires classification of all 51 audit-start surfaces, reduction to the minimum safe workflow count (preferably <=2), evidence-backed exceptions for any retained standalone workflows above that minimum, and bounded issue/PR/branch reconciliation without deleting active evidence or claims.
 
 ## Current state
 
-`ACTIVE_REMEDIATION / BATCH_1_MERGED / BATCH_2_MERGED / FULL_CENSUS_PENDING`
+`ACTIVE_REMEDIATION / CONTAINMENT_BATCHES_1_2_MERGED / WORKFLOW_MINIMIZATION_BATCH_1_IMPLEMENTED_PENDING_MERGE / FULL_CENSUS_PENDING`
 
 ## Session consolidation
 
-The local-model/runtime and trade-readiness requirements are already durably transferred to the canonical organization/runtime worker chain. This session retains unique value only for repository cost-containment/hygiene implementation until those mutations and their continuation records are transferred.
+The local-model/runtime and trade-readiness requirements are durably transferred to the canonical organization/runtime worker chain. This session retains unique value for repository cost-containment, workflow-surface minimization, and hygiene implementation until those mutations and continuation records are transferred.
