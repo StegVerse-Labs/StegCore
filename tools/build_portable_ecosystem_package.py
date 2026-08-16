@@ -15,6 +15,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "sdk" / "portable_package_catalog.v1.json"
+RELEASE_MANIFEST = ROOT / "sdk" / "portable_release_manifest.v1.json"
 MICRO_MANIFEST = ROOT / "micro_ecosystem" / "manifest.json"
 DEPLOYMENT_CLASSES = ("S", "NS")
 ARCHIVE_FORMATS = ("zip", "tar.gz")
@@ -40,15 +41,26 @@ def git_commit() -> str | None:
         return None
 
 
-def load_catalog() -> dict[str, Any]:
-    value = json.loads(CATALOG.read_text(encoding="utf-8"))
+def _load_object(path: Path, label: str) -> dict[str, Any]:
+    value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
-        raise ValueError("portable package catalog must be an object")
+        raise ValueError(f"{label} must be an object")
+    return value
+
+
+def load_catalog() -> dict[str, Any]:
+    return _load_object(CATALOG, "portable package catalog")
+
+
+def load_release_manifest() -> dict[str, Any]:
+    value = _load_object(RELEASE_MANIFEST, "portable release manifest")
+    if value.get("schema") != "stegverse.sdk.portable-release-manifest.v1":
+        raise ValueError("portable release manifest schema mismatch")
     return value
 
 
 def load_micro_manifest() -> dict[str, Any]:
-    value = json.loads(MICRO_MANIFEST.read_text(encoding="utf-8"))
+    value = _load_object(MICRO_MANIFEST, "micro ecosystem manifest")
     contract = value.get("single_host_sovereignty")
     if not isinstance(contract, dict):
         raise ValueError("micro ecosystem manifest lacks single_host_sovereignty contract")
@@ -122,8 +134,13 @@ def _write_tar_gz(stage: Path, archive: Path) -> None:
                 continue
             data = path.read_bytes()
             info = tarfile.TarInfo(path.relative_to(stage).as_posix())
-            info.size = len(data); info.mode = 0o644; info.mtime = FIXED_MTIME
-            info.uid = 0; info.gid = 0; info.uname = ""; info.gname = ""
+            info.size = len(data)
+            info.mode = 0o644
+            info.mtime = FIXED_MTIME
+            info.uid = 0
+            info.gid = 0
+            info.uname = ""
+            info.gname = ""
             tf.addfile(info, io.BytesIO(data))
     with archive.open("wb") as raw:
         with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=FIXED_MTIME) as gz:
@@ -134,43 +151,74 @@ def build_package_set(deployment_class: str, output_dir: Path) -> tuple[dict[str
     if deployment_class not in DEPLOYMENT_CLASSES:
         raise ValueError(f"unsupported deployment class: {deployment_class}")
     catalog = load_catalog()
+    release = load_release_manifest()
     micro_manifest = load_micro_manifest()
     sovereignty = micro_manifest["single_host_sovereignty"]
     package = catalog["packages"][deployment_class]
+    component_key = str(package.get("package_version_component") or "")
+    component_versions = release.get("versioned_components")
+    if not isinstance(component_versions, dict) or component_key not in component_versions:
+        raise ValueError(f"package version component missing: {component_key}")
+    package_version = str(component_versions[component_key])
+    release_version = str(release.get("release_version") or "")
+    package_id = str(package["package_id"])
+    versioned_package_id = f"{package_id}-v{package_version}"
+
     files = iter_payload_files(catalog["required_payload_paths"])
     validate_no_secret_material(files)
     manifest = {
-        "schema": "stegverse.sdk.portable-package-receipt.v2",
-        "catalog_schema": catalog["schema"], "channel": catalog["channel"],
-        "package_id": package["package_id"], "deployment_class": deployment_class,
-        "source_commit": git_commit(), "required_archive_formats": list(ARCHIVE_FORMATS),
+        "schema": "stegverse.sdk.portable-package-receipt.v3",
+        "catalog_schema": catalog["schema"],
+        "channel": catalog["channel"],
+        "package_id": package_id,
+        "package_generation": package.get("package_generation"),
+        "package_version": package_version,
+        "release_version": release_version,
+        "versioned_package_id": versioned_package_id,
+        "deployment_class": deployment_class,
+        "source_commit": git_commit(),
+        "required_archive_formats": list(ARCHIVE_FORMATS),
         "archive_format_authority_effect": "NONE",
         "node_membership_claim": package.get("node_membership_claim", False),
         "node_membership_activation_required": package.get("node_membership_activation_required", False),
         "files": [{"path": path.relative_to(ROOT).as_posix(), "sha256": sha256_file(path), "size": path.stat().st_size} for path in files],
-        "requires_provider_account": False, "requires_non_tv_tvc_secret": False,
+        "requires_provider_account": False,
+        "requires_non_tv_tvc_secret": False,
         "single_host_sovereignty": sovereignty,
         "physical_additional_machine_required": False,
         "third_party_runtime_infrastructure_required": False,
     }
     manifest["payload_sha256"] = hashlib.sha256(canonical_json_bytes(manifest["files"])).hexdigest()
     output_dir.mkdir(parents=True, exist_ok=True)
-    archives = {"zip": output_dir / f"{package['package_id']}.zip", "tar.gz": output_dir / f"{package['package_id']}.tar.gz"}
+    archives = {
+        "zip": output_dir / f"{versioned_package_id}.zip",
+        "tar.gz": output_dir / f"{versioned_package_id}.tar.gz",
+    }
     with tempfile.TemporaryDirectory() as tmp:
-        stage = Path(tmp) / package["package_id"]; stage.mkdir(parents=True)
-        _stage_payload(stage, files, manifest); _write_zip(stage, archives["zip"]); _write_tar_gz(stage, archives["tar.gz"])
-    receipt = {**manifest, "artifacts": {fmt: {"path": archive.name, "sha256": sha256_file(archive), "size": archive.stat().st_size} for fmt, archive in archives.items()}}
+        stage = Path(tmp) / versioned_package_id
+        stage.mkdir(parents=True)
+        _stage_payload(stage, files, manifest)
+        _write_zip(stage, archives["zip"])
+        _write_tar_gz(stage, archives["tar.gz"])
+    receipt = {
+        **manifest,
+        "artifacts": {
+            fmt: {"path": archive.name, "sha256": sha256_file(archive), "size": archive.stat().st_size}
+            for fmt, archive in archives.items()
+        },
+    }
     return archives, receipt
 
 
 def build_package(deployment_class: str, output_dir: Path) -> tuple[Path, dict[str, Any]]:
     archives, receipt = build_package_set(deployment_class, output_dir)
-    compatibility_receipt = dict(receipt); compatibility_receipt["archive_sha256"] = receipt["artifacts"]["zip"]["sha256"]
+    compatibility_receipt = dict(receipt)
+    compatibility_receipt["archive_sha256"] = receipt["artifacts"]["zip"]["sha256"]
     return archives["zip"], compatibility_receipt
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build deterministic ZIP and TAR.GZ StegVerse SDK portable ecosystem packages.")
+    parser = argparse.ArgumentParser(description="Build deterministic, versioned ZIP and TAR.GZ StegVerse SDK portable ecosystem packages.")
     parser.add_argument("--deployment-class", choices=DEPLOYMENT_CLASSES, required=True)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "dist" / "sdk")
     parser.add_argument("--receipt", type=Path)
@@ -178,7 +226,8 @@ def main() -> int:
     archives, receipt = build_package_set(args.deployment_class, args.output_dir)
     rendered = json.dumps(receipt, indent=2, sort_keys=True)
     if args.receipt:
-        args.receipt.parent.mkdir(parents=True, exist_ok=True); args.receipt.write_text(rendered + "\n", encoding="utf-8")
+        args.receipt.parent.mkdir(parents=True, exist_ok=True)
+        args.receipt.write_text(rendered + "\n", encoding="utf-8")
     print(json.dumps({"archives": {key: str(value) for key, value in archives.items()}, "receipt": receipt}, indent=2, sort_keys=True))
     return 0
 
