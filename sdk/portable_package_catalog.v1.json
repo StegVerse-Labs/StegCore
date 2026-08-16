@@ -1,0 +1,54 @@
+{
+  "schema": "stegverse.sdk.portable-package-catalog.v1",
+  "channel": "SDK_EARLY_ACCESS",
+  "purpose": "Developer/community distribution of portable StegVerse ecosystem packages before later app or paid-product promotion.",
+  "distribution_posture": {
+    "console_download_supported": true,
+    "console_install_supported": true,
+    "public_app_store_product": false,
+    "paid_product": false,
+    "duration_policy": "governed_channel_lifecycle_not_hardcoded",
+    "requires_provider_account": false,
+    "requires_non_tv_tvc_secret": false
+  },
+  "packages": {
+    "S": {
+      "package_id": "stegverse-sdk-s-micro-ecosystem-v0",
+      "display_name": "StegVerse S Micro-Ecosystem",
+      "deployment_class": "S",
+      "description": "Portable isolated Sovereign StegGate/AdmittedCode ecosystem unit.",
+      "node_membership_claim": false
+    },
+    "NS": {
+      "package_id": "stegverse-sdk-ns-micro-ecosystem-v0",
+      "display_name": "StegVerse NS Micro-Ecosystem",
+      "deployment_class": "NS",
+      "description": "Portable Node Sovereign profile package. Installation does not self-accredit Node Sovereign membership.",
+      "node_membership_claim": false,
+      "node_membership_activation_required": true
+    }
+  },
+  "required_payload_paths": [
+    "micro_ecosystem/manifest.json",
+    "micro_ecosystem/node_sovereign_profile.v1.json",
+    "docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md",
+    "examples/steggate_allow_request.json",
+    "src/stegcore",
+    "pyproject.toml"
+  ],
+  "package_invariants": [
+    "explicit_S_or_NS_selection",
+    "canonical_runtime_identity_preserved",
+    "no_embedded_secrets",
+    "no_provider_account_requirement",
+    "NS_installation_does_not_create_membership",
+    "package_manifest_hashes_every_file",
+    "package_receipt_records_source_commit_when_available"
+  ],
+  "future_promotion_states": [
+    "SDK_EARLY_ACCESS",
+    "SDK_COMMUNITY",
+    "APP_PRODUCT_CANDIDATE",
+    "PAID_PRODUCT_CANDIDATE"
+  ]
+}

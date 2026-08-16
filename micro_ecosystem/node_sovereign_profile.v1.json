@@ -1,0 +1,131 @@
+{
+  "schema": "stegverse.node-sovereign.profile.v1",
+  "profile_id": "stegverse:node-sovereign:portable-node:v1",
+  "deployment_class": "NS",
+  "name": "StegVerse NS Ecosystem",
+  "sovereignty_class": "Node Sovereign",
+  "definition": "A genuine continuity-bearing node of the sovereign StegVerse ecosystem, not merely an installed runtime or isolated sovereign deployment.",
+  "activation_rule": "NODE_SOVEREIGN_ACTIVE only when every required_activation_capability is evidenced and no fail_closed_condition is present.",
+  "required_activation_capabilities": {
+    "node_identity": {
+      "required": true,
+      "description": "A portable-node continuity identity distinct from provider accounts and transport endpoints."
+    },
+    "local_continuity_state": {
+      "required": true,
+      "description": "User/node-controlled continuity vault or equivalent state capable of preserving identity, policy/evidence references, receipts, recovery material, and prior-state linkage."
+    },
+    "continuity_envelope": {
+      "required": true,
+      "description": "A shared continuity envelope or compatible representation binding object/event identity, hashes, prior receipt linkage, custody/disclosure posture, profile references, and signatures where applicable."
+    },
+    "artifact_event_receipts": {
+      "required": true,
+      "description": "Receipt-bearing capture/observation and governed transition records with replay or reconstruction pointers."
+    },
+    "peer_exchange": {
+      "required": true,
+      "description": "At least one governed node-to-node exchange path over a transport-independent protocol boundary."
+    },
+    "independent_receiver_admission": {
+      "required": true,
+      "description": "Receiver performs its own admission; sender admission never becomes receiver authority automatically."
+    },
+    "authority_monotonicity": {
+      "required": true,
+      "description": "Downstream authority may narrow but never silently broaden beyond admitted upstream authority."
+    },
+    "membership_proof": {
+      "required": true,
+      "description": "Inspectably proves this deployment is admitted as a genuine sovereign-ecosystem node rather than merely self-declaring NS status."
+    },
+    "anti_sybil_standing": {
+      "required": true,
+      "description": "Node membership/contribution standing is resistant to fake-node creation and self-corroboration through controlled identities."
+    },
+    "recovery_reconstruction": {
+      "required": true,
+      "description": "Node identity/state and governed history can be recovered or reconstructed from preserved evidence without equating reconstruction alone with continuity."
+    },
+    "selective_participation": {
+      "required": true,
+      "description": "User/node controls whether artifacts remain local or participate in bounded network sharing/corroboration, with minimum necessary disclosure."
+    },
+    "governed_execution_boundary": {
+      "required": true,
+      "description": "Consequential transitions remain StegGate-governed; node membership, uptime, transport availability, model confidence, or process persistence do not create execution authority."
+    },
+    "least_stable_capability_runtime": {
+      "required": true,
+      "description": "Execution uses capability minimization and least-stable viable micro-node construction with ephemeral-by-default behavior where viable."
+    },
+    "contribution_receipts": {
+      "required": true,
+      "description": "Useful network contribution can be attributed through receipts without allowing economic value to purchase governance authority."
+    }
+  },
+  "minimum_personal_utility": [
+    "private governed interaction",
+    "local or user-controlled memory/state",
+    "secure communication or exchange",
+    "capture/preservation with provenance",
+    "recovery"
+  ],
+  "optional_network_services": [
+    "privacy-preserving peer presence correlation",
+    "multimodal event correlation",
+    "evidence-profile attachment",
+    "storage contribution",
+    "compute contribution",
+    "relay/delivery contribution",
+    "independent verification",
+    "research contribution",
+    "service settlement",
+    "earned participation standing"
+  ],
+  "continuity_invariants": [
+    "temporal_adjacency_is_not_continuity",
+    "identity_equality_is_not_continuity",
+    "process_persistence_is_not_continuity",
+    "reconstruction_alone_is_not_continuity",
+    "admissibility_is_not_continuity",
+    "continuity_requires_an_established_governed_relationship_between_states"
+  ],
+  "authority_invariants": [
+    "sender_admission_is_not_receiver_admission",
+    "downstream_authority_may_narrow_never_silently_broaden",
+    "node_membership_is_not_policy_authority",
+    "node_membership_is_not_execution_authority",
+    "node_membership_is_not_continuity_minting_authority",
+    "economic_capacity_may_not_purchase_authority",
+    "transport_identity_is_not_authoritative"
+  ],
+  "privacy_invariants": [
+    "minimum_necessary_disclosure",
+    "presence_proof_need_not_disclose_civil_identity",
+    "continuity_must_not_become_surveillance",
+    "network_participation_is_graduated_and_user_controlled"
+  ],
+  "fail_closed_conditions": [
+    "deployment_class_not_explicit_NS",
+    "self_declared_membership_without_membership_proof",
+    "missing_or_unverifiable_node_identity",
+    "missing_continuity_state_or_receipt_linkage",
+    "receiver_admission_bypassed",
+    "authority_broadened_downstream",
+    "anti_sybil_boundary_not_established",
+    "governed_execution_boundary_bypassed"
+  ],
+  "not_sufficient_for_node_status": [
+    "application_installation",
+    "running_process",
+    "local_model_runtime",
+    "service_availability",
+    "heartbeat_only",
+    "transport_connection",
+    "single_successful_StegGate_evaluation",
+    "self_asserted_node_label",
+    "micro_node_work_unit",
+    "economic_contribution_without_membership_proof"
+  ]
+}

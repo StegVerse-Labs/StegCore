@@ -1,0 +1,64 @@
+{
+  "schema": "stegverse.micro-ecosystem.manifest.v2",
+  "micro_ecosystem_id": "stegverse:micro-ecosystem:steggate-admittedcode:v0",
+  "product_version": "0.2.0",
+  "canonical_owner": "StegVerse-Labs/StegCore",
+  "canonical_runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
+  "canonical_admissibility_runtime": "stegcore.three_layer.evaluate_three_layer",
+  "purpose": "Portable StegGate/AdmittedCode governance micro-node ecosystem using the canonical StegCore evaluator without a parallel policy authority.",
+  "deployment_choice_required": true,
+  "deployment_classes": {
+    "S": {
+      "name": "StegVerse S Ecosystem",
+      "sovereignty_class": "Sovereign",
+      "description": "Sovereign deployment operated as an isolated, individually operated StegVerse ecosystem unit.",
+      "node_status_requested": false,
+      "isolated": true,
+      "individually_operated": true,
+      "ecosystem_membership_required": false
+    },
+    "NS": {
+      "name": "StegVerse NS Ecosystem",
+      "sovereignty_class": "Node Sovereign",
+      "description": "Node Sovereign deployment intended to become a genuine node of the sovereign StegVerse ecosystem only after the normative node activation contract is evidenced.",
+      "node_status_requested": true,
+      "node_status_self_assertable": false,
+      "node_activation_profile": "micro_ecosystem/node_sovereign_profile.v1.json",
+      "node_definition": "docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md",
+      "ecosystem_membership_required": true
+    }
+  },
+  "components": {
+    "runtime": "stegcore",
+    "cli": "steggate",
+    "proof_runner": "tools/run_stegverse_micro_ecosystem.py",
+    "allow_fixture": "examples/steggate_allow_request.json",
+    "handoff": "docs/STEGVERSE_MICRO_ECOSYSTEM_MIRROR_HANDOFF.md",
+    "node_sovereign_profile": "micro_ecosystem/node_sovereign_profile.v1.json",
+    "node_sovereign_definition": "docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md"
+  },
+  "required_dispositions": ["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"],
+  "proof_requirements": {
+    "self_test_state": "PASS",
+    "canonical_three_layer_bound": true,
+    "fixture_disposition": "ALLOW",
+    "runtime_identity_match": true,
+    "deployment_choice_explicit": true,
+    "deployment_class_valid": true,
+    "ns_local_proof_does_not_self_accredit_node": true,
+    "manifest_hash_present": true,
+    "request_hash_present": true,
+    "result_hash_present": true
+  },
+  "authority_boundaries": {
+    "creates_policy_authority": false,
+    "creates_execution_authority": false,
+    "creates_continuity_minting_authority": false,
+    "transport_identity_authoritative": false,
+    "requires_external_host": false,
+    "requires_provider_account": false,
+    "requires_non_tv_tvc_secret": false,
+    "deployment_class_changes_canonical_governance_semantics": false,
+    "ns_selection_creates_node_membership": false
+  }
+}
