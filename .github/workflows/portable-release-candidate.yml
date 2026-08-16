@@ -18,9 +18,11 @@ on:
       - 'sdk/portable_release_manifest.v1.json'
       - 'sdk/portable_package_catalog.v1.json'
       - 'tools/build_portable_ecosystem_package.py'
+      - 'tools/prepare_portable_release.py'
       - 'micro_ecosystem/**'
       - 'src/stegcore/**'
       - 'pyproject.toml'
+      - '.github/workflows/portable-release-candidate.yml'
   workflow_dispatch:
 
 permissions: {}
@@ -73,7 +75,32 @@ jobs:
           test -f dist/portable-release/SHA256SUMS
           test "$(find dist/portable-release -maxdepth 1 -type f \( -name '*.zip' -o -name '*.tar.gz' \) | wc -l)" -eq 4
 
-      - name: Prove publication remains TV/TVC-gated
+      - name: Resolve immutable candidate artifact identity
+        id: candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          receipt = json.loads(Path('dist/portable-release/PORTABLE_RELEASE_RECEIPT.json').read_text())
+          version = receipt['release_version']
+          commit = receipt['source_commit']
+          print(f"name=stegverse-portable-release-candidate-v{version}-{commit}")
+          print(f"version={version}")
+          print(f"commit={commit}")
+          PY
+
+      - name: Persist exact GitHub-built release candidate for TVC transport
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.candidate.outputs.name }}
+          path: dist/portable-release/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+
+      - name: Prove candidate transport remains non-authorizing
         shell: bash
         run: |
           set -euo pipefail
@@ -85,4 +112,5 @@ jobs:
           assert receipt['publication_authority'] == 'TV/TVC'
           assert receipt['github_build_is_runtime_authority'] is False
           assert receipt['github_release_is_execution_authority'] is False
+          assert receipt['node_membership_granted'] is False
           PY
