@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "sdk" / "portable_release_manifest.v1.json"
 PACKAGE_BUILDER = ROOT / "tools" / "build_portable_ecosystem_package.py"
 VERSION_RE = re.compile(r'^version\s*=\s*["\']([^"\']+)["\']\s*$', re.MULTILINE)
+SEMVER_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -46,17 +47,23 @@ def validate_manifest(manifest: dict[str, Any]) -> None:
     if manifest.get("schema") != "stegverse.sdk.portable-release-manifest.v1":
         raise ValueError("unsupported_release_manifest_schema")
     release_version = str(manifest.get("release_version", ""))
+    if not SEMVER_RE.fullmatch(release_version):
+        raise ValueError("invalid_release_version")
     observed_source_version = source_version()
-    if release_version != observed_source_version:
-        raise ValueError(f"release_source_version_mismatch:{release_version}:{observed_source_version}")
     if manifest.get("source_version") != observed_source_version:
         raise ValueError("declared_source_version_mismatch")
     component_versions = manifest.get("versioned_components")
     if not isinstance(component_versions, dict) or not component_versions:
         raise ValueError("versioned_components_missing")
-    bad = sorted(k for k, v in component_versions.items() if str(v) != release_version)
-    if bad:
-        raise ValueError("component_version_mismatch:" + ",".join(bad))
+    invalid = sorted(key for key, value in component_versions.items() if not SEMVER_RE.fullmatch(str(value)))
+    if invalid:
+        raise ValueError("invalid_component_versions:" + ",".join(invalid))
+    if str(component_versions.get("StegCore", "")) != observed_source_version:
+        raise ValueError("stegcore_component_source_version_mismatch")
+    required_components = {"StegCore", "StegGate_AdmittedCode_micro_ecosystem", "S_package", "NS_package"}
+    missing = sorted(required_components - set(component_versions))
+    if missing:
+        raise ValueError("required_component_versions_missing:" + ",".join(missing))
     if manifest.get("required_archive_formats") != ["zip", "tar.gz"]:
         raise ValueError("dual_archive_formats_required")
     if manifest.get("release_tag") != f"stegverse-portable-v{release_version}":
@@ -97,6 +104,11 @@ def prepare_release(output_dir: Path) -> dict[str, Any]:
     for deployment_class, receipt in built.items():
         if receipt.get("source_commit") != commit:
             raise ValueError(f"source_commit_mismatch:{deployment_class}")
+        if receipt.get("release_version") != manifest["release_version"]:
+            raise ValueError(f"package_release_version_mismatch:{deployment_class}")
+        expected_component = f"{deployment_class}_package"
+        if receipt.get("package_version") != manifest["versioned_components"][expected_component]:
+            raise ValueError(f"package_component_version_mismatch:{deployment_class}")
         for archive_format, artifact in sorted(receipt["artifacts"].items()):
             declared = Path(str(artifact["path"]))
             path = declared if declared.is_absolute() else output_dir / declared
@@ -107,6 +119,8 @@ def prepare_release(output_dir: Path) -> dict[str, Any]:
                 raise ValueError(f"archive_hash_mismatch:{path.name}")
             assets.append({
                 "deployment_class": deployment_class,
+                "package_id": receipt["package_id"],
+                "package_version": receipt["package_version"],
                 "archive_format": archive_format,
                 "name": path.name,
                 "path": str(path),
@@ -126,8 +140,11 @@ def prepare_release(output_dir: Path) -> dict[str, Any]:
         "size": sums_path.stat().st_size,
     })
 
+    component_fingerprint = hashlib.sha256(
+        json.dumps(manifest["versioned_components"], sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
     receipt = {
-        "schema": "stegverse.sdk.portable-release-candidate-receipt.v1",
+        "schema": "stegverse.sdk.portable-release-candidate-receipt.v2",
         "release_family": manifest["release_family"],
         "release_version": manifest["release_version"],
         "release_tag": manifest["release_tag"],
@@ -135,6 +152,7 @@ def prepare_release(output_dir: Path) -> dict[str, Any]:
         "channel": manifest["channel"],
         "source_commit": commit,
         "versioned_components": manifest["versioned_components"],
+        "component_versions_sha256": component_fingerprint,
         "assets": assets,
         "release_publication_state": "CANDIDATE_NOT_PUBLISHED",
         "publication_authority": "TV/TVC",
