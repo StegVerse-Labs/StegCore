@@ -16,14 +16,18 @@
   },
   "packages": {
     "S": {
-      "package_id": "stegverse-sdk-s-micro-ecosystem-v0",
+      "package_id": "stegverse-sdk-s-micro-ecosystem",
+      "package_generation": "0",
+      "package_version_component": "S_package",
       "display_name": "StegVerse S Micro-Ecosystem",
       "deployment_class": "S",
       "description": "Portable isolated Sovereign StegGate/AdmittedCode ecosystem unit.",
       "node_membership_claim": false
     },
     "NS": {
-      "package_id": "stegverse-sdk-ns-micro-ecosystem-v0",
+      "package_id": "stegverse-sdk-ns-micro-ecosystem",
+      "package_generation": "0",
+      "package_version_component": "NS_package",
       "display_name": "StegVerse NS Micro-Ecosystem",
       "deployment_class": "NS",
       "description": "Portable Node Sovereign profile package. Installation does not self-accredit Node Sovereign membership.",
@@ -48,7 +52,10 @@
     "package_manifest_hashes_every_file",
     "package_receipt_records_source_commit_when_available",
     "zip_and_tar_gz_built_from_same_payload",
-    "zip_and_tar_gz_have_independent_sha256"
+    "zip_and_tar_gz_have_independent_sha256",
+    "package_family_identity_is_stable",
+    "package_version_is_explicit",
+    "archive_filename_contains_package_version"
   ],
   "future_product_profiles": {
     "StegOS": {
