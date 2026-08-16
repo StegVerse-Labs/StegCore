@@ -9,7 +9,10 @@
     "paid_product": false,
     "duration_policy": "governed_channel_lifecycle_not_hardcoded",
     "requires_provider_account": false,
-    "requires_non_tv_tvc_secret": false
+    "requires_non_tv_tvc_secret": false,
+    "required_archive_formats": ["zip", "tar.gz"],
+    "same_payload_across_formats_required": true,
+    "independent_archive_hashes_required": true
   },
   "packages": {
     "S": {
@@ -43,8 +46,22 @@
     "no_provider_account_requirement",
     "NS_installation_does_not_create_membership",
     "package_manifest_hashes_every_file",
-    "package_receipt_records_source_commit_when_available"
+    "package_receipt_records_source_commit_when_available",
+    "zip_and_tar_gz_built_from_same_payload",
+    "zip_and_tar_gz_have_independent_sha256"
   ],
+  "future_product_profiles": {
+    "StegOS": {
+      "inherits_S_NS_deployment_classes": true,
+      "additional_hardware_or_image_profile_allowed": true,
+      "required_archive_formats": ["zip", "tar.gz"],
+      "additional_bootable_image_artifacts_allowed": true,
+      "github_reproducible_build_allowed": true,
+      "github_runtime_authority": false,
+      "node_membership_self_accreditation_allowed": false,
+      "profile_ref": "docs/STEGOS_SDK_DISTRIBUTION_PROFILE.md"
+    }
+  },
   "future_promotion_states": [
     "SDK_EARLY_ACCESS",
     "SDK_COMMUNITY",
