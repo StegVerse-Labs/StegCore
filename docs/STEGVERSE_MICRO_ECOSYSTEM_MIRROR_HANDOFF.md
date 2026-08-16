@@ -1,32 +1,48 @@
 # StegVerse Micro-Ecosystem Mirror Handoff
 
-## Goal
+## Source of truth
+
+```text
+repository: StegVerse-Labs/StegCore
+canonical_branch: main
+canonical_runtime_identity: stegverse:steggate:canonical:three-layer:v1
+canonical_evaluator: stegcore.three_layer.evaluate_three_layer
+credential_authority: TV/TVC
+non-TV/TVC secret/token required: FALSE
+```
+
+This file owns the StegGate/AdmittedCode portable micro-ecosystem assembly, S/NS deployment definitions, portable package production, and the transition into SDK distribution / Node Sovereign activation.
+
+Parent repository handoff: `docs/STEGCORE_MIRROR_HANDOFF.md`.
+
+## Completed source goal
 
 `STEGVERSE-MICRO-ECOSYSTEM-001`
 
-Deliver the smallest portable StegVerse ecosystem unit that proves canonical StegGate/AdmittedCode governance can operate as an inspectable local micro-node ecosystem without creating a parallel evaluator, requiring a third-party host, requiring a provider account, or requiring any non-TV/TVC secret.
+Status:
 
-The portable unit has a mandatory implementation-time deployment choice:
+```text
+SOURCE_IMPLEMENTATION: COMPLETE
+HOSTED_VALIDATION: PASS
+MERGED: TRUE
+merge_commit: 1cdd479a8c50a61cda9a236fc05b126592362fff
+source_PR: #133
+release_artifact_bound: FALSE
+remote_SDK_download_active: FALSE
+Node_Sovereign_membership_active: FALSE
+```
 
-- `S` — **StegVerse S Ecosystem / Sovereign**: an isolated, individually operated sovereign deployment.
-- `NS` — **StegVerse NS Ecosystem / Node Sovereign**: a deployment profile intended to become a genuine node of the sovereign StegVerse ecosystem only after the Node Sovereign activation contract is evidenced.
+Required hosted checks on the exact implementation head `28a21b3319a6c6e46dd8ab3f97ca89354a7d1b35` completed successfully before merge:
 
-The first intended community distribution channel is `SDK_EARLY_ACCESS`, with deterministic downloadable/installable packages before later app or paid-product promotion.
+```text
+Test Readiness - No Non-TV/TVC Credential Authority: SUCCESS
+StegCore Tests - No Non-TV/TVC Credential Authority: SUCCESS
+BCAT Gate - No Non-TV/TVC Credential Authority: SUCCESS
+Validate StegVerse 001 002 Baseline - No Non-TV/TVC Credential Authority: SUCCESS
+Validate StegCore Runtime - No Non-TV/TVC Credential Authority: SUCCESS
+```
 
-## Canonical owner and source of truth
-
-- Repository: `StegVerse-Labs/StegCore`
-- Canonical StegGate owner: `StegVerse-Labs/StegCore`
-- Canonical runtime identity: `stegverse:steggate:canonical:three-layer:v1`
-- Canonical evaluator: `stegcore.three_layer.evaluate_three_layer`
-- Parent source of truth: `STEGCORE_MIRROR_HANDOFF.md`
-- Node Sovereign explanation: `docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md`
-- Machine-readable Node Sovereign contract: `micro_ecosystem/node_sovereign_profile.v1.json`
-- SDK distribution definition: `docs/STEGVERSE_SDK_PORTABLE_DISTRIBUTION.md`
-- SDK package catalog: `sdk/portable_package_catalog.v1.json`
-- This file owns only the micro-ecosystem assembly/proof/distribution surface.
-
-## Installed unit
+## Installed portable unit
 
 ```text
 micro_ecosystem/manifest.json
@@ -41,35 +57,33 @@ docs/STEGVERSE_SDK_PORTABLE_DISTRIBUTION.md
 examples/steggate_allow_request.json
 ```
 
-The unit imports and exercises the existing canonical StegCore evaluator. It does not fork policy semantics.
+The portable unit reuses the canonical StegCore evaluator. It creates no parallel policy authority, execution authority, or continuity-minting authority.
 
-## Mandatory deployment-class choice
+## Mandatory implementation choice
 
-A requested implementation must explicitly select one and only one deployment class. No default is permitted.
+No portable implementation has an implicit default.
 
-### `S` — StegVerse S Ecosystem
+### S — StegVerse S Ecosystem / Sovereign
 
 ```text
-sovereignty_class: Sovereign
-node_status_requested: false
 isolated: true
 individually_operated: true
+node_status_requested: false
 ecosystem_membership_required: false
 ```
 
-This is a sovereign StegVerse deployment that remains isolated and individually operated. It may use the same portable governance artifacts and runtime contracts but is not represented as a genuine node of the sovereign ecosystem.
+An S deployment is a sovereign StegVerse installation and does not claim genuine ecosystem-node membership.
 
-### `NS` — StegVerse NS Ecosystem
+### NS — StegVerse NS Ecosystem / Node Sovereign profile
 
 ```text
-sovereignty_class: Node Sovereign
 node_status_requested: true
 node_status_self_assertable: false
 ecosystem_membership_required: true
 node_activation_profile: micro_ecosystem/node_sovereign_profile.v1.json
 ```
 
-Selecting `NS` does not itself create node status. A local assembly proof may prove the NS profile is correctly assembled while remaining explicitly:
+Selecting or installing NS does not create Node Sovereign membership. Until genuine membership evidence exists, local proof remains:
 
 ```text
 node_activation_state: PROFILE_DEFINED_NOT_ACTIVE
@@ -77,88 +91,28 @@ membership_proof_present: false
 node_sovereign_active: false
 ```
 
-A genuine Node Sovereign must later satisfy the complete activation profile: continuity-bearing node identity/state, continuity envelope, receipt-bearing events, governed peer exchange, independent receiver admission, authority monotonicity, inspectable membership proof, anti-Sybil standing, recovery/reconstruction, selective participation, canonical governed-execution boundary, least-stable viable execution, and contribution receipts.
+Normative explanation: `docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md`.
 
-Node membership does not itself grant policy authority, execution authority, continuity-minting authority, custody, or release authority.
+## Node Sovereign activation contract
 
-## SDK-first distribution
+A genuine NS deployment requires inspectable evidence for all required capabilities in `micro_ecosystem/node_sovereign_profile.v1.json`, including:
 
-The package catalog defines two early-access products:
+1. portable node continuity identity;
+2. local/user-controlled continuity state or vault;
+3. shared continuity envelope;
+4. artifact/event receipts;
+5. governed node-to-node exchange;
+6. independent receiver admission;
+7. authority monotonicity;
+8. externally established membership proof;
+9. anti-Sybil standing;
+10. recovery/reconstruction;
+11. selective privacy-bounded participation;
+12. canonical governed-execution boundary;
+13. least-stable viable execution;
+14. contribution receipts.
 
-```text
-stegverse-sdk-s-micro-ecosystem-v0
-stegverse-sdk-ns-micro-ecosystem-v0
-```
-
-The deterministic package builder emits a ZIP plus package receipt with per-file SHA-256 hashes and source-commit identity when available. NS archives explicitly carry the Node Sovereign definition/profile while retaining `node_membership_claim=false`.
-
-```bash
-python tools/build_portable_ecosystem_package.py --deployment-class S --output-dir dist/sdk
-python tools/build_portable_ecosystem_package.py --deployment-class NS --output-dir dist/sdk
-```
-
-The intended product progression is:
-
-```text
-SDK_EARLY_ACCESS
--> SDK_COMMUNITY
--> APP_PRODUCT_CANDIDATE
--> PAID_PRODUCT_CANDIDATE
-```
-
-Duration and promotion are governed lifecycle decisions, not assumptions embedded in the package.
-
-## Proof commands
-
-Sovereign isolated deployment:
-
-```bash
-python tools/run_stegverse_micro_ecosystem.py \
-  --deployment-class S \
-  --output artifacts/stegverse-s-micro-ecosystem-proof.json
-```
-
-Node Sovereign profile assembly:
-
-```bash
-python tools/run_stegverse_micro_ecosystem.py \
-  --deployment-class NS \
-  --output artifacts/stegverse-ns-micro-ecosystem-proof.json
-```
-
-Omitting `--deployment-class` is an invalid implementation request and the CLI refuses to run. An unknown class fails closed in the callable proof path.
-
-## Required proof invariants
-
-- manifest schema is recognized;
-- runtime identity matches the canonical StegGate identity;
-- canonical owner matches StegCore;
-- canonical evaluator path matches the runtime identity contract;
-- deterministic four-disposition self-test is `PASS`;
-- canonical three-layer binding is present;
-- the canonical ALLOW fixture evaluates `ALLOW`;
-- deployment choice is explicit;
-- selected deployment class is recognized;
-- `S` proves isolated + individually operated + non-node status;
-- `NS` proves the normative Node Sovereign profile is selected and refuses to self-accredit node membership;
-- deployment class does not change canonical governance semantics;
-- runtime exposes no execution authority;
-- runtime exposes no continuity-minting authority;
-- the unit requires no external host;
-- the unit requires no provider account;
-- the unit requires no non-TV/TVC secret;
-- manifest, request, and result hashes are emitted;
-- SDK package receipt hashes every payload file;
-- identical source produces deterministic package bytes;
-- SDK distribution never promotes installation into NS membership.
-
-## Node Sovereign definition recovered from prior StegVerse work
-
-The prior portable-node architecture established that a genuine portable node is a continuity-bearing participation mechanism rather than merely an application interface. It carries or controls node identity/state and continuity, creates or preserves receipts, participates in peer exchange/corroboration, supports recovery, and can provide governed ecosystem services.
-
-The reconciled Node Sovereign definition is normative in `docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md` and `micro_ecosystem/node_sovereign_profile.v1.json`.
-
-Key rules preserved:
+Preserved invariants:
 
 ```text
 sender admission != receiver admission
@@ -173,6 +127,46 @@ micro-node execution != sovereign node status
 continuity must not become surveillance
 ```
 
+## SDK-first distribution
+
+Canonical package production is installed in this repository. Consumer/distribution console work is now active in:
+
+```text
+StegVerse-org/StegVerse-SDK
+workstream: SDK-PORTABLE-PACKAGE-CONSOLE-001
+PR: #34
+handoff: docs/SDK_PORTABLE_PACKAGE_CONSOLE_MIRROR_HANDOFF.md
+```
+
+Package IDs:
+
+```text
+stegverse-sdk-s-micro-ecosystem-v0
+stegverse-sdk-ns-micro-ecosystem-v0
+```
+
+Product progression:
+
+```text
+SDK_EARLY_ACCESS
+-> SDK_COMMUNITY
+-> APP_PRODUCT_CANDIDATE
+-> PAID_PRODUCT_CANDIDATE
+```
+
+SDK package install must remain distinct from activation. NS install must remain distinct from node admission.
+
+## Early-adopter economics
+
+Verified contribution accounting is separately owned by:
+
+```text
+StegVerse-Labs/stegfin-governance
+workstream: STEGFIN-EARLY-ADOPTER-CONTRIBUTION-001
+```
+
+Package download/install, enrollment, passive holding, traffic generation, or self-declared node identity are not rewardable contribution by themselves.
+
 ## Authority boundary
 
 ```text
@@ -181,104 +175,78 @@ portable unit != execution authority
 portable unit != continuity minting
 SDK install != activation
 S sovereign isolation != ecosystem node membership
-NS profile selection != ecosystem node membership
-NS ecosystem node membership != policy authority
-NS ecosystem node membership != execution authority
-local execution != identity authority
-runtime availability != admissibility
-proof receipt != custody
+NS profile/install != ecosystem node membership
+NS membership != policy authority
+NS membership != execution authority
+transport identity != authority
 proof PASS != external release authorization
 ```
 
-No secret or token is embedded in this unit. Any future network, publication, deployment, or credential use remains under its owning handoff and TV/TVC-managed secret boundary.
-
-## Early-adopter economic integration
-
-A separate StegFin workstream owns contribution accounting. SDK users may later receive provisional contribution credits only for verified useful receipt-bearing work; package download/install, enrollment, passive holding, traffic generation, or self-declared node identity are not rewardable by themselves.
-
-Destination workstream:
-
-```text
-StegVerse-Labs/stegfin-governance
-docs/STEGFIN_EARLY_ADOPTER_CONTRIBUTION_MIRROR_HANDOFF.md
-```
+No secret/token is embedded in the unit. Any protected credential use remains TV/TVC-owned.
 
 ## Completion states
 
 ```text
-ASSEMBLY_INSTALLED
-DUAL_CLASS_IMPLEMENTED
-NODE_DEFINITION_CAPTURED
-LOCALLY_PROVABLE
-NS_PROFILE_READY
-SDK_PACKAGE_BUILDER_INSTALLED
-SDK_PACKAGE_VALIDATED
-NODE_SOVEREIGN_ACTIVE
-HOSTED_VALIDATED
-MERGED
-RELEASED
-SDK_CONSOLE_ACTIVE
+ASSEMBLY_INSTALLED: COMPLETE
+DUAL_CLASS_IMPLEMENTED: COMPLETE
+NODE_DEFINITION_CAPTURED: COMPLETE
+NS_PROFILE_READY: COMPLETE
+PORTABLE_PROOF_TESTED: COMPLETE
+SDK_PACKAGE_BUILDER_INSTALLED: COMPLETE
+SDK_PACKAGE_SOURCE_VALIDATED: COMPLETE
+MERGED: COMPLETE
+IMMUTABLE_PACKAGE_ARTIFACTS_BOUND: PENDING
+SDK_REMOTE_DOWNLOAD_ACTIVE: PENDING
+NODE_SOVEREIGN_ACTIVE: PENDING
+RELEASED_PORTABLE_PRODUCT: PENDING
 ```
 
 Do not collapse these states.
 
-## Remaining work
+## Successor goals
 
-1. Obtain hosted CI evidence for the current head, including S, NS non-self-accreditation, invalid-class fail-closed behavior, and package-builder determinism.
-2. Repair only concrete failures without weakening canonical invariants.
-3. Merge after required checks pass and collision review remains clean.
-4. Re-read this handoff and `STEGCORE_MIRROR_HANDOFF.md` on main.
-5. Update completion evidence and percentages.
-6. Implement the genuine NS membership/continuity integration contract using the normative Node Sovereign profile; do not fabricate membership from local proof.
-7. Bind portable node continuity identity/vault/envelope and node-to-node exchange through their destination-owned continuity/network contracts.
-8. Bind membership/anti-Sybil evidence and independent receiver admission.
-9. Expose the package catalog/builder through the actual SDK console distribution owner once that console target is resolved/claimed.
-10. Integrate verified SDK/community contributions into StegFin provisional accounting only through its own handoff.
-11. When release/tag readiness is actually reached, verify downstream reconciliation with `StegVerse-Labs/Site`, `GCAT-BCAT-Engine/Publisher`, `StegVerse-Labs/admissibility-wiki`, and `StegVerse-002/stegguardian-wiki` under their own handoffs.
+### Goal A — `STEGVERSE-PORTABLE-ARTIFACT-002`
+
+Produce exact immutable S and NS package artifacts from merged source, retain archive hashes/receipts, and bind them into the SDK catalog so public SDK download can become real rather than descriptive.
+
+Acceptance:
+
+```text
+exact merged source identified
+S archive produced deterministically
+NS archive produced deterministically
+per-file receipt retained
+archive SHA-256 retained
+immutable public artifact locator retained
+SDK catalog binds exact locator + archive hash
+SDK verifies downloaded archive
+no provider account required
+no non-TV/TVC secret required
+```
+
+### Goal B — `STEGVERSE-NODE-SOVEREIGN-ACTIVATION-003`
+
+Implement genuine NS membership and continuity integration without self-accreditation.
+
+Acceptance begins with destination-owned bindings for portable node identity/vault/envelope, peer exchange, independent receiver admission, membership/anti-Sybil evidence, recovery, and Node Sovereign activation receipt.
+
+## Next executable actions
+
+1. Finish and merge SDK PR #34 after its focused portable-package tests pass.
+2. Select a credential-free immutable artifact publication mechanism for Goal A; do not substitute mutable `latest` URLs or private authenticated artifacts.
+3. Bind exact S/NS artifacts into the SDK download catalog and validate download -> verify -> install.
+4. Begin Node Sovereign membership/continuity integration under Goal B.
+5. Continue StegFin provisional contribution accounting separately; do not grant token/coin/authority from installation.
+6. At actual release/tag readiness, reconcile Site, `GCAT-BCAT-Engine/Publisher`, admissibility-wiki, and stegguardian-wiki under their own handoffs.
 
 ## Current claim
 
 ```yaml
-task_id: STEGVERSE-MICRO-ECOSYSTEM-001
-execution_owner: current implementation branch
-claim_state: CLAIMED_FOR_IMPLEMENTATION
-branch: feat/stegverse-micro-ecosystem-v0
-collision_scope:
-  - micro_ecosystem/manifest.json
-  - micro_ecosystem/node_sovereign_profile.v1.json
-  - sdk/portable_package_catalog.v1.json
-  - tools/run_stegverse_micro_ecosystem.py
-  - tools/build_portable_ecosystem_package.py
-  - tests/test_stegverse_micro_ecosystem.py
-  - tests/test_portable_ecosystem_package.py
-  - docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md
-  - docs/STEGVERSE_SDK_PORTABLE_DISTRIBUTION.md
-  - docs/STEGVERSE_MICRO_ECOSYSTEM_MIRROR_HANDOFF.md
+completed_task: STEGVERSE-MICRO-ECOSYSTEM-001
+completed_commit: 1cdd479a8c50a61cda9a236fc05b126592362fff
+active_successor_goal: STEGVERSE-PORTABLE-ARTIFACT-002
+secondary_successor_goal: STEGVERSE-NODE-SOVEREIGN-ACTIVATION-003
+claim_state: SUCCESSOR_WORK_ACTIVE
 manual_execution_allowed: true
-release_condition: required CI proves deployment and package behavior and PR is merged without modifying the canonical evaluator authority boundary
-next_executable_action: inspect replacement CI on the SDK-package head, repair exact failures, merge when green
-```
-
-## Current assessment
-
-```text
-canonical runtime reused: complete
-micro-ecosystem manifest: installed
-mandatory S/NS implementation choice: installed
-S isolated sovereign profile: installed
-NS Node Sovereign profile definition: installed
-NS machine-readable activation contract: installed
-NS self-accreditation prevention: installed
-portable proof runner: installed
-SDK package catalog: installed
-SDK deterministic package builder: installed
-SDK package tests: installed
-SDK console integration: target owner unresolved / not yet installed
-non-TV/TVC secret dependency: none introduced
-external host dependency: none introduced
-provider account dependency: none introduced
-actual NS network membership binding: successor integration work
-hosted CI proof on current head: pending
-main-branch activation: pending
-release/tag: not authorized yet
+credential_authority: TV/TVC
 ```
