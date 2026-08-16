@@ -88,6 +88,7 @@ def build_class(deployment_class: str, output_dir: Path) -> dict[str, Any]:
 def prepare_release(output_dir: Path) -> dict[str, Any]:
     manifest = load_json(MANIFEST_PATH)
     validate_manifest(manifest)
+    output_dir = output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     commit = source_commit()
     built = {deployment_class: build_class(deployment_class, output_dir) for deployment_class in ("S", "NS")}
@@ -97,9 +98,8 @@ def prepare_release(output_dir: Path) -> dict[str, Any]:
         if receipt.get("source_commit") != commit:
             raise ValueError(f"source_commit_mismatch:{deployment_class}")
         for archive_format, artifact in sorted(receipt["artifacts"].items()):
-            path = Path(artifact["path"])
-            if not path.is_absolute():
-                path = ROOT / path
+            declared = Path(str(artifact["path"]))
+            path = declared if declared.is_absolute() else output_dir / declared
             if not path.is_file():
                 raise FileNotFoundError(path)
             observed = sha256_file(path)
