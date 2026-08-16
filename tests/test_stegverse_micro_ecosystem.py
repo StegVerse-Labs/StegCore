@@ -32,17 +32,25 @@ def test_s_ecosystem_is_explicit_isolated_sovereign_deployment():
     assert receipt["deployment_profile"]["sovereignty_class"] == "Sovereign"
     assert receipt["deployment_profile"]["isolated"] is True
     assert receipt["deployment_profile"]["individually_operated"] is True
-    assert receipt["deployment_profile"]["genuine_sovereign_ecosystem_node"] is False
+    assert receipt["deployment_profile"]["node_status_requested"] is False
     assert receipt["deployment_profile"]["ecosystem_membership_required"] is False
+    assert receipt["node_activation_state"] == "NOT_APPLICABLE"
+    assert receipt["node_sovereign_active"] is False
 
 
-def test_ns_ecosystem_is_explicit_node_sovereign_deployment():
+def test_ns_ecosystem_selects_profile_without_self_accrediting_node():
     receipt = module.run_proof(MANIFEST, REQUEST, "NS")
     assert_common_proof(receipt)
     assert receipt["deployment_class"] == "NS"
     assert receipt["deployment_profile"]["sovereignty_class"] == "Node Sovereign"
-    assert receipt["deployment_profile"]["genuine_sovereign_ecosystem_node"] is True
+    assert receipt["deployment_profile"]["node_status_requested"] is True
+    assert receipt["deployment_profile"]["node_status_self_assertable"] is False
     assert receipt["deployment_profile"]["ecosystem_membership_required"] is True
+    assert receipt["node_sovereign_profile"]["schema"] == "stegverse.node-sovereign.profile.v1"
+    assert receipt["node_activation_state"] == "PROFILE_DEFINED_NOT_ACTIVE"
+    assert receipt["membership_proof_present"] is False
+    assert receipt["node_sovereign_active"] is False
+    assert receipt["checks"]["ns_selection_does_not_self_accredit_node"] is True
 
 
 def test_invalid_deployment_class_fails_closed():
