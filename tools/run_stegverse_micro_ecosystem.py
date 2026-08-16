@@ -32,6 +32,39 @@ def load_json(path: Path) -> dict[str, Any]:
     return value
 
 
+def _single_host_checks(manifest: dict[str, Any]) -> dict[str, bool]:
+    contract = manifest.get("single_host_sovereignty")
+    if not isinstance(contract, dict):
+        return {
+            "single_host_sovereignty_present": False,
+            "one_sovereign_physical_host": False,
+            "same_host_logical_validation": False,
+            "no_additional_machine_required": False,
+            "no_third_party_runtime_required": False,
+            "local_operation_survives_third_party_absence": False,
+            "single_host_credential_authority_tvtvc": False,
+        }
+    prohibited_true = (
+        "additional_physical_machine_required",
+        "third_party_machine_required",
+        "third_party_process_host_required",
+        "third_party_scheduler_required",
+        "third_party_state_host_required",
+        "third_party_control_plane_executor_required",
+        "third_party_platform_availability_may_block_local_operation",
+        "non_tv_tvc_secret_or_token_allowed",
+    )
+    return {
+        "single_host_sovereignty_present": True,
+        "one_sovereign_physical_host": contract.get("physical_host_topology") == "ONE_SOVEREIGN_PHYSICAL_HOST",
+        "same_host_logical_validation": contract.get("independent_validation_mechanism") == "SAME_HOST_ISOLATED_LOGICAL_BOUNDARIES",
+        "no_additional_machine_required": contract.get("additional_physical_machine_required") is False,
+        "no_third_party_runtime_required": all(contract.get(name) is False for name in prohibited_true),
+        "local_operation_survives_third_party_absence": contract.get("local_governance_replay_reconstruction_survive_third_party_absence") is True,
+        "single_host_credential_authority_tvtvc": contract.get("credential_authority") == "TV/TVC",
+    }
+
+
 def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) -> dict[str, Any]:
     manifest = load_json(manifest_path)
     request_payload = load_json(request_path)
@@ -71,7 +104,7 @@ def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) ->
         )
 
     checks = {
-        "manifest_schema": manifest.get("schema") == "stegverse.micro-ecosystem.manifest.v2",
+        "manifest_schema": manifest.get("schema") == "stegverse.micro-ecosystem.manifest.v3",
         "runtime_identity_match": identity.get("runtime_identity") == EXPECTED_RUNTIME_IDENTITY == manifest.get("canonical_runtime_identity"),
         "canonical_owner_match": identity.get("canonical_owner") == manifest.get("canonical_owner"),
         "canonical_runtime_match": identity.get("canonical_admissibility_runtime") == manifest.get("canonical_admissibility_runtime"),
@@ -96,14 +129,18 @@ def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) ->
         "no_external_host_required": manifest.get("authority_boundaries", {}).get("requires_external_host") is False,
         "no_provider_account_required": manifest.get("authority_boundaries", {}).get("requires_provider_account") is False,
         "no_non_tv_tvc_secret_required": manifest.get("authority_boundaries", {}).get("requires_non_tv_tvc_secret") is False,
+        "no_additional_physical_machine_boundary": manifest.get("authority_boundaries", {}).get("requires_additional_physical_machine") is False,
+        "no_third_party_runtime_boundary": manifest.get("authority_boundaries", {}).get("requires_third_party_runtime_infrastructure") is False,
+        **_single_host_checks(manifest),
     }
 
     receipt = {
-        "schema": "stegverse.micro-ecosystem.proof-receipt.v2",
+        "schema": "stegverse.micro-ecosystem.proof-receipt.v3",
         "micro_ecosystem_id": manifest.get("micro_ecosystem_id"),
         "product_version": manifest.get("product_version"),
         "deployment_class": deployment_class,
         "deployment_profile": selected,
+        "single_host_sovereignty": manifest.get("single_host_sovereignty"),
         "node_sovereign_profile": node_profile,
         "node_activation_state": node_activation_state,
         "membership_proof_present": membership_proof_present,
