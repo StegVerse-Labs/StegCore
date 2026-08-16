@@ -1,0 +1,8 @@
+{
+  "schema": "stegverse.sdk.archive-formats.v1",
+  "required_formats": ["zip", "tar.gz"],
+  "format_authority_effect": "NONE",
+  "same_payload_required": true,
+  "independent_archive_hash_required": true,
+  "stegos_additional_image_formats_allowed": true
+}
