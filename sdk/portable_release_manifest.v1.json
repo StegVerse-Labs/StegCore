@@ -1,0 +1,47 @@
+{
+  "schema": "stegverse.sdk.portable-release-manifest.v1",
+  "release_family": "stegverse-portable-ecosystem",
+  "release_version": "0.2.0",
+  "source_version_file": "pyproject.toml",
+  "source_version": "0.2.0",
+  "channel": "SDK_EARLY_ACCESS",
+  "deployment_classes": ["S", "NS"],
+  "required_archive_formats": ["zip", "tar.gz"],
+  "release_tag": "stegverse-portable-v0.2.0",
+  "release_name": "StegVerse Portable Ecosystem 0.2.0",
+  "versioned_components": {
+    "StegCore": "0.2.0",
+    "StegGate_AdmittedCode_micro_ecosystem": "0.2.0",
+    "S_package": "0.2.0",
+    "NS_package": "0.2.0"
+  },
+  "version_change_policy": {
+    "new_release_required_when_release_version_changes": true,
+    "new_release_required_when_any_versioned_component_changes": true,
+    "source_change_without_version_change": "FAIL_CLOSED_FOR_RELEASE_PUBLICATION",
+    "same_version_may_not_replace_existing_release_assets": true
+  },
+  "artifact_policy": {
+    "build_location": "GitHub repository automation",
+    "zip_required": true,
+    "tar_gz_required": true,
+    "same_payload_across_formats_required": true,
+    "independent_archive_sha256_required": true,
+    "package_receipt_required": true,
+    "source_commit_required": true,
+    "mutable_latest_asset_allowed": false
+  },
+  "sdk_version_discovery": {
+    "source": "public GitHub Releases API",
+    "repository": "StegVerse-Labs/StegCore",
+    "release_tag_prefix": "stegverse-portable-v",
+    "cross_repository_catalog_commit_required": false
+  },
+  "authority": {
+    "credential_authority": "TV/TVC",
+    "github_build_is_runtime_authority": false,
+    "github_release_is_execution_authority": false,
+    "release_publication_requires_governance_release_permission": true,
+    "node_membership_self_accreditation_allowed": false
+  }
+}
