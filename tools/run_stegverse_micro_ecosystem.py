@@ -4,7 +4,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from stegcore.service import runtime_identity, self_test
 from stegcore.steggate import AdmissibilityRequest, evaluate_admissibility
@@ -15,19 +15,6 @@ DEFAULT_REQUEST = ROOT / "examples" / "steggate_allow_request.json"
 DEFAULT_NS_PROFILE = ROOT / "micro_ecosystem" / "node_sovereign_profile.v1.json"
 EXPECTED_RUNTIME_IDENTITY = "stegverse:steggate:canonical:three-layer:v1"
 DEPLOYMENT_CLASSES = ("S", "NS")
-EXPECTED_MANIFEST_SCHEMA = "stegverse.micro-ecosystem.manifest.v3"
-SINGLE_HOST_TOPOLOGY = "ONE_SOVEREIGN_PHYSICAL_HOST"
-SINGLE_HOST_VALIDATION = "SAME_HOST_ISOLATED_LOGICAL_BOUNDARIES"
-SOVEREIGN_FALSE_FIELDS = (
-    "additional_physical_machine_required",
-    "third_party_machine_required",
-    "third_party_process_host_required",
-    "third_party_scheduler_required",
-    "third_party_state_host_required",
-    "third_party_control_plane_executor_required",
-    "third_party_platform_availability_may_block_local_operation",
-    "non_tv_tvc_secret_or_token_allowed",
-)
 
 
 def canonical_bytes(value: Any) -> bytes:
@@ -45,28 +32,37 @@ def load_json(path: Path) -> dict[str, Any]:
     return value
 
 
-def single_host_sovereignty_valid(manifest: Mapping[str, Any]) -> bool:
+def _single_host_checks(manifest: dict[str, Any]) -> dict[str, bool]:
     contract = manifest.get("single_host_sovereignty")
-    boundaries = manifest.get("authority_boundaries")
-    if not isinstance(contract, Mapping) or not isinstance(boundaries, Mapping):
-        return False
-    if contract.get("physical_host_topology") != SINGLE_HOST_TOPOLOGY:
-        return False
-    if contract.get("independent_validation_mechanism") != SINGLE_HOST_VALIDATION:
-        return False
-    if contract.get("credential_authority") != "TV/TVC":
-        return False
-    if any(contract.get(name) is not False for name in SOVEREIGN_FALSE_FIELDS):
-        return False
-    if contract.get("local_governance_replay_reconstruction_survive_third_party_absence") is not True:
-        return False
-    if boundaries.get("requires_external_host") is not False:
-        return False
-    if boundaries.get("requires_additional_physical_machine") is not False:
-        return False
-    if boundaries.get("requires_third_party_runtime_infrastructure") is not False:
-        return False
-    return True
+    if not isinstance(contract, dict):
+        return {
+            "single_host_sovereignty_present": False,
+            "one_sovereign_physical_host": False,
+            "same_host_logical_validation": False,
+            "no_additional_machine_required": False,
+            "no_third_party_runtime_required": False,
+            "local_operation_survives_third_party_absence": False,
+            "single_host_credential_authority_tvtvc": False,
+        }
+    prohibited_true = (
+        "additional_physical_machine_required",
+        "third_party_machine_required",
+        "third_party_process_host_required",
+        "third_party_scheduler_required",
+        "third_party_state_host_required",
+        "third_party_control_plane_executor_required",
+        "third_party_platform_availability_may_block_local_operation",
+        "non_tv_tvc_secret_or_token_allowed",
+    )
+    return {
+        "single_host_sovereignty_present": True,
+        "one_sovereign_physical_host": contract.get("physical_host_topology") == "ONE_SOVEREIGN_PHYSICAL_HOST",
+        "same_host_logical_validation": contract.get("independent_validation_mechanism") == "SAME_HOST_ISOLATED_LOGICAL_BOUNDARIES",
+        "no_additional_machine_required": contract.get("additional_physical_machine_required") is False,
+        "no_third_party_runtime_required": all(contract.get(name) is False for name in prohibited_true),
+        "local_operation_survives_third_party_absence": contract.get("local_governance_replay_reconstruction_survive_third_party_absence") is True,
+        "single_host_credential_authority_tvtvc": contract.get("credential_authority") == "TV/TVC",
+    }
 
 
 def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) -> dict[str, Any]:
@@ -107,10 +103,8 @@ def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) ->
             and node_profile.get("deployment_class") == "NS"
         )
 
-    authority_boundaries = manifest.get("authority_boundaries", {})
-    sovereignty_ok = single_host_sovereignty_valid(manifest)
     checks = {
-        "manifest_schema": manifest.get("schema") == EXPECTED_MANIFEST_SCHEMA,
+        "manifest_schema": manifest.get("schema") == "stegverse.micro-ecosystem.manifest.v3",
         "runtime_identity_match": identity.get("runtime_identity") == EXPECTED_RUNTIME_IDENTITY == manifest.get("canonical_runtime_identity"),
         "canonical_owner_match": identity.get("canonical_owner") == manifest.get("canonical_owner"),
         "canonical_runtime_match": identity.get("canonical_admissibility_runtime") == manifest.get("canonical_admissibility_runtime"),
@@ -120,11 +114,11 @@ def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) ->
         "deployment_choice_required": manifest.get("deployment_choice_required") is True,
         "deployment_class_valid": valid_choice,
         "deployment_class_invariants": class_invariants,
-        "deployment_class_does_not_change_governance_semantics": authority_boundaries.get("deployment_class_changes_canonical_governance_semantics") is False,
+        "deployment_class_does_not_change_governance_semantics": manifest.get("authority_boundaries", {}).get("deployment_class_changes_canonical_governance_semantics") is False,
         "ns_selection_does_not_self_accredit_node": (
             deployment_class != "NS"
             or (
-                authority_boundaries.get("ns_selection_creates_node_membership") is False
+                manifest.get("authority_boundaries", {}).get("ns_selection_creates_node_membership") is False
                 and selected.get("node_status_self_assertable") is False
                 and membership_proof_present is False
                 and node_activation_state == "PROFILE_DEFINED_NOT_ACTIVE"
@@ -132,12 +126,12 @@ def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) ->
         ),
         "no_execution_authority": identity.get("execution_authority") is False,
         "no_continuity_minting_authority": identity.get("continuity_receipt_minting_authority") is False,
-        "no_external_host_required": authority_boundaries.get("requires_external_host") is False,
-        "no_provider_account_required": authority_boundaries.get("requires_provider_account") is False,
-        "no_non_tv_tvc_secret_required": authority_boundaries.get("requires_non_tv_tvc_secret") is False,
-        "single_host_sovereignty_contract_present": sovereignty_ok,
-        "no_additional_physical_machine_required": authority_boundaries.get("requires_additional_physical_machine") is False,
-        "no_third_party_runtime_infrastructure_required": authority_boundaries.get("requires_third_party_runtime_infrastructure") is False,
+        "no_external_host_required": manifest.get("authority_boundaries", {}).get("requires_external_host") is False,
+        "no_provider_account_required": manifest.get("authority_boundaries", {}).get("requires_provider_account") is False,
+        "no_non_tv_tvc_secret_required": manifest.get("authority_boundaries", {}).get("requires_non_tv_tvc_secret") is False,
+        "no_additional_physical_machine_boundary": manifest.get("authority_boundaries", {}).get("requires_additional_physical_machine") is False,
+        "no_third_party_runtime_boundary": manifest.get("authority_boundaries", {}).get("requires_third_party_runtime_infrastructure") is False,
+        **_single_host_checks(manifest),
     }
 
     receipt = {
@@ -146,6 +140,7 @@ def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) ->
         "product_version": manifest.get("product_version"),
         "deployment_class": deployment_class,
         "deployment_profile": selected,
+        "single_host_sovereignty": manifest.get("single_host_sovereignty"),
         "node_sovereign_profile": node_profile,
         "node_activation_state": node_activation_state,
         "membership_proof_present": membership_proof_present,
@@ -156,9 +151,6 @@ def run_proof(manifest_path: Path, request_path: Path, deployment_class: str) ->
         "runtime_identity": identity,
         "self_test": matrix_proof,
         "evaluation": result,
-        "single_host_sovereignty": manifest.get("single_host_sovereignty"),
-        "physical_additional_machine_required": False if sovereignty_ok else None,
-        "third_party_runtime_infrastructure_required": False if sovereignty_ok else None,
         "checks": checks,
         "proof_state": "PASS" if all(checks.values()) else "FAIL",
         "external_side_effect": False,
