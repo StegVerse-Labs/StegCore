@@ -26,6 +26,24 @@ def read_receipt_from_tar_gz(path: Path) -> dict:
         return json.loads(handle.read())
 
 
+def assert_single_host_sovereignty(receipt: dict) -> None:
+    contract = receipt["single_host_sovereignty"]
+    assert contract["physical_host_topology"] == "ONE_SOVEREIGN_PHYSICAL_HOST"
+    assert contract["additional_physical_machine_required"] is False
+    assert contract["third_party_machine_required"] is False
+    assert contract["third_party_process_host_required"] is False
+    assert contract["third_party_scheduler_required"] is False
+    assert contract["third_party_state_host_required"] is False
+    assert contract["third_party_control_plane_executor_required"] is False
+    assert contract["third_party_platform_availability_may_block_local_operation"] is False
+    assert contract["independent_validation_mechanism"] == "SAME_HOST_ISOLATED_LOGICAL_BOUNDARIES"
+    assert contract["local_governance_replay_reconstruction_survive_third_party_absence"] is True
+    assert contract["credential_authority"] == "TV/TVC"
+    assert contract["non_tv_tvc_secret_or_token_allowed"] is False
+    assert receipt["physical_additional_machine_required"] is False
+    assert receipt["third_party_runtime_infrastructure_required"] is False
+
+
 def test_s_package_is_sdk_distributable_in_both_required_formats_without_node_membership_claim(tmp_path):
     archives, receipt = module.build_package_set("S", tmp_path)
     assert set(archives) == {"zip", "tar.gz"}
@@ -36,13 +54,14 @@ def test_s_package_is_sdk_distributable_in_both_required_formats_without_node_me
     assert receipt["node_membership_claim"] is False
     assert receipt["requires_provider_account"] is False
     assert receipt["requires_non_tv_tvc_secret"] is False
+    assert_single_host_sovereignty(receipt)
     assert len(receipt["artifacts"]["zip"]["sha256"]) == 64
     assert len(receipt["artifacts"]["tar.gz"]["sha256"]) == 64
-
     zip_receipt = read_receipt_from_zip(archives["zip"])
     tar_receipt = read_receipt_from_tar_gz(archives["tar.gz"])
     assert zip_receipt == tar_receipt
     assert zip_receipt["deployment_class"] == "S"
+    assert_single_host_sovereignty(zip_receipt)
 
 
 def test_ns_package_never_self_accredits_node_membership_in_either_format(tmp_path):
@@ -50,16 +69,28 @@ def test_ns_package_never_self_accredits_node_membership_in_either_format(tmp_pa
     assert receipt["deployment_class"] == "NS"
     assert receipt["node_membership_claim"] is False
     assert receipt["node_membership_activation_required"] is True
-
+    assert_single_host_sovereignty(receipt)
     with zipfile.ZipFile(archives["zip"]) as zf:
         names = set(zf.namelist())
         assert "micro_ecosystem/node_sovereign_profile.v1.json" in names
         assert "docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md" in names
-
     with tarfile.open(archives["tar.gz"], "r:gz") as tf:
         names = set(tf.getnames())
         assert "micro_ecosystem/node_sovereign_profile.v1.json" in names
         assert "docs/STEGVERSE_NODE_SOVEREIGN_DEFINITION.md" in names
+
+
+def test_builder_fails_closed_if_single_host_contract_is_weakened(tmp_path, monkeypatch):
+    original = module.load_micro_manifest
+    manifest = original()
+    manifest["single_host_sovereignty"]["third_party_process_host_required"] = True
+    monkeypatch.setattr(module, "MICRO_MANIFEST", tmp_path / "manifest.json")
+    module.MICRO_MANIFEST.write_text(json.dumps(manifest), encoding="utf-8")
+    try:
+        module.build_package_set("S", tmp_path / "dist")
+        assert False, "weakened sovereignty contract must fail closed"
+    except ValueError as exc:
+        assert "prohibited sovereignty dependency" in str(exc)
 
 
 def test_both_archive_formats_are_byte_deterministic_for_same_source(tmp_path):
