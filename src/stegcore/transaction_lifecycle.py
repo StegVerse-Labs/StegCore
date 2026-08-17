@@ -12,10 +12,13 @@ This module adds the continuity envelope around that existing authority path:
     -> return ingestion -> discover/reconstruct/replay descriptor
 
 Receipts are hash chained so the complete trajectory can be independently
-verified without rewriting historical states.
+verified without rewriting historical states. When a route declares capability
+requirements, their current Admissible-Existence state is resolved from the
+canonical capability registry before execution and recorded as non-authorizing
+transaction evidence.
 """
 
-from dataclasses import asdict, dataclass, is_dataclass
+from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
 import json
 from pathlib import Path
@@ -24,6 +27,12 @@ import uuid
 
 from pydantic import BaseModel, Field
 
+from .capability_registry import CapabilityExistenceRegistry
+from .manifest_capability_context import (
+    ManifestCapabilityContext,
+    RequestedCapability,
+    resolve_manifest_capability_context,
+)
 from .steggate import AdmissibilityRequest, canonical_sha256
 from .steggate_runtime import StegGateExecutionObservation, governed_steggate_execute
 
@@ -96,6 +105,7 @@ class ReplayDescriptor(BaseModel):
     receipt_count: int
     expected_disposition: str
     expected_executor_invoked: bool
+    capability_context_hash: Optional[str] = None
 
 
 class ManifestedTransactionResult(BaseModel):
@@ -105,6 +115,7 @@ class ManifestedTransactionResult(BaseModel):
     manifest: TransactionManifest
     receipts: list[TransitionReceipt]
     execution_observation: dict[str, Any]
+    capability_context: Optional[ManifestCapabilityContext] = None
     replay: ReplayDescriptor
     chain_verified: bool
 
@@ -173,6 +184,7 @@ class TransactionLedger:
                     "output_state_hash": item.output_state_hash,
                     "decision_ref": item.decision_ref,
                     "receipt_hash": item.receipt_hash,
+                    "capability_context_hash": item.details.get("capability_context_hash"),
                 }
                 for item in chain
             ],
@@ -270,15 +282,33 @@ def run_manifested_transaction(
     declared_execution_context: Optional[Mapping[str, Any]] = None,
     capability_surface: Optional[Mapping[str, Any]] = None,
     authority_resolution: Optional[Mapping[str, Any]] = None,
+    capability_registry: Optional[CapabilityExistenceRegistry] = None,
+    requested_capabilities: Optional[list[RequestedCapability | Mapping[str, object]]] = None,
 ) -> ManifestedTransactionResult:
     """Run one ordinary manifested transaction through canonical StegGate.
 
     ``transaction_id`` may be supplied by an already-established ecosystem route
     manifest so ingestion/CGE, StegCore, return ingestion, and downstream custody
     preserve one transaction identity. Supplying the identifier grants no authority.
+
+    If ``requested_capabilities`` are declared, StegCore resolves their current
+    Admissible-Existence state from ``capability_registry`` before the transaction
+    is admitted. Caller-supplied lifecycle phase claims are never authoritative.
+    Any declared required phase that is not satisfied fails closed before the
+    executor can be invoked. The resolved context is transaction evidence, not a
+    substitute for canonical StegGate admissibility.
     """
 
     ledger = ledger or TransactionLedger()
+    capability_context: Optional[ManifestCapabilityContext] = None
+    if requested_capabilities:
+        if capability_registry is None:
+            raise ValueError("capability_registry_required_for_requested_capabilities")
+        capability_context = resolve_manifest_capability_context(
+            capability_registry,
+            requested_capabilities,
+        )
+
     manifest = manifest_transaction(
         request,
         input_data,
@@ -288,6 +318,22 @@ def run_manifested_transaction(
         metadata=metadata,
         transaction_id=transaction_id,
     )
+
+    admission_details: dict[str, Any] = {
+        "manifest_hash": manifest.manifest_hash,
+        "request_hash": manifest.request_hash,
+    }
+    if capability_context is not None:
+        admission_details.update(
+            {
+                "capability_context_hash": capability_context.context_hash,
+                "capability_context_source": capability_context.source,
+                "capability_resolution_grants_authority": False,
+                "resolved_capability_ids": [
+                    item.capability_id for item in capability_context.resolved_capabilities
+                ],
+            }
+        )
 
     admitted = _make_receipt(
         transaction_id=manifest.transaction_id,
@@ -300,7 +346,7 @@ def run_manifested_transaction(
         output_state_hash=manifest.manifest_hash,
         route_from="sdk",
         route_to="steggate",
-        details={"manifest_hash": manifest.manifest_hash, "request_hash": manifest.request_hash},
+        details=admission_details,
     )
     ledger.append(admitted)
 
@@ -312,6 +358,15 @@ def run_manifested_transaction(
         authority_resolution=authority_resolution,
     )
     evaluation = observation.evaluation
+
+    governed_details: dict[str, Any] = {
+        "candidate_hash": evaluation.candidate_hash,
+        "canonical_three_layer_receipt_hash": evaluation.canonical_three_layer_receipt_hash,
+        "executor_invoked": observation.executor_invoked,
+        "execution_status": observation.status,
+    }
+    if capability_context is not None:
+        governed_details["capability_context_hash"] = capability_context.context_hash
 
     governed = _make_receipt(
         transaction_id=manifest.transaction_id,
@@ -325,14 +380,13 @@ def run_manifested_transaction(
         decision_ref=evaluation.decision_state_hash,
         route_from="ingestion",
         route_to="return_ingestion",
-        details={
-            "candidate_hash": evaluation.candidate_hash,
-            "canonical_three_layer_receipt_hash": evaluation.canonical_three_layer_receipt_hash,
-            "executor_invoked": observation.executor_invoked,
-            "execution_status": observation.status,
-        },
+        details=governed_details,
     )
     ledger.append(governed)
+
+    return_details: dict[str, Any] = {"execution_status": observation.status}
+    if capability_context is not None:
+        return_details["capability_context_hash"] = capability_context.context_hash
 
     returned = _make_receipt(
         transaction_id=manifest.transaction_id,
@@ -346,7 +400,7 @@ def run_manifested_transaction(
         decision_ref=evaluation.decision_state_hash,
         route_from="steggate",
         route_to="sdk_output",
-        details={"execution_status": observation.status},
+        details=return_details,
     )
     ledger.append(returned)
 
@@ -360,6 +414,7 @@ def run_manifested_transaction(
         receipt_count=len(receipts),
         expected_disposition=evaluation.disposition,
         expected_executor_invoked=observation.executor_invoked,
+        capability_context_hash=(capability_context.context_hash if capability_context else None),
     )
 
     return ManifestedTransactionResult(
@@ -367,6 +422,7 @@ def run_manifested_transaction(
         manifest=manifest,
         receipts=receipts,
         execution_observation=_jsonable(observation),
+        capability_context=capability_context,
         replay=replay,
         chain_verified=ledger.verify_chain(manifest.transaction_id),
     )
