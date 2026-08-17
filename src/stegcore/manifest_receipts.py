@@ -147,6 +147,7 @@ class ManifestReceiptRegistry:
             "manifest": result["manifest"],
             "receipts": result["receipts"],
             "execution_observation": result["execution_observation"],
+            "capability_context": result.get("capability_context"),
             "replay_descriptor": result["replay"],
             "chain_verified": result["chain_verified"],
             "receipt_chain_head": record.receipt_chain_head,
@@ -165,14 +166,22 @@ class ManifestReceiptRegistry:
                 "state": item.get("state"),
                 "processor": item.get("processor"),
                 "receipt_hash": item.get("receipt_hash"),
+                "capability_context_hash": (item.get("details") or {}).get("capability_context_hash"),
                 "evidence_class": "NATIVELY_PERSISTED",
             }
             for item in receipts
         ]
+        capability_context = result.get("capability_context")
         summary = {
             "manifest_hash": record.manifest_hash,
             "receipt_chain_head": record.receipt_chain_head,
             "states": [item.get("state") for item in receipts],
+            "capability_context": capability_context,
+            "capability_context_hash": (
+                capability_context.get("context_hash") if isinstance(capability_context, dict) else None
+            ),
+            "capability_state_is_original_run_evidence": capability_context is not None,
+            "current_capability_state_substituted": False,
             "reconstructed_from_retained_record": True,
             "reconstruction_grants_authority": False,
         }
