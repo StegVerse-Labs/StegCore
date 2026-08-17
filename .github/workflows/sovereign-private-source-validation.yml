@@ -31,41 +31,110 @@ jobs:
           done
           echo "credential_authority=TV/TVC"
           echo "consumer_credential_present=false"
-          echo "source_fetch_by_validator=false"
+          echo "validator_network_fetch=false"
 
-      - name: Resolve exact pre-materialized StegCore source
+      - name: Resolve or request exact StegCore source from TVC
         id: source
         shell: bash
         env:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           set -euo pipefail
           EXPECTED_HEAD="${PR_HEAD:-${GITHUB_SHA}}"
+          SOURCE_REF="${PR_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          DEST="/var/lib/stegverse/source/StegVerse-Labs/StegCore/${EXPECTED_HEAD}"
+          SPOOL="${STEGVERSE_FORMALISM_TVC_SPOOL_ROOT:-$HOME/.stegverse/transport/formalism-tvc-repository}"
+          ROOT=""
+          RECEIPT=""
+
           candidates=(
             "${STEGVERSE_STEGCORE_SOURCE_ROOT:-}"
             "$PWD"
             "$HOME/.stegverse/repos/StegVerse-Labs/StegCore"
+            "$DEST"
             "/srv/stegverse/repos/StegVerse-Labs/StegCore"
             "/opt/stegverse/repos/StegVerse-Labs/StegCore"
           )
-          ROOT=""
           for candidate in "${candidates[@]}"; do
             [ -n "$candidate" ] || continue
             if [ -d "$candidate/.git" ] && [ -f "$candidate/pyproject.toml" ]; then
               HEAD="$(git -C "$candidate" rev-parse HEAD 2>/dev/null || true)"
-              if [ "$HEAD" = "$EXPECTED_HEAD" ]; then
+              if [ "$HEAD" = "$EXPECTED_HEAD" ] && [ -z "$(git -C "$candidate" status --porcelain)" ]; then
                 ROOT="$candidate"
                 break
               fi
             fi
           done
+
           if [ -z "$ROOT" ]; then
-            echo "SOVEREIGN_SOURCE_NOT_MATERIALIZED expected_head=$EXPECTED_HEAD" >&2
-            exit 2
+            OPERATION_ID="stegcore-pr-source-${EXPECTED_HEAD:0:16}-${GITHUB_RUN_ID:-local}"
+            REQUEST="$SPOOL/outbox/${OPERATION_ID}.json"
+            RECEIPT="$SPOOL/inbox/${OPERATION_ID}.json"
+            mkdir -p "$SPOOL/outbox" "$SPOOL/inbox"
+            export OPERATION_ID EXPECTED_HEAD SOURCE_REF DEST REQUEST
+            python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timedelta, timezone
+          issued = datetime.now(timezone.utc)
+          value = {
+              "schema": "stegverse.tvc-github-repository-operation-warrant/v0.1",
+              "operation_id": os.environ["OPERATION_ID"],
+              "operation_class": "MATERIALIZE_SOURCE_ARCHIVE",
+              "repository": "StegVerse-Labs/StegCore",
+              "base_ref": os.environ["SOURCE_REF"],
+              "expected_base_sha": os.environ["EXPECTED_HEAD"],
+              "destination_identity": os.environ["DEST"],
+              "maximum_total_bytes": 50000000,
+              "credential_authority": "TV/TVC",
+              "consumer_credential_present": False,
+              "secret_values_present": False,
+              "single_use": True,
+              "issued_at": issued.isoformat().replace("+00:00", "Z"),
+              "expires_at": (issued + timedelta(minutes=15)).isoformat().replace("+00:00", "Z"),
+              "nonce": "stegcore-" + os.environ["EXPECTED_HEAD"][:24],
+              "authorization_ref": "tvc://spool/stegcore-private-source/" + os.environ["OPERATION_ID"],
+          }
+          with open(os.environ["REQUEST"], "w", encoding="utf-8") as handle:
+              json.dump(value, handle, indent=2, sort_keys=True)
+              handle.write("\n")
+          print("TVC_SOURCE_MATERIALIZATION_REQUEST=" + os.environ["REQUEST"])
+          PY
+
+            for _ in $(seq 1 180); do
+              if [ -f "$RECEIPT" ]; then
+                break
+              fi
+              sleep 2
+            done
+            if [ ! -f "$RECEIPT" ]; then
+              echo "TVC_SOURCE_MATERIALIZATION_RECEIPT_TIMEOUT request=$REQUEST" >&2
+              exit 2
+            fi
+            export RECEIPT EXPECTED_HEAD DEST
+            python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          value = json.loads(Path(os.environ["RECEIPT"]).read_text(encoding="utf-8"))
+          assert value["credential_authority"] == "TV/TVC"
+          assert value["consumer_credential_present"] is False
+          assert value["credential_value_exposed"] is False
+          assert value["non_tv_tvc_secret_or_token_used"] is False
+          result = value["result"]
+          assert result["status"] == "MATERIALIZED"
+          assert result["repository"] == "StegVerse-Labs/StegCore"
+          assert result["commit_sha"] == os.environ["EXPECTED_HEAD"]
+          assert Path(result["destination"]).resolve() == Path(os.environ["DEST"]).resolve()
+          print("TVC_SOURCE_MATERIALIZATION=PASS")
+          PY
+            ROOT="$DEST"
           fi
-          test -z "$(git -C "$ROOT" status --porcelain)"
+
+          test -f "$ROOT/pyproject.toml"
+          test -d "$ROOT/src/stegcore"
           echo "root=$ROOT" >> "$GITHUB_OUTPUT"
           echo "expected_head=$EXPECTED_HEAD" >> "$GITHUB_OUTPUT"
+          echo "materialization_receipt=$RECEIPT" >> "$GITHUB_OUTPUT"
           echo "source_root=$ROOT"
           echo "source_head=$EXPECTED_HEAD"
 
@@ -74,18 +143,23 @@ jobs:
         env:
           SOURCE_ROOT: ${{ steps.source.outputs.root }}
           EXPECTED_HEAD: ${{ steps.source.outputs.expected_head }}
+          MATERIALIZATION_RECEIPT: ${{ steps.source.outputs.materialization_receipt }}
         run: |
           set -euo pipefail
-          cd "$SOURCE_ROOT"
-          python3 scripts/run_sovereign_validation.py \
-            --source-root "$SOURCE_ROOT" \
-            --expected-head "$EXPECTED_HEAD" \
+          args=(
+            --source-root "$SOURCE_ROOT"
+            --expected-head "$EXPECTED_HEAD"
             --receipt-out validation/sovereign-validation.latest.json
+          )
+          if [ -n "${MATERIALIZATION_RECEIPT:-}" ]; then
+            args+=(--materialization-receipt "$MATERIALIZATION_RECEIPT")
+          fi
+          cd "$SOURCE_ROOT"
+          python3 scripts/run_sovereign_validation.py "${args[@]}"
           python3 - <<'PY'
           import json
           from pathlib import Path
-          p = Path('validation/sovereign-validation.latest.json')
-          data = json.loads(p.read_text())
+          data = json.loads(Path('validation/sovereign-validation.latest.json').read_text())
           assert data['validation_result'] == 'PASS'
           assert data['non_tv_tvc_secret_or_token_used'] is False
           assert data['github_token_required'] is False
