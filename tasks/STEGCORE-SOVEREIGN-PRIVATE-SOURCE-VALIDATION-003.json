@@ -6,7 +6,7 @@
   "branch": "feat/ae-manifest-capability-context-v1",
   "pull_request": 141,
   "role": "SOVEREIGN_LOCAL_VALIDATION",
-  "state": "BLOCKED_ON_TVC_BROKER_RELEASE_READY_TO_EXECUTE_AFTER_RELEASE",
+  "state": "BLOCKED_ON_MACHINE_OWNED_TVC_BROKER_VALIDATION_CARRIER",
   "credential_authority": "TV/TVC",
   "non_tv_tvc_secret_or_token_allowed": false,
   "github_token_required": false,
@@ -15,6 +15,17 @@
   "canonical_validator": "scripts/run_sovereign_validation.py",
   "github_self_hosted_workflow_required": false,
   "optional_github_self_hosted_bridge": ".github/workflows/sovereign-private-source-validation.yml",
+  "upstream_validation_carrier": {
+    "owner_repository": "StegVerse-Labs/.github",
+    "task_id": "SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001",
+    "handoff": "handoffs/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json",
+    "worker": "workers/tvc_repository_broker_validation_worker.py",
+    "registry_fragment": "control/worker-registry.d/tvc-repository-broker-validation-001.json",
+    "adapter_fragment": "control/process-worker-adapters.d/tvc-repository-broker-validation-001.json",
+    "receipt": "receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json",
+    "state": "MACHINE_OWNED_HANDOFF_READY",
+    "expected_tvc_pr20_head": "6209396bc9846ec5f301b24d3b6f0207e571af1d"
+  },
   "source_policy": {
     "network_fetch_by_validator": false,
     "source_must_be_materialized_by_tvc_or_preexist_as_exact_clean_git_head": true,
@@ -39,9 +50,10 @@
     "python3 -m pytest -q",
     "python3 scripts/verify_product_consistency.py"
   ],
-  "machine_trigger": "TVC PR #20 is canonically validated/admitted and a StegVerse-controlled execution lane can access the shared TVC spool. No GitHub Actions runner is required for the canonical path.",
+  "machine_trigger": "The .github validation-carrier receipt reaches COMPLETED for the exact TVC PR #20 head, TVC integration authority admits PR #20, and a StegVerse-controlled execution lane can access the shared TVC spool. No GitHub Actions runner is required for the canonical path.",
+  "machine_observable_upstream_release_condition": "StegVerse-Labs/.github/receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json state=COMPLETED with exact TVC PR #20 head and sanitized PASS dispatcher evidence, followed by canonical admission of TVC PR #20.",
   "release_condition": "The sovereign validation receipt records the exact current PR #141 head and PASS for all required commands with non_tv_tvc_secret_or_token_used=false and github_token_required=false.",
-  "failure_condition": "TVC broker not released, spool unavailable, source materialization receipt timeout/failure, source identity mismatch, forbidden credential environment, incomplete materialized source, or any validation command failure.",
+  "failure_condition": "TVC broker validation/admission incomplete, spool unavailable, source materialization receipt timeout/failure, source identity mismatch, forbidden credential environment, incomplete materialized source, or any validation command failure.",
   "outputs": [
     "TVC materialization warrant in the local non-secret spool",
     "sanitized TVC materialization receipt",
