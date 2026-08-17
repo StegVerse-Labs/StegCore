@@ -9,6 +9,7 @@ permissions: {}
 
 jobs:
   tests:
+    if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-latest
 
     steps:
