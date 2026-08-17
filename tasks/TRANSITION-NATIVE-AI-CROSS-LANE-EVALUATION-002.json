@@ -1,0 +1,67 @@
+{
+  "schema_version": "STEGVERSE-TASK-v1",
+  "task_id": "TRANSITION-NATIVE-AI-CROSS-LANE-EVALUATION-002",
+  "title": "Evaluate TVC SES receipts against transition-native controls",
+  "originating_goal": "Run the transition-native AI construction experiment without duplicating the executable SES construction lane or contaminating it with later-stage labels.",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "main",
+  "canonical_handoff": "docs/TRANSITION_NATIVE_AI_MIRROR_HANDOFF.md",
+  "role": "POSTHOC_CROSS_LANE_AND_THRESHOLD_EVALUATION",
+  "state": "BLOCKED_DEPENDENCY_MACHINE_OWNED",
+  "claimant": "StegCore repository heartbeat admissibility_evaluation/external_evidence_mapping capability",
+  "machine_owner": "StegCore repository heartbeat -> existing StegVerse control plane",
+  "claim_created_at": "2026-08-17T11:08:00-05:00",
+  "claim_expires_or_releases_when": "TVC task TVC-SES-EXPERIMENT-RUN-023 emits a complete immutable end-to-end receipt bundle and terminal observation record suitable for post-hoc evaluation.",
+  "dependencies": [
+    "StegVerse-Labs/TVC tasks/TVC-SES-EXPERIMENT-RUN-023.json = COMPLETE",
+    "immutable ordered SES transition/state receipt bundle exists",
+    "capability activation/source manifest exists",
+    "observer receipt bundle exists",
+    "terminal autonomy observation record exists"
+  ],
+  "evaluation_contract": {
+    "construction_input_from_stegcore_stage_labels": false,
+    "construction_input_from_admissibility_definition_text": false,
+    "construction_input_from_autonomy_label": false,
+    "posthoc_stage_mapping_allowed": true,
+    "posthoc_cross_lane_comparison_allowed": true,
+    "posthoc_blind_threshold_evaluation_allowed": true,
+    "external_execution_default": "DISABLED",
+    "capability_unlock_does_not_grant_external_authority": true
+  },
+  "machine_inputs": [
+    "TVC immutable experiment receipt bundle",
+    "StegCore ecosystem_management/transition_native_ai_construction.v0.1.json",
+    "held-out/sham/ablation manifests when available",
+    "wrapped/tuned/native lane evidence when available"
+  ],
+  "machine_outputs": [
+    "secret-free cross-lane evaluation receipt",
+    "post-hoc mapping of observed SES capabilities to StegCore experimental criteria",
+    "held-out/sham/ablation evidence status",
+    "blind-threshold status: NOT_YET_POSSIBLE, POSSIBLE_UNCONFIRMED, OBSERVED_ONCE, REPRODUCED, CAUSALLY_SUPPORTED, or CAPABILITY_UNLOCKED",
+    "explicit unresolved evidence gaps",
+    "no external authorization side effect"
+  ],
+  "collision_boundaries": [
+    "Do not build a second SES construction harness in StegCore while TVC owns the executable construction/run lane.",
+    "Do not feed stage 0-8 labels, ALLOW/DENY vocabulary, admissibility definition text, autonomy labels, or goal-seeking labels into TVC SES construction.",
+    "Do not reinterpret workflow success, merge state, or capability count as autonomy.",
+    "Do not use Render.",
+    "Do not use GITHUB_TOKEN, GH_TOKEN, STEGVERSE_GITHUB_TOKEN, or any non-TV/TVC credential fallback.",
+    "Do not grant execution, release, publication, Master Record, wallet, trade, or production authority."
+  ],
+  "credential_authority": "TV/TVC",
+  "non_tv_tvc_secret_or_token_allowed": false,
+  "github_token_runtime_authority": "NONE",
+  "authority_effect": false,
+  "activation_effect": false,
+  "machine_trigger": "Repository heartbeat observes completion of TVC-SES-EXPERIMENT-RUN-023 and availability of its immutable receipt bundle.",
+  "machine_observable_release_conditions": [
+    "TVC end-to-end experiment run reports COMPLETE.",
+    "Exact source/evidence identities for the TVC run are available.",
+    "Post-hoc evaluation can consume the receipt bundle without adding construction inputs.",
+    "Any missing held-out, sham, causal-ablation, or blind-evaluation evidence is reported as an evidence gap rather than inferred as success."
+  ],
+  "next_task_after_complete": "Use observed evaluation gaps to decide whether StegCore needs additional held-out/sham/ablation tooling; do not duplicate the TVC construction runner."
+}
