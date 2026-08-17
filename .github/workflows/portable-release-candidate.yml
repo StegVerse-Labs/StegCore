@@ -29,6 +29,7 @@ permissions: {}
 
 jobs:
   prepare-release-candidate:
+    if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-latest
     steps:
       - name: Assert no publication credential authority
