@@ -1,0 +1,39 @@
+{
+  "schema_version": "STEGVERSE-TASK-v1",
+  "task_id": "STEGCORE-SOVEREIGN-PRIVATE-SOURCE-VALIDATION-003",
+  "title": "Validate private StegCore source without NON-TV/TVC credentials",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "feat/ae-manifest-capability-context-v1",
+  "pull_request": 141,
+  "role": "SOVEREIGN_LOCAL_VALIDATION",
+  "state": "READY_FOR_STEGVERSE_CONTROLLED_SOURCE",
+  "credential_authority": "TV/TVC",
+  "non_tv_tvc_secret_or_token_allowed": false,
+  "github_token_required": false,
+  "render_required": false,
+  "canonical_runner": "scripts/run_sovereign_validation.py",
+  "source_policy": {
+    "network_fetch_by_validator": false,
+    "source_must_already_be_materialized": true,
+    "source_owner": "StegVerse-controlled local repository materialization",
+    "expected_identity": "current PR #141 head at execution start",
+    "dirty_worktree_allowed": false
+  },
+  "validation_commands": [
+    "python3 -m pytest -q tests/test_manifest_capability_context.py",
+    "python3 -m pytest -q tests/test_transaction_lifecycle.py tests/test_manifest_receipts.py tests/test_manifest_receipt_provider.py",
+    "python3 -m pytest -q",
+    "python3 scripts/verify_product_consistency.py"
+  ],
+  "machine_trigger": "A StegVerse-controlled node has the exact current PR #141 head materialized locally without exposing any repository credential to the validation process.",
+  "release_condition": "The sovereign validation receipt records the exact PR head and PASS for all required commands with non_tv_tvc_secret_or_token_used=false and github_token_required=false.",
+  "failure_condition": "Missing local source, source identity mismatch, dirty worktree, forbidden credential environment, or any validation command failure.",
+  "outputs": [
+    "validation/sovereign-validation.latest.json",
+    "exact command output hashes and tails",
+    "source-head identity",
+    "PASS/FAIL result"
+  ],
+  "next_after_pass": "Merge PR #141, reconcile issue #85 and main handoff, then release SDK/LLM-adapter capability_context consumer work.",
+  "next_after_fail": "Persist exact diagnostics and assign correction to the owning StegCore branch without weakening credential policy."
+}
