@@ -1,0 +1,95 @@
+name: Sovereign Private-Source Validation - No Non-TV/TVC Credential Authority
+
+on:
+  pull_request:
+    paths:
+      - 'src/stegcore/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'tasks/**'
+      - 'docs/**'
+      - 'pyproject.toml'
+      - '.github/workflows/sovereign-private-source-validation.yml'
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  validate:
+    runs-on: self-hosted
+    timeout-minutes: 30
+    steps:
+      - name: Assert StegVerse-controlled credential-free validation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN; do
+            if [ -n "${!name:-}" ]; then
+              echo "forbidden credential environment variable present: ${name}" >&2
+              exit 1
+            fi
+          done
+          echo "credential_authority=TV/TVC"
+          echo "consumer_credential_present=false"
+          echo "source_fetch_by_validator=false"
+
+      - name: Resolve exact pre-materialized StegCore source
+        id: source
+        shell: bash
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          EXPECTED_HEAD="${PR_HEAD:-${GITHUB_SHA}}"
+          candidates=(
+            "${STEGVERSE_STEGCORE_SOURCE_ROOT:-}"
+            "$PWD"
+            "$HOME/.stegverse/repos/StegVerse-Labs/StegCore"
+            "/srv/stegverse/repos/StegVerse-Labs/StegCore"
+            "/opt/stegverse/repos/StegVerse-Labs/StegCore"
+          )
+          ROOT=""
+          for candidate in "${candidates[@]}"; do
+            [ -n "$candidate" ] || continue
+            if [ -d "$candidate/.git" ] && [ -f "$candidate/pyproject.toml" ]; then
+              HEAD="$(git -C "$candidate" rev-parse HEAD 2>/dev/null || true)"
+              if [ "$HEAD" = "$EXPECTED_HEAD" ]; then
+                ROOT="$candidate"
+                break
+              fi
+            fi
+          done
+          if [ -z "$ROOT" ]; then
+            echo "SOVEREIGN_SOURCE_NOT_MATERIALIZED expected_head=$EXPECTED_HEAD" >&2
+            exit 2
+          fi
+          test -z "$(git -C "$ROOT" status --porcelain)"
+          echo "root=$ROOT" >> "$GITHUB_OUTPUT"
+          echo "expected_head=$EXPECTED_HEAD" >> "$GITHUB_OUTPUT"
+          echo "source_root=$ROOT"
+          echo "source_head=$EXPECTED_HEAD"
+
+      - name: Execute sovereign validation and produce receipt
+        shell: bash
+        env:
+          SOURCE_ROOT: ${{ steps.source.outputs.root }}
+          EXPECTED_HEAD: ${{ steps.source.outputs.expected_head }}
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          python3 scripts/run_sovereign_validation.py \
+            --source-root "$SOURCE_ROOT" \
+            --expected-head "$EXPECTED_HEAD" \
+            --receipt-out validation/sovereign-validation.latest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('validation/sovereign-validation.latest.json')
+          data = json.loads(p.read_text())
+          assert data['validation_result'] == 'PASS'
+          assert data['non_tv_tvc_secret_or_token_used'] is False
+          assert data['github_token_required'] is False
+          assert data['source_head'] == data['expected_head']
+          print('SOVEREIGN_PRIVATE_SOURCE_VALIDATION=PASS')
+          print('receipt_sha256=' + data['receipt_sha256'])
+          PY
