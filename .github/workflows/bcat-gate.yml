@@ -10,6 +10,7 @@ permissions: {}
 
 jobs:
   bcat-check:
+    if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-latest
     steps:
       - name: Assert credential-clean validation environment
