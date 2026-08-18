@@ -17,14 +17,16 @@ Create a durable tagged/released governance-runtime state for evaluator provenan
 ## Validated release candidate
 
 ```text
+aggregate_release_set: ODA3-EVALUATOR-PATH-2026-08-18-R1
 role: governance_runtime
 package: stegcore
 package_version: 0.2.0
+target_release_tag: v0.2.0
 candidate_commit: 083557adec1bdbace09ebd10fb0765eb8e9a9d08
 SDK governed-test pin matches candidate: true
-current main at handoff creation: 716667e80b1b99ebbcec84ac6dabc5e3d24e4c33
 current main has advanced beyond validated SDK pin: true
 existing GitHub release: stegcore-v1.0-constitution (older constitutional release; not this evaluator runtime candidate)
+release_notes: RELEASE_NOTES_EVALUATOR_PATH_0.2.0.md
 ```
 
 ## Release requirements
@@ -32,8 +34,8 @@ existing GitHub release: stegcore-v1.0-constitution (older constitutional releas
 The StegVerse worker owning release execution must:
 
 1. validate the exact candidate commit `083557adec1bdbace09ebd10fb0765eb8e9a9d08` used by the SDK governed-test lane;
-2. create a new durable release tag resolving exactly to that candidate; do not reuse the constitutional release tag;
-3. publish release notes/changelog describing the StegGate/manifested-transaction runtime semantics present in that candidate;
+2. create durable tag `v0.2.0` resolving exactly to that candidate; do not reuse the constitutional release tag;
+3. publish the prepared release notes/changelog describing the StegGate/manifested-transaction runtime semantics present in that candidate;
 4. record tag, immutable commit SHA, package version, publication time, release URL, and changelog URL;
 5. propagate the completed release identity to `StegVerse-org/StegVerse-SDK` production release catalog/packet contract;
 6. continue later development on moving branches/main without altering the released tag.
@@ -49,10 +51,17 @@ release tag != moving branch
 future releases are comparable, not substitutable
 ```
 
-## Remaining executable work
+## Readiness evidence
+
+The canonical StegCore handoff identifies portable product version `0.2.0`, runtime identity `stegverse:steggate:canonical:three-layer:v1`, and the canonical three-layer admissibility runtime. The SDK production-validation lane is pinned to this exact commit and retained cross-repository sovereign validation evidence for the manifested transaction route. Release publication must preserve this historical candidate rather than substitute later `main` state.
+
+## Current executable state
 
 ```text
-OWNER: StegVerse release worker / TV-TVC governed release authority
-TASK: validate candidate, tag, publish release/changelog, propagate receipt to SDK
-STATUS: READY_FOR_RELEASE_EXECUTION
+SOURCE_CANDIDATE: FROZEN
+RELEASE_NOTES: PREPARED
+TARGET_TAG: FIXED_TO_v0.2.0
+TAG_PUBLICATION: PENDING_TV_TVC_RELEASE_AUTHORITY
+GITHUB_ACTIONS_RUNTIME_AUTHORITY: NONE
+STATUS: RELEASE_READY_AWAITING_TAG_PUBLICATION
 ```
