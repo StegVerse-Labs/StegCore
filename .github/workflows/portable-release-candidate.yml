@@ -1,17 +1,6 @@
 name: Portable Release Candidate - Build Only / TV-TVC Publication Authority
 
 on:
-  pull_request:
-    paths:
-      - 'sdk/portable_release_manifest.v1.json'
-      - 'sdk/portable_package_catalog.v1.json'
-      - 'tools/build_portable_ecosystem_package.py'
-      - 'tools/prepare_portable_release.py'
-      - 'micro_ecosystem/**'
-      - 'src/stegcore/**'
-      - 'pyproject.toml'
-      - 'tests/test_portable_release_factory.py'
-      - '.github/workflows/portable-release-candidate.yml'
   push:
     branches: [main]
     paths:
@@ -29,6 +18,7 @@ permissions: {}
 
 jobs:
   prepare-release-candidate:
+    if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-latest
     steps:
       - name: Assert no publication credential authority
@@ -37,7 +27,6 @@ jobs:
           set -euo pipefail
           test -z "${GH_TOKEN:-}"
           test -z "${TVC_EPHEMERAL_GITHUB_TOKEN:-}"
-
       - name: Materialize exact public source anonymously
         shell: bash
         env:
@@ -49,48 +38,31 @@ jobs:
           git config --global --unset-all http.https://github.com/.extraheader || true
           git init .
           git remote add origin https://github.com/StegVerse-Labs/StegCore.git
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-            env -u GITHUB_TOKEN -u GH_TOKEN git fetch --depth=1 origin "refs/pull/${PR_NUMBER}/merge"
-          else
-            env -u GITHUB_TOKEN -u GH_TOKEN git fetch --depth=1 origin "$SOURCE_SHA"
-          fi
+          if [ "$EVENT_NAME" = "pull_request" ]; then env -u GITHUB_TOKEN -u GH_TOKEN git fetch --depth=1 origin "refs/pull/${PR_NUMBER}/merge"; else env -u GITHUB_TOKEN -u GH_TOKEN git fetch --depth=1 origin "$SOURCE_SHA"; fi
           git checkout --detach FETCH_HEAD
-
       - name: Install test dependency
-        shell: bash
         run: python -m pip install pytest
-
       - name: Validate release factory
-        shell: bash
-        run: |
-          set -euo pipefail
-          python -m pytest tests/test_portable_ecosystem_package.py tests/test_portable_release_factory.py -q
-
+        run: python -m pytest tests/test_portable_ecosystem_package.py tests/test_portable_release_factory.py -q
       - name: Prepare S and NS release assets
-        shell: bash
         run: |
           set -euo pipefail
           python tools/prepare_portable_release.py --output-dir dist/portable-release
           test -f dist/portable-release/PORTABLE_RELEASE_RECEIPT.json
           test -f dist/portable-release/SHA256SUMS
           test "$(find dist/portable-release -maxdepth 1 -type f \( -name '*.zip' -o -name '*.tar.gz' \) | wc -l)" -eq 4
-
       - name: Resolve immutable candidate artifact identity
         id: candidate
         shell: bash
         run: |
-          set -euo pipefail
           python - <<'PY' >> "$GITHUB_OUTPUT"
           import json
           from pathlib import Path
           receipt = json.loads(Path('dist/portable-release/PORTABLE_RELEASE_RECEIPT.json').read_text())
-          version = receipt['release_version']
-          commit = receipt['source_commit']
-          print(f"name=stegverse-portable-release-candidate-v{version}-{commit}")
-          print(f"version={version}")
-          print(f"commit={commit}")
+          print(f"name=stegverse-portable-release-candidate-v{receipt['release_version']}-{receipt['source_commit']}")
+          print(f"version={receipt['release_version']}")
+          print(f"commit={receipt['source_commit']}")
           PY
-
       - name: Persist exact GitHub-built release candidate for TVC transport
         uses: actions/upload-artifact@v4
         with:
@@ -99,11 +71,9 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
-
       - name: Prove candidate transport remains non-authorizing
         shell: bash
         run: |
-          set -euo pipefail
           python - <<'PY'
           import json
           from pathlib import Path
