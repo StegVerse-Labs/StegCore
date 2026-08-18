@@ -1,19 +1,6 @@
 name: Portable Release Candidate - Build Only / TV-TVC Publication Authority
 
 on:
-  pull_request:
-    branches-ignore:
-      - feat/ae-manifest-capability-context-v1
-    paths:
-      - 'sdk/portable_release_manifest.v1.json'
-      - 'sdk/portable_package_catalog.v1.json'
-      - 'tools/build_portable_ecosystem_package.py'
-      - 'tools/prepare_portable_release.py'
-      - 'micro_ecosystem/**'
-      - 'src/stegcore/**'
-      - 'pyproject.toml'
-      - 'tests/test_portable_release_factory.py'
-      - '.github/workflows/portable-release-candidate.yml'
   push:
     branches: [main]
     paths:
