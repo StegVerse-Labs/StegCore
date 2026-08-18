@@ -5,6 +5,8 @@ on:
     branches:
       - main
   pull_request:
+    branches-ignore:
+      - feat/ae-manifest-capability-context-v1
   workflow_dispatch:
 
 permissions: {}
