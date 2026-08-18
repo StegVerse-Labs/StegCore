@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches-ignore:
-      - feat/ae-manifest-capability-context-v1
   workflow_dispatch:
 
 permissions: {}
@@ -27,7 +24,6 @@ jobs:
               exit 1
             fi
           done
-
       - name: Anonymous public repository fetch
         shell: bash
         env:
@@ -40,16 +36,12 @@ jobs:
           git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "${SOURCE_REF}"
           git checkout --detach FETCH_HEAD
           test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
-
       - name: Verify preinstalled Python
         run: python3 --version
-
       - name: Validate no non-TV/TVC validation credential path
         run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
-
       - name: Compile source and tests
         run: python3 -m compileall src tests
-
       - name: Validate baseline manifest
         run: |
           python3 - <<'PY'
