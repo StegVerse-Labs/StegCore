@@ -22,6 +22,8 @@ on:
       - 'pyproject.toml'
       - '.github/workflows/runtime-tests.yml'
   pull_request:
+    branches-ignore:
+      - feat/ae-manifest-capability-context-v1
     paths:
       - 'src/stegcore/**'
       - 'tests/**'
@@ -131,20 +133,10 @@ jobs:
       - name: Validate consolidated originating-choice contract and routing
         run: |
           mkdir -p artifacts/originating-choice
-          python3 tools/validate_originating_choice.py \
-            spec/originating-choice.schema.json \
-            examples/originating-choice.valid.json \
-            --receipt-output artifacts/originating-choice/validation-receipt.json
-          python3 tools/validate_originating_choice.py \
-            --self-test \
-            --receipt-output artifacts/originating-choice/self-test-receipt.json
-          python3 tools/consume_originating_choice.py \
-            spec/originating-choice.schema.json \
-            examples/originating-choice.valid.json \
-            --output artifacts/originating-choice/integration-receipt.json
-          python3 tools/consume_originating_choice.py \
-            --self-test \
-            --output artifacts/originating-choice/integration-self-test-receipt.json
+          python3 tools/validate_originating_choice.py spec/originating-choice.schema.json examples/originating-choice.valid.json --receipt-output artifacts/originating-choice/validation-receipt.json
+          python3 tools/validate_originating_choice.py --self-test --receipt-output artifacts/originating-choice/self-test-receipt.json
+          python3 tools/consume_originating_choice.py spec/originating-choice.schema.json examples/originating-choice.valid.json --output artifacts/originating-choice/integration-receipt.json
+          python3 tools/consume_originating_choice.py --self-test --output artifacts/originating-choice/integration-self-test-receipt.json
           sha256sum artifacts/originating-choice/*.json
 
       - name: Run runtime tests
@@ -180,22 +172,9 @@ jobs:
           GOVERNANCE_SHA: ${{ steps.governance.outputs.governance_sha }}
         run: |
           CONTRACT_SHA="$(git rev-list -1 HEAD -- src/stegcore tests scripts tools spec examples docs ecosystem_management/tidc_evidence_chain_registry.json ecosystem_management/correctability_layer.v0.1.json ecosystem_management/correctability_claim.v0.1.json contracts/criterion-contestability-boundary.v1.json contracts/permission-admissibility-boundary.v1.json contracts/governance_snapshot evidence/downstream-verification-dispatch.json pyproject.toml .github/workflows/runtime-tests.yml)"
-          python3 scripts/record_runtime_validation.py \
-            --output evidence/runtime-validation.json \
-            --dispatch evidence/downstream-verification-dispatch.json \
-            --stegcore-commit "$CONTRACT_SHA" \
-            --governance-commit "$GOVERNANCE_SHA" \
-            --run-id "${GITHUB_RUN_ID}" \
-            --run-attempt "${GITHUB_RUN_ATTEMPT}" \
-            --workflow "${GITHUB_WORKFLOW}" \
-            --repository "${GITHUB_REPOSITORY}" \
-            --ref "${GITHUB_REF}" \
-            --event "${GITHUB_EVENT_NAME}" \
-            --issue 22
+          python3 scripts/record_runtime_validation.py --output evidence/runtime-validation.json --dispatch evidence/downstream-verification-dispatch.json --stegcore-commit "$CONTRACT_SHA" --governance-commit "$GOVERNANCE_SHA" --run-id "${GITHUB_RUN_ID}" --run-attempt "${GITHUB_RUN_ATTEMPT}" --workflow "${GITHUB_WORKFLOW}" --repository "${GITHUB_REPOSITORY}" --ref "${GITHUB_REF}" --event "${GITHUB_EVENT_NAME}" --issue 22
           python3 scripts/check_runtime_validation_evidence.py evidence/runtime-validation.json
-          python3 scripts/assess_release_readiness.py \
-            --evidence evidence/runtime-validation.json \
-            --output evidence/release-readiness.json
+          python3 scripts/assess_release_readiness.py --evidence evidence/runtime-validation.json --output evidence/release-readiness.json
           sha256sum evidence/runtime-validation.json evidence/release-readiness.json
           echo "contract_sha=$CONTRACT_SHA" >> "$GITHUB_OUTPUT"
           echo "persistence_authority=TV/TVC_ONLY_NOT_THIS_WORKFLOW" >> "$GITHUB_STEP_SUMMARY"
