@@ -78,11 +78,7 @@ tasks/STEGCORE-SOVEREIGN-PRIVATE-SOURCE-VALIDATION-003.json
 
 The canonical bridge emits a bounded non-secret `MATERIALIZE_SOURCE_ARCHIVE` warrant to TVC, waits for a sanitized TVC receipt, verifies exact source identity, then runs the sovereign validator against the materialized source. `GITHUB_TOKEN`, `GH_TOKEN`, `GITHUB_PAT`, and `TVC_EPHEMERAL_GITHUB_TOKEN` remain forbidden in the StegCore validation process.
 
-Current exact PR #141 head at this reconciliation:
-
-```text
-c8cfe486632415c91e3fe2a39f7aac3d82af33e9
-```
+PR #141 is still changing while the private-source repair is reconciled, so its source identity must be resolved from the live PR immediately before materialization and bound to the sovereign validation receipt. No previously observed PR #141 SHA is an execution authorization after the branch advances.
 
 The required sovereign receipt remains unobserved. PR #141 must not merge solely because obsolete hosted checks are absent/skipped or because source files are complete.
 
@@ -93,7 +89,7 @@ The current private-source path depends on the existing TVC repository-operation
 ```text
 StegVerse-Labs/TVC PR #20
 TVC-GITHUB-REPOSITORY-OPERATION-BROKER-001
-expected PR #20 head: 6209396bc9846ec5f301b24d3b6f0207e571af1d
+expected PR #20 head: dfbf736d9e205e1fc179dc8636af74e638c2aec5
 
 StegVerse-Labs/.github
 handoffs/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json
@@ -102,21 +98,23 @@ receipt target:
 receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json
 ```
 
+The PR #20 pin was deliberately advanced after its supplementary hosted workflow was repaired to stop automatic anonymous private-source fanout. The canonical local TV/TVC verifier and authority boundary were not weakened by that change.
+
 The worker is bound for validation-only execution and grants no credential or merge authority. The required carrier receipt has not yet been observed. Durable handoff, `HANDOFF_READY`, machine ownership, or source completion do not satisfy the release condition.
 
 The machine-observable upstream release condition is:
 
 ```text
-1. exact clean TVC PR #20 source is locally materialized on a StegVerse-controlled carrier;
+1. exact clean TVC PR #20 source at dfbf736d9e205e1fc179dc8636af74e638c2aec5 is locally materialized on a StegVerse-controlled carrier;
 2. python tools/task_dispatcher.py tvc.github_repository_operation_broker.verify executes;
 3. dispatcher status=ok and nested result.result=PASS;
 4. consumer_credential_used=false;
 5. tvc_github_credential_used=false;
 6. non_tv_tvc_secret_or_token_used=false;
 7. protected_value_disclosure=false;
-8. the carrier receipt records COMPLETED for exact PR #20 head;
+8. the carrier receipt records COMPLETED for that exact PR #20 head;
 9. TVC PR #20 is canonically admitted;
-10. StegCore exact PR #141 source is materialized and sovereign validation executes against its then-current exact head.
+10. StegCore exact PR #141 source is re-resolved/materialized and sovereign validation executes against that then-current exact head.
 ```
 
 ## Separate generalized private-source-read capability
@@ -143,6 +141,7 @@ original PR #102: MERGED
 legacy anonymous private-source failure fanout repair on main: APPLIED @ 3b10620843a650224e18a7aac1e402b684becbf2
 NON-TV/TVC credential substitution: NONE AUTHORIZED
 private-source sovereign implementation in PR #141: SOURCE COMPLETE
+TVC PR #20 broker validation carrier exact pin: dfbf736d9e205e1fc179dc8636af74e638c2aec5
 TVC PR #20 broker validation carrier receipt: NOT OBSERVED
 TVC PR #20 canonical admission: NOT COMPLETE
 StegCore PR #141 exact-head sovereign validation receipt: NOT OBSERVED
