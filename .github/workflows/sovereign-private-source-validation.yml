@@ -1,16 +1,16 @@
 name: Sovereign Private-Source Validation - No Non-TV/TVC Credential Authority
 
 on:
-  pull_request:
-    paths:
-      - 'src/stegcore/**'
-      - 'tests/**'
-      - 'scripts/**'
-      - 'tasks/**'
-      - 'docs/**'
-      - 'pyproject.toml'
-      - '.github/workflows/sovereign-private-source-validation.yml'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      expected_head:
+        description: Exact StegCore commit SHA to validate
+        required: true
+        type: string
+      source_ref:
+        description: Exact branch/ref corresponding to expected_head
+        required: true
+        type: string
 
 permissions: {}
 
@@ -37,12 +37,14 @@ jobs:
         id: source
         shell: bash
         env:
-          PR_HEAD: ${{ github.event.pull_request.head.sha }}
-          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_HEAD: ${{ inputs.expected_head }}
+          PR_HEAD_REF: ${{ inputs.source_ref }}
         run: |
           set -euo pipefail
-          EXPECTED_HEAD="${PR_HEAD:-${GITHUB_SHA}}"
-          SOURCE_REF="${PR_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          EXPECTED_HEAD="$PR_HEAD"
+          SOURCE_REF="$PR_HEAD_REF"
+          test -n "$EXPECTED_HEAD"
+          test -n "$SOURCE_REF"
           DEST="/var/lib/stegverse/source/StegVerse-Labs/StegCore/${EXPECTED_HEAD}"
           SPOOL="${STEGVERSE_FORMALISM_TVC_SPOOL_ROOT:-$HOME/.stegverse/transport/formalism-tvc-repository}"
           ROOT=""
@@ -102,9 +104,7 @@ jobs:
           PY
 
             for _ in $(seq 1 180); do
-              if [ -f "$RECEIPT" ]; then
-                break
-              fi
+              if [ -f "$RECEIPT" ]; then break; fi
               sleep 2
             done
             if [ ! -f "$RECEIPT" ]; then
@@ -146,14 +146,8 @@ jobs:
           MATERIALIZATION_RECEIPT: ${{ steps.source.outputs.materialization_receipt }}
         run: |
           set -euo pipefail
-          args=(
-            --source-root "$SOURCE_ROOT"
-            --expected-head "$EXPECTED_HEAD"
-            --receipt-out validation/sovereign-validation.latest.json
-          )
-          if [ -n "${MATERIALIZATION_RECEIPT:-}" ]; then
-            args+=(--materialization-receipt "$MATERIALIZATION_RECEIPT")
-          fi
+          args=(--source-root "$SOURCE_ROOT" --expected-head "$EXPECTED_HEAD" --receipt-out validation/sovereign-validation.latest.json)
+          if [ -n "${MATERIALIZATION_RECEIPT:-}" ]; then args+=(--materialization-receipt "$MATERIALIZATION_RECEIPT"); fi
           cd "$SOURCE_ROOT"
           python3 scripts/run_sovereign_validation.py "${args[@]}"
           python3 - <<'PY'
