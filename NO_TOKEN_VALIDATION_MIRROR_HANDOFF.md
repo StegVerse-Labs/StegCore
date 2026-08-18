@@ -1,107 +1,131 @@
 # StegCore No-Non-TV/TVC Validation Credential Mirror Handoff
 
-## Canonical authority
+## Source of truth
 
 ```text
 organization: StegVerse-Labs
 repository: StegCore
+branch: main
 goal_id: STEGCORE-NO-NON-TVTVC-VALIDATION-CREDENTIALS-001
-original_issue: #93 CLOSED_COMPLETE_FOR_PUBLIC_REPOSITORY_MODE
-current_private_source_task: tasks/STEGCORE-SOVEREIGN-PRIVATE-SOURCE-VALIDATION-003.json
-current_ae_validation_task: tasks/STEGCORE-AE-MANIFEST-CAPABILITY-CONTEXT-VALIDATION-002V.json
-current_ae_pull_request: #141
+historical_issue: #93 (CLOSED COMPLETED)
+historical_pull_request: #102 (MERGED)
+private_source_followup_pull_request: #141
+private_source_followup_task: tasks/STEGCORE-SOVEREIGN-PRIVATE-SOURCE-VALIDATION-003.json
+parent_handoff: STEGCORE_MIRROR_HANDOFF.md
 credential_authority: TV/TVC
 non_TV_TVC_secret_or_token_allowed: false
-render_required: false
+archive_ready: false
 ```
 
-This handoff owns credential-clean validation transport only. It does not grant StegGate, release, merge, provider, wallet, signing, broadcast, or runtime authority.
+This scoped handoff owns credential-clean validation transport semantics only. It does not own canonical StegGate policy, issue #70 four-app runtime binding, runtime activation, release/tag authority, wallet authority, or TV/TVC credential custody.
 
-## Historical public-source mode
+## Historical completion before privatization
 
-Issue #93 / PR #102 correctly removed GitHub checkout-token use while StegCore was public. Five hosted validation workflows used `permissions: {}`, no `uses:` actions, explicit credential absence checks, and anonymous public `git fetch`. Historical runs 31819521795, 31819521778, 31819521809, 31819521770, and 31819521765 passed that mode.
-
-That evidence remains valid for the repository state observed at the time. It is not evidence that anonymous fetch remains possible now.
-
-## Visibility transition / supersession
-
-Current repository inspection reports:
+Issue #93 and PR #102 completed the original public-repository validation objective. Five core validation gates were converted away from `actions/checkout`, GitHub-generated checkout credentials, `GH_TOKEN`, PATs, and other NON-TV/TVC credential paths. Historical branch head `591ee20af4699d1d8c4c761bdb7fc801d1c5c176` produced five credential-clean hosted validation passes while StegCore was public:
 
 ```text
-StegVerse-Labs/StegCore visibility: private
+StegCore Tests: 31819521795 SUCCESS
+Runtime Validation: 31819521778 SUCCESS
+BCAT Gate: 31819521809 SUCCESS
+Test Readiness: 31819521770 SUCCESS
+001/002 Baseline: 31819521765 SUCCESS
 ```
 
-Therefore the sentence "StegCore is public, so validation source is fetched anonymously" is superseded. Anonymous GitHub-hosted fetch is no longer a valid source-materialization mechanism for current private StegCore validation.
+Those passes remain valid historical evidence for the public-source configuration. They are not evidence that anonymous fetch works after repository privatization.
 
-Observed PR #141 hosted runs correctly passed the no-credential environment check, then failed before code-test execution at `Anonymous public repository fetch`. No implementation PASS or code-test failure may be inferred from those runs.
+## Visibility transition
 
-## Canonical private-source validation path
+StegCore is now private. The prior anonymous-source premise is therefore no longer valid.
 
-Private-source validation now uses a StegVerse-controlled local source boundary:
+The first private-repository failure mode was transport-only: credential absence assertions passed, then anonymous `git fetch` could not materialize the private source. Such runs are neither product-code PASS nor product-code failure.
+
+No response to privatization may silently restore `GITHUB_TOKEN`, `GH_TOKEN`, a PAT, provider credential, or any other NON-TV/TVC secret/token to StegCore validation.
+
+## Applied noise/fanout repair on main
+
+Commit:
 
 ```text
-TV/TVC-owned repository source materialization
--> exact private StegCore commit materialized locally
--> credential value remains inside TV/TVC transport
--> validation process receives no repository credential
--> scripts/run_sovereign_validation.py verifies exact HEAD + clean worktree
--> focused AE tests
--> transaction/receipt regressions
--> full pytest
--> product-consistency verifier
--> validation/sovereign-validation.latest.json
+3b10620843a650224e18a7aac1e402b684becbf2
+ci: stop legacy anonymous validation fanout on private StegCore
 ```
 
-Installed on PR #141:
+applied the bounded private-repository transition to six legacy public-anonymous workflows:
 
 ```text
+.github/workflows/bcat-gate.yml
+.github/workflows/portable-release-candidate.yml
+.github/workflows/runtime-tests.yml
+.github/workflows/stegcore-tests.yml
+.github/workflows/stegverse-001-002-validator.yml
+.github/workflows/test-readiness.yml
+```
+
+The automatic `pull_request` fanout that could not validate private source was removed from those public-anonymous paths, and their remaining public-mode jobs are guarded with `github.event.repository.private == false`.
+
+This repair intentionally produces no replacement PASS and introduces no credential path. It stops known-invalid anonymous-private-source runs while preserving the credential boundary.
+
+## Canonical private-source validation continuation
+
+PR #141 installs the StegVerse-native private-source validation path without exposing repository credentials to StegCore:
+
+```text
+scripts/run_private_source_validation_via_tvc.py
 scripts/run_sovereign_validation.py
-.github/workflows/sovereign-private-source-validation.yml
 tasks/STEGCORE-SOVEREIGN-PRIVATE-SOURCE-VALIDATION-003.json
+.github/workflows/sovereign-private-source-validation.yml  # optional bridge only
 ```
 
-The sovereign runner refuses `GITHUB_TOKEN`, `GH_TOKEN`, `GITHUB_PAT`, and `TVC_EPHEMERAL_GITHUB_TOKEN` in the validation process. It performs no network source fetch and accepts only an already materialized exact source HEAD with a clean worktree.
+The canonical bridge emits a bounded non-secret `MATERIALIZE_SOURCE_ARCHIVE` warrant to TVC, waits for a sanitized TVC receipt, verifies exact source identity, then runs the sovereign validator against the materialized source. `GITHUB_TOKEN`, `GH_TOKEN`, `GITHUB_PAT`, and `TVC_EPHEMERAL_GITHUB_TOKEN` remain forbidden in the StegCore validation process.
 
-## TVC source-materialization owner
+Current exact PR #141 head at this reconciliation:
 
-Do not create a StegCore credential path. The existing canonical implementation is:
+```text
+c8cfe486632415c91e3fe2a39f7aac3d82af33e9
+```
+
+The required sovereign receipt remains unobserved. PR #141 must not merge solely because obsolete hosted checks are absent/skipped or because source files are complete.
+
+## Upstream machine-owned dependency
+
+The current private-source path depends on the existing TVC repository-operation broker and its StegVerse-controlled validation carrier:
 
 ```text
 StegVerse-Labs/TVC PR #20
 TVC-GITHUB-REPOSITORY-OPERATION-BROKER-001
-operation: MATERIALIZE_SOURCE_ARCHIVE
-policy materialization root: /var/lib/stegverse/source
-allowed repository: StegVerse-Labs/StegCore
-credential authority: TV/TVC
-consumer credential allowed: false
+expected PR #20 head: 6209396bc9846ec5f301b24d3b6f0207e571af1d
+
+StegVerse-Labs/.github
+handoffs/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json
+workers/tvc_repository_broker_validation_worker.py
+receipt target:
+receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json
 ```
 
-TVC PR #20 explicitly implements safe source-archive materialization using the TVC-managed ephemeral GitHub credential without exposing the credential to the consumer/validator. Until that broker is admitted/released on its canonical TVC lane, current private-source validation is `BLOCKED_ON_CANONICAL_TVC_SOURCE_MATERIALIZATION_RELEASE`, not blocked on a missing StegCore test implementation.
+The worker is bound for validation-only execution and grants no credential or merge authority. The required carrier receipt has not yet been observed. Durable handoff, `HANDOFF_READY`, machine ownership, or source completion do not satisfy the release condition.
 
-## Authority and collision boundaries
+The machine-observable upstream release condition is:
 
 ```text
-no Render
-no GitHub-generated checkout token in StegCore validation
-no GH_TOKEN / PAT / provider / wallet credential in validation
-no direct private-repository fetch credential in StegCore
-no weakening tests to obtain a green workflow
-no duplicate repository-operation broker outside TVC
-GitHub-hosted validation: optional validation infrastructure only, never runtime/control-plane authority
+1. exact clean TVC PR #20 source is locally materialized on a StegVerse-controlled carrier;
+2. python tools/task_dispatcher.py tvc.github_repository_operation_broker.verify executes;
+3. dispatcher status=ok and nested result.result=PASS;
+4. consumer_credential_used=false;
+5. tvc_github_credential_used=false;
+6. non_tv_tvc_secret_or_token_used=false;
+7. protected_value_disclosure=false;
+8. the carrier receipt records COMPLETED for exact PR #20 head;
+9. TVC PR #20 is canonically admitted;
+10. StegCore exact PR #141 source is materialized and sovereign validation executes against its then-current exact head.
 ```
 
-## Current validation command
+## Separate generalized private-source-read capability
 
-On a StegVerse-controlled node with exact source already materialized:
+TVC main also carries `TVC-PRIVATE-SOURCE-READ-001` / `tvc.private-source-read.v1` for generalized exact private repository reads. That capability is currently `BLOCKED_DEPENDENCY_MACHINE_OWNED` and is not a completed substitute for the PR #20 broker path. No generic GitHub credential substitution is authorized.
 
-```text
-python3 scripts/run_sovereign_validation.py \
-  --source-root <EXACT_LOCAL_STEGCORE_ROOT> \
-  --expected-head <EXACT_PR_HEAD> \
-  --receipt-out validation/sovereign-validation.latest.json
-```
+## Validation commands after materialization
 
-The runner itself executes:
+PR #141 requires the sovereign validation receipt to cover:
 
 ```text
 python3 -m pytest -q tests/test_manifest_capability_context.py
@@ -110,42 +134,28 @@ python3 -m pytest -q
 python3 scripts/verify_product_consistency.py
 ```
 
-## Workflow fanout retirement
-
-The private-repository transition exposed a second defect: six historical public-anonymous workflows and the optional self-hosted bridge were still automatically instantiated for PR #141 even though they could not produce authoritative private-source validation. This created repeated queued/skipped workflow groups on every synchronize event.
-
-PR #141 now enforces:
+## Current completion inventory
 
 ```text
-sovereign-private-source-validation.yml: workflow_dispatch only, exact expected_head + source_ref required
-bcat-gate.yml: no pull_request trigger
-stegcore-tests.yml: no pull_request trigger
-runtime-tests.yml: no pull_request trigger
-stegverse-001-002-validator.yml: no pull_request trigger
-test-readiness.yml: no pull_request trigger
-portable-release-candidate.yml: no pull_request trigger
+original #93/#102 credential-clean public validation implementation: COMPLETE
+original issue #93: CLOSED COMPLETED
+original PR #102: MERGED
+legacy anonymous private-source failure fanout repair on main: APPLIED @ 3b10620843a650224e18a7aac1e402b684becbf2
+NON-TV/TVC credential substitution: NONE AUTHORIZED
+private-source sovereign implementation in PR #141: SOURCE COMPLETE
+TVC PR #20 broker validation carrier receipt: NOT OBSERVED
+TVC PR #20 canonical admission: NOT COMPLETE
+StegCore PR #141 exact-head sovereign validation receipt: NOT OBSERVED
+StegCore PR #141 merge: NOT COMPLETE
+write-side evidence continuation #101: REMAINS DEPENDENT ON TV/TVC TRANSPORT
 ```
 
-The historical public-anonymous workflows remain available for `main`/manual public-mode validation, but they no longer instantiate useless PR checks while StegCore is private. The canonical private-source path remains TVC materialization plus the repository-local sovereign validator.
+## Archive condition
 
-Verification evidence:
+Do not archive this workstream while the required private-source validation chain remains machine-owned, blocked, unvalidated, unreleased, or not activated. Historical public-source success and the applied fanout repair do not satisfy private-source activation.
+
+Current status:
 
 ```text
-PR head 93994e8f9d3d434c188d455a8cea4713eec79f67 -> zero pull_request workflow runs
-post-task-update head bd05e8bab7552fe3986c4beb0b7ffb919cb51d77 -> zero pull_request workflow runs
+DO NOT ARCHIVE THIS SESSION — REQUIRED EXECUTION REMAINS IN AN ACTIVE DEPENDENCY LANE.
 ```
-
-This is a workflow-creation reduction, not merely a job-level `if:` skip. No NON-TV/TVC credential path or third-party production dependency was added.
-
-## Durable continuation
-
-```text
-StegVerse-Labs/StegCore#141
--> tasks/STEGCORE-SOVEREIGN-PRIVATE-SOURCE-VALIDATION-003.json
--> StegVerse-Labs/TVC#20 source materialization authority
--> exact local validation receipt
--> PR #141 merge only after PASS
--> issue #85 / SDK #16 / LLM-adapter #139 continuation
-```
-
-The old public-anonymous validation mode is historical fallback only if repository visibility is deliberately public again. It is not the current canonical path.
