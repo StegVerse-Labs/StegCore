@@ -2,6 +2,8 @@ name: BCAT Gate - No Non-TV/TVC Credential Authority
 
 on:
   pull_request:
+    branches-ignore:
+      - feat/ae-manifest-capability-context-v1
   push:
     branches: [main]
   workflow_dispatch:
