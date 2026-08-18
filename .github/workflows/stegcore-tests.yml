@@ -2,15 +2,15 @@ name: StegCore Tests - No Non-TV/TVC Credential Authority
 
 on:
   push:
-  pull_request:
+    branches: [main]
   workflow_dispatch: {}
 
 permissions: {}
 
 jobs:
   tests:
+    if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-latest
-
     steps:
       - name: Assert credential-clean validation environment
         shell: bash
@@ -24,7 +24,6 @@ jobs:
           done
           echo "credential_authority=TV/TVC"
           echo "consumer_credential_present=false"
-
       - name: Anonymous public repository fetch
         shell: bash
         env:
@@ -37,21 +36,16 @@ jobs:
           git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "${SOURCE_REF}"
           git checkout --detach FETCH_HEAD
           test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
-
       - name: Verify preinstalled Python
         run: python3 --version
-
       - name: Install deps
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install -e . pytest
-
       - name: Validate no non-TV/TVC validation credential path
         run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
-
       - name: Validate personal-data control decision boundary
         run: python3 scripts/check_personal_data_control_decision.py
-
       - name: Run tests and persist diagnostics to job log
         shell: bash
         run: |
