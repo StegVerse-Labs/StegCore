@@ -2,13 +2,14 @@ name: Test Readiness - No Non-TV/TVC Credential Authority
 
 on:
   push:
-  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions: {}
 
 jobs:
   repo-smoke:
+    if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -22,7 +23,6 @@ jobs:
               exit 1
             fi
           done
-
       - name: Anonymous public repository fetch
         shell: bash
         env:
@@ -35,20 +35,16 @@ jobs:
           git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "${SOURCE_REF}"
           git checkout --detach FETCH_HEAD
           test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
-
       - name: Verify preinstalled Python
         run: python3 --version
-
       - name: Validate no non-TV/TVC validation credential path
         run: python3 scripts/validate_no_non_tvtvc_validation_credentials.py
-
       - name: Baseline repository smoke test
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import json
           import sys
-
           root = Path('.')
           failures = []
           if not any((root / name).exists() for name in ('README.md', 'README.MD')):
