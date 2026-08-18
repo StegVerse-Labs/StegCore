@@ -15,6 +15,15 @@
   "canonical_validator": "scripts/run_sovereign_validation.py",
   "github_self_hosted_workflow_required": false,
   "optional_github_self_hosted_bridge": ".github/workflows/sovereign-private-source-validation.yml",
+  "workflow_fanout_policy": {
+    "automatic_pull_request_validation_for_private_source": false,
+    "sovereign_private_source_workflow_trigger": "workflow_dispatch_only_with_exact_head_and_source_ref",
+    "legacy_public_anonymous_workflows_pull_request_trigger": false,
+    "legacy_public_anonymous_workflows_retained_for_main_or_manual_public_mode_only": true,
+    "authoritative_private_source_validation_path": "TVC materialization -> scripts/run_private_source_validation_via_tvc.py -> scripts/run_sovereign_validation.py",
+    "reason": "Private StegCore cannot be anonymously fetched; automatic PR workflows were creating queued/skipped runs without authoritative validation value.",
+    "verification": "PR head 93994e8f9d3d434c188d455a8cea4713eec79f67 produced zero pull-request workflow runs after automatic triggers were removed."
+  },
   "upstream_validation_carrier": {
     "owner_repository": "StegVerse-Labs/.github",
     "task_id": "SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001",
