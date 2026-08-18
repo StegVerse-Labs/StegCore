@@ -3,6 +3,8 @@ name: StegCore Tests - No Non-TV/TVC Credential Authority
 on:
   push:
   pull_request:
+    branches-ignore:
+      - feat/ae-manifest-capability-context-v1
   workflow_dispatch: {}
 
 permissions: {}
