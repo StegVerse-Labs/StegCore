@@ -33,13 +33,15 @@
     "adapter_fragment": "control/process-worker-adapters.d/tvc-repository-broker-validation-001.json",
     "receipt": "receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json",
     "state": "MACHINE_OWNED_HANDOFF_READY",
-    "expected_tvc_pr20_head": "dfbf736d9e205e1fc179dc8636af74e638c2aec5",
-    "expected_head_change_reason": "TVC PR #20 private-repository fanout repair removed automatic anonymous pull_request validation without changing the canonical local TV/TVC verifier."
+    "canonical_tvc_pr": 79,
+    "superseded_tvc_pr": 20,
+    "expected_tvc_pr79_head": "50d84499e255f8c54814c79f6c9060853c62dae4",
+    "expected_head_change_reason": "Legacy TVC PR #20 was structurally superseded; PR #79 re-materializes the bounded broker delta on current private main and is the exact governed validation target."
   },
   "source_policy": {
     "network_fetch_by_validator": false,
     "source_must_be_materialized_by_tvc_or_preexist_as_exact_clean_git_head": true,
-    "source_materialization_owner": "StegVerse-Labs/TVC PR #20 / TVC-GITHUB-REPOSITORY-OPERATION-BROKER-001",
+    "source_materialization_owner": "StegVerse-Labs/TVC PR #79 / TVC-GITHUB-REPOSITORY-OPERATION-BROKER-001",
     "source_operation": "MATERIALIZE_SOURCE_ARCHIVE",
     "materialization_root": "/var/lib/stegverse/source",
     "expected_identity": "current PR #141 head at execution start",
@@ -60,8 +62,8 @@
     "python3 -m pytest -q",
     "python3 scripts/verify_product_consistency.py"
   ],
-  "machine_trigger": "The .github validation-carrier receipt reaches COMPLETED for exact TVC PR #20 head dfbf736d9e205e1fc179dc8636af74e638c2aec5, TVC integration authority admits PR #20, and a StegVerse-controlled execution lane can access the shared TVC spool. No GitHub Actions runner is required for the canonical path.",
-  "machine_observable_upstream_release_condition": "StegVerse-Labs/.github/receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json state=COMPLETED with exact TVC PR #20 head dfbf736d9e205e1fc179dc8636af74e638c2aec5 and sanitized PASS dispatcher evidence, followed by canonical admission of TVC PR #20.",
+  "machine_trigger": "The .github validation-carrier receipt reaches COMPLETED for exact TVC PR #79 head 50d84499e255f8c54814c79f6c9060853c62dae4, TVC integration authority admits PR #79, and a StegVerse-controlled execution lane can access the shared TVC spool. No GitHub Actions runner is required for the canonical path.",
+  "machine_observable_upstream_release_condition": "StegVerse-Labs/.github/receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json state=COMPLETED with exact TVC PR #79 head 50d84499e255f8c54814c79f6c9060853c62dae4 and sanitized PASS dispatcher evidence, followed by canonical admission of TVC PR #79.",
   "release_condition": "The sovereign validation receipt records the exact current PR #141 head and PASS for all required commands with non_tv_tvc_secret_or_token_used=false and github_token_required=false.",
   "failure_condition": "TVC broker validation/admission incomplete, spool unavailable, source materialization receipt timeout/failure, source identity mismatch, forbidden credential environment, incomplete materialized source, or any validation command failure.",
   "outputs": [
