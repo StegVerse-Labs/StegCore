@@ -110,6 +110,33 @@ python3 -m pytest -q
 python3 scripts/verify_product_consistency.py
 ```
 
+## Workflow fanout retirement
+
+The private-repository transition exposed a second defect: six historical public-anonymous workflows and the optional self-hosted bridge were still automatically instantiated for PR #141 even though they could not produce authoritative private-source validation. This created repeated queued/skipped workflow groups on every synchronize event.
+
+PR #141 now enforces:
+
+```text
+sovereign-private-source-validation.yml: workflow_dispatch only, exact expected_head + source_ref required
+bcat-gate.yml: no pull_request trigger
+stegcore-tests.yml: no pull_request trigger
+runtime-tests.yml: no pull_request trigger
+stegverse-001-002-validator.yml: no pull_request trigger
+test-readiness.yml: no pull_request trigger
+portable-release-candidate.yml: no pull_request trigger
+```
+
+The historical public-anonymous workflows remain available for `main`/manual public-mode validation, but they no longer instantiate useless PR checks while StegCore is private. The canonical private-source path remains TVC materialization plus the repository-local sovereign validator.
+
+Verification evidence:
+
+```text
+PR head 93994e8f9d3d434c188d455a8cea4713eec79f67 -> zero pull_request workflow runs
+post-task-update head bd05e8bab7552fe3986c4beb0b7ffb919cb51d77 -> zero pull_request workflow runs
+```
+
+This is a workflow-creation reduction, not merely a job-level `if:` skip. No NON-TV/TVC credential path or third-party production dependency was added.
+
 ## Durable continuation
 
 ```text
