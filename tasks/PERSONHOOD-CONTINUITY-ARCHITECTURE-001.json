@@ -1,0 +1,62 @@
+{
+  "schema_version": "STEGVERSE-TASK-v1",
+  "task_id": "PERSONHOOD-CONTINUITY-ARCHITECTURE-001",
+  "title": "Reconcile and define Personhood Continuity architecture",
+  "originating_goal": "Make governed intergenerational personhood continuity a durable StegVerse development capability rather than a conversation-dependent idea.",
+  "repository": "StegVerse-Labs/StegCore",
+  "branch": "main",
+  "canonical_handoff": "docs/PERSONHOOD_CONTINUITY_MIRROR_HANDOFF.md",
+  "role": "ARCHITECTURE_RECONCILIATION_AND_MINIMUM_CANONICAL_CONTRACT",
+  "state": "READY_FOR_NON_DUPLICATIVE_RECONCILIATION",
+  "dependencies": [
+    "Read StegCore permission/admissibility handoff before reuse or mutation.",
+    "Read current Continuity/StegID continuity handoff before assigning evidence authority.",
+    "Read current Governance handoff before defining disclosure authority.",
+    "Read current StegTalk/Auri handoff before defining conversational access.",
+    "Detect existing schemas or tasks that already satisfy any Personhood Continuity requirement."
+  ],
+  "required_outputs": [
+    "architecture ownership map across StegCore, Continuity/StegID, Governance, and StegTalk/Auri",
+    "smallest canonical personhood-record schema that does not duplicate existing continuity primitives",
+    "query-time personhood disclosure admissibility contract",
+    "evidence-class and temporal-state representation",
+    "contemporaneous reconstruction vs retrospective analysis contract",
+    "third-party privacy and selective-disclosure boundary",
+    "persona-simulation separation boundary",
+    "minimum-resolution conversational answer contract",
+    "test requirements for unsupported inference, contradictory evidence, temporal drift, unauthorized disclosure, and historical mutation",
+    "explicit downstream task/handoff destinations for implementation"
+  ],
+  "core_invariants": [
+    "Preservation does not imply disclosure.",
+    "Analysis does not imply disclosure.",
+    "Existence does not imply availability.",
+    "The represented person controls availability subject to valid governance constraints.",
+    "AI inference must remain distinguishable from direct testimony, observed behavior, third-party testimony, contemporaneous context, outcome evidence, and later reflection.",
+    "Future analytical methods may increase interpretive resolution without mutating historical evidence.",
+    "Technical provenance remains hidden from ordinary interaction unless requested or necessary.",
+    "Persona simulation is separate from the historical personhood record and requires separate explicit authority."
+  ],
+  "collision_boundaries": [
+    "Do not create a parallel identity or continuity authority in StegCore.",
+    "Do not create a parallel governance authority if disclosure policy already belongs elsewhere.",
+    "Do not treat stored information as automatically discloseable.",
+    "Do not expose third-party private evidence merely because the represented person preserved it.",
+    "Do not rewrite derived inference into historical fact.",
+    "Do not use model output as disclosure or execution authority.",
+    "Do not use Render.",
+    "Do not use GITHUB_TOKEN, GH_TOKEN, STEGVERSE_GITHUB_TOKEN, or any non-TV/TVC credential fallback."
+  ],
+  "credential_authority": "TV/TVC",
+  "non_tv_tvc_secret_or_token_allowed": false,
+  "github_token_runtime_authority": "NONE",
+  "authority_effect": false,
+  "activation_effect": false,
+  "publication_targets_after_release_gate": [
+    "StegVerse-Labs/Site",
+    "GCAT-BCAT-Engine/Publisher",
+    "admissibility-wiki",
+    "stegguardian-wiki"
+  ],
+  "next_task_after_complete": "Install repository-specific implementation tasks only after ownership reconciliation proves the correct destination for each required primitive."
+}
