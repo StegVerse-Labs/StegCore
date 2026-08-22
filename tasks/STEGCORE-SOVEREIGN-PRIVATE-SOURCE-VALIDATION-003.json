@@ -25,10 +25,13 @@
     "receipt": "receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json",
     "state": "MACHINE_OWNED_HANDOFF_READY",
     "canonical_tvc_pr": 92,
-    "superseded_tvc_prs": [20,79],
-    "expected_tvc_pr92_head": "a817cc8aa58ece1ae104ebfc59f4074ccbc60031",
+    "superseded_tvc_prs": [20, 79],
+    "expected_tvc_pr92_head": "06569c885f33e5761d43911ba1088fdf958855b4",
+    "expected_source_bundle_file_count": 16,
+    "source_bundle_sha256_required": true,
     "heartbeat_dependency": false,
-    "expected_head_change_reason": "PR #92 was rematerialized onto TVC main e718abdacfce1a0c6d524464f549cbbb54af7724 after current main advanced again; the exact validation target is the resulting one-commit broker head."
+    "validation_identity_rule": "Governed PASS binds exact TVC PR #92 head plus the complete 16-file source_bundle_sha256. Later unrelated TVC main movement requires identical-digest rematerialization and current-base compatibility review, not automatic source revalidation.",
+    "revalidation_rule": "If the broker source_bundle_sha256 changes, full governed broker validation is required again before admission."
   },
   "source_policy": {
     "network_fetch_by_validator": false,
@@ -54,10 +57,10 @@
     "python3 -m pytest -q",
     "python3 scripts/verify_product_consistency.py"
   ],
-  "machine_trigger": "The .github validation receipt reaches COMPLETED for exact TVC PR #92 head a817cc8aa58ece1ae104ebfc59f4074ccbc60031, TVC integration authority admits PR #92 after current-base compatibility review, and a StegVerse-controlled execution lane can access the shared TVC spool. Heartbeat progression is not a trigger or dependency.",
-  "machine_observable_upstream_release_condition": "StegVerse-Labs/.github/receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json state=COMPLETED with exact TVC PR #92 head a817cc8aa58ece1ae104ebfc59f4074ccbc60031 and sanitized PASS dispatcher evidence, followed by canonical admission of TVC PR #92.",
+  "machine_trigger": "The separate .github task-control runtime produces a COMPLETED broker validation receipt for exact TVC PR #92 head 06569c885f33e5761d43911ba1088fdf958855b4 with source_bundle_file_count=16, a retained source_bundle_sha256, and sanitized PASS evidence; TVC integration authority then admits an identical-digest broker bundle after current-base compatibility review. Heartbeat progression is not a trigger or dependency.",
+  "machine_observable_upstream_release_condition": "StegVerse-Labs/.github/receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json state=COMPLETED with exact TVC PR #92 head 06569c885f33e5761d43911ba1088fdf958855b4, source_bundle_file_count=16, source_bundle_sha256, sanitized PASS dispatcher evidence, and subsequent canonical admission of an identical-digest broker bundle.",
   "release_condition": "The sovereign validation receipt records the exact current PR #141 head and PASS for all required commands with non_tv_tvc_secret_or_token_used=false and github_token_required=false.",
-  "failure_condition": "TVC broker validation/admission incomplete, spool unavailable, source materialization receipt timeout/failure, source identity mismatch, forbidden credential environment, incomplete materialized source, or any validation command failure.",
+  "failure_condition": "TVC broker validation/admission incomplete, broker bundle digest mismatch, current-base compatibility failure, spool unavailable, source materialization receipt timeout/failure, source identity mismatch, forbidden credential environment, incomplete materialized source, or any validation command failure.",
   "outputs": [
     "TVC materialization warrant in the local non-secret spool",
     "sanitized TVC materialization receipt",
