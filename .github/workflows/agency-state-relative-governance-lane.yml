@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'test/agency-state-relative-governance-lane'
+      - 'run/agency-state-relative-governance-lane'
     paths:
       - 'examples/governance_lanes/agency_state_relative/**'
       - 'scripts/run_agency_state_relative_lane.py'
@@ -28,8 +29,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install StegCore
-        run: python -m pip install -e .
+      - name: Install StegCore test dependencies
+        run: python -m pip install -e . pytest
       - name: Run governed lane assertions
         run: python -m pytest -q tests/test_agency_state_relative_lane.py
       - name: Generate resultant manifest
