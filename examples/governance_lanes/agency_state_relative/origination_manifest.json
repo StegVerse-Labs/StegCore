@@ -1,0 +1,57 @@
+{
+  "artifact_type": "stegverse.governance_lane.origination_manifest",
+  "schema_version": "1.0",
+  "lane_id": "AGENCY-STATE-RELATIVE-001",
+  "title": "State-relative validity and consequential human agency",
+  "purpose": "Demonstrate that a historically valid authorization remains preserved as evidence while a governance-relevant state transition forces renewed applicability determination, and that current human direction can alter the permitted operative path before consequence closure.",
+  "canonical_evaluator": "stegcore.steggate.evaluate_admissibility",
+  "initial_state": {
+    "state_id": "S0",
+    "reference_state_hash": "state:agency:S0",
+    "policy_ref": "policy:agency:v1",
+    "delegation_ref": "delegation:human:v1",
+    "historical_authorization": "AUTH-S0-001",
+    "human_direction": "PROCEED",
+    "consequence_boundary": "OPEN"
+  },
+  "transition_event": {
+    "transition_id": "T-S0-S1",
+    "type": "GOVERNANCE_RELEVANT_STATE_CHANGE",
+    "changed_dimensions": [
+      "reference_state",
+      "human_direction"
+    ],
+    "new_state_id": "S1",
+    "new_reference_state_hash": "state:agency:S1",
+    "human_direction": "REFUSE_AND_REDIRECT",
+    "claim": "Elapsed time is not the governance-changing event; the material state transition is."
+  },
+  "test_cases": [
+    {
+      "case_id": "CASE-1-HISTORICAL-VALIDITY",
+      "state": "S0",
+      "candidate": "execute_authorized_path",
+      "expected_disposition": "ALLOW",
+      "expected_consequence": "HISTORICAL_AUTHORIZATION_VALID_IN_S0"
+    },
+    {
+      "case_id": "CASE-2-STALE-APPLICABILITY",
+      "state": "S1",
+      "candidate": "execute_authorized_path_using_S0_basis",
+      "expected_disposition": "DENY_OR_FAIL_CLOSED",
+      "expected_consequence": "PRIOR_AUTHORIZATION_NOT_APPLICABLE_WITHOUT_RENEWED_DETERMINATION"
+    },
+    {
+      "case_id": "CASE-3-CONSEQUENTIAL-AGENCY",
+      "state": "S1",
+      "candidate": "refuse_and_redirect_for_renewed_determination",
+      "expected_disposition": "ALLOW",
+      "expected_consequence": "OPERATIVE_PATH_REDIRECTED_TO_RENEWED_DETERMINATION"
+    }
+  ],
+  "invariants": [
+    "historical_validity_does_not_imply_present_applicability",
+    "recorded_human_input_does_not_by_itself_prove_exercisable_agency",
+    "current_human_direction_is_consequential_only_if_it_can_change_the_permitted_operative_path_before_consequence_closure"
+  ]
+}
