@@ -1,6 +1,14 @@
 name: Agency State-Relative Governance Lane
 
 on:
+  push:
+    branches:
+      - 'test/agency-state-relative-governance-lane'
+    paths:
+      - 'examples/governance_lanes/agency_state_relative/**'
+      - 'scripts/run_agency_state_relative_lane.py'
+      - 'tests/test_agency_state_relative_lane.py'
+      - '.github/workflows/agency-state-relative-governance-lane.yml'
   pull_request:
     paths:
       - 'examples/governance_lanes/agency_state_relative/**'
