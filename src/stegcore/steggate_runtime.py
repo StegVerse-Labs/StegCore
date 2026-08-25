@@ -14,7 +14,8 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Generic, Literal, Mapping, Optional, TypeVar
 
 from .commit_governance import canonical_hash, coherence_gate, finalize_receipt
-from .steggate import AdmissibilityEvaluation, AdmissibilityRequest, evaluate_admissibility
+from .standing_binding import evaluate_admissibility_with_standing
+from .steggate import AdmissibilityEvaluation, AdmissibilityRequest
 
 T = TypeVar("T")
 ExecutionStatus = Literal["executed", "refused", "failed"]
@@ -47,7 +48,7 @@ def governed_steggate_execute(
     capability_surface: Optional[Mapping[str, Any]] = None,
     authority_resolution: Optional[Mapping[str, Any]] = None,
 ) -> StegGateExecutionObservation[T]:
-    """Evaluate, check commit coherence, and only then invoke ``executor``."""
+    """Evaluate, check standing/coherence, and only then invoke ``executor``."""
 
     context = dict(declared_execution_context or {})
     request_data = request.model_dump(mode="json", exclude_none=False)
@@ -56,7 +57,7 @@ def governed_steggate_execute(
         "declared_execution_context": context,
     }
     pre_state_hash = canonical_hash(pre_state)
-    evaluation = evaluate_admissibility(request)
+    evaluation = evaluate_admissibility_with_standing(request, context)
     observed_at = datetime.now(timezone.utc).isoformat()
 
     if evaluation.disposition != "ALLOW":
