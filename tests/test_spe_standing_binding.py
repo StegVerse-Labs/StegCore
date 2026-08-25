@@ -223,3 +223,20 @@ def test_non_allow_spe_standing_fails_closed_before_executor():
     assert result.evaluation.disposition == "FAIL_CLOSED"
     assert result.executor_invoked is False
     assert calls == []
+
+
+def test_public_sdk_interlock_fixture_traverses_same_canonical_runtime():
+    from pathlib import Path
+
+    from tools.run_portable_interlock_bounded_traversal import run_traversal
+
+    root = Path(__file__).resolve().parents[1]
+    evidence = run_traversal(
+        root / "fixtures" / "portable_interlock_bounded_traversal.v1.json",
+        root / "examples" / "steggate_allow_request.json",
+    )
+    assert evidence["proof_state"] == "PASS"
+    assert evidence["execution"]["status"] == "executed"
+    assert evidence["execution"]["executor_invoked"] is True
+    assert evidence["execution"]["coherence_receipt"]["decision"] == "ALLOW"
+    assert evidence["next_boundary"] == "SDK_INTERLOCK_RETURN_ASSEMBLY"
