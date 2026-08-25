@@ -1,0 +1,191 @@
+{
+  "ingress_interlock_hash": "sha256:4bd4daf74bd0660c1c697c951fe99a5c76b8232b6af096eda5e2424e13e681b7",
+  "interlock_transition": {
+    "authority": {
+      "execution_authorized": false,
+      "interlock_transfers_authority": false,
+      "master_records_custody_claimed": false,
+      "participant_truth_assumed": false,
+      "sdk_authority": "NONE"
+    },
+    "boundary": {
+      "original_manifest_hash": "sha256:b18bd403350e11a3e90363c2d0b552e35175e5027562c97805f7cee08b8d9e33",
+      "repaired_manifest_hash": null,
+      "state": "ACCEPT"
+    },
+    "connection": {
+      "class": "INTERLOCK",
+      "direction": "INGRESS",
+      "participant_binding_hash": "sha256:9db49e9b1de41569a72eb628849033977cd6fba045fd30de0c3d554bb478385d",
+      "participant_boundary_receipt_hash": "sha256:e3272017f59b3d3878be41680709cc7c2f11a8119d3ead9d4da2daca7894e8e9",
+      "participant_id": "reference-portable-participant"
+    },
+    "governance": {
+      "mode": "DEFAULT_STEGVERSE",
+      "profiles": [
+        {
+          "issuer": "StegVerse",
+          "profile_hash": "sha256:f5217d8bc1e2dd886163352e8cd427029f128ab4d1205525e40f174e67ca8dfd",
+          "profile_id": "stegverse.default.records.write.v1",
+          "source": "STEGVERSE"
+        }
+      ]
+    },
+    "manifest": {
+      "canonicalization": "JCS_RFC8785_NFC",
+      "manifest_hash": "sha256:b18bd403350e11a3e90363c2d0b552e35175e5027562c97805f7cee08b8d9e33",
+      "predecessor_receipts": [
+        {
+          "issuer": "reference-portable-participant",
+          "receipt_hash": "sha256:e3272017f59b3d3878be41680709cc7c2f11a8119d3ead9d4da2daca7894e8e9",
+          "receipt_id": "reference-portable-participant:e3272017f59b3d38"
+        }
+      ],
+      "source_state_hash": "sha256:5c41769a27fc4f5e5def39018e689910b57afb7db1af084ca33a2f930652f886"
+    },
+    "manifold": {
+      "predecessors": [
+        {
+          "state_hash": "sha256:5c41769a27fc4f5e5def39018e689910b57afb7db1af084ca33a2f930652f886",
+          "state_id": "participant:state:0"
+        }
+      ],
+      "relationships": [
+        {
+          "from_state_id": "participant:state:0",
+          "to_state_id": "stegverse:boundary:tx-portable-traversal-001",
+          "type": "CAUSE"
+        }
+      ],
+      "successors": [
+        {
+          "state_hash": "sha256:7b3bc417ddd2b3f0be2a868c74d9fa5dd13bcd902328297ce18399fbea8b7670",
+          "state_id": "stegverse:boundary:tx-portable-traversal-001"
+        }
+      ]
+    },
+    "package_id": "pkg-portable-traversal-001",
+    "reconstruction": {
+      "linear_chain_is_special_case": true,
+      "replay_scope": "MATERIAL_CAUSAL_CLOSURE",
+      "required": true
+    },
+    "run_id": "run-portable-traversal-001",
+    "schema": "stegverse.interlock-transition.v1",
+    "transition_id": "tx-portable-traversal-001"
+  },
+  "participant_receipt": {
+    "authority": {
+      "issuer_asserts_own_state": true,
+      "stegverse_authority_transferred": false,
+      "stegverse_truth_assumed": false
+    },
+    "issuer": "reference-portable-participant",
+    "predecessor_receipt_hashes": [],
+    "receipt_hash": "sha256:e3272017f59b3d3878be41680709cc7c2f11a8119d3ead9d4da2daca7894e8e9",
+    "receipt_id": "reference-portable-participant:e3272017f59b3d38",
+    "schema": "stegverse.reference-participant-receipt.v1",
+    "state_hash": "sha256:5c41769a27fc4f5e5def39018e689910b57afb7db1af084ca33a2f930652f886",
+    "state_id": "participant:state:0"
+  },
+  "schema": "stegverse.portable-interlock-stegcore-fixture.v1",
+  "sdk_source_commit": "9368804802ba8b5e5899a9da6c8325d811c268de",
+  "spe_envelope": {
+    "candidate": {
+      "authorizing": false,
+      "candidate_hash": "88af3ce3e45f843931b1968424a2cbbd26d92238b067570034bf11b7253c2bd6",
+      "package_id": "pkg-portable-traversal-001",
+      "requires_fresh_standing_determination": true,
+      "run_id": "run-portable-traversal-001",
+      "schema_version": "stegverse.sdk.spe_commitment_candidate.v0.1",
+      "transition_id": "tx-portable-traversal-001",
+      "validity_window": {
+        "not_after": "2026-08-26T12:00:00+00:00",
+        "not_before": "2026-08-24T00:00:00+00:00"
+      }
+    },
+    "candidate_hash": "88af3ce3e45f843931b1968424a2cbbd26d92238b067570034bf11b7253c2bd6",
+    "destination_repo": "StegVerse-Labs/Standing-Proof-Engine",
+    "envelope_hash": "a7a29f152e765ffdefc61d60baeaf963dc79fcb350ab0d3646cd74cd159ea7d5",
+    "package_id": "pkg-portable-traversal-001",
+    "receipt_required": true,
+    "route_purpose": "FRESH_STANDING_DETERMINATION",
+    "run_id": "run-portable-traversal-001",
+    "schema_version": "stegverse.sdk.spe_commitment_intake.v0.1",
+    "source_repo": "StegVerse-org/StegVerse-SDK",
+    "transition_id": "tx-portable-traversal-001"
+  },
+  "spe_receipt": {
+    "candidate_hash": "88af3ce3e45f843931b1968424a2cbbd26d92238b067570034bf11b7253c2bd6",
+    "delegation_refs": [],
+    "destination_repo": "StegVerse-Labs/Standing-Proof-Engine",
+    "envelope_hash": "a7a29f152e765ffdefc61d60baeaf963dc79fcb350ab0d3646cd74cd159ea7d5",
+    "evidence_refs": [
+      "interlock:sha256:4bd4daf74bd0660c1c697c951fe99a5c76b8232b6af096eda5e2424e13e681b7"
+    ],
+    "execution_authorized": false,
+    "execution_performed": false,
+    "master_record_installed": false,
+    "next_boundary": "GOVERNED_EXECUTION_AUTHORITY",
+    "package_id": "pkg-portable-traversal-001",
+    "policy_refs": [
+      "policy://portable-traversal/v1"
+    ],
+    "reasons": [
+      "standing satisfied for bounded traversal"
+    ],
+    "receipt_hash": "5a0fe152147d9a3c2e0cb0a273c434d266d9f78311a0741d77c8ad2b8a5b8915",
+    "receipt_type": "SPE_STANDING_DETERMINATION",
+    "run_id": "run-portable-traversal-001",
+    "schema_version": "stegverse.spe.sdk_commitment_intake.v0.1",
+    "source_repo": "StegVerse-org/StegVerse-SDK",
+    "standing_result": "ALLOW",
+    "transition_id": "tx-portable-traversal-001"
+  },
+  "steggate_bridge": {
+    "admissibility_candidate": {
+      "decision": "PENDING",
+      "permission_contract": {
+        "contract_id": "PA-001",
+        "version": "1.0.0"
+      },
+      "permission_predicates": {
+        "authority_current": true,
+        "consent_or_standing_current": true,
+        "consent_or_standing_required": true,
+        "consequence_attributable": true,
+        "consequence_reconstructable": true,
+        "continuity_current": true,
+        "governing_conditions_current": true
+      },
+      "runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
+      "three_layer_request": {},
+      "three_layer_request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    "authority": {
+      "execution_authorized": false,
+      "master_records_custody_claimed": false,
+      "sdk_authority": "NONE",
+      "spe_execution_authority": "NONE",
+      "steggate_decision_authority": "CANONICAL_RUNTIME_ONLY"
+    },
+    "bridge_hash": "2f3666b6bc85ea05af224183dff2ee7653221dd497b6a75dc9c6b1f1d2d90fc9",
+    "interlock": {
+      "ingress_interlock_hash": "sha256:4bd4daf74bd0660c1c697c951fe99a5c76b8232b6af096eda5e2424e13e681b7",
+      "participant_id": "reference-portable-participant"
+    },
+    "package_id": "pkg-portable-traversal-001",
+    "run_id": "run-portable-traversal-001",
+    "schema": "stegverse.sdk.spe-steggate-bridge.v1",
+    "standing_binding": {
+      "candidate_hash": "88af3ce3e45f843931b1968424a2cbbd26d92238b067570034bf11b7253c2bd6",
+      "envelope_hash": "a7a29f152e765ffdefc61d60baeaf963dc79fcb350ab0d3646cd74cd159ea7d5",
+      "execution_authorized": false,
+      "observed_at": "2026-08-24T23:00:00-05:00",
+      "receipt_hash": "5a0fe152147d9a3c2e0cb0a273c434d266d9f78311a0741d77c8ad2b8a5b8915",
+      "standing_current": true,
+      "standing_result": "ALLOW"
+    },
+    "transition_id": "tx-portable-traversal-001"
+  }
+}
