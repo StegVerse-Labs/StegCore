@@ -2,7 +2,7 @@
 
 StegCore is the canonical StegVerse commit-time governance runtime. **StegGate** is its portable product surface for evaluating one proposed consequential transition before execution.
 
-Current portable product version: **0.2.0**.
+Current portable product version: **0.3.0**.
 
 ## What it does
 
@@ -20,6 +20,8 @@ candidate
   -> stegcore.steggate.evaluate_admissibility
   -> disposition + reasons + complete predicate matrix + hashes
 ```
+
+For routes that declare fresh SPE standing as required, canonical execution also re-verifies the bound SDK/SPE/interlock evidence before commit coherence or consequence invocation. Missing, stale, DENY, tampered, or mismatched required standing fails closed before the bounded executor can run.
 
 Interfaces may adapt input or presentation, but they must not implement a separate policy or admissibility engine.
 
@@ -147,7 +149,7 @@ Historical receipts, review documents, activation artifacts, and schema-versione
 
 ## Current product status
 
-The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, and AdmittedCode performance benchmark lane are implemented. Current integration work is proving that named consumer applications traverse this same runtime rather than carrying per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
+The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, and standing/interlock fail-closed consequence binding are implemented. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
 
 ## Development verification
 
