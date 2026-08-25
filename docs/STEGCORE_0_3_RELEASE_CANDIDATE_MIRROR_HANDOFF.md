@@ -19,13 +19,16 @@ This lane is separate and successor-only.
 package: stegcore
 version: 0.3.0
 target_tag: v0.3.0
-source_parent_commit: ec349be317cea0593e787f53935c22876bac636a
+sdk_executable_source_commit: 124ea6b53ff79db8f514cacf1aab295f03cacf74
+release_preparation_parent: ec349be317cea0593e787f53935c22876bac636a
 release_candidate_commit: PENDING_EXACT_PR_MERGE
 release_notes: RELEASE_NOTES_0_3_0.md
 credential_authority: TV/TVC
 ```
 
-The source parent contains:
+The frozen SDK 1.2.0 successor candidate already pins StegCore executable source `124ea6b...`. Git comparison from `124ea6b...` to `ec349be...` shows only package-version validation metadata/documentation changes and no `src/` changes. Therefore the successor aggregate's StegCore executable/source coordinate must remain `124ea6b...`; `ec349be...` is only the release-preparation parent.
+
+The executable source contains:
 
 ```text
 PR #146 / canonical SPE-standing enforcement
@@ -34,9 +37,13 @@ merge: 26b18204b135a213231d160b718e47ca6ab46f28
 
 PR #148 / bounded public interlock traversal
 merge: 124ea6b53ff79db8f514cacf1aab295f03cacf74
+```
 
-post-0.2 identity repair
-merge: ec349be317cea0593e787f53935c22876bac636a
+Release-preparation metadata then advanced at:
+
+```text
+post-0.2 identity repair: ec349be317cea0593e787f53935c22876bac636a
+runtime source changed between 124ea6b... and ec349be...: FALSE
 ```
 
 ## Required successor capability
@@ -59,9 +66,9 @@ Before the successor aggregate release can become READY:
 
 1. this exact release-candidate head must pass package/runtime/artifact validation;
 2. its merge commit becomes the immutable StegCore `release_commit_sha` candidate;
-3. TVC successor candidate must set `source_parent_commit_sha=ec349be...` and exact release commit;
-4. SDK governed-test StegCore pin must equal `ec349be...`;
-5. installed SDK wheel alignment must PASS;
+3. TVC successor candidate must set `source_parent_commit_sha=124ea6b...` and the exact release commit;
+4. SDK governed-test StegCore pin must equal `124ea6b...`;
+5. installed SDK wheel alignment must PASS against the successor receipt;
 6. TV/TVC guarded release execution must verify capability containment and immutable tag/release evidence.
 
 ## Authority boundary
