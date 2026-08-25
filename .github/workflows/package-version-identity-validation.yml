@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'pyproject.toml'
+      - 'VERSION'
+      - 'src/stegcore/version.py'
       - 'tests/test_package_version_identity.py'
       - '.github/workflows/package-version-identity-validation.yml'
   workflow_dispatch:
@@ -25,11 +27,13 @@ jobs:
           python-version: '3.11'
       - name: Install package, pytest and build
         run: python -m pip install --disable-pip-version-check --no-input -e . pytest build
-      - name: Verify moving source identity
+      - name: Verify release candidate identity and canonical standing runtime
         env:
           GITHUB_TOKEN: ''
           GH_TOKEN: ''
-        run: python -m pytest -q tests/test_package_version_identity.py tests/test_spe_standing_binding.py tests/test_steggate_runtime.py
+        run: python -m pytest -q tests/test_package_version_identity.py tests/test_spe_standing_binding.py tests/test_steggate_runtime.py tests/test_portable_interlock_bounded_traversal.py
+      - name: Verify product consistency
+        run: python scripts/verify_product_consistency.py
       - name: Build artifact
         run: python -m build
       - name: Verify built metadata version
@@ -41,8 +45,8 @@ jobs:
               meta = [n for n in z.namelist() if n.endswith('.dist-info/METADATA')][0]
               text = z.read(meta).decode()
           assert 'Name: stegcore' in text
-          assert 'Version: 0.3.0.dev0' in text
-          print('STEGCORE_0_3_DEV_ARTIFACT_IDENTITY_PASS')
+          assert 'Version: 0.3.0' in text
+          print('STEGCORE_0_3_RELEASE_CANDIDATE_ARTIFACT_IDENTITY_PASS')
           PY
       - name: Record non-authorizing boundary
         run: |
