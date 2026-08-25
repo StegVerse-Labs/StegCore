@@ -1,7 +1,7 @@
 # StegGate Portable Product
 
 Status: current product boundary  
-Product version: `0.2.0`  
+Product version: `0.3.0`  
 Canonical owner: `StegVerse-Labs/StegCore`
 
 ## Purpose
@@ -15,6 +15,17 @@ AdmissibilityRequest
   -> stegcore.three_layer.evaluate_three_layer
   -> stegcore.steggate.evaluate_admissibility
   -> AdmissibilityEvaluation
+```
+
+When a declared execution context requires standing, the canonical consequence path additionally requires current, correctly bound SPE standing evidence before execution may be considered:
+
+```text
+SDK manifested candidate
+  -> SPE standing receipt
+  -> StegCore standing binding verification
+  -> canonical StegGate admissibility
+  -> commit coherence
+  -> bounded consequence only after ALLOW
 ```
 
 Supported dispositions:
@@ -82,7 +93,7 @@ The following are transport or orchestration facts, not governance identity:
 
 Do not collapse unrelated version domains.
 
-`0.2.0` is the current **portable product/package/service** version and must agree across:
+`0.3.0` is the current **portable product/package/service** version and must agree across:
 
 - `VERSION`;
 - `pyproject.toml` project version;
@@ -121,12 +132,15 @@ Each evaluation preserves:
 - decision-state hash;
 - explicit non-execution and non-continuity-minting posture.
 
+For a standing-required consequence, missing, stale, tampered, denied, mismatched, or differently-bound standing evidence fails closed before the bounded consequence executor is invoked.
+
 ## Authority boundary
 
 StegGate does not, by virtue of an evaluation:
 
 - execute arbitrary external actions;
 - mint Continuity receipts;
+- mint SPE standing;
 - establish identity truth;
 - create custody;
 - grant publication authority;
@@ -164,6 +178,7 @@ A change is not compatible if it silently:
 - changes a binding field in runtime identity;
 - makes transport identity authoritative;
 - bypasses `evaluate_three_layer` for canonical decisions;
+- bypasses required standing verification before a consequence;
 - creates a per-interface or per-application policy engine;
 - reports execution or Continuity minting when those actions did not occur.
 
