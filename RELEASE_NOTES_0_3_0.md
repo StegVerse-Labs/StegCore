@@ -1,39 +1,37 @@
 # StegCore 0.3.0 Release Notes
 
-Release-set role: `governance_runtime`
-Target tag: `v0.3.0`
-Credential authority: `TV/TVC`
+Release-set role: `governance_runtime`  
+Target tag: `v0.3.0`  
+Credential/release authority: `TV/TVC`
 
-Executable/runtime coordinate used by the frozen SDK successor candidate:
+## Exact release binding
 
 ```text
-repository: StegVerse-Labs/StegCore
-package: stegcore
-version: 0.3.0
-executable_source_commit: 124ea6b53ff79db8f514cacf1aab295f03cacf74
-release_preparation_parent: ec349be317cea0593e787f53935c22876bac636a
+source_parent_commit_sha: ef38410505b0ef3e84148892b1d6e3cdef20f300
+release_relation: EXACT_ONE_COMMIT_RELEASE_NOTE_ONLY_SUCCESSOR
+release_notes_path: RELEASE_NOTES_0_3_0.md
 runtime_identity: stegverse:steggate:canonical:three-layer:v1
 ```
 
-`124ea6b...` contains both PR #146 canonical SPE-standing enforcement and PR #148 bounded public interlock traversal. The later `ec349be...` commit changed only package/version validation metadata and documentation; Git comparison shows no `src/` change. Therefore the SDK's frozen governed-test pin remains the exact executable runtime coordinate while `ec349be...` is only the release-preparation parent.
+The source parent passed exact-head hosted validation in `StegCore Package Version Identity Validation` run `32911552882`, including:
+
+- exact 0.3.0 package/service identity;
+- canonical SPE standing binding tests;
+- canonical StegGate runtime tests;
+- bounded public interlock traversal tests;
+- `scripts/verify_product_consistency.py`;
+- artifact build and built-wheel `Version: 0.3.0` verification.
 
 ## Included proof-critical capability
 
-`0.3.0` contains the canonical SPE standing enforcement introduced by PR #146:
+The release contains canonical SPE-standing enforcement and bounded public interlock traversal. Proof-critical executable ancestry includes `124ea6b53ff79db8f514cacf1aab295f03cacf74`, which contains the standing/interlock consequence traversal used by the successor proof lane. That ancestor is not substituted for the TVC direct `source_parent_commit_sha` above.
 
-```text
-capability: STEGCORE_SPE_STANDING_BINDING_V1
-feature_commit: f09eb36abcd3b317f35638e5c0b0c4a802d0aecf
-```
+When standing is required, missing, stale, tampered, denied, or differently-bound standing/interlock evidence fails closed before the bounded consequence executor can run.
 
-When `declared_execution_context.standing_required=true`, canonical StegCore independently verifies the SDK->SPE envelope, SPE standing receipt, SDK->StegGate bridge, identity continuity, current ALLOW standing, canonical runtime identity, and non-authority constraints. Missing, stale, tampered, DENY, or differently-bound standing fails closed before the consequence executor can run.
+## Preserved authority boundaries
 
-## Public interlock traversal
-
-The candidate also contains PR #148, which exercises a public-SDK-derived interlock/reference-participant bundle through the canonical standing verifier and bounded consequence path. That source proof intentionally stops before reciprocal SDK interlock return assembly; the downstream successor SDK production runner owns Master Records custody, reciprocal ACK, POST_RETURN exchange, replay, and reconstruction.
-
-## Release invariant
-
-The eventual `v0.3.0` tag must resolve exactly to the separately validated release-candidate merge commit produced from release-preparation parent `ec349be317cea0593e787f53935c22876bac636a`. TVC successor release policy must use `124ea6b53ff79db8f514cacf1aab295f03cacf74` as the executable/source coordinate so it exactly matches the frozen SDK 1.2 governed-test pin. Moving `main` may not be substituted.
-
-This release metadata grants no tag, publication, runtime, admissibility, or credential authority. Release execution remains behind the TV/TVC guarded successor aggregate-release path.
+- SPE standing ALLOW does not authorize execution by itself.
+- StegGate ALLOW does not prove execution occurred.
+- StegCore does not mint SPE standing, Continuity receipts, Master Records custody authority, credential authority, or release authority.
+- Hosted validation is non-authorizing.
+- TV/TVC remains the only release/credential authority for the successor aggregate.

@@ -1,34 +1,38 @@
 # StegCore 0.3 Release Candidate Mirror Handoff
 
-Updated: 2026-08-25
+Updated: 2026-08-25  
 Repository: `StegVerse-Labs/StegCore`
 
 ## Purpose
 
-Freeze a successor StegCore release candidate containing canonical SPE-standing enforcement and bounded public interlock traversal without altering or relabeling historical `v0.2.0`.
+Freeze the successor StegCore 0.3.0 product containing canonical SPE-standing enforcement and bounded public interlock traversal while satisfying the actual TVC aggregate-release source-parent contract.
 
 ## Historical release boundary
 
-`PRODUCTION_RELEASE_SET_MIRROR_HANDOFF.md` remains authoritative for historical `v0.2.0` and its candidate `083557adec1bdbace09ebd10fb0765eb8e9a9d08`.
+`PRODUCTION_RELEASE_SET_MIRROR_HANDOFF.md` remains authoritative for historical `v0.2.0`. This lane is successor-only and does not move or reuse historical tags.
 
-This lane is separate and successor-only.
-
-## Candidate coordinates
+## Canonical product identity
 
 ```text
 package: stegcore
 version: 0.3.0
 target_tag: v0.3.0
-sdk_executable_source_commit: 124ea6b53ff79db8f514cacf1aab295f03cacf74
-release_preparation_parent: ec349be317cea0593e787f53935c22876bac636a
-release_candidate_commit: PENDING_EXACT_PR_MERGE
-release_notes: RELEASE_NOTES_0_3_0.md
-credential_authority: TV/TVC
+runtime_identity: stegverse:steggate:canonical:three-layer:v1
+credential/release authority: TV/TVC
 ```
 
-The frozen SDK 1.2.0 successor candidate already pins StegCore executable source `124ea6b...`. Git comparison from `124ea6b...` to `ec349be...` shows only package-version validation metadata/documentation changes and no `src/` changes. Therefore the successor aggregate's StegCore executable/source coordinate must remain `124ea6b...`; `ec349be...` is only the release-preparation parent.
+All current product identity surfaces must agree on 0.3.0:
 
-The executable source contains:
+- `pyproject.toml`
+- `VERSION`
+- `src/stegcore/version.py`
+- `README.md`
+- `docs/STEGGATE_PORTABLE_PRODUCT.md`
+- `CHANGELOG.md`
+
+## Proof-critical executable ancestry
+
+The 0.3.0 product contains:
 
 ```text
 PR #146 / canonical SPE-standing enforcement
@@ -36,47 +40,70 @@ feature head: f09eb36abcd3b317f35638e5c0b0c4a802d0aecf
 merge: 26b18204b135a213231d160b718e47ca6ab46f28
 
 PR #148 / bounded public interlock traversal
-merge: 124ea6b53ff79db8f514cacf1aab295f03cacf74
+proof-critical executable ancestor: 124ea6b53ff79db8f514cacf1aab295f03cacf74
 ```
 
-Release-preparation metadata then advanced at:
+`124ea6b...` remains an important executable/proof ancestor. It is NOT the final TVC `source_parent_commit_sha` merely because the runtime source originated there.
+
+## TVC exact release relation
+
+The generic TVC aggregate-release executor verifies an exact relation:
 
 ```text
-post-0.2 identity repair: ec349be317cea0593e787f53935c22876bac636a
-runtime source changed between 124ea6b... and ec349be...: FALSE
+source_parent_commit_sha
+  -> exactly one commit
+  -> release commit
+  -> only changed file = declared release_notes_path
 ```
 
-## Required successor capability
+Therefore the canonical 0.3.0 release is prepared in two states:
+
+1. **release source parent** — contains the complete 0.3.0 package/version/docs/tests/workflow/handoff state and contains no `RELEASE_NOTES_0_3_0.md` file;
+2. **release commit** — direct child of that source parent adding only `RELEASE_NOTES_0_3_0.md`.
+
+The exact source-parent and release SHAs are recorded after those immutable commits exist. Moving `main` may not be substituted for either coordinate.
+
+## Required validation
+
+The exact release source state must pass the existing `StegCore Package Version Identity Validation` workflow with:
 
 ```text
-capability_id: STEGCORE_SPE_STANDING_BINDING_V1
-feature_commit_sha: f09eb36abcd3b317f35638e5c0b0c4a802d0aecf
-required containment: feature commit ancestor-or-equal to exact v0.3.0 release coordinate
+exact PR head checkout
+0.3.0 identity tests
+SPE standing binding tests
+canonical StegGate runtime tests
+bounded public interlock traversal tests
+scripts/verify_product_consistency.py
+wheel/sdist build
+built metadata Version: 0.3.0
 ```
 
-## Evidence caveat retained
+Hosted CI remains non-authorizing. It grants no tag, release, runtime, publication, credential, standing, or custody authority.
 
-PR #146 is merged. Hosted exact-head validation exists. At the time this candidate was prepared, no canonical TVC resident private-source admission receipt for exact #146 head `f09eb36...` had been observed in repository-retained TVC state.
+## Standing and consequence boundary
 
-That missing evidence remains an open evidence item and may not be inferred from merge or release status.
+When `declared_execution_context.standing_required=true`, the canonical path verifies the SDK→SPE envelope and SPE standing receipt, preserves participant/package/transition/run identity, requires current ALLOW standing, then applies canonical StegGate admissibility and commit coherence before any bounded consequence. Missing, stale, tampered, DENY, or differently-bound standing/interlock evidence fails closed before the consequence executor.
 
-## Release conditions
+SPE ALLOW alone never authorizes execution. StegGate ALLOW alone never proves execution occurred.
 
-Before the successor aggregate release can become READY:
+## Downstream successor aggregate
 
-1. this exact release-candidate head must pass package/runtime/artifact validation;
-2. its merge commit becomes the immutable StegCore `release_commit_sha` candidate;
-3. TVC successor candidate must set `source_parent_commit_sha=124ea6b...` and the exact release commit;
-4. SDK governed-test StegCore pin must equal `124ea6b...`;
-5. installed SDK wheel alignment must PASS against the successor receipt;
-6. TV/TVC guarded release execution must verify capability containment and immutable tag/release evidence.
+After exact StegCore source validation and the note-only release relation are proven:
+
+1. SDK 1.2.0 `governed-test` must pin the exact TVC source-parent coordinate used by the aggregate receipt;
+2. TVC successor aggregate policy must bind the exact StegCore source-parent and release commit;
+3. TV/TVC guarded execution must publish/verify the immutable tag/release;
+4. the aggregate receipt must then feed the SDK POST_RETURN production proof;
+5. bounded consequence, Master Records custody, reciprocal ACK, portable verification, replay, and reconstruction remain separate evidence gates.
 
 ## Authority boundary
 
 ```text
 candidate prepared != released
-PR merged != tag published
-hosted CI != TV/TVC release authority
+source validation != release authority
+PR merge != tag publication
 release candidate != runtime activation
-credential authority: TV/TVC
+SPE standing != execution authority
+StegGate ALLOW != execution evidence
+credential/release authority: TV/TVC
 ```
