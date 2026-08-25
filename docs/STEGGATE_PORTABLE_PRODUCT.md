@@ -1,7 +1,7 @@
 # StegGate Portable Product
 
 Status: current product boundary  
-Product version: `0.2.0`  
+Product version: `0.3.0`  
 Canonical owner: `StegVerse-Labs/StegCore`
 
 ## Purpose
@@ -16,6 +16,8 @@ AdmissibilityRequest
   -> stegcore.steggate.evaluate_admissibility
   -> AdmissibilityEvaluation
 ```
+
+When a route declares fresh standing as required, canonical execution additionally consumes the bound SDK/SPE/interlock standing context before commit coherence. Required standing that is missing, stale, DENY, tampered, or mismatched converts the canonical evaluation to `FAIL_CLOSED` before the bounded executor is reachable.
 
 Supported dispositions:
 
@@ -82,7 +84,7 @@ The following are transport or orchestration facts, not governance identity:
 
 Do not collapse unrelated version domains.
 
-`0.2.0` is the current **portable product/package/service** version and must agree across:
+`0.3.0` is the current **portable product/package/service** version and must agree across:
 
 - `VERSION`;
 - `pyproject.toml` project version;
@@ -121,6 +123,8 @@ Each evaluation preserves:
 - decision-state hash;
 - explicit non-execution and non-continuity-minting posture.
 
+For standing-required routes, the canonical consequence path also binds the expected package/transition/run/participant/interlock identity to the independently re-hashed SPE envelope, standing receipt, and SDK-to-StegGate bridge before commit coherence.
+
 ## Authority boundary
 
 StegGate does not, by virtue of an evaluation:
@@ -134,6 +138,8 @@ StegGate does not, by virtue of an evaluation:
 - make transport availability authoritative;
 - convert permission into admissibility;
 - convert admissibility into proof of execution.
+
+SPE standing remains non-authorizing; SDK/interlock continuity remains non-authorizing; Master Records custody remains non-authorizing. Only the canonical consequence composition may reach its bounded executor after both canonical admissibility and commit coherence permit it.
 
 ## Stranger-runnable verification
 
@@ -169,7 +175,7 @@ A change is not compatible if it silently:
 
 ## Current integration posture
 
-The portable core runtime and identity contract are implemented and CI validated. Consumer integration evidence is tracked separately in:
+The portable core runtime and identity contract are implemented and CI validated. The 0.3.0 successor adds canonical standing/interlock binding before bounded consequence execution without changing the canonical runtime identity. Consumer integration evidence is tracked separately in:
 
 ```text
 management/steggate-four-app-runtime-binding.json
