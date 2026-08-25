@@ -6,6 +6,9 @@ on:
       - 'pyproject.toml'
       - 'VERSION'
       - 'src/stegcore/version.py'
+      - 'README.md'
+      - 'docs/STEGGATE_PORTABLE_PRODUCT.md'
+      - 'CHANGELOG.md'
       - 'tests/test_package_version_identity.py'
       - '.github/workflows/package-version-identity-validation.yml'
   workflow_dispatch:
