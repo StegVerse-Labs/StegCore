@@ -2,6 +2,7 @@ from pathlib import Path
 import tomllib
 
 
+# Release-candidate identity is intentionally checked alongside canonical standing/interlock tests.
 def test_successor_release_candidate_is_exact_0_3_0_identity():
     root = Path(__file__).resolve().parents[1]
     project = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]
