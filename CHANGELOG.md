@@ -16,6 +16,20 @@ Historical governance, schema, receipt, and research artifact versions retain th
 - Keep live product documentation, runtime identity, packaging, consumer evidence, performance baselines, onboarding evidence, and release measurement surfaces aligned through repository consistency verification.
 - Release candidates now compare against the compatible AdmittedCode hosted baseline and retain HTTP/performance regression evidence before a release PR is opened.
 
+## [0.3.0] - 2026-08-25
+
+### Added
+- Canonical fail-closed verification of required SDK/SPE standing evidence inside `governed_steggate_execute`.
+- Exact package, transition, run, participant, ingress-interlock, candidate, envelope, standing-receipt, and bridge hash binding before consequence execution.
+- Canonical bounded public-interlock traversal proof from participant/interlock identity through standing, StegGate admissibility, commit coherence, and exactly one bounded executor invocation.
+- Negative proof that missing, stale, DENY, tampered, or mismatched standing/interlock evidence remains unable to reach the executor.
+
+### Preserved boundaries
+- SDK and SPE remain non-authorizing.
+- Canonical StegGate remains the present-tense admissibility and consequence boundary.
+- Master Records custody does not grant execution or admissibility authority.
+- Model output, transport identity, workflow success, and release metadata do not grant execution authority.
+
 ## [0.2.0] - 2026-08-10
 
 ### Added
