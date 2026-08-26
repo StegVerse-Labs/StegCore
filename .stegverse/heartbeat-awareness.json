@@ -1,0 +1,11 @@
+{
+  "schema":"stegverse.heartbeat-awareness/v1",
+  "participant":"StegVerse-Labs/StegCore",
+  "canonical_owner":"StegVerse-Labs/.github",
+  "topology_ref":"StegVerse-Labs/.github/control/heartbeat-participant-topology.json",
+  "heartbeat":{"display_format":"HB-XXXXXXXX","encoding":"FIXED_WIDTH_BASE36","anchor_epoch":32,"anchor_heartbeat_id":"HB-0000000W","period_ms":10,"rate_hz":100,"progression_dependency":"OSCILLATOR_ONLY"},
+  "participant_knows_heartbeat":true,
+  "heartbeat_knows_participant":true,
+  "observation_is_causal":false,
+  "authority_effect":"NONE"
+}
