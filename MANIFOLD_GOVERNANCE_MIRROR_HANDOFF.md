@@ -197,3 +197,12 @@ No Site, Publisher, admissibility-wiki, or stegguardian-wiki release propagation
 ## Archive condition
 
 The StegCore manifold source claim is complete and released. No chat session needs to retain this collision scope. Remaining resident formalism/manifold execution is durably owned by `.github` workers and their machine-observable receipt/reconciliation conditions.
+
+## Production validation continuation — 2026-08-27
+
+```text
+production validation workflow: .github/workflows/manifold-governance-production.yml
+production source merge: 99397392462b8e39a510ec6d9e543551270bd402
+validation trigger branch: manifold-governance-validation-reconcile
+validation status: PENDING_HOSTED_PR_PROOF
+```
