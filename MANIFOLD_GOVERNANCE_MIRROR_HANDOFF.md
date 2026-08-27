@@ -220,3 +220,14 @@ private-repository checkout: actions/checkout with persist-credentials=false
 GitHub production/runtime authority: NONE
 credential authority: TV/TVC
 ```
+
+## Validation reconciliation merge
+
+```text
+validation reconciliation PR: #158
+validation reconciliation merge: 882a25adf6635a2c61c3fa7b75ddc84c50c30741
+validated head: aeeb8f07ee377dd7e3115f88a253838efb8aa6c3
+hosted validation run: 33118864638
+result: SUCCESS
+production manifold action source: IMPLEMENTED / VALIDATED / MERGED
+```
