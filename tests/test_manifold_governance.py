@@ -1,4 +1,4 @@
-from stegcore.manifold_governance import PopulationTransition, plan_manifold
+from stegcore.manifold_governance import PopulationTransition, govern_manifold_action, plan_manifold
 from stegcore.steggate import (
     AdmissibilityRequest,
     ApprovalState,
@@ -206,3 +206,72 @@ def test_unknown_dependency_reference_fails_closed():
     ])
     assert result.state == "FAIL_CLOSED"
     assert result.reasons[0].startswith("UNKNOWN_DEPENDENCY_REFERENCE:T-A:T-MISSING")
+
+def test_governed_manifold_action_allows_independent_machine_speed_paths_while_review_holds_boundary():
+    review = allowed_request(target="record:protected")
+    review.approval.required = True
+    action = govern_manifold_action(
+        [
+            PopulationTransition("T-A", "M0", allowed_request(target="record:a")),
+            PopulationTransition(
+                "T-B",
+                "M0",
+                allowed_request(target="record:b"),
+                depends_on=("T-A",),
+            ),
+            PopulationTransition("T-REVIEW", "M0", review),
+            PopulationTransition(
+                "T-AFTER-REVIEW",
+                "M0",
+                allowed_request(target="record:after-review"),
+                depends_on=("T-REVIEW",),
+            ),
+        ],
+        authority_boundary_refs=("authority:human-review", "policy:manifold-v1"),
+    )
+
+    assert action.state == "REVIEWABLE"
+    assert action.continue_transition_ids == ("T-A", "T-B")
+    assert action.review_transition_ids == ("T-REVIEW",)
+    assert action.held_transition_ids == ("T-AFTER-REVIEW",)
+    assert action.denied_transition_ids == ()
+    assert action.fail_closed_transition_ids == ()
+    assert action.external_execution_performed is False
+    assert action.continuity_receipt_minted is False
+    assert action.human_review_timing_is_authority is False
+    assert action.wall_clock_is_governance_authority is False
+    assert action.heartbeat_is_governance_authority is False
+    assert action.machine_speed_internal_transitions_may_continue is True
+    assert action.protected_boundary_crossing_requires_external_authority is True
+
+    projection = action.reviewable_projection
+    assert projection["governance_invariants"]["linear_transition_path_required"] is False
+    assert projection["governance_invariants"]["manifold_reviewable_as_projection"] is True
+    assert projection["governance_invariants"]["machine_speed_internal_transitions_may_continue_inside_existing_authority"] is True
+    assert projection["governance_invariants"]["protected_boundary_crossing_requires_external_authority"] is True
+    assert projection["authority_boundary_refs"] == ["authority:human-review", "policy:manifold-v1"]
+
+
+def test_governed_manifold_action_preserves_deny_and_never_advances_failed_population():
+    denied = allowed_request(target="record:denied")
+    denied.execution.policy_current = False
+    action = govern_manifold_action(
+        [
+            PopulationTransition("T-ALLOW", "M0", allowed_request(target="record:allow")),
+            PopulationTransition("T-DENY", "M0", denied),
+        ]
+    )
+    assert action.state == "CONTINUE"
+    assert action.continue_transition_ids == ("T-ALLOW",)
+    assert action.denied_transition_ids == ("T-DENY",)
+    assert action.external_execution_performed is False
+
+    failed = govern_manifold_action(
+        [
+            PopulationTransition("T-X", "M0", allowed_request(target="record:x"), depends_on=("T-Y",)),
+        ]
+    )
+    assert failed.state == "FAIL_CLOSED"
+    assert failed.continue_transition_ids == ()
+    assert failed.external_execution_performed is False
+
