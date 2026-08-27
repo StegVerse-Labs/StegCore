@@ -7,12 +7,29 @@ organization: StegVerse-Labs
 repository: StegCore
 branch: main
 canonical StegGate owner: StegVerse-Labs/StegCore
-portable product version: 0.2.0
+portable product source version: 0.3.0
+successor release state: SOURCE_VALIDATED_MERGED / v0.3.0 NOT YET RELEASED
 canonical runtime identity: stegverse:steggate:canonical:three-layer:v1
 canonical admissibility runtime: stegcore.three_layer.evaluate_three_layer
 ```
 
 Live repository/workflow evidence supersedes chat summaries. This file is the canonical continuation source for current StegCore runtime, portable-product, benchmark, release, reviewer-readiness, and cross-application integration work.
+
+## 2026-08-26 successor 0.3 reconciliation
+
+The current portable-product source line is 0.3.0. Exact successor release coordinates and validation are canonical in `docs/STEGCORE_0_3_RELEASE_CANDIDATE_MIRROR_HANDOFF.md`:
+
+```text
+source parent: ef38410505b0ef3e84148892b1d6e3cdef20f300
+release commit: 58445bb14642c1889cf9802666c15bd48c6d2e39
+target tag: v0.3.0
+exact source validation: 32911552882 SUCCESS
+canonical source reconciliation merge: 788a55b8e616b53fdc593fd56a10e9d7f5625f51
+release authority: TV/TVC
+release state: NOT RELEASED
+```
+
+The 0.2.0 benchmark/baseline sections retained below are historical/provisional evidence domains and are not a claim that 0.2.0 remains the current source-product identity. StegCore PR #141 remains a separate active capability-context lane.
 
 ## Current goals
 
