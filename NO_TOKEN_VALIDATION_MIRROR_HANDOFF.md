@@ -80,6 +80,10 @@ The required upstream release condition is:
 10. StegCore exact PR #141 source is re-resolved/materialized and sovereign validation executes against that then-current exact head.
 ```
 
+## Integration compatibility rule
+
+A sovereign validation PASS is bound to the exact tested PR #141 head. It does not override current-base compatibility. Immediately before merge, repository integration authority must verify that the exact validated head is still admissible against current `main`. If resolving base drift changes any validated source byte or changes the PR head, the resulting head must be re-materialized and revalidated before merge. Moving `main`, mergeability, or a merge preview never substitutes for the exact sovereign PASS.
+
 ## Separate generalized private-source-read capability
 
 TVC main also carries `TVC-PRIVATE-SOURCE-READ-001` / `tvc.private-source-read.v1`. It is useful for exact private reads but remains a separate capability and does not satisfy broker admission or StegCore validation merely by existing.
