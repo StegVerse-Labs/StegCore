@@ -1,0 +1,85 @@
+name: Manifold Governance Production Validation (Non-Authorizing)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - src/stegcore/manifold_governance.py
+      - src/stegcore/__init__.py
+      - tests/test_manifold_governance.py
+      - MANIFOLD_GOVERNANCE_MIRROR_HANDOFF.md
+      - .github/workflows/manifold-governance-production.yml
+  push:
+    branches: [main]
+    paths:
+      - src/stegcore/manifold_governance.py
+      - src/stegcore/__init__.py
+      - tests/test_manifold_governance.py
+      - MANIFOLD_GOVERNANCE_MIRROR_HANDOFF.md
+      - .github/workflows/manifold-governance-production.yml
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Materialize source anonymously
+        env:
+          SOURCE_REPO: ${{ github.repository }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          test -z "${GITHUB_TOKEN:-}"
+          test -z "${GH_TOKEN:-}"
+          curl -fsSL "https://github.com/${SOURCE_REPO}/archive/${SOURCE_SHA}.tar.gz" -o /tmp/source.tgz
+          mkdir /tmp/source
+          tar -xzf /tmp/source.tgz -C /tmp/source --strip-components=1
+
+      - name: Install and validate canonical manifold governance
+        run: |
+          set -eu
+          cd /tmp/source
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+          python -m pip install .
+          python -m pytest -q tests/test_manifold_governance.py
+          python -m py_compile src/stegcore/manifold_governance.py src/stegcore/__init__.py
+
+      - name: Prove production manifold invariants
+        run: |
+          set -eu
+          cd /tmp/source
+          python - <<'PY'
+          from stegcore.manifold_governance import PopulationTransition, govern_manifold_action
+          from stegcore.steggate import AdmissibilityRequest
+          import json
+
+          base=json.load(open('examples/steggate_allow_request.json'))
+          review=json.loads(json.dumps(base))
+          review['approval']['required']=True
+          rows=[
+              PopulationTransition('T-A','M0',AdmissibilityRequest.model_validate(base)),
+              PopulationTransition('T-B','M0',AdmissibilityRequest.model_validate(base), depends_on=('T-A',)),
+              PopulationTransition('T-REVIEW','M0',AdmissibilityRequest.model_validate(review)),
+              PopulationTransition('T-AFTER','M0',AdmissibilityRequest.model_validate(base), depends_on=('T-REVIEW',)),
+          ]
+          action=govern_manifold_action(rows, authority_boundary_refs=('authority:human-review',))
+          assert action.state == 'REVIEWABLE'
+          assert action.continue_transition_ids == ('T-A','T-B')
+          assert action.review_transition_ids == ('T-REVIEW',)
+          assert action.held_transition_ids == ('T-AFTER',)
+          assert action.external_execution_performed is False
+          inv=action.reviewable_projection['governance_invariants']
+          assert inv['wall_clock_is_governance_authority'] is False
+          assert inv['heartbeat_is_governance_authority'] is False
+          assert inv['linear_transition_path_required'] is False
+          assert inv['protected_boundary_crossing_requires_external_authority'] is True
+          print('MANIFOLD_GOVERNANCE_PRODUCTION_PASS')
+          PY
+
+      - name: Record non-authority boundary
+        run: |
+          echo 'Validation proves source behavior only.'
+          echo 'GitHub Actions grants no runtime, execution, governance, credential, release, or custody authority.'
