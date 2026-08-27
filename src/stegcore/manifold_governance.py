@@ -20,6 +20,7 @@ from .steggate import AdmissibilityEvaluation, AdmissibilityRequest, canonical_s
 CanonicalDisposition = Literal["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"]
 PlanState = Literal["READY", "REVIEW_REQUIRED", "FAIL_CLOSED"]
 BundleState = Literal["ALLOW", "DENY", "REVIEW", "FAIL_CLOSED"]
+ManifoldActionState = Literal["CONTINUE", "REVIEWABLE", "FAIL_CLOSED"]
 
 
 @dataclass(frozen=True)
@@ -76,6 +77,40 @@ class ManifoldPlan:
     continuity_receipt_minted: bool = False
     derived_observations_authoritative: bool = False
     authority_effect: str = "NONE_PLANNING_ONLY"
+
+
+@dataclass(frozen=True)
+class ManifoldGovernanceAction:
+    """Production governance resolution for concurrent manifold transitions.
+
+    This object does not itself perform external execution. It determines which
+    canonically evaluated transitions may continue to the separately governed
+    commit boundary, which transitions must remain reviewable, and which are
+    denied or failed closed.
+    """
+
+    schema: str
+    base_manifold_hash: str
+    plan_hash: str
+    state: ManifoldActionState
+    continue_transition_ids: tuple[str, ...]
+    review_transition_ids: tuple[str, ...]
+    held_transition_ids: tuple[str, ...]
+    denied_transition_ids: tuple[str, ...]
+    fail_closed_transition_ids: tuple[str, ...]
+    authority_boundary_refs: tuple[str, ...]
+    reviewable_projection: Mapping[str, Any]
+    action_hash: str
+    canonical_evaluator: str = "stegcore.steggate.evaluate_admissibility"
+    canonical_evaluator_unchanged: bool = True
+    human_review_timing_is_authority: bool = False
+    wall_clock_is_governance_authority: bool = False
+    heartbeat_is_governance_authority: bool = False
+    machine_speed_internal_transitions_may_continue: bool = True
+    protected_boundary_crossing_requires_external_authority: bool = True
+    external_execution_performed: bool = False
+    continuity_receipt_minted: bool = False
+    authority_effect: str = "NONE_UNTIL_SEPARATE_GOVERNED_COMMIT"
 
 
 _DISPOSITION_SEVERITY: dict[str, int] = {
@@ -422,3 +457,139 @@ def plan_manifold(transitions: Iterable[PopulationTransition]) -> ManifoldPlan:
         reasons=reasons,
         plan_hash=canonical_sha256(payload),
     )
+
+def govern_manifold_action(
+    transitions: Iterable[PopulationTransition],
+    *,
+    authority_boundary_refs: Iterable[str] = (),
+) -> ManifoldGovernanceAction:
+    """Resolve concurrent manifold progression through canonical StegVerse governance.
+
+    The production invariant is state-boundary governance, not a temporal human
+    race. Canonical ALLOW transitions whose dependency/bundle/conflict conditions
+    are satisfied may continue to the separately governed commit boundary even
+    while an unrelated branch is waiting for human review. REVIEW transitions and
+    unresolved ALLOW conflicts remain reviewable; their dependent transitions are
+    held. DENY and FAIL_CLOSED are never promoted.
+
+    HB/time may observe the resulting projection but neither heartbeat cadence nor
+    wall-clock timing grants transition authority.
+    """
+
+    population = tuple(transitions)
+    plan = plan_manifold(population)
+    standings = {row.transition_id: row for row in plan.standings}
+    ordered = tuple(plan.ordered_transition_ids)
+
+    denied = tuple(
+        transition_id
+        for transition_id in ordered
+        if standings.get(transition_id) is not None
+        and standings[transition_id].disposition == "DENY"
+    )
+    failed = tuple(
+        transition_id
+        for transition_id in ordered
+        if standings.get(transition_id) is not None
+        and standings[transition_id].disposition == "FAIL_CLOSED"
+    )
+
+    review_set = {
+        transition_id
+        for transition_id in ordered
+        if standings.get(transition_id) is not None
+        and standings[transition_id].disposition == "REVIEW"
+    }
+    for left, right in plan.conflict_pairs:
+        left_row = standings.get(left)
+        right_row = standings.get(right)
+        if (
+            left_row is not None
+            and right_row is not None
+            and left_row.disposition == "ALLOW"
+            and right_row.disposition == "ALLOW"
+        ):
+            review_set.update((left, right))
+
+    continued = tuple(plan.eligible_transition_ids) if plan.state != "FAIL_CLOSED" else ()
+    review = tuple(transition_id for transition_id in ordered if transition_id in review_set)
+    classified = set(continued) | set(review) | set(denied) | set(failed)
+    held = tuple(transition_id for transition_id in ordered if transition_id not in classified)
+
+    if plan.state == "FAIL_CLOSED":
+        state: ManifoldActionState = "FAIL_CLOSED"
+    elif review or held:
+        state = "REVIEWABLE"
+    else:
+        state = "CONTINUE"
+
+    boundary_refs = tuple(sorted({_normalize_text(ref) for ref in authority_boundary_refs}))
+    projection = {
+        "schema": "stegcore.governed-manifold-projection.v1",
+        "base_manifold_hash": plan.base_manifold_hash,
+        "plan_hash": plan.plan_hash,
+        "state": state,
+        "ordered_transition_ids": list(ordered),
+        "continue_transition_ids": list(continued),
+        "review_transition_ids": list(review),
+        "held_transition_ids": list(held),
+        "denied_transition_ids": list(denied),
+        "fail_closed_transition_ids": list(failed),
+        "authority_boundary_refs": list(boundary_refs),
+        "transition_standings": [
+            {
+                "transition_id": row.transition_id,
+                "disposition": row.disposition,
+                "depends_on": list(row.depends_on),
+                "conflicts_with": list(row.conflicts_with),
+                "bundle_id": row.bundle_id,
+                "candidate_hash": row.candidate_hash,
+                "evaluation_hash": row.evaluation_hash,
+            }
+            for row in plan.standings
+        ],
+        "governance_invariants": {
+            "human_in_the_loop_timing_is_governance_authority": False,
+            "wall_clock_is_governance_authority": False,
+            "heartbeat_is_governance_authority": False,
+            "observation_is_authorization": False,
+            "machine_speed_internal_transitions_may_continue_inside_existing_authority": True,
+            "protected_boundary_crossing_requires_external_authority": True,
+            "linear_transition_path_required": False,
+            "manifold_reviewable_as_projection": True,
+        },
+        "external_execution_performed": False,
+        "continuity_receipt_minted": False,
+        "authority_effect": "NONE_UNTIL_SEPARATE_GOVERNED_COMMIT",
+    }
+    payload = {
+        "schema": "stegcore.manifold-governance-action.v1",
+        "projection": projection,
+        "canonical_evaluator": "stegcore.steggate.evaluate_admissibility",
+        "canonical_evaluator_unchanged": True,
+    }
+    return ManifoldGovernanceAction(
+        schema=payload["schema"],
+        base_manifold_hash=plan.base_manifold_hash,
+        plan_hash=plan.plan_hash,
+        state=state,
+        continue_transition_ids=continued,
+        review_transition_ids=review,
+        held_transition_ids=held,
+        denied_transition_ids=denied,
+        fail_closed_transition_ids=failed,
+        authority_boundary_refs=boundary_refs,
+        reviewable_projection=projection,
+        action_hash=canonical_sha256(payload),
+    )
+
+
+__all__ = [
+    "PopulationTransition",
+    "TransitionStanding",
+    "BundleStanding",
+    "ManifoldPlan",
+    "ManifoldGovernanceAction",
+    "plan_manifold",
+    "govern_manifold_action",
+]
