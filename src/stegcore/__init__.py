@@ -56,6 +56,15 @@ from .transaction_discovery import (
     TransactionDiscoveryIndex,
 )
 from .transaction_discovery_store import DiscoveryRecordStore, SqliteDiscoveryStore
+from .manifold_governance import (
+    PopulationTransition,
+    TransitionStanding,
+    BundleStanding,
+    ManifoldPlan,
+    ManifoldGovernanceAction,
+    plan_manifold,
+    govern_manifold_action,
+)
 from .sdk_operation_events import (
     SDK_CHOICE_CODES,
     CORE_GOVERNED_CHOICES,
@@ -117,6 +126,13 @@ __all__ = [
     "TransactionDiscoveryIndex",
     "DiscoveryRecordStore",
     "SqliteDiscoveryStore",
+    "PopulationTransition",
+    "TransitionStanding",
+    "BundleStanding",
+    "ManifoldPlan",
+    "ManifoldGovernanceAction",
+    "plan_manifold",
+    "govern_manifold_action",
     "SDK_CHOICE_CODES",
     "CORE_GOVERNED_CHOICES",
     "CHOICE_LABELS",
