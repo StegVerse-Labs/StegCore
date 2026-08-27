@@ -19,28 +19,27 @@ on:
       - .github/workflows/manifold-governance-production.yml
   workflow_dispatch:
 
-permissions: {}
+permissions:
+  contents: read
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Materialize source anonymously
-        env:
-          SOURCE_REPO: ${{ github.repository }}
-          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: |
-          set -eu
-          test -z "${GITHUB_TOKEN:-}"
-          test -z "${GH_TOKEN:-}"
-          curl -fsSL "https://github.com/${SOURCE_REPO}/archive/${SOURCE_SHA}.tar.gz" -o /tmp/source.tgz
-          mkdir /tmp/source
-          tar -xzf /tmp/source.tgz -C /tmp/source --strip-components=1
+      - name: Checkout source without persisted credential
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
 
       - name: Install and validate canonical manifold governance
         run: |
           set -eu
-          cd /tmp/source
           python -m pip install --upgrade pip
           python -m pip install pytest
           python -m pip install .
@@ -50,7 +49,6 @@ jobs:
       - name: Prove production manifold invariants
         run: |
           set -eu
-          cd /tmp/source
           python - <<'PY'
           from stegcore.manifold_governance import PopulationTransition, govern_manifold_action
           from stegcore.steggate import AdmissibilityRequest
@@ -79,7 +77,9 @@ jobs:
           print('MANIFOLD_GOVERNANCE_PRODUCTION_PASS')
           PY
 
-      - name: Record non-authority boundary
+      - name: Record validation-only authority boundary
         run: |
-          echo 'Validation proves source behavior only.'
-          echo 'GitHub Actions grants no runtime, execution, governance, credential, release, or custody authority.'
+          echo 'checkout_credential_persisted=false'
+          echo 'production_runtime_authority=NONE'
+          echo 'credential_authority=TV/TVC'
+          echo 'validation_transport_authority=GITHUB_ACTIONS_ONLY'
