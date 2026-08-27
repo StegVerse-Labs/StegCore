@@ -51,7 +51,7 @@ The canonical repository-operation broker admission target is now:
 ```text
 StegVerse-Labs/TVC PR #92
 TVC-GITHUB-REPOSITORY-OPERATION-BROKER-001
-expected current PR #92 head: 8eae9764599817f92aa24a71c64dcd1ba1dccfed
+expected governed PR #92 head: 4e87ad9f3a859ab3b18241640624abd5e1757002
 superseded unmerged PRs: #20, #79
 
 StegVerse-Labs/.github
@@ -61,22 +61,22 @@ receipt target:
 receipts/tvc-repository-broker-validation/SHWP-TVC-REPOSITORY-BROKER-VALIDATION-001.json
 ```
 
-PR #79 was 122+ commits behind current TVC main and non-mergeable; it was closed without merge. PR #92 re-materializes the same bounded broker delta onto current main and is one commit ahead / zero behind at the latest reconciliation, with exactly 16 broker source/control/test files.
+PR #79 was 122+ commits behind current TVC main and non-mergeable; it was closed without merge. PR #92 carries exactly 16 broker source/control/test files. Governed PASS binds the exact tested PR head plus the complete 16-file `source_bundle_sha256`. Later unrelated movement of TVC `main` does not change that tested source identity; integration must rematerialize the identical digest and perform current-base compatibility review.
 
 Heartbeat progression is not a validation trigger or dependency. The broker validation is a separate task-control/runtime lane. No heartbeat state, carrier epoch, missed observation, or assignment packet authorizes, delays, suppresses, or advances the validation.
 
 The required upstream release condition is:
 
 ```text
-1. exact clean TVC PR #92 source at 8eae9764599817f92aa24a71c64dcd1ba1dccfed is locally materialized on a StegVerse-controlled validation surface;
+1. exact clean TVC PR #92 source at 4e87ad9f3a859ab3b18241640624abd5e1757002 is locally materialized on a StegVerse-controlled validation surface;
 2. python tools/task_dispatcher.py tvc.github_repository_operation_broker.verify executes;
 3. dispatcher status=ok and nested result.result=PASS;
 4. consumer_credential_used=false;
 5. tvc_github_credential_used=false;
 6. non_tv_tvc_secret_or_token_used=false;
 7. protected_value_disclosure=false;
-8. the retained validation receipt binds that exact PR #92 head;
-9. TVC PR #92 is canonically admitted;
+8. the retained validation receipt binds that exact PR #92 head, `source_bundle_file_count=16`, and a 64-character `source_bundle_sha256`;
+9. if TVC main moved, the identical 16-file digest is rematerialized and current-base compatibility passes; TVC PR #92/broker bundle is then canonically admitted;
 10. StegCore exact PR #141 source is re-resolved/materialized and sovereign validation executes against that then-current exact head.
 ```
 
@@ -102,7 +102,7 @@ original #93/#102 credential-clean public validation implementation: COMPLETE
 legacy anonymous private-source failure fanout repair: APPLIED
 NON-TV/TVC credential substitution: NONE AUTHORIZED
 private-source sovereign implementation in PR #141: SOURCE COMPLETE
-TVC PR #92 broker validation target: 8eae9764599817f92aa24a71c64dcd1ba1dccfed
+TVC PR #92 broker validation target: 4e87ad9f3a859ab3b18241640624abd5e1757002
 TVC PR #92 governed validation receipt: NOT OBSERVED
 TVC PR #92 canonical admission: NOT COMPLETE
 StegCore PR #141 exact-head sovereign validation receipt: NOT OBSERVED
@@ -110,10 +110,13 @@ StegCore PR #141 merge: NOT COMPLETE
 write-side evidence continuation #101: REMAINS DEPENDENT ON TV/TVC TRANSPORT
 ```
 
-## Archive condition
+## Continuity and archive semantics
 
-Do not archive while the required private-source validation chain remains machine-owned, blocked, unvalidated, unreleased, not deployed, or not activated.
+The **StegCore validation project lane remains ACTIVE / BLOCKED** while the required private-source validation chain is machine-owned, blocked, unvalidated, unreleased, not deployed, or not activated. Those states remain nonterminal for the project.
+
+The ChatGPT session is not part of the validation chain. Continuation is durable in this handoff, `tasks/STEGCORE-SOVEREIGN-PRIVATE-SOURCE-VALIDATION-003.json`, PR #141, and the upstream TVC/.github handoffs. After global coordination capture, session archival does not imply validation, merge, release, deployment, activation, or completion.
 
 ```text
-DO NOT ARCHIVE THIS SESSION — REQUIRED EXECUTION REMAINS IN AN ACTIVE DEPENDENCY LANE.
+project_lifecycle: ACTIVE / BLOCKED
+chat_session_required: false
 ```
