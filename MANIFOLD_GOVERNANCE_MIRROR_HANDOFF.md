@@ -55,8 +55,66 @@ The kernel:
 5. is permutation-invariant for equivalent input populations;
 6. fails closed on duplicate identities, stale/mixed base state, unknown references, self references, and dependency cycles;
 7. exposes coherence/gradient observations as evidence-only hashes with no authority effect;
-8. separates planning from commit and performs no external execution or continuity-receipt minting;
-9. emits a replay-stable deterministic plan hash.
+8. separates planning/action resolution from commit and performs no external execution or continuity-receipt minting;
+9. emits a replay-stable deterministic plan hash;
+10. resolves concurrent production manifold action into continue/review/held/denied/fail-closed classes;
+11. permits independent ALLOW branches to continue toward the governed commit boundary while protected REVIEW branches remain reviewable;
+12. treats wall-clock time and HB cadence as non-authorizing observations rather than human-governance authority.
+
+
+## Production governed-manifold action extension — 2026-08-27
+
+The manifold kernel now includes a production governance action resolver rather than remaining planning-only.
+
+Canonical runtime surface:
+
+```text
+src/stegcore/manifold_governance.py
+  govern_manifold_action(...)
+  ManifoldGovernanceAction
+```
+
+This is part of StegVerse governance. It is not an SDK-local evaluator and it does not create a parallel decision path. Every transition still receives its canonical disposition from `stegcore.steggate.evaluate_admissibility`.
+
+The resolver classifies the concurrently evolving transition population into:
+
+```text
+continue_transition_ids
+review_transition_ids
+held_transition_ids
+denied_transition_ids
+fail_closed_transition_ids
+```
+
+The central production invariant is:
+
+```text
+human-in-the-loop timing != governance authority
+wall-clock time != governance authority
+heartbeat cadence != governance authority
+observation != authorization
+
+independent ALLOW transitions may continue to the separately governed commit boundary
+while unrelated REVIEW transitions remain reviewable
+and dependent transitions remain held.
+
+protected boundary crossing requires the separately applicable authority.
+```
+
+The emitted `stegcore.governed-manifold-projection.v1` is explicitly non-authorizing and reviewable. It represents a multi-variable concurrent transition space; a single linear path is not required.
+
+The resolver itself does not perform external execution, mint continuity/custody receipts, or bypass the existing governed commit boundary. Its role is production governance resolution before that boundary.
+
+Focused validation coverage is installed in `tests/test_manifold_governance.py` for:
+- independent ALLOW branches continuing while a protected REVIEW branch is held;
+- dependent transitions remaining held behind a review boundary;
+- DENY preservation;
+- FAIL_CLOSED preservation;
+- non-temporal human authority semantics;
+- non-authorizing HB/time observations.
+
+SDK demo/test consumers must call this StegCore production capability rather than duplicate its logic.
+
 
 ## Replay-stability correction retained
 
@@ -121,10 +179,10 @@ python scripts/verify_product_consistency.py
 ## Completion inventory
 
 ```text
-required developed files: 3/3
+required developed files: 3/3 + production action extension
 scaffolding/stubs: 0
 missing required files: 0
-focused implementation: COMPLETE
+focused implementation: COMPLETE + PRODUCTION ACTION EXTENSION IMPLEMENTED
 hosted workflow gates: 5/5 PASS
 canonical StegCore merge: COMPLETE
 upstream .github re-observation: COMPLETE
