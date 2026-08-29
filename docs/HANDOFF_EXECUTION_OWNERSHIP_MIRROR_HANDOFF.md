@@ -18,6 +18,10 @@ credential authority: TV/TVC
 heartbeat grants execution authority: false
 ```
 
+## Validation boundary for this metadata-only migration
+
+The repository's `external-evidence-interop.yml` pull-request path filter intentionally excludes this execution-ownership-only file. The strongest applicable validation for this migration is therefore exact-head file/diff inspection plus GitHub mergeability, without manufacturing a product-path edit merely to trigger unrelated runtime tests. Absence of a PR check for this path is not a product-runtime PASS and does not alter issue #25's machine-owned validation state.
+
 ## Execution ownership and collision partition
 
 Standard: `stegverse.handoff-execution-ownership/v1`.
@@ -32,8 +36,8 @@ Standard: `stegverse.handoff-execution-ownership/v1`.
   manual_execution_allowed: true
   manual_allowed_role: integration
   collision_scope: this execution-ownership mirror handoff and adoption metadata only; excludes issue #25 implementation/validation, other PR/workstream files, Governance contract repair, runtime execution, release, credentials, claims/fences/leases, and destination propagation
-  release_condition: exact-head repository validation is observed, migration PR is merged, issue #159 is reconciled, and repo-standards adoption state is updated
-  next_executable_action: validate and merge ownership metadata only
+  release_condition: strongest applicable exact-head validation for the metadata-only path is observed, migration PR is merged, issue #159 is reconciled, and repo-standards adoption state is updated
+  next_executable_action: inspect exact-head metadata/diff and merge only if collision boundaries remain intact
 ```
 
 ### WORKER-OWNED / DO NOT COMPETE
@@ -73,4 +77,4 @@ Standard: `stegverse.handoff-execution-ownership/v1`.
 
 ## Completion rule
 
-The StegCore handoff-ownership target is migration-complete when this exact execution-ownership record is validated and merged and repo-standards records StegCore as `MIGRATED`, while issue #25 and all other current owners remain unchanged.
+The StegCore handoff-ownership target is migration-complete when this exact execution-ownership record receives the strongest applicable exact-head metadata validation, is merged, and repo-standards records StegCore as `MIGRATED`, while issue #25 and all other current owners remain unchanged.
