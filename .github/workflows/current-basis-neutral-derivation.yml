@@ -30,10 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source without persisted credential
-        uses: actions/checkout@v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
         with:
           persist-credentials: false
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Assert runtime credential boundary
         run: |
