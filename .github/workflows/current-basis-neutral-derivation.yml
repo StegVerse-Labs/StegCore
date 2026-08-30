@@ -28,29 +28,27 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Materialize public source anonymously
-        env:
-          SOURCE_REPO: ${{ github.repository }}
-          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Checkout exact source without persisted credential
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert runtime credential boundary
         run: |
           set -eu
-          test -z "${GITHUB_TOKEN:-}"
           test -z "${GH_TOKEN:-}"
-          curl -fsSL "https://github.com/${SOURCE_REPO}/archive/${SOURCE_SHA}.tar.gz" -o /tmp/source.tgz
-          mkdir /tmp/source
-          tar -xzf /tmp/source.tgz -C /tmp/source --strip-components=1
+          echo 'Checkout transport credential is not persisted and grants no StegVerse runtime authority.'
 
       - name: Install package test dependencies
         run: |
           set -eu
-          cd /tmp/source
           python -m pip install -U pip
           python -m pip install -e ".[dev]"
 
       - name: Validate neutral derivation and canonical delegation
         run: |
           set -eu
-          cd /tmp/source
           python -m pytest -q tests/test_current_basis.py
           python -m py_compile src/stegcore/current_basis.py
           python - <<'PY'
