@@ -65,6 +65,13 @@ from .manifold_governance import (
     plan_manifold,
     govern_manifold_action,
 )
+from .current_basis import (
+    VECTOR_SCHEMA as CURRENT_BASIS_VECTOR_SCHEMA,
+    RESULT_SCHEMA as CURRENT_BASIS_RESULT_SCHEMA,
+    CurrentBasisVectorError,
+    derive_admissibility_request as derive_current_basis_admissibility_request,
+    evaluate_current_basis_vector,
+)
 from .sdk_operation_events import (
     SDK_CHOICE_CODES,
     CORE_GOVERNED_CHOICES,
@@ -133,6 +140,11 @@ __all__ = [
     "ManifoldGovernanceAction",
     "plan_manifold",
     "govern_manifold_action",
+    "CURRENT_BASIS_VECTOR_SCHEMA",
+    "CURRENT_BASIS_RESULT_SCHEMA",
+    "CurrentBasisVectorError",
+    "derive_current_basis_admissibility_request",
+    "evaluate_current_basis_vector",
     "SDK_CHOICE_CODES",
     "CORE_GOVERNED_CHOICES",
     "CHOICE_LABELS",
