@@ -44,7 +44,8 @@ jobs:
         run: |
           set -eu
           python -m pip install -U pip
-          python -m pip install -e ".[dev]"
+          python -m pip install pytest
+          python -m pip install .
 
       - name: Validate neutral derivation and canonical delegation
         run: |
