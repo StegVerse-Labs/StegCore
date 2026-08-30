@@ -22,7 +22,8 @@ on:
       - docs/CROSS_FRAMEWORK_CURRENT_BASIS_NATIVE_DERIVATION_MIRROR_HANDOFF.md
       - .github/workflows/current-basis-neutral-derivation.yml
 
-permissions: {}
+permissions:
+  contents: read
 
 jobs:
   validate:
