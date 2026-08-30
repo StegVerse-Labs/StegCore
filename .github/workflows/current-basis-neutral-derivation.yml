@@ -1,0 +1,63 @@
+name: Current-Basis Neutral Derivation Validation (Non-Authorizing)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - src/stegcore/current_basis.py
+      - src/stegcore/steggate.py
+      - src/stegcore/three_layer.py
+      - src/stegcore/__init__.py
+      - tests/test_current_basis.py
+      - docs/CROSS_FRAMEWORK_CURRENT_BASIS_NATIVE_DERIVATION_MIRROR_HANDOFF.md
+      - .github/workflows/current-basis-neutral-derivation.yml
+  push:
+    branches: [main]
+    paths:
+      - src/stegcore/current_basis.py
+      - src/stegcore/steggate.py
+      - src/stegcore/three_layer.py
+      - src/stegcore/__init__.py
+      - tests/test_current_basis.py
+      - docs/CROSS_FRAMEWORK_CURRENT_BASIS_NATIVE_DERIVATION_MIRROR_HANDOFF.md
+      - .github/workflows/current-basis-neutral-derivation.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source without persisted credential
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
+        with:
+          persist-credentials: false
+
+      - name: Assert runtime credential boundary
+        run: |
+          set -eu
+          test -z "${GH_TOKEN:-}"
+          echo 'Checkout transport credential is not persisted and grants no StegVerse runtime authority.'
+
+      - name: Install package test dependencies
+        run: |
+          set -eu
+          python -m pip install -U pip
+          python -m pip install pytest
+          python -m pip install .
+
+      - name: Validate neutral derivation and canonical delegation
+        run: |
+          set -eu
+          python -m pytest -q tests/test_current_basis.py
+          python -m py_compile src/stegcore/current_basis.py
+          python - <<'PY'
+          from stegcore.current_basis import VECTOR_SCHEMA, evaluate_current_basis_vector
+          assert VECTOR_SCHEMA == "stegverse.cross-framework-current-basis-vector.v0.4"
+          print("CURRENT_BASIS_NEUTRAL_DERIVATION_PASS")
+          PY
+
+      - name: Record authority boundary
+        run: |
+          echo 'This workflow validates source only. It does not execute the external comparison consequence, mint the S0->S1 transition receipt, create Master Records custody, or grant runtime/release authority.'
