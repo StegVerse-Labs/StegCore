@@ -1,0 +1,54 @@
+{
+  "schema_version": "stegverse.governance-connector.request/v1",
+  "profile_id": "example.external-system.v1",
+  "operation_id": "execute",
+  "system_id": "external-system.example",
+  "boundary_id": "interlock:external-system.example",
+  "authority_ref": "authority:example:1",
+  "intent_ref": "intent:example:1",
+  "candidate_ref": "candidate:example:1",
+  "evidence_refs": [
+    "evidence:example:1"
+  ],
+  "resolved_facts": {
+    "judgment_conditions": {
+      "refusal_available": true,
+      "operator_recoverability": "available",
+      "workload_state": "supported",
+      "time_pressure": "normal",
+      "isolation_state": "supported",
+      "evidence_refs": [
+        "judgment:example:1"
+      ]
+    },
+    "signal_admission": {
+      "admitted_signal_refs": [
+        "signal:example:1"
+      ],
+      "excluded_signal_refs": [],
+      "transformations": [
+        "canonicalize"
+      ],
+      "missing_inputs": [],
+      "uncertainty_state": "bounded",
+      "reference_state_hash": "state:example:1",
+      "expected_reference_state_hash": "state:example:1",
+      "reconstruction_available": true,
+      "transformation_provenance_complete": true
+    },
+    "execution_boundary": {
+      "actor_authority_current": true,
+      "policy_current": true,
+      "delegation_current": true,
+      "evidence_current": true,
+      "affected_entity_conditions_represented": true,
+      "recoverability_profile": "recoverable",
+      "validity_window_open": true,
+      "policy_ref": "policy.external-system.execute.v1",
+      "delegation_ref": "delegation:example:1",
+      "evidence_refs": [
+        "execution:example:1"
+      ]
+    }
+  }
+}
