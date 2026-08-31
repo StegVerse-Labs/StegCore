@@ -10,6 +10,7 @@
     "system_id",
     "boundary_id",
     "governance_profile_id",
+    "candidate_hash_profile",
     "enforcement_claim",
     "bypass_path_declared",
     "operations",
@@ -128,6 +129,9 @@
           "const": "NONE"
         }
       }
+    },
+    "candidate_hash_profile": {
+      "const": "stegverse.external-native-action-candidate.v1"
     }
   }
 }
