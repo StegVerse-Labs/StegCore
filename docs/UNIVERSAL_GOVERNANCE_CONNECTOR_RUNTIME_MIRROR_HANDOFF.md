@@ -357,4 +357,4 @@ target authority_effect exists only for the bounded consequence
 
 Negative controls cover candidate mutation, Governance DENY, target authority mismatch, credential mismatch, forbidden automatic capability mode, and ENFORCED bypass.
 
-Lifecycle for this lane remains IMPLEMENTED_VALIDATION_PENDING until #173 CI passes and the merge completes. Live external-system ENFORCED observation remains separate.
+Lifecycle for this lane is IMPLEMENTED_VALIDATION_REQUESTED until #173/#174 CI passes and the merge completes. Live external-system ENFORCED observation remains separate.
