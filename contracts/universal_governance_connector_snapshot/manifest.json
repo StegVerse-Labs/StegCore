@@ -1,8 +1,18 @@
 {
   "schema": "stegcore.governance-connector-snapshot-manifest.v1",
   "governance_repository": "StegVerse-Labs/Governance",
-  "governance_source_commit": "3b0e5f10616fc00f2d91117bbf5ada358b04144d",
+  "governance_source_commit": "16ee2517cfcfe567fcf7065fbcbc8077d3651341",
   "source_files": [
+    {
+      "source_path": "specs/universal-governance-connector-profiles.v1.json",
+      "snapshot_path": "contracts/universal_governance_connector_snapshot/universal-governance-connector-profiles.v1.json",
+      "source_blob_sha": "3fdabf87fadde86aee4cd6906fb6dd57ae6f1881"
+    },
+    {
+      "source_path": "schemas/universal_governance_connector_registry.schema.json",
+      "snapshot_path": "contracts/universal_governance_connector_snapshot/universal_governance_connector_registry.schema.json",
+      "source_blob_sha": "febe9caf9362220ac1475ee7c897d79c76bce64c"
+    },
     {
       "source_path": "fixtures/universal-governance-connector/profile.example.json",
       "snapshot_path": "contracts/universal_governance_connector_snapshot/profile.example.json",
