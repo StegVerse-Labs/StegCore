@@ -162,13 +162,72 @@ class UniversalGovernanceConsequenceEvidenceTests(unittest.TestCase):
             evidence,
             source_repository="StegVerse-Labs/StegCore",
             source_commit="SOURCE-COMMIT-UNDER-TEST",
+            return_intr_packet_id=complete["packet_id"],
+            return_payload_hash=complete["payload_hash"],
+            return_terminal_receipt_hash=complete["terminal_receipt_hash"],
         )
         self.assertEqual(projection["destination_repository"],"master-records/core-lite")
         self.assertEqual(projection["source_evidence_hash"],evidence["evidence_hash"])
+        self.assertEqual(projection["return_intr_packet_id"],complete["packet_id"])
+        self.assertEqual(projection["return_terminal_receipt_hash"],complete["terminal_receipt_hash"])
+        self.assertEqual(
+            projection["travel_lineage"],
+            [
+                governance.intr_packet_id,
+                governance.receipt_hash,
+                evidence["evidence_hash"],
+                complete["packet_id"],
+                complete["terminal_receipt_hash"],
+            ],
+        )
         self.assertTrue(projection["custody_requested"])
         self.assertFalse(projection["destination_acknowledgement_minted"])
         self.assertFalse(projection["execution_authority_granted"])
         self.assertEqual(projection["authority_effect"],"NONE_SOURCE_PROJECTION_ONLY")
+
+    def test_projection_requires_return_transport_metadata(self):
+        adapter,_,_,_,_,governance,execution=build_full_execution()
+        evidence=build_universal_governance_consequence_evidence(
+            adapter_id=adapter["adapter_id"],
+            governance_result=governance,
+            execution=execution,
+        )
+        with self.assertRaisesRegex(ValueError,"return_transport_binding_missing"):
+            build_master_records_projection(
+                evidence,
+                source_repository="StegVerse-Labs/StegCore",
+                source_commit="SOURCE-COMMIT-UNDER-TEST",
+                return_intr_packet_id="",
+                return_payload_hash="",
+                return_terminal_receipt_hash="",
+            )
+
+    def test_projection_rejects_return_payload_mismatch(self):
+        adapter,_,connector,packet,request_receipt,governance,execution=build_full_execution()
+        evidence=build_universal_governance_consequence_evidence(
+            adapter_id=adapter["adapter_id"],
+            governance_result=governance,
+            execution=execution,
+        )
+        _,_,complete=return_consequence_evidence_via_intr(
+            connector=connector,
+            request_packet=packet,
+            request_receipts=[request_receipt],
+            evidence=evidence,
+            operation_id="CONSEQUENCE-EVIDENCE-RETURN-MISMATCH",
+            receipt_id="CONSEQUENCE-EVIDENCE-RETURN-MISMATCH-R1",
+            boundary_identity_ref="ExternalSystem:GovernedBoundary",
+            recorded_at="2026-08-31T18:45:02Z",
+        )
+        with self.assertRaisesRegex(ValueError,"return_payload_hash_mismatch"):
+            build_master_records_projection(
+                evidence,
+                source_repository="StegVerse-Labs/StegCore",
+                source_commit="SOURCE-COMMIT-UNDER-TEST",
+                return_intr_packet_id=complete["packet_id"],
+                return_payload_hash="sha256:"+"0"*64,
+                return_terminal_receipt_hash=complete["terminal_receipt_hash"],
+            )
 
     def test_completed_execution_cannot_claim_unobserved_consequence(self):
         adapter,_,_,_,_,governance,execution=build_full_execution()
