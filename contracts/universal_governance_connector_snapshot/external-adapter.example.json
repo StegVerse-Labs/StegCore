@@ -18,7 +18,8 @@
       "input_mapping": {
         "native_action_ref": "candidate_ref",
         "native_intent_ref": "intent_ref",
-        "native_authority_ref": "authority_ref"
+        "native_authority_ref": "authority_ref",
+        "native_parameters": "candidate_hash_basis.parameters"
       },
       "evidence_mapping": {
         "native_evidence_refs": "evidence_refs",
@@ -32,5 +33,6 @@
     "governance_allow_executes_consequence": false,
     "credential_authority": "TV/TVC",
     "authority_effect": "NONE"
-  }
+  },
+  "candidate_hash_profile": "stegverse.external-native-action-candidate.v1"
 }

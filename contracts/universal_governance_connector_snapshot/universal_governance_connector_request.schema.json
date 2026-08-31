@@ -13,6 +13,7 @@
     "authority_ref",
     "intent_ref",
     "candidate_ref",
+    "candidate_hash",
     "evidence_refs",
     "resolved_facts"
   ],
@@ -255,6 +256,10 @@
           }
         }
       }
+    },
+    "candidate_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
     }
   }
 }

@@ -1,0 +1,20 @@
+{
+  "schema": "stegcore.steggate-execution-profile-snapshot.v1",
+  "source_repository": "StegVerse-Labs/ara-admissibility-interop",
+  "source_ref": "main",
+  "source_files": [
+    {
+      "source_path": "profiles/execution-deterministic.v1.yaml",
+      "snapshot_path": "contracts/steggate_execution_profile_snapshot/execution-deterministic.v1.json",
+      "source_blob_sha": "aaa9d7192d4a845c786188c7625bab4e3166bbdc"
+    },
+    {
+      "source_path": "schemas/execution-request.v1.json",
+      "snapshot_path": "contracts/steggate_execution_profile_snapshot/execution-request.v1.json",
+      "source_blob_sha": "c77a7d78df1c57b17c82ab81223f6ec904a42da1"
+    }
+  ],
+  "profile_id": "SG-EXECUTION-DETERMINISTIC-v1",
+  "authority_effect": false,
+  "credential_authority": "TV/TVC"
+}
