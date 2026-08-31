@@ -36,6 +36,7 @@ class GovernanceConnectorRequest:
     authority_ref: str
     intent_ref: str
     candidate_ref: str
+    candidate_hash: str
     evidence_refs: tuple[str, ...]
     three_layer_request: ThreeLayerRequest
 
@@ -71,7 +72,7 @@ def parse_governance_connector_request(
 
     allowed_fields = {
         "schema_version", "profile_id", "operation_id", "system_id", "boundary_id",
-        "authority_ref", "intent_ref", "candidate_ref", "evidence_refs", "resolved_facts",
+        "authority_ref", "intent_ref", "candidate_ref", "candidate_hash", "evidence_refs", "resolved_facts",
     }
     if set(payload) != allowed_fields:
         raise ValueError("connector.request_field_set_invalid")
@@ -109,11 +110,19 @@ def parse_governance_connector_request(
     authority_ref = payload.get("authority_ref")
     intent_ref = payload.get("intent_ref")
     candidate_ref = payload.get("candidate_ref")
+    candidate_hash = payload.get("candidate_hash")
     evidence_refs = payload.get("evidence_refs")
     if not isinstance(authority_ref, str) or not authority_ref:
         raise ValueError("connector.authority_ref_missing")
     if not isinstance(intent_ref, str) or not intent_ref or not isinstance(candidate_ref, str) or not candidate_ref:
         raise ValueError("connector.intent_or_candidate_missing")
+    if (
+        not isinstance(candidate_hash, str)
+        or not candidate_hash.startswith("sha256:")
+        or len(candidate_hash) != 71
+        or any(ch not in "0123456789abcdef" for ch in candidate_hash[7:])
+    ):
+        raise ValueError("connector.candidate_hash_invalid")
     if not isinstance(evidence_refs, list) or not evidence_refs or not all(isinstance(x, str) and x for x in evidence_refs):
         raise ValueError("connector.evidence_refs_missing")
 
@@ -179,6 +188,7 @@ def parse_governance_connector_request(
         authority_ref=authority_ref,
         intent_ref=intent_ref,
         candidate_ref=candidate_ref,
+        candidate_hash=candidate_hash,
         evidence_refs=tuple(evidence_refs),
         three_layer_request=tl,
     )
@@ -203,6 +213,7 @@ class GovernanceConnectorResult:
     authority_ref: str
     intent_ref: str
     candidate_ref: str
+    candidate_hash: str
     evidence_refs: tuple[str, ...]
     three_layer_receipt: Mapping[str, Any] | None
     eligible_for_separate_consequence_authorization: bool
@@ -297,6 +308,7 @@ def _result(
         "authority_ref": request.authority_ref,
         "intent_ref": request.intent_ref,
         "candidate_ref": request.candidate_ref,
+        "candidate_hash": request.candidate_hash,
         "evidence_refs": list(request.evidence_refs),
         "three_layer_receipt": dict(three_layer_result.receipt) if three_layer_result is not None else None,
         "eligible_for_separate_consequence_authorization": decision == "ALLOW",
@@ -324,6 +336,7 @@ def _result(
         authority_ref=request.authority_ref,
         intent_ref=request.intent_ref,
         candidate_ref=request.candidate_ref,
+        candidate_hash=request.candidate_hash,
         evidence_refs=tuple(request.evidence_refs),
         three_layer_receipt=payload["three_layer_receipt"],
         eligible_for_separate_consequence_authorization=payload["eligible_for_separate_consequence_authorization"],
