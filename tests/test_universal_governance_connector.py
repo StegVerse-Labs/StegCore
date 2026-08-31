@@ -11,7 +11,9 @@ from stegcore.three_layer import (
 )
 from stegcore.universal_governance_connector import (
     GovernanceConnectorRequest,
+    VerifiedTransportBindings,
     evaluate_governance_connector,
+    parse_governance_connector_request,
 )
 
 
@@ -29,7 +31,7 @@ def profile():
         },
         "interlock": {
             "required": True,
-            "intr_profile_ref": "stegos.universal-intr.external-system.v1",
+            "intr_profile_ref": "governance-external-action",
             "governed_transition_profile_ref": "steggate.transition.v1",
             "carrier_profile_ref": "heartbeat-derived-intr.v1",
             "fail_closed_on_binding_error": True,
@@ -114,7 +116,7 @@ def request(tl=None):
         boundary_id="interlock:external-system.example",
         interlock_exchange_id="exchange:1",
         intr_packet_id="intr:packet:1",
-        intr_profile_ref="stegos.universal-intr.external-system.v1",
+        intr_profile_ref="governance-external-action",
         governed_transition_profile_ref="steggate.transition.v1",
         carrier_profile_ref="heartbeat-derived-intr.v1",
         authority_ref="authority:1",
@@ -122,6 +124,63 @@ def request(tl=None):
         candidate_ref="candidate:1",
         evidence_refs=("evidence:1",),
         three_layer_request=tl or three_layer(),
+    )
+
+
+def serialized_payload():
+    return {
+        "schema_version": "stegverse.governance-connector.request/v1",
+        "profile_id": "example.external-system.v1",
+        "operation_id": "execute",
+        "system_id": "external-system.example",
+        "boundary_id": "interlock:external-system.example",
+        "authority_ref": "authority:1",
+        "intent_ref": "intent:1",
+        "candidate_ref": "candidate:1",
+        "evidence_refs": ["evidence:1"],
+        "resolved_facts": {
+            "judgment_conditions": {
+                "refusal_available": True,
+                "operator_recoverability": "available",
+                "workload_state": "supported",
+                "time_pressure": "normal",
+                "isolation_state": "supported",
+                "evidence_refs": ["judgment:1"],
+            },
+            "signal_admission": {
+                "admitted_signal_refs": ["signal:1"],
+                "excluded_signal_refs": [],
+                "transformations": ["canonicalize"],
+                "missing_inputs": [],
+                "uncertainty_state": "bounded",
+                "reference_state_hash": "state:abc",
+                "expected_reference_state_hash": "state:abc",
+                "reconstruction_available": True,
+                "transformation_provenance_complete": True,
+            },
+            "execution_boundary": {
+                "actor_authority_current": True,
+                "policy_current": True,
+                "delegation_current": True,
+                "evidence_current": True,
+                "affected_entity_conditions_represented": True,
+                "recoverability_profile": "recoverable",
+                "validity_window_open": True,
+                "policy_ref": "policy.external-system.execute.v1",
+                "delegation_ref": "delegation:1",
+                "evidence_refs": ["execution:1"],
+            },
+        },
+    }
+
+
+def transport_bindings():
+    return VerifiedTransportBindings(
+        interlock_exchange_id="exchange:1",
+        intr_packet_id="intr:packet:1",
+        intr_profile_ref="governance-external-action",
+        governed_transition_profile_ref="steggate.transition.v1",
+        carrier_profile_ref="heartbeat-derived-intr.v1",
     )
 
 
@@ -196,6 +255,38 @@ class UniversalGovernanceConnectorTests(unittest.TestCase):
         result = evaluate_governance_connector(profile(), r)
         self.assertEqual(result.decision, "FAIL-CLOSED")
         self.assertEqual(result.reason_code, "connector.carrier_profile_mismatch")
+
+
+    def test_serialized_request_parses_and_evaluates(self):
+        parsed = parse_governance_connector_request(profile(), serialized_payload(), transport_bindings())
+        self.assertEqual(parsed.intr_profile_ref, "governance-external-action")
+        self.assertEqual(parsed.interlock_exchange_id, "exchange:1")
+        result = evaluate_governance_connector(profile(), parsed)
+        self.assertEqual(result.decision, "ALLOW")
+        self.assertFalse(result.execution_authority_granted)
+
+    def test_payload_cannot_self_assert_transport_bindings(self):
+        payload = serialized_payload()
+        payload["intr_packet_id"] = "forged"
+        with self.assertRaisesRegex(ValueError, "request_field_set_invalid"):
+            parse_governance_connector_request(profile(), payload, transport_bindings())
+
+    def test_verified_transport_binding_mismatch_is_rejected(self):
+        tb = VerifiedTransportBindings(
+            interlock_exchange_id="exchange:1",
+            intr_packet_id="intr:packet:1",
+            intr_profile_ref="wrong",
+            governed_transition_profile_ref="steggate.transition.v1",
+            carrier_profile_ref="heartbeat-derived-intr.v1",
+        )
+        with self.assertRaisesRegex(ValueError, "intr_profile_mismatch"):
+            parse_governance_connector_request(profile(), serialized_payload(), tb)
+
+    def test_serialized_policy_drift_is_rejected(self):
+        payload = serialized_payload()
+        payload["resolved_facts"]["execution_boundary"]["policy_ref"] = "policy.wrong"
+        with self.assertRaisesRegex(ValueError, "policy_ref_mismatch"):
+            parse_governance_connector_request(profile(), payload, transport_bindings())
 
 
 if __name__ == "__main__":
