@@ -12,6 +12,7 @@ from stegcore.external_governance_adapter import (
     AdapterPreparedRequest,
     ConsequenceGateResult,
     gate_external_consequence,
+    native_candidate_hash,
 )
 from stegcore.universal_governance_connector import GovernanceConnectorResult
 
@@ -113,7 +114,15 @@ def build_steggate_execution_request(
     candidate_id = str(prepared.payload.get("candidate_ref") or "")
     if not candidate_id:
         raise ValueError("execution.candidate_id_missing")
-    candidate_hash = _sha256_uri({"candidate_id": candidate_id, "action": action})
+    candidate_hash = native_candidate_hash(
+        candidate_ref=candidate_id,
+        native_operation=native_operation,
+        parameters=parameters,
+    )
+    if prepared.payload.get("candidate_hash") != candidate_hash:
+        raise ValueError("execution.governance_candidate_hash_mismatch")
+    if governance_result.candidate_hash != candidate_hash:
+        raise ValueError("execution.governance_result_candidate_hash_mismatch")
 
     surface = dict(capability_surface or {
         "actions_exposed": [native_operation],
@@ -184,9 +193,15 @@ def validate_steggate_execution_request(
     action = request.get("action")
     if not isinstance(action, Mapping) or set(action) != {"name", "parameters"}:
         raise ValueError("execution.action_invalid")
-    expected_hash = _sha256_uri({"candidate_id": request["candidate_id"], "action": dict(action)})
+    expected_hash = native_candidate_hash(
+        candidate_ref=str(request["candidate_id"]),
+        native_operation=str(action["name"]),
+        parameters=action["parameters"],
+    )
     if request.get("candidate_hash") != expected_hash:
         raise ValueError("execution.candidate_binding_mismatch")
+    if prepared.payload.get("candidate_hash") != expected_hash:
+        raise ValueError("execution.governance_candidate_hash_mismatch")
     credential = request.get("credential_binding")
     if not isinstance(credential, Mapping) or set(credential) != {"credential_id", "credential_hash", "subject_binding"}:
         raise ValueError("execution.credential_binding_invalid")
