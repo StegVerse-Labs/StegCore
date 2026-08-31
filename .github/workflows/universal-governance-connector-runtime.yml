@@ -34,3 +34,5 @@ jobs:
         run: python -m py_compile src/stegcore/universal_governance_connector.py tests/test_universal_governance_connector.py
       - name: Run connector tests
         run: python -m unittest -v tests.test_universal_governance_connector
+      - name: Verify pinned Governance connector contract
+        run: python scripts/verify_universal_governance_connector_contract.py
