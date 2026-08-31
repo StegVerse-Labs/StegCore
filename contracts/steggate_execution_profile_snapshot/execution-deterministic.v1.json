@@ -1,0 +1,49 @@
+{
+  "profile_id": "SG-EXECUTION-DETERMINISTIC-v1",
+  "consequence_class": "execution",
+  "status": "review-candidate",
+  "authority_effect": false,
+  "runtime_owner": "StegVerse-Labs/StegCore@feat/commit-coherence-boundary:src/stegcore/commit_governance.py",
+  "request_schema": "schemas/execution-request.v1.json",
+  "candidate_binding": {
+    "required": true,
+    "fields": ["candidate_id", "candidate_hash"],
+    "mismatch_result": "DENY",
+    "mismatch_reason": "CANDIDATE_BINDING_MISMATCH"
+  },
+  "credential_binding": {
+    "required": true,
+    "fields": ["credential_id", "credential_hash", "subject_binding"],
+    "mismatch_result": "DENY",
+    "mismatch_reason": "CREDENTIAL_BINDING_MISMATCH"
+  },
+  "capability_constraints": {
+    "action_must_be_exposed": true,
+    "downstream_may_only_narrow": true,
+    "requires_governed_commit": true,
+    "forbidden_execution_modes": ["auto", "autonomous", "unbounded"],
+    "action_not_exposed_reason": "CAPABILITY_ACTION_NOT_EXPOSED",
+    "broadening_reason": "AUTHORITY_BROADENING",
+    "governed_commit_reason": "GOVERNED_COMMIT_REQUIRED",
+    "parameter_bounds_reason": "PARAMETER_OUT_OF_BOUNDS"
+  },
+  "decision_semantics": {
+    "allow": "consequence_semantically_admitted_when_all_bindings_and_authority_hold",
+    "deny": "no_consequence",
+    "review": "not_admission_requires_distinct_later_allow",
+    "fail_closed": "no_consequence"
+  },
+  "receipt_requirements": [
+    "candidate_id",
+    "candidate_hash",
+    "credential_id",
+    "credential_hash",
+    "capability_hash",
+    "authority_ref",
+    "decision",
+    "consequence_observed"
+  ],
+  "real_boundary_evidence": "real-boundary/consequence-observation.json",
+  "claims_file": "claims/execution-deterministic.yaml",
+  "invariant_registry": "invariants/profile-execution.yaml"
+}
