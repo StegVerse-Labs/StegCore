@@ -12,6 +12,8 @@ from stegcore.universal_governance_connector import (
     VerifiedTransportBindings,
     evaluate_governance_connector,
     parse_governance_connector_request,
+    parse_registered_governance_connector_request,
+    resolve_governance_connector_profile,
 )
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -39,16 +41,21 @@ def transport_bindings(profile):
 def main() -> int:
     try:
         manifest=load(SNAP/"manifest.json")
-        if manifest["governance_source_commit"] != "3b0e5f10616fc00f2d91117bbf5ada358b04144d":
+        if manifest["governance_source_commit"] != "16ee2517cfcfe567fcf7065fbcbc8077d3651341":
             raise ValueError("unexpected Governance source commit")
         for entry in manifest["source_files"]:
             path=ROOT/entry["snapshot_path"]
             raw=path.read_bytes()
             if git_blob_sha(raw) != entry["source_blob_sha"]:
                 raise ValueError(f"snapshot blob mismatch: {path}")
-        profile=load(SNAP/"profile.example.json")
+        registry=load(SNAP/"universal-governance-connector-profiles.v1.json")
         payload=load(SNAP/"request.example.json")
-        parsed=parse_governance_connector_request(profile, payload, transport_bindings(profile))
+        profile=resolve_governance_connector_profile(registry, payload["profile_id"])
+        resolved_profile, parsed=parse_registered_governance_connector_request(
+            registry, payload, transport_bindings(profile)
+        )
+        if resolved_profile != profile:
+            raise ValueError("registry resolution drift")
         result=evaluate_governance_connector(profile,parsed)
         if result.decision!="ALLOW":
             raise ValueError(f"canonical profile runtime decision {result.decision}: {result.reason_code}")
@@ -69,6 +76,13 @@ def main() -> int:
         except ValueError as exc:
             if "intr_profile_mismatch" not in str(exc):
                 raise
+        try:
+            resolve_governance_connector_profile(registry, "unknown.profile")
+            raise ValueError("registry_unknown_profile accepted")
+        except ValueError as exc:
+            if "registry_profile_unknown" not in str(exc):
+                raise
+
         forged=dict(payload)
         forged["intr_packet_id"]="self-asserted"
         try:
@@ -81,7 +95,8 @@ def main() -> int:
         print(f"UNIVERSAL_GOVERNANCE_CONNECTOR_CROSS_REPO: FAIL: {exc}")
         return 1
     print("UNIVERSAL_GOVERNANCE_CONNECTOR_CROSS_REPO: PASS")
-    print("governance_commit=3b0e5f10616fc00f2d91117bbf5ada358b04144d")
+    print("governance_commit=16ee2517cfcfe567fcf7065fbcbc8077d3651341")
+    print("registry_resolution=PASS")
     print("positive=SERIALIZED_REQUEST_ALLOW_NON_AUTHORIZING")
     print("negative=INTR_PROFILE_MISMATCH_REJECTED")
     print("negative=PAYLOAD_TRANSPORT_SELF_ASSERTION_REJECTED")
