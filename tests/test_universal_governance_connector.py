@@ -134,6 +134,7 @@ def request(tl=None):
         authority_ref="authority:1",
         intent_ref="intent:1",
         candidate_ref="candidate:1",
+        candidate_hash="sha256:1111111111111111111111111111111111111111111111111111111111111111",
         evidence_refs=("evidence:1",),
         three_layer_request=tl or three_layer(),
     )
@@ -149,6 +150,7 @@ def serialized_payload():
         "authority_ref": "authority:1",
         "intent_ref": "intent:1",
         "candidate_ref": "candidate:1",
+        "candidate_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
         "evidence_refs": ["evidence:1"],
         "resolved_facts": {
             "judgment_conditions": {
@@ -298,6 +300,12 @@ class UniversalGovernanceConnectorTests(unittest.TestCase):
         payload = serialized_payload()
         payload["resolved_facts"]["execution_boundary"]["policy_ref"] = "policy.wrong"
         with self.assertRaisesRegex(ValueError, "policy_ref_mismatch"):
+            parse_governance_connector_request(profile(), payload, transport_bindings())
+
+    def test_invalid_candidate_hash_is_rejected(self):
+        payload = serialized_payload()
+        payload["candidate_hash"] = "sha256:bad"
+        with self.assertRaisesRegex(ValueError, "candidate_hash_invalid"):
             parse_governance_connector_request(profile(), payload, transport_bindings())
 
 
