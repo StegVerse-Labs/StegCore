@@ -448,3 +448,10 @@ authority_effect=NONE_SOURCE_PROJECTION_ONLY
 ```
 
 This closes the source-side travel-reporting gap. Master Records still must independently validate and accept custody.
+
+
+## Sovereign reference-boundary runner — issue #179
+
+The merged Universal Governance architecture now has a bounded local-source runner under `scripts/run_universal_governance_reference_boundary.py`. It writes only to a caller-supplied bound-state root and is intended for `StegVerse-Labs/.github#690 / SHWP-UNIVERSAL-GOVERNANCE-ENFORCED-REFERENCE-001`.
+
+The runner proves exactly one governed target mutation, a bypass-negative-control that leaves target state unchanged, consequence evidence return over Universal InTr, and a Master Records source projection. It explicitly records `real_external_system_enforced_activation=false`; source/CI validation of this runner is not resident observation.
