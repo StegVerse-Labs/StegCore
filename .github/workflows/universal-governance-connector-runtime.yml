@@ -11,7 +11,9 @@ on:
       - "src/stegcore/external_adapter_steggate_execution.py"
       - "tests/test_universal_adapter_steggate_execution.py"
       - "src/stegcore/universal_governance_consequence_evidence.py"
-      - "tests/test_universal_governance_consequence_evidence.py"\n      - "scripts/run_universal_governance_reference_boundary.py"\n      - "tests/test_universal_governance_reference_runner.py"
+      - "tests/test_universal_governance_consequence_evidence.py"
+      - "scripts/run_universal_governance_reference_boundary.py"
+      - "tests/test_universal_governance_reference_runner.py"
       - "contracts/steggate_execution_profile_snapshot/**"
       - "docs/UNIVERSAL_GOVERNANCE_CONNECTOR_RUNTIME_MIRROR_HANDOFF.md"
       - "scripts/verify_universal_governance_connector_contract.py"
@@ -57,7 +59,8 @@ jobs:
           python -m unittest -v tests.test_governance_intr_vertical_slice
           python -m unittest -v tests.test_external_governance_adapter
           python -m unittest -v tests.test_universal_adapter_steggate_execution
-          python -m unittest -v tests.test_universal_governance_consequence_evidence\n          python -m unittest -v tests.test_universal_governance_reference_runner
+          python -m unittest -v tests.test_universal_governance_consequence_evidence
+          python -m unittest -v tests.test_universal_governance_reference_runner
       - name: Verify pinned Governance connector contract
         run: python scripts/verify_universal_governance_connector_contract.py
       - name: Verify pinned StegOS Universal InTr snapshot
