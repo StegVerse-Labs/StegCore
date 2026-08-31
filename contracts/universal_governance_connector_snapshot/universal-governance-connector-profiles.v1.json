@@ -1,0 +1,105 @@
+{
+  "schema_version": "stegverse.governance-connector-registry.v1",
+  "state": "DEFINED_SOURCE_ONLY",
+  "credential_authority": "TV/TVC",
+  "authority_effect": "NONE",
+  "profiles": [
+    {
+      "schema_version": "stegverse.governance-connector-profile.v1",
+      "profile_id": "example.external-system.v1",
+      "profile_version": "1.0.0",
+      "system": {
+        "system_id": "external-system.example",
+        "system_kind": "EXTERNAL_API",
+        "boundary_id": "interlock:external-system.example",
+        "enforcement_class": "ENFORCED",
+        "bypass_path_declared": false
+      },
+      "interlock": {
+        "required": true,
+        "intr_profile_ref": "governance-external-action",
+        "governed_transition_profile_ref": "steggate.transition.v1",
+        "carrier_profile_ref": "heartbeat-derived-intr.v1",
+        "fail_closed_on_binding_error": true
+      },
+      "runtime": {
+        "evaluator_ref": "stegcore.three_layer.evaluate_three_layer",
+        "decision_surface": [
+          "ALLOW",
+          "DENY",
+          "FAIL-CLOSED"
+        ],
+        "execution_requires_separate_authority": true
+      },
+      "operations": [
+        {
+          "operation_id": "execute",
+          "action_class": "EXECUTE",
+          "policy_ref": "policy.external-system.execute.v1",
+          "required_governance_classes": [
+            "G0",
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5"
+          ],
+          "required_admissibility_stages": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4",
+            "A5",
+            "A6",
+            "A7",
+            "A8"
+          ],
+          "authority_ref_required": true,
+          "evidence_refs_required": true,
+          "reversibility": "compensable",
+          "protected_consequence": true,
+          "bypass_disposition": "FAIL_CLOSED"
+        },
+        {
+          "operation_id": "read",
+          "action_class": "READ",
+          "policy_ref": "policy.external-system.read.v1",
+          "required_governance_classes": [
+            "G0",
+            "G1",
+            "G2",
+            "G4"
+          ],
+          "required_admissibility_stages": [
+            "A0",
+            "A3",
+            "A4",
+            "A6",
+            "A8"
+          ],
+          "authority_ref_required": true,
+          "evidence_refs_required": true,
+          "reversibility": "reversible",
+          "protected_consequence": false,
+          "bypass_disposition": "FAIL_CLOSED"
+        }
+      ],
+      "evidence": {
+        "ingress_receipt_required": true,
+        "decision_receipt_required": true,
+        "egress_receipt_required": true,
+        "reconstruction_required": true,
+        "master_records_projection": true
+      },
+      "authority_boundaries": {
+        "profile_grants_execution_authority": false,
+        "interlock_grants_execution_authority": false,
+        "intr_grants_execution_authority": false,
+        "carrier_grants_execution_authority": false,
+        "governance_allow_grants_credential_authority": false,
+        "credential_authority": "TV/TVC"
+      }
+    }
+  ]
+}
