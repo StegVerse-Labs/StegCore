@@ -455,3 +455,49 @@ This closes the source-side travel-reporting gap. Master Records still must inde
 The merged Universal Governance architecture now has a bounded local-source runner under `scripts/run_universal_governance_reference_boundary.py`. It writes only to a caller-supplied bound-state root and is intended for `StegVerse-Labs/.github#690 / SHWP-UNIVERSAL-GOVERNANCE-ENFORCED-REFERENCE-001`.
 
 The runner proves exactly one governed target mutation, a bypass-negative-control that leaves target state unchanged, consequence evidence return over Universal InTr, and a Master Records source projection. It explicitly records `real_external_system_enforced_activation=false`; source/CI validation of this runner is not resident observation.
+
+
+## Master Records destination custody — master-records/core-lite #33 / PR #34
+
+Destination custody machinery is now merged and independently validated.
+
+```text
+Destination repository: master-records/core-lite
+Issue: #33 CLOSED_COMPLETED
+PR: #34 MERGED
+Merge commit: 78abdcad9ee4a82f6ae71cc68bcfdfb867f86880
+Focused workflow: Universal Governance Consequence Custody
+Focused PR run: 33427730279 PASS
+Focused PR job: 99605309994 PASS
+```
+
+The destination validates the canonical consequence evidence plus source projection, exact source commit/evidence hash, candidate and Governance bindings, request/return InTr lineage, return payload equality, TV/TVC credential authority, completed consequence observation/coherence, and all non-authority boundaries before minting a destination-owned custody acknowledgement.
+
+Destination custody semantics remain bounded:
+
+```text
+destination_custody_accepted=true
+destination_acknowledgement_minted=true
+independent_validation_complete=true
+runtime_activation=false
+execution_authority_granted=false
+continuity_receipt_minted=false
+publication_authority_granted=false
+credential_authority=TV/TVC
+authority_effect=NONE_CUSTODY_ONLY
+```
+
+No synthetic live custody record was committed. Authentic custody materialization still requires an authentic external-system consequence evidence/projection instance. The generic source/destination custody contract is therefore MERGED_VALIDATED, while live ENFORCED observation remains a deployment/runtime task.
+
+Updated lifecycle:
+
+```text
+UNIVERSAL_GOVERNANCE_GENERIC_SOURCE_PATH: MERGED_VALIDATED
+MASTER_RECORDS_DESTINATION_CUSTODY_VALIDATOR: MERGED_VALIDATED
+SOVEREIGN_REFERENCE_BOUNDARY_RUNNER: MERGED_VALIDATED_SOURCE
+LIVE_EXTERNAL_SYSTEM: false
+ENFORCED_BOUNDARY_OBSERVED: false
+AUTHENTIC_MASTER_RECORDS_CUSTODY: false
+ACTIVATED: false
+COMPLETE: false
+```
