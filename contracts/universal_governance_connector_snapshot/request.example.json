@@ -50,5 +50,6 @@
         "execution:example:1"
       ]
     }
-  }
+  },
+  "candidate_hash": "sha256:fbf1806f023b97b704d8fdfbd0e81aed0870a4bf3db876428020d2a3110ac7c7"
 }
