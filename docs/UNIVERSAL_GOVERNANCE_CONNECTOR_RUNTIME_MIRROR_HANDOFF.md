@@ -409,3 +409,42 @@ Master Records must independently validate/custody the artifact before any desti
 Negative controls cover false completion/observation, candidate hash drift, missing coherence receipt, evidence tamper, and exact-byte return transport tamper.
 
 Continuity minting and publication authority remain false.
+
+
+## Return transport lineage projection — issue #177
+
+The source-side Master Records projection now binds the actual consequence-evidence travel path rather than only the request packet.
+
+Required lineage:
+
+```text
+request_intr_packet_id
+ -> governance_receipt_hash
+ -> source_evidence_hash
+ -> return_intr_packet_id
+ -> return_terminal_receipt_hash
+```
+
+The projection also binds `return_payload_hash` and requires it to equal the exact canonical hash of the returned consequence-evidence payload.
+
+The projection cannot be built without:
+
+```text
+return_intr_packet_id
+return_payload_hash
+return_terminal_receipt_hash
+```
+
+and a mismatched return payload hash fails closed.
+
+Destination semantics remain unchanged:
+
+```text
+custody_requested=true
+destination_acknowledgement_minted=false
+execution_authority_granted=false
+credential_authority=TV/TVC
+authority_effect=NONE_SOURCE_PROJECTION_ONLY
+```
+
+This closes the source-side travel-reporting gap. Master Records still must independently validate and accept custody.
