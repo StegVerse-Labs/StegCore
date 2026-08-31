@@ -37,6 +37,7 @@ def native_action():
         native_action_ref=request["candidate_ref"],
         native_intent_ref=request["intent_ref"],
         native_authority_ref=request["authority_ref"],
+        native_parameters={"x": 1},
         native_evidence_refs=tuple(request["evidence_refs"]),
         resolved_governance_facts=request["resolved_facts"],
         consequence_authority_ref="target-authority:example:execute:1",
@@ -92,6 +93,8 @@ class ExternalGovernanceAdapterTests(unittest.TestCase):
         prepared=prepare_external_governance_request(self.adapter,self.registry,native_action())
         self.assertNotIn("consequence_authority_ref",prepared.payload)
         self.assertEqual(prepared.payload["profile_id"],"example.external-system.v1")
+        self.assertTrue(prepared.payload["candidate_hash"].startswith("sha256:"))
+        self.assertEqual(result_candidate := len(prepared.payload["candidate_hash"]), 71)
         connector,packet,receipt,complete,ref=transport_for(prepared)
         result=evaluate_prepared_external_governance_request(
             self.registry,prepared,verified_bindings(self.profile,complete,ref)
