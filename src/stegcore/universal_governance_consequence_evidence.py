@@ -177,10 +177,18 @@ def build_master_records_projection(
     *,
     source_repository: str,
     source_commit: str,
+    return_intr_packet_id: str,
+    return_payload_hash: str,
+    return_terminal_receipt_hash: str,
 ) -> dict[str, Any]:
     validate_universal_governance_consequence_evidence(evidence)
     if not source_repository or not source_commit:
         raise ValueError("master_records_projection.source_binding_missing")
+    if not return_intr_packet_id or not return_payload_hash or not return_terminal_receipt_hash:
+        raise ValueError("master_records_projection.return_transport_binding_missing")
+    expected_payload_hash = _hash_uri(evidence)
+    if return_payload_hash != expected_payload_hash:
+        raise ValueError("master_records_projection.return_payload_hash_mismatch")
     return {
         "schema": "stegcore.master-records-universal-governance-projection.v1",
         "destination_repository": "master-records/core-lite",
@@ -192,6 +200,16 @@ def build_master_records_projection(
         "candidate_hash": evidence["candidate"]["candidate_hash"],
         "governance_receipt_hash": evidence["governance"]["receipt_hash"],
         "request_intr_packet_id": evidence["governance"]["request_intr_packet_id"],
+        "return_intr_packet_id": return_intr_packet_id,
+        "return_payload_hash": return_payload_hash,
+        "return_terminal_receipt_hash": return_terminal_receipt_hash,
+        "travel_lineage": [
+            evidence["governance"]["request_intr_packet_id"],
+            evidence["governance"]["receipt_hash"],
+            evidence["evidence_hash"],
+            return_intr_packet_id,
+            return_terminal_receipt_hash,
+        ],
         "consequence_status": evidence["consequence"]["status"],
         "consequence_observed": evidence["consequence"]["consequence_observed"],
         "custody_requested": True,
