@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/universal_governance_connector_profile.v1.json",
+  "title": "StegVerse Universal Governance Connector Profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_id",
+    "profile_version",
+    "system",
+    "interlock",
+    "runtime",
+    "operations",
+    "evidence",
+    "authority_boundaries"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "stegverse.governance-connector-profile.v1"
+    },
+    "profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "system": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "system_id",
+        "system_kind",
+        "boundary_id",
+        "enforcement_class"
+      ],
+      "properties": {
+        "system_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "system_kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "boundary_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enforcement_class": {
+          "enum": [
+            "OBSERVABLE",
+            "GOVERNED",
+            "ENFORCED"
+          ]
+        },
+        "bypass_path_declared": {
+          "type": "boolean"
+        }
+      }
+    },
+    "interlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "intr_profile_ref",
+        "governed_transition_profile_ref",
+        "carrier_profile_ref",
+        "fail_closed_on_binding_error"
+      ],
+      "properties": {
+        "required": {
+          "const": true
+        },
+        "intr_profile_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "governed_transition_profile_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "carrier_profile_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fail_closed_on_binding_error": {
+          "const": true
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluator_ref",
+        "decision_surface",
+        "execution_requires_separate_authority"
+      ],
+      "properties": {
+        "evaluator_ref": {
+          "const": "stegcore.three_layer.evaluate_three_layer"
+        },
+        "decision_surface": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ALLOW",
+              "DENY",
+              "FAIL-CLOSED"
+            ]
+          }
+        },
+        "execution_requires_separate_authority": {
+          "const": true
+        }
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "action_class",
+          "policy_ref",
+          "required_governance_classes",
+          "required_admissibility_stages",
+          "authority_ref_required",
+          "evidence_refs_required",
+          "reversibility",
+          "protected_consequence",
+          "bypass_disposition"
+        ],
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "action_class": {
+            "type": "string",
+            "minLength": 1
+          },
+          "policy_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required_governance_classes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "G0",
+                "G1",
+                "G2",
+                "G3",
+                "G4",
+                "G5",
+                "G6"
+              ]
+            }
+          },
+          "required_admissibility_stages": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "A0",
+                "A1",
+                "A2",
+                "A3",
+                "A4",
+                "A5",
+                "A6",
+                "A7",
+                "A8"
+              ]
+            }
+          },
+          "authority_ref_required": {
+            "const": true
+          },
+          "evidence_refs_required": {
+            "const": true
+          },
+          "reversibility": {
+            "enum": [
+              "reversible",
+              "compensable",
+              "irreversible"
+            ]
+          },
+          "protected_consequence": {
+            "type": "boolean"
+          },
+          "bypass_disposition": {
+            "enum": [
+              "FAIL_CLOSED",
+              "OUT_OF_SCOPE_DECLARED"
+            ]
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ingress_receipt_required",
+        "decision_receipt_required",
+        "egress_receipt_required",
+        "reconstruction_required"
+      ],
+      "properties": {
+        "ingress_receipt_required": {
+          "const": true
+        },
+        "decision_receipt_required": {
+          "const": true
+        },
+        "egress_receipt_required": {
+          "const": true
+        },
+        "reconstruction_required": {
+          "const": true
+        },
+        "master_records_projection": {
+          "type": "boolean"
+        }
+      }
+    },
+    "authority_boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_grants_execution_authority",
+        "interlock_grants_execution_authority",
+        "intr_grants_execution_authority",
+        "carrier_grants_execution_authority",
+        "governance_allow_grants_credential_authority",
+        "credential_authority"
+      ],
+      "properties": {
+        "profile_grants_execution_authority": {
+          "const": false
+        },
+        "interlock_grants_execution_authority": {
+          "const": false
+        },
+        "intr_grants_execution_authority": {
+          "const": false
+        },
+        "carrier_grants_execution_authority": {
+          "const": false
+        },
+        "governance_allow_grants_credential_authority": {
+          "const": false
+        },
+        "credential_authority": {
+          "const": "TV/TVC"
+        }
+      }
+    }
+  }
+}

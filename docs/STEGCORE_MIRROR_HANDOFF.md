@@ -201,3 +201,27 @@ canonical_issue: StegVerse-Labs/StegCore#25
 execution_inventory: data/external-evidence-session-execution-inventory.json
 thread_archive_ready: true
 ```
+
+
+## Universal Governance Connector runtime lane — issue #163
+
+StegCore now has a generic profile-driven adapter lane that composes the Governance-owned connector profile with the existing canonical three-layer evaluator.
+
+Scoped handoff:
+
+```text
+docs/UNIVERSAL_GOVERNANCE_CONNECTOR_RUNTIME_MIRROR_HANDOFF.md
+```
+
+Runtime source:
+
+```text
+src/stegcore/universal_governance_connector.py
+tests/test_universal_governance_connector.py
+```
+
+The runtime validates system/boundary/operation/Interlock/InTr/carrier/policy/authority/evidence bindings and returns `ALLOW`, `DENY`, or `FAIL-CLOSED` through the existing three-layer evaluator.
+
+An `ALLOW` result sets only `eligible_for_separate_consequence_authorization=true`; it always retains `execution_authority_granted=false`, `credential_authority=TV/TVC`, and `continuity_receipt_minted=false`.
+
+This lane does not alter the active external-evidence workstream or any provider/custody authority boundary.
