@@ -41,7 +41,7 @@ def transport_bindings(profile):
 def main() -> int:
     try:
         manifest=load(SNAP/"manifest.json")
-        if manifest["governance_source_commit"] != "16ee2517cfcfe567fcf7065fbcbc8077d3651341":
+        if manifest["governance_source_commit"] != "9f49f5b102e5eeb30d5ea7dbcd6265fa97ca8896":
             raise ValueError("unexpected Governance source commit")
         for entry in manifest["source_files"]:
             path=ROOT/entry["snapshot_path"]
@@ -95,7 +95,7 @@ def main() -> int:
         print(f"UNIVERSAL_GOVERNANCE_CONNECTOR_CROSS_REPO: FAIL: {exc}")
         return 1
     print("UNIVERSAL_GOVERNANCE_CONNECTOR_CROSS_REPO: PASS")
-    print("governance_commit=16ee2517cfcfe567fcf7065fbcbc8077d3651341")
+    print("governance_commit=9f49f5b102e5eeb30d5ea7dbcd6265fa97ca8896")
     print("registry_resolution=PASS")
     print("positive=SERIALIZED_REQUEST_ALLOW_NON_AUTHORIZING")
     print("negative=INTR_PROFILE_MISMATCH_REJECTED")
