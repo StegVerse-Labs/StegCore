@@ -335,6 +335,57 @@ def _result(
     )
 
 
+
+def resolve_governance_connector_profile(
+    registry: Mapping[str, Any],
+    profile_id: str,
+) -> Mapping[str, Any]:
+    """Resolve one non-authorizing Governance connector profile by id."""
+    if registry.get("schema_version") != "stegverse.governance-connector-registry.v1":
+        raise ValueError("connector.registry_schema_unsupported")
+    if registry.get("credential_authority") != "TV/TVC":
+        raise ValueError("connector.registry_credential_authority_mismatch")
+    if registry.get("authority_effect") != "NONE":
+        raise ValueError("connector.registry_authority_effect_invalid")
+    profiles = registry.get("profiles")
+    if not isinstance(profiles, list) or not profiles:
+        raise ValueError("connector.registry_profiles_missing")
+
+    seen: set[str] = set()
+    resolved: Mapping[str, Any] | None = None
+    for profile in profiles:
+        if not isinstance(profile, Mapping):
+            raise ValueError("connector.registry_profile_invalid")
+        pid = profile.get("profile_id")
+        if not isinstance(pid, str) or not pid:
+            raise ValueError("connector.registry_profile_identity_invalid")
+        if pid in seen:
+            raise ValueError("connector.registry_profile_duplicate")
+        seen.add(pid)
+        profile_error = _profile_error(profile)
+        if profile_error:
+            raise ValueError(profile_error)
+        if pid == profile_id:
+            resolved = profile
+
+    if resolved is None:
+        raise ValueError("connector.registry_profile_unknown")
+    return resolved
+
+
+def parse_registered_governance_connector_request(
+    registry: Mapping[str, Any],
+    payload: Mapping[str, Any],
+    transport: VerifiedTransportBindings,
+) -> tuple[Mapping[str, Any], GovernanceConnectorRequest]:
+    """Resolve payload.profile_id from the canonical registry, then parse."""
+    profile_id = payload.get("profile_id")
+    if not isinstance(profile_id, str) or not profile_id:
+        raise ValueError("connector.profile_id_missing")
+    profile = resolve_governance_connector_profile(registry, profile_id)
+    return profile, parse_governance_connector_request(profile, payload, transport)
+
+
 def evaluate_governance_connector(
     profile: Mapping[str, Any],
     request: GovernanceConnectorRequest,
