@@ -10,6 +10,8 @@ on:
       - "tests/test_external_governance_adapter.py"
       - "src/stegcore/external_adapter_steggate_execution.py"
       - "tests/test_universal_adapter_steggate_execution.py"
+      - "src/stegcore/universal_governance_consequence_evidence.py"
+      - "tests/test_universal_governance_consequence_evidence.py"
       - "contracts/steggate_execution_profile_snapshot/**"
       - "docs/UNIVERSAL_GOVERNANCE_CONNECTOR_RUNTIME_MIRROR_HANDOFF.md"
       - "scripts/verify_universal_governance_connector_contract.py"
@@ -48,13 +50,14 @@ jobs:
       - name: Install local package
         run: python -m pip install -e .
       - name: Compile connector
-        run: python -m py_compile src/stegcore/universal_governance_connector.py src/stegcore/external_governance_adapter.py src/stegcore/external_adapter_steggate_execution.py tests/test_universal_governance_connector.py tests/test_governance_intr_vertical_slice.py tests/test_external_governance_adapter.py tests/test_universal_adapter_steggate_execution.py scripts/verify_universal_governance_connector_contract.py scripts/verify_stegos_universal_intr_snapshot.py
+        run: python -m py_compile src/stegcore/universal_governance_connector.py src/stegcore/external_governance_adapter.py src/stegcore/external_adapter_steggate_execution.py src/stegcore/universal_governance_consequence_evidence.py tests/test_universal_governance_connector.py tests/test_governance_intr_vertical_slice.py tests/test_external_governance_adapter.py tests/test_universal_adapter_steggate_execution.py tests/test_universal_governance_consequence_evidence.py scripts/verify_universal_governance_connector_contract.py scripts/verify_stegos_universal_intr_snapshot.py
       - name: Run connector tests
         run: |
           python -m unittest -v tests.test_universal_governance_connector
           python -m unittest -v tests.test_governance_intr_vertical_slice
           python -m unittest -v tests.test_external_governance_adapter
           python -m unittest -v tests.test_universal_adapter_steggate_execution
+          python -m unittest -v tests.test_universal_governance_consequence_evidence
       - name: Verify pinned Governance connector contract
         run: python scripts/verify_universal_governance_connector_contract.py
       - name: Verify pinned StegOS Universal InTr snapshot
