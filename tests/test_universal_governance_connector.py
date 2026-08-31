@@ -14,6 +14,8 @@ from stegcore.universal_governance_connector import (
     VerifiedTransportBindings,
     evaluate_governance_connector,
     parse_governance_connector_request,
+    parse_registered_governance_connector_request,
+    resolve_governance_connector_profile,
 )
 
 
@@ -68,6 +70,16 @@ def profile():
             "governance_allow_grants_credential_authority": False,
             "credential_authority": "TV/TVC",
         },
+    }
+
+
+def registry():
+    return {
+        "schema_version": "stegverse.governance-connector-registry.v1",
+        "state": "DEFINED_SOURCE_ONLY",
+        "credential_authority": "TV/TVC",
+        "authority_effect": "NONE",
+        "profiles": [profile()],
     }
 
 
@@ -287,6 +299,34 @@ class UniversalGovernanceConnectorTests(unittest.TestCase):
         payload["resolved_facts"]["execution_boundary"]["policy_ref"] = "policy.wrong"
         with self.assertRaisesRegex(ValueError, "policy_ref_mismatch"):
             parse_governance_connector_request(profile(), payload, transport_bindings())
+
+
+    def test_registry_resolves_profile_and_registered_request(self):
+        resolved = resolve_governance_connector_profile(registry(), "example.external-system.v1")
+        self.assertEqual(resolved["profile_id"], "example.external-system.v1")
+        resolved_profile, parsed = parse_registered_governance_connector_request(
+            registry(), serialized_payload(), transport_bindings()
+        )
+        self.assertEqual(resolved_profile["profile_id"], "example.external-system.v1")
+        self.assertEqual(evaluate_governance_connector(resolved_profile, parsed).decision, "ALLOW")
+
+    def test_registry_unknown_profile_and_duplicates_fail_closed(self):
+        with self.assertRaisesRegex(ValueError, "registry_profile_unknown"):
+            resolve_governance_connector_profile(registry(), "unknown.profile")
+        dup = registry()
+        dup["profiles"].append(profile())
+        with self.assertRaisesRegex(ValueError, "registry_profile_duplicate"):
+            resolve_governance_connector_profile(dup, "example.external-system.v1")
+
+    def test_registry_cannot_change_authority_or_credentials(self):
+        bad = registry()
+        bad["authority_effect"] = "EXECUTE"
+        with self.assertRaisesRegex(ValueError, "registry_authority_effect_invalid"):
+            resolve_governance_connector_profile(bad, "example.external-system.v1")
+        bad = registry()
+        bad["credential_authority"] = "PROVIDER"
+        with self.assertRaisesRegex(ValueError, "registry_credential_authority_mismatch"):
+            resolve_governance_connector_profile(bad, "example.external-system.v1")
 
 
 if __name__ == "__main__":
