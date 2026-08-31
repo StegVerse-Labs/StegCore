@@ -153,3 +153,51 @@ ENFORCED_BOUNDARY_OBSERVED: false
 ACTIVATED: false
 COMPLETE: false
 ```
+
+
+## Universal InTr vertical slice — issue #167
+
+Pinned transport source:
+
+```text
+StegOS merge: 5231765d07b5b69b3ef52ad9912251d956a513d1
+profile: governance-external-action
+contracts/stegos_universal_intr_snapshot/
+```
+
+The deterministic integration test executes:
+
+```text
+Governance request.example.json
+ -> CanonicalInTrConnector(governance-external-action)
+ -> exact canonical payload bytes
+ -> InTr transport intent / packet_id / payload_hash
+ -> complete adjacent-hop receipt chain
+ -> COMPAT Interlock reference adapter
+ -> VerifiedTransportBindings
+ -> parse_governance_connector_request()
+ -> evaluate_governance_connector()
+ -> ALLOW / DENY / FAIL-CLOSED
+ -> governance decision payload
+ -> canonical Universal InTr return intent
+ -> complete return receipt chain
+```
+
+Negative controls cover incomplete receipt chains, exact-byte tampering, wrong InTr profile, payload self-asserted transport identity, stale authority, and ENFORCED-profile bypass.
+
+This is deterministic software/integration execution. It does not establish a live external-system ENFORCED deployment.
+
+## Lifecycle after #167 source
+
+```text
+PROFILE_SCHEMA: MERGED_VALIDATED
+INTR_PROFILE: MERGED_VALIDATED
+SERIALIZED_REQUEST_SCHEMA: MERGED_VALIDATED
+GENERIC_RUNTIME: MERGED_VALIDATED
+SERIALIZED_REQUEST_PARSER: MERGED_VALIDATED
+CROSS_REPO_GOVERNANCE_INTR_VERTICAL_SLICE: IMPLEMENTED_VALIDATION_PENDING
+LIVE_EXTERNAL_SYSTEM: false
+ENFORCED_BOUNDARY_OBSERVED: false
+ACTIVATED: false
+COMPLETE: false
+```
