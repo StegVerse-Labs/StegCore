@@ -92,3 +92,26 @@ ENFORCED_BOUNDARY_OBSERVED: false
 ACTIVATED: false
 COMPLETE: false
 ```
+
+
+## Pinned canonical Governance contract
+
+```text
+Governance merge: 0632ee691711d1fcc38ae8b1729c26b9d78d21e1
+profile source blob: 53b69017caaa566fdd2ac22f9546760aa810f670
+schema source blob: 034069f86db871f0f48096e2417bd15dc1373366
+
+contracts/universal_governance_connector_snapshot/profile.example.json
+contracts/universal_governance_connector_snapshot/universal_governance_connector_profile.schema.json
+contracts/universal_governance_connector_snapshot/manifest.json
+scripts/verify_universal_governance_connector_contract.py
+```
+
+The snapshot is evidence/contract input only; Governance authority is not transferred to StegCore.
+
+Cross-repository validation requires both:
+
+```text
+canonical profile positive path -> ALLOW with execution_authority_granted=false
+InTr profile mismatch negative control -> FAIL-CLOSED
+```
