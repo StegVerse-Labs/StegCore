@@ -1,0 +1,36 @@
+{
+  "schema_version": "stegverse.governance-external-adapter.v1",
+  "adapter_id": "example.external-system.adapter.v1",
+  "system_id": "external-system.example",
+  "boundary_id": "interlock:external-system.example",
+  "governance_profile_id": "example.external-system.v1",
+  "enforcement_claim": "ENFORCED",
+  "bypass_path_declared": false,
+  "bypass_evidence_refs": [
+    "evidence:bypass-negative-control:example:1"
+  ],
+  "operations": [
+    {
+      "native_operation": "native.execute",
+      "governance_operation_id": "execute",
+      "protected_consequence": true,
+      "consequence_authority_ref_required": true,
+      "input_mapping": {
+        "native_action_ref": "candidate_ref",
+        "native_intent_ref": "intent_ref",
+        "native_authority_ref": "authority_ref"
+      },
+      "evidence_mapping": {
+        "native_evidence_refs": "evidence_refs",
+        "resolved_governance_facts": "resolved_facts"
+      }
+    }
+  ],
+  "authority_boundaries": {
+    "adapter_grants_execution_authority": false,
+    "adapter_grants_credential_authority": false,
+    "governance_allow_executes_consequence": false,
+    "credential_authority": "TV/TVC",
+    "authority_effect": "NONE"
+  }
+}

@@ -253,3 +253,50 @@ ENFORCED_BOUNDARY_OBSERVED: false
 ACTIVATED: false
 COMPLETE: false
 ```
+
+
+## Thin external-system adapter runtime — issue #171
+
+Pinned Governance adapter contract:
+
+```text
+Governance merge: 9f49f5b102e5eeb30d5ea7dbcd6265fa97ca8896
+adapter fixture blob: b586497b10e4c7001357a55fa04a995c5c152b32
+adapter schema blob: 43995b1fbeaf9a3e19dc67fe5bba57afd77ca073
+```
+
+Runtime source:
+
+```text
+src/stegcore/external_governance_adapter.py
+tests/test_external_governance_adapter.py
+```
+
+The reference machine-executable path is:
+
+```text
+NativeGovernanceAction
+ -> validate external adapter
+ -> prepare canonical registered Governance request
+ -> Universal InTr exact packet + receipt
+ -> Interlock reference binding
+ -> registered Governance profile resolution
+ -> StegCore evaluation
+ -> GovernanceConnectorResult
+ -> gate_external_consequence()
+ -> ELIGIBLE_FOR_SEPARATE_CONSEQUENCE_AUTHORITY
+```
+
+The consequence gate never executes the target consequence.
+
+```text
+consequence_executed=false
+adapter_grants_execution_authority=false
+governance_grants_execution_authority=false
+credential_authority=TV/TVC
+authority_effect=NONE
+```
+
+Negative controls cover unknown native operations, missing separate consequence authority, ENFORCED bypass, stale Governance authority, and forged Governance execution authority.
+
+This is a deterministic enforced-source-boundary proof, not live external-system activation.

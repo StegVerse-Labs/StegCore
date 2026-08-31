@@ -1,7 +1,7 @@
 {
   "schema": "stegcore.governance-connector-snapshot-manifest.v1",
   "governance_repository": "StegVerse-Labs/Governance",
-  "governance_source_commit": "16ee2517cfcfe567fcf7065fbcbc8077d3651341",
+  "governance_source_commit": "9f49f5b102e5eeb30d5ea7dbcd6265fa97ca8896",
   "source_files": [
     {
       "source_path": "specs/universal-governance-connector-profiles.v1.json",
@@ -32,6 +32,16 @@
       "source_path": "schemas/universal_governance_connector_request.schema.json",
       "snapshot_path": "contracts/universal_governance_connector_snapshot/universal_governance_connector_request.schema.json",
       "source_blob_sha": "07de89923923ca4590cd59405e5c2261c80fd560"
+    },
+    {
+      "source_path": "fixtures/universal-governance-connector/external-adapter.example.json",
+      "snapshot_path": "contracts/universal_governance_connector_snapshot/external-adapter.example.json",
+      "source_blob_sha": "b586497b10e4c7001357a55fa04a995c5c152b32"
+    },
+    {
+      "source_path": "schemas/universal_governance_external_adapter.schema.json",
+      "snapshot_path": "contracts/universal_governance_connector_snapshot/universal_governance_external_adapter.schema.json",
+      "source_blob_sha": "43995b1fbeaf9a3e19dc67fe5bba57afd77ca073"
     }
   ],
   "authority_effect": "NONE_SNAPSHOT_ONLY",
