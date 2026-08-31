@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/universal_governance_connector_registry.v1.json",
+  "title": "StegVerse Universal Governance Connector Profile Registry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "state",
+    "credential_authority",
+    "authority_effect",
+    "profiles"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "stegverse.governance-connector-registry.v1"
+    },
+    "state": {
+      "enum": [
+        "DEFINED_SOURCE_ONLY",
+        "RELEASED"
+      ]
+    },
+    "credential_authority": {
+      "const": "TV/TVC"
+    },
+    "authority_effect": {
+      "const": "NONE"
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "universal_governance_connector_profile.schema.json"
+      }
+    }
+  }
+}
