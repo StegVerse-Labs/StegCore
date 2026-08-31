@@ -24,6 +24,8 @@ from stegcore.universal_governance_connector import (
     VerifiedTransportBindings,
     evaluate_governance_connector,
     parse_governance_connector_request,
+    parse_registered_governance_connector_request,
+    resolve_governance_connector_profile,
 )
 
 REGISTRY = STEGOS_SNAPSHOT / "specs/universal-intr-connector-profiles.v1.json"
@@ -32,6 +34,10 @@ GOV_SNAPSHOT = ROOT / "contracts/universal_governance_connector_snapshot"
 
 def load(name: str):
     return json.loads((GOV_SNAPSHOT / name).read_text(encoding="utf-8"))
+
+
+def load_registry():
+    return load("universal-governance-connector-profiles.v1.json")
 
 
 def request_packet(payload: dict):
@@ -78,8 +84,9 @@ def transport_bindings(profile: dict, complete: dict, adapter: dict):
 
 class GovernanceInTrVerticalSliceTests(unittest.TestCase):
     def test_request_governance_and_return_are_complete_non_authorizing_chains(self):
-        profile = load("profile.example.json")
+        registry = load_registry()
         payload = load("request.example.json")
+        profile = resolve_governance_connector_profile(registry, payload["profile_id"])
         connector, packet, receipt, complete, adapter = request_packet(payload)
 
         self.assertEqual(complete["state"], "TRANSPORT_COMPLETE")
@@ -90,11 +97,12 @@ class GovernanceInTrVerticalSliceTests(unittest.TestCase):
         self.assertEqual(adapter["authority_effect"], "NONE")
         self.assertEqual(adapter["exchange_id"], packet.intent["packet_id"])
 
-        parsed = parse_governance_connector_request(
-            profile,
+        resolved_profile, parsed = parse_registered_governance_connector_request(
+            registry,
             payload,
             transport_bindings(profile, complete, adapter),
         )
+        self.assertEqual(resolved_profile["profile_id"], profile["profile_id"])
         result = evaluate_governance_connector(profile, parsed)
         self.assertEqual(result.decision, "ALLOW")
         self.assertTrue(result.eligible_for_separate_consequence_authorization)
