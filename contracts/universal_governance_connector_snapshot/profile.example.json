@@ -11,7 +11,7 @@
   },
   "interlock": {
     "required": true,
-    "intr_profile_ref": "stegos.universal-intr.external-system.v1",
+    "intr_profile_ref": "governance-external-action",
     "governed_transition_profile_ref": "steggate.transition.v1",
     "carrier_profile_ref": "heartbeat-derived-intr.v1",
     "fail_closed_on_binding_error": true

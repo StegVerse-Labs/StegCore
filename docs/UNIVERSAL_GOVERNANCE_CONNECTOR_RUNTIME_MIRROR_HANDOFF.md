@@ -115,3 +115,41 @@ Cross-repository validation requires both:
 canonical profile positive path -> ALLOW with execution_authority_granted=false
 InTr profile mismatch negative control -> FAIL-CLOSED
 ```
+
+
+## Canonical serialized request parser — issue #165
+
+The runtime now parses the merged Governance request contract:
+
+```text
+Governance merge: 3b0e5f10616fc00f2d91117bbf5ada358b04144d
+profile blob: 389078bdbafc2558df562a2529c710af32e383bd
+request blob: 2d63c081555b498a70f3c7ba35e1bd2a90940e5a
+profile schema blob: 034069f86db871f0f48096e2417bd15dc1373366
+request schema blob: 07de89923923ca4590cd59405e5c2261c80fd560
+canonical InTr profile: governance-external-action
+StegOS profile merge: 5231765d07b5b69b3ef52ad9912251d956a513d1
+```
+
+`VerifiedTransportBindings` supplies Interlock exchange identity, InTr packet identity, InTr profile, governed-transition profile, and carrier profile from the verified transport runtime. Those fields are intentionally prohibited from the serialized Governance payload.
+
+`parse_governance_connector_request()` maps the Governance-owned payload and transport-owned bindings into the existing `GovernanceConnectorRequest` and canonical `ThreeLayerRequest`.
+
+Negative controls reject payload self-asserted transport fields, InTr profile mismatch, profile/system/boundary mismatch, unknown operation, policy mismatch, missing authority/evidence/intent/candidate, and missing transport bindings.
+
+No parser result grants execution or credential authority.
+
+## Updated lifecycle
+
+```text
+PROFILE_SCHEMA: MERGED_VALIDATED
+INTR_PROFILE: MERGED_VALIDATED
+SERIALIZED_REQUEST_SCHEMA: MERGED_VALIDATED
+GENERIC_RUNTIME: MERGED_VALIDATED
+SERIALIZED_REQUEST_PARSER: IMPLEMENTED_VALIDATION_PENDING
+CROSS_REPO_PROFILE_REQUEST_CONTRACT: IMPLEMENTED_VALIDATION_PENDING
+LIVE_EXTERNAL_SYSTEM: false
+ENFORCED_BOUNDARY_OBSERVED: false
+ACTIVATED: false
+COMPLETE: false
+```

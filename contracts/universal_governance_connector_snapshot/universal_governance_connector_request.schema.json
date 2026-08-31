@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/universal_governance_connector_request.v1.json",
+  "title": "StegVerse Universal Governance Connector Request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_id",
+    "operation_id",
+    "system_id",
+    "boundary_id",
+    "authority_ref",
+    "intent_ref",
+    "candidate_ref",
+    "evidence_refs",
+    "resolved_facts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "stegverse.governance-connector.request/v1"
+    },
+    "profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "operation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "system_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "boundary_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authority_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intent_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "resolved_facts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "judgment_conditions",
+        "signal_admission",
+        "execution_boundary"
+      ],
+      "properties": {
+        "judgment_conditions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "refusal_available",
+            "operator_recoverability",
+            "workload_state",
+            "time_pressure",
+            "isolation_state",
+            "evidence_refs"
+          ],
+          "properties": {
+            "refusal_available": {
+              "type": "boolean"
+            },
+            "operator_recoverability": {
+              "enum": [
+                "available",
+                "degraded",
+                "unavailable",
+                "unknown"
+              ]
+            },
+            "workload_state": {
+              "enum": [
+                "supported",
+                "elevated",
+                "overloaded",
+                "unknown"
+              ]
+            },
+            "time_pressure": {
+              "enum": [
+                "normal",
+                "elevated",
+                "critical",
+                "unknown"
+              ]
+            },
+            "isolation_state": {
+              "enum": [
+                "supported",
+                "isolated",
+                "unknown"
+              ]
+            },
+            "evidence_refs": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "signal_admission": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "admitted_signal_refs",
+            "excluded_signal_refs",
+            "transformations",
+            "missing_inputs",
+            "uncertainty_state",
+            "reference_state_hash",
+            "expected_reference_state_hash",
+            "reconstruction_available",
+            "transformation_provenance_complete"
+          ],
+          "properties": {
+            "admitted_signal_refs": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "excluded_signal_refs": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "transformations": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "missing_inputs": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "uncertainty_state": {
+              "enum": [
+                "bounded",
+                "material",
+                "unknown"
+              ]
+            },
+            "reference_state_hash": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected_reference_state_hash": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reconstruction_available": {
+              "type": "boolean"
+            },
+            "transformation_provenance_complete": {
+              "type": "boolean"
+            }
+          }
+        },
+        "execution_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "actor_authority_current",
+            "policy_current",
+            "delegation_current",
+            "evidence_current",
+            "affected_entity_conditions_represented",
+            "recoverability_profile",
+            "validity_window_open",
+            "policy_ref",
+            "delegation_ref",
+            "evidence_refs"
+          ],
+          "properties": {
+            "actor_authority_current": {
+              "type": "boolean"
+            },
+            "policy_current": {
+              "type": "boolean"
+            },
+            "delegation_current": {
+              "type": "boolean"
+            },
+            "evidence_current": {
+              "type": "boolean"
+            },
+            "affected_entity_conditions_represented": {
+              "type": "boolean"
+            },
+            "recoverability_profile": {
+              "enum": [
+                "recoverable",
+                "constrained",
+                "irreversible",
+                "unknown"
+              ]
+            },
+            "validity_window_open": {
+              "type": "boolean"
+            },
+            "policy_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "delegation_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evidence_refs": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
