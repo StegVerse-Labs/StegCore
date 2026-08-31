@@ -12,7 +12,14 @@ from hashlib import sha256
 import json
 from typing import Any, Mapping, Sequence
 
-from stegcore.three_layer import ThreeLayerRequest, ThreeLayerResult, evaluate_three_layer
+from stegcore.three_layer import (
+    ExecutionBoundary,
+    JudgmentConditions,
+    SignalAdmission,
+    ThreeLayerRequest,
+    ThreeLayerResult,
+    evaluate_three_layer,
+)
 
 
 @dataclass(frozen=True)
@@ -31,6 +38,150 @@ class GovernanceConnectorRequest:
     candidate_ref: str
     evidence_refs: tuple[str, ...]
     three_layer_request: ThreeLayerRequest
+
+
+@dataclass(frozen=True)
+class VerifiedTransportBindings:
+    """Transport-owned facts supplied by verified Interlock/InTr processing.
+
+    These values are deliberately absent from the Governance request payload so
+    the target system cannot self-assert transport completion or carrier state.
+    """
+
+    interlock_exchange_id: str
+    intr_packet_id: str
+    intr_profile_ref: str
+    governed_transition_profile_ref: str
+    carrier_profile_ref: str
+
+
+def parse_governance_connector_request(
+    profile: Mapping[str, Any],
+    payload: Mapping[str, Any],
+    transport: VerifiedTransportBindings,
+) -> GovernanceConnectorRequest:
+    """Parse the canonical serialized request into the existing runtime request.
+
+    Structural or binding defects raise ValueError. Callers may convert those
+    parser failures to a fail-closed boundary receipt; this function never
+    grants authority or executes a consequence.
+    """
+    if payload.get("schema_version") != "stegverse.governance-connector.request/v1":
+        raise ValueError("connector.request_schema_unsupported")
+
+    allowed_fields = {
+        "schema_version", "profile_id", "operation_id", "system_id", "boundary_id",
+        "authority_ref", "intent_ref", "candidate_ref", "evidence_refs", "resolved_facts",
+    }
+    if set(payload) != allowed_fields:
+        raise ValueError("connector.request_field_set_invalid")
+
+    if not all((
+        transport.interlock_exchange_id,
+        transport.intr_packet_id,
+        transport.intr_profile_ref,
+        transport.governed_transition_profile_ref,
+        transport.carrier_profile_ref,
+    )):
+        raise ValueError("connector.transport_binding_missing")
+
+    if payload.get("profile_id") != profile.get("profile_id"):
+        raise ValueError("connector.profile_id_mismatch")
+    system = profile.get("system")
+    interlock = profile.get("interlock")
+    if not isinstance(system, Mapping) or not isinstance(interlock, Mapping):
+        raise ValueError("connector.profile_structure_invalid")
+    if payload.get("system_id") != system.get("system_id"):
+        raise ValueError("connector.system_id_mismatch")
+    if payload.get("boundary_id") != system.get("boundary_id"):
+        raise ValueError("connector.boundary_id_mismatch")
+
+    operation = _operation(profile, str(payload.get("operation_id") or ""))
+    if operation is None:
+        raise ValueError("connector.operation_unknown")
+    if transport.intr_profile_ref != interlock.get("intr_profile_ref"):
+        raise ValueError("connector.intr_profile_mismatch")
+    if transport.governed_transition_profile_ref != interlock.get("governed_transition_profile_ref"):
+        raise ValueError("connector.transition_profile_mismatch")
+    if transport.carrier_profile_ref != interlock.get("carrier_profile_ref"):
+        raise ValueError("connector.carrier_profile_mismatch")
+
+    authority_ref = payload.get("authority_ref")
+    intent_ref = payload.get("intent_ref")
+    candidate_ref = payload.get("candidate_ref")
+    evidence_refs = payload.get("evidence_refs")
+    if not isinstance(authority_ref, str) or not authority_ref:
+        raise ValueError("connector.authority_ref_missing")
+    if not isinstance(intent_ref, str) or not intent_ref or not isinstance(candidate_ref, str) or not candidate_ref:
+        raise ValueError("connector.intent_or_candidate_missing")
+    if not isinstance(evidence_refs, list) or not evidence_refs or not all(isinstance(x, str) and x for x in evidence_refs):
+        raise ValueError("connector.evidence_refs_missing")
+
+    facts = payload.get("resolved_facts")
+    if not isinstance(facts, Mapping) or set(facts) != {"judgment_conditions", "signal_admission", "execution_boundary"}:
+        raise ValueError("connector.resolved_facts_invalid")
+    judgment = facts.get("judgment_conditions")
+    signal = facts.get("signal_admission")
+    boundary = facts.get("execution_boundary")
+    if not all(isinstance(x, Mapping) for x in (judgment, signal, boundary)):
+        raise ValueError("connector.resolved_fact_layer_invalid")
+
+    if boundary.get("policy_ref") != operation.get("policy_ref"):
+        raise ValueError("connector.policy_ref_mismatch")
+
+    tl = ThreeLayerRequest(
+        judgment_conditions=JudgmentConditions(
+            refusal_available=bool(judgment.get("refusal_available")),
+            operator_recoverability=judgment.get("operator_recoverability", "unknown"),
+            workload_state=judgment.get("workload_state", "unknown"),
+            time_pressure=judgment.get("time_pressure", "unknown"),
+            isolation_state=judgment.get("isolation_state", "unknown"),
+            evidence_refs=tuple(judgment.get("evidence_refs") or ()),
+        ),
+        signal_admission=SignalAdmission(
+            admitted_signal_refs=tuple(signal.get("admitted_signal_refs") or ()),
+            excluded_signal_refs=tuple(signal.get("excluded_signal_refs") or ()),
+            transformations=tuple(signal.get("transformations") or ()),
+            missing_inputs=tuple(signal.get("missing_inputs") or ()),
+            uncertainty_state=signal.get("uncertainty_state", "unknown"),
+            reference_state_hash=str(signal.get("reference_state_hash") or ""),
+            expected_reference_state_hash=str(signal.get("expected_reference_state_hash") or ""),
+            reconstruction_available=bool(signal.get("reconstruction_available")),
+            transformation_provenance_complete=bool(signal.get("transformation_provenance_complete")),
+        ),
+        execution_boundary=ExecutionBoundary(
+            actor_authority_current=bool(boundary.get("actor_authority_current")),
+            policy_current=bool(boundary.get("policy_current")),
+            delegation_current=bool(boundary.get("delegation_current")),
+            evidence_current=bool(boundary.get("evidence_current")),
+            affected_entity_conditions_represented=bool(boundary.get("affected_entity_conditions_represented")),
+            recoverability_profile=boundary.get("recoverability_profile", "unknown"),
+            validity_window_open=bool(boundary.get("validity_window_open")),
+            policy_ref=str(boundary.get("policy_ref") or ""),
+            delegation_ref=str(boundary.get("delegation_ref") or ""),
+            evidence_refs=tuple(boundary.get("evidence_refs") or ()),
+        ),
+        action=str(operation.get("action_class") or ""),
+        target=str(system.get("system_id") or ""),
+        scope=f"operation:{payload.get('operation_id')}",
+    )
+
+    return GovernanceConnectorRequest(
+        profile_id=str(payload["profile_id"]),
+        operation_id=str(payload["operation_id"]),
+        system_id=str(payload["system_id"]),
+        boundary_id=str(payload["boundary_id"]),
+        interlock_exchange_id=transport.interlock_exchange_id,
+        intr_packet_id=transport.intr_packet_id,
+        intr_profile_ref=transport.intr_profile_ref,
+        governed_transition_profile_ref=transport.governed_transition_profile_ref,
+        carrier_profile_ref=transport.carrier_profile_ref,
+        authority_ref=authority_ref,
+        intent_ref=intent_ref,
+        candidate_ref=candidate_ref,
+        evidence_refs=tuple(evidence_refs),
+        three_layer_request=tl,
+    )
 
 
 @dataclass(frozen=True)
