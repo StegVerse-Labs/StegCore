@@ -300,3 +300,61 @@ authority_effect=NONE
 Negative controls cover unknown native operations, missing separate consequence authority, ENFORCED bypass, stale Governance authority, and forged Governance execution authority.
 
 This is a deterministic enforced-source-boundary proof, not live external-system activation.
+
+
+## StegGate consequence-boundary binding — issue #173
+
+The Universal Governance adapter now converges on the existing canonical deterministic StegGate execution profile rather than defining a parallel consequence engine.
+
+Pinned execution semantics:
+
+```text
+profile: SG-EXECUTION-DETERMINISTIC-v1
+profile blob: aaa9d7192d4a845c786188c7625bab4e3166bbdc
+request schema blob: c77a7d78df1c57b17c82ab81223f6ec904a42da1
+runtime owner: stegcore.commit_governance
+```
+
+Candidate identity is now exact-state bound across the complete chain:
+
+```text
+native action + parameters
+ -> stegverse.external-native-action-candidate.v1
+ -> candidate_hash
+ -> Governance request
+ -> Governance result
+ -> StegGate execution request
+ -> commit coherence
+```
+
+The same `candidate_hash` must survive every stage. Reusing the same `candidate_ref` with changed parameters is rejected before target execution.
+
+The target runner is reachable only after all independent predicates hold:
+
+```text
+Governance ALLOW
+AND adapter consequence eligibility
+AND exact candidate hash equality
+AND target credential id/hash/subject equality
+AND target consequence authority_ref equality
+AND bounded exposed capability
+AND requires_governed_commit=true
+AND commit coherence ALLOW
+```
+
+The composite consequence evidence records candidate/credential/authority bindings, Governance receipt hash, InTr packet id, coherence receipt hash, executor invocation, and consequence observation.
+
+Authority separation remains:
+
+```text
+Governance ALLOW != target authority
+adapter != target authority
+Interlock/InTr/HB != target authority
+credential_authority = TV/TVC
+adapter authority_effect = NONE
+target authority_effect exists only for the bounded consequence
+```
+
+Negative controls cover candidate mutation, Governance DENY, target authority mismatch, credential mismatch, forbidden automatic capability mode, and ENFORCED bypass.
+
+Lifecycle for this lane remains IMPLEMENTED_VALIDATION_PENDING until #173 CI passes and the merge completes. Live external-system ENFORCED observation remains separate.
