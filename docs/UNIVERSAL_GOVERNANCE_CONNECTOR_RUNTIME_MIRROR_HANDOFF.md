@@ -358,3 +358,54 @@ target authority_effect exists only for the bounded consequence
 Negative controls cover candidate mutation, Governance DENY, target authority mismatch, credential mismatch, forbidden automatic capability mode, and ENFORCED bypass.
 
 Lifecycle for this lane is IMPLEMENTED_VALIDATION_REQUESTED until #173/#174 CI passes and the merge completes. Live external-system ENFORCED observation remains separate.
+
+
+## Post-consequence evidence return — issue #175
+
+The Universal Governance external-system lane now produces a canonical post-consequence evidence artifact:
+
+```text
+schema: stegcore.universal-governance-consequence-evidence.v1
+producer: src/stegcore/universal_governance_consequence_evidence.py
+```
+
+The evidence binds:
+
+```text
+adapter_id
+Governance profile/system/boundary
+candidate_ref + exact candidate_hash
+credential_id + credential_hash + TV/TVC authority
+target consequence authority_ref
+Governance decision + receipt hash
+request InTr packet id/profile
+StegGate execution profile
+coherence receipt hash
+execution status
+executor invocation
+consequence observation
+execution result hash
+authority-boundary invariants
+```
+
+For a completed consequence, `executor_invoked=true`, `consequence_observed=true`, a coherence receipt is required, and the target authority effect is exactly `TARGET_CONSEQUENCE_ONLY`.
+
+The artifact is canonical-hashed with `sha256-canonical-json-without-evidence_hash`.
+
+The already-existing Universal InTr response path returns the exact evidence bytes and validates a complete response receipt chain linked to the request terminal receipt. No new transport profile is introduced.
+
+The source-side Master Records projection names `master-records/core-lite`, binds the exact evidence hash and source commit, and sets:
+
+```text
+custody_requested=true
+destination_acknowledgement_minted=false
+execution_authority_granted=false
+credential_authority=TV/TVC
+authority_effect=NONE_SOURCE_PROJECTION_ONLY
+```
+
+Master Records must independently validate/custody the artifact before any destination acknowledgement exists.
+
+Negative controls cover false completion/observation, candidate hash drift, missing coherence receipt, evidence tamper, and exact-byte return transport tamper.
+
+Continuity minting and publication authority remain false.
