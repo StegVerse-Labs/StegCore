@@ -201,3 +201,55 @@ ENFORCED_BOUNDARY_OBSERVED: false
 ACTIVATED: false
 COMPLETE: false
 ```
+
+
+## Governance profile registry consumer — issue #169
+
+The runtime no longer requires applications to supply a hard-coded connector profile object.
+
+Pinned Governance registry:
+
+```text
+Governance merge: 16ee2517cfcfe567fcf7065fbcbc8077d3651341
+registry blob: 3fdabf87fadde86aee4cd6906fb6dd57ae6f1881
+registry schema blob: febe9caf9362220ac1475ee7c897d79c76bce64c
+registry snapshot:
+  contracts/universal_governance_connector_snapshot/
+    universal-governance-connector-profiles.v1.json
+    universal_governance_connector_registry.schema.json
+```
+
+Runtime API:
+
+```text
+resolve_governance_connector_profile(registry, profile_id)
+parse_registered_governance_connector_request(registry, payload, transport)
+```
+
+Resolution validates registry schema/version, `credential_authority=TV/TVC`, `authority_effect=NONE`, unique profile ids, and every embedded profile through the existing profile invariants. Unknown profiles fail closed.
+
+The canonical Governance/InTr vertical slice now selects `payload.profile_id` through this registry before parsing and evaluation.
+
+```text
+registry lookup != authority
+registered profile != activated profile
+profile discovery != execution permission
+unknown profile -> FAIL_CLOSED
+```
+
+## Updated lifecycle after #169 source
+
+```text
+PROFILE_SCHEMA: MERGED_VALIDATED
+PROFILE_REGISTRY: MERGED_VALIDATED
+INTR_PROFILE: MERGED_VALIDATED
+SERIALIZED_REQUEST_SCHEMA: MERGED_VALIDATED
+GENERIC_RUNTIME: MERGED_VALIDATED
+SERIALIZED_REQUEST_PARSER: MERGED_VALIDATED
+REGISTRY_RUNTIME_CONSUMER: IMPLEMENTED_VALIDATION_PENDING
+CROSS_REPO_GOVERNANCE_INTR_VERTICAL_SLICE: MERGED_VALIDATED_PREDECESSOR
+LIVE_EXTERNAL_SYSTEM: false
+ENFORCED_BOUNDARY_OBSERVED: false
+ACTIVATED: false
+COMPLETE: false
+```
