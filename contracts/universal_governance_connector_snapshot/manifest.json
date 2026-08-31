@@ -1,0 +1,19 @@
+{
+  "schema": "stegcore.governance-connector-snapshot-manifest.v1",
+  "governance_repository": "StegVerse-Labs/Governance",
+  "governance_source_commit": "0632ee691711d1fcc38ae8b1729c26b9d78d21e1",
+  "source_files": [
+    {
+      "source_path": "fixtures/universal-governance-connector/profile.example.json",
+      "snapshot_path": "contracts/universal_governance_connector_snapshot/profile.example.json",
+      "source_blob_sha": "53b69017caaa566fdd2ac22f9546760aa810f670"
+    },
+    {
+      "source_path": "schemas/universal_governance_connector_profile.schema.json",
+      "snapshot_path": "contracts/universal_governance_connector_snapshot/universal_governance_connector_profile.schema.json",
+      "source_blob_sha": "034069f86db871f0f48096e2417bd15dc1373366"
+    }
+  ],
+  "authority_effect": "NONE_SNAPSHOT_ONLY",
+  "governance_authority_transferred": false
+}
