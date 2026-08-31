@@ -1,0 +1,33 @@
+{
+  "schema": "stegcore.stegos-universal-intr-snapshot-manifest.v1",
+  "stegos_repository": "StegVerse-Labs/StegOS",
+  "stegos_source_commit": "5231765d07b5b69b3ef52ad9912251d956a513d1",
+  "source_files": [
+    {
+      "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/__init__.py",
+      "source_blob_sha": "6c0d19373eb47547b08d02215758b51989fda0c0"
+    },
+    {
+      "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/universal_intr_transport.py",
+      "source_blob_sha": "ca392303c1ab3e6d1b2a06034d7e761018f61b31"
+    },
+    {
+      "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/universal_intr_materialization.py",
+      "source_blob_sha": "93023b8fb59b66dd5099fc42e9849ab4b3596454"
+    },
+    {
+      "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/intr_backbone.py",
+      "source_blob_sha": "f2dffb6d53444282c317b0e1467fda5a30867be2"
+    },
+    {
+      "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/interlock_reference_adapter.py",
+      "source_blob_sha": "aca0c12c9ece64de082e06b2a16d7c29cea70f15"
+    },
+    {
+      "snapshot_path": "contracts/stegos_universal_intr_snapshot/specs/universal-intr-connector-profiles.v1.json",
+      "source_blob_sha": "5b21b1d208c1aa025558ff4a6c37a232cdb49c04"
+    }
+  ],
+  "authority_effect": "NONE_SNAPSHOT_ONLY",
+  "stegos_authority_transferred": false
+}
