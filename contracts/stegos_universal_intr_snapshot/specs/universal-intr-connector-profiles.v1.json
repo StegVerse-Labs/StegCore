@@ -1,0 +1,376 @@
+{
+  "schema": "stegverse.universal-intr.connector-profile-registry/v1",
+  "state": "DEFINED_SOURCE_ONLY",
+  "credential_authority": "TV/TVC",
+  "authority_effect": "NONE",
+  "canonical_invariants": {
+    "interlock_required_per_hop": true,
+    "receipt_chain_required": true,
+    "exact_packet_hash_required": true,
+    "always_on_receiver_required": false,
+    "second_user_device_required": false,
+    "exact_packet_transport_retry_allowed": true,
+    "blind_consequence_retry_allowed": false,
+    "transport_grants_execution_authority": false
+  },
+  "profiles": [
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "evaluator-read-review",
+      "request_class": "EVALUATOR_READ_REVIEW",
+      "payload_schema": "stegverse.evaluator_review.interlock_request.v1",
+      "operations": [
+        "READ_REVIEW"
+      ],
+      "source": {
+        "boundary": "DEVICE_SYSTEM",
+        "subsystem": "Site:EvaluatorReview"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "SDK:EvaluatorReviewIngress"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "SDK:EvaluatorReviewIngress"
+        },
+        "destination": {
+          "boundary": "DEVICE_SYSTEM",
+          "subsystem": "Site:EvaluatorReview"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/.github#431",
+      "custody_mode": "REFERENCE",
+      "display_projection": "Site:EvaluatorReviewReceiptReport",
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "hil-submission",
+      "request_class": "HIL_SUBMISSION",
+      "payload_schema": "stegverse.hil.multipart-payload/v1",
+      "operations": [
+        "SUBMIT"
+      ],
+      "source": {
+        "boundary": "DEVICE_SYSTEM",
+        "subsystem": "Site:HIL"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "HIL:Ingress"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "HIL:Custody"
+        },
+        "destination": {
+          "boundary": "DEVICE_SYSTEM",
+          "subsystem": "Site:HIL"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/.github#246",
+      "custody_mode": "EXACT_BYTES",
+      "display_projection": "Site:HILObservation",
+      "authorization_required": false,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "hil-ingress-custody",
+      "request_class": "HIL_INGRESS_CUSTODY",
+      "payload_schema": "stegverse.hil.intr_payload_binding/v1",
+      "operations": [
+        "ACCEPT_CUSTODY"
+      ],
+      "source": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "HIL:Ingress"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "HIL:Custody"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "HIL:Custody"
+        },
+        "destination": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "HIL:Ingress"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-org/LLM-adapter",
+      "custody_mode": "EXACT_BYTES",
+      "display_projection": null,
+      "authorization_required": false,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "hil-tvc-lifecycle",
+      "request_class": "HIL_TVC_LIFECYCLE",
+      "payload_schema": "stegverse.hil.intr_payload_binding/v1",
+      "operations": [
+        "ADMIT_LIFECYCLE"
+      ],
+      "source": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "HIL:Custody"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "TVC:HIL-Lifecycle"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "TVC:HIL-Lifecycle"
+        },
+        "destination": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "HIL:Custody"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/TVC",
+      "custody_mode": "REFERENCE",
+      "display_projection": null,
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "sv002-public-observe",
+      "request_class": "SV002_PUBLIC_OBSERVE",
+      "payload_schema": "stegverse.sv002.public_observation.interlock_request.v1",
+      "operations": [
+        "READ_OBSERVATION"
+      ],
+      "source": {
+        "boundary": "DEVICE_SYSTEM",
+        "subsystem": "Site:SV002Observer"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "SV002:ObservationProjection"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "SV002:ObservationProjection"
+        },
+        "destination": {
+          "boundary": "DEVICE_SYSTEM",
+          "subsystem": "Site:SV002Observer"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/.github#493",
+      "custody_mode": "REFERENCE",
+      "display_projection": "Site:SV002PublicObservation",
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "device-kv",
+      "request_class": "DEVICE_KV_INTR",
+      "payload_schema": "kv.interlock.request.v1",
+      "operations": [
+        "DISCOVER",
+        "REQUEST",
+        "COMMIT_CANDIDATE"
+      ],
+      "source": {
+        "boundary": "DEVICE_SYSTEM",
+        "subsystem": "Device:KnowledgeVaultClient"
+      },
+      "destination": {
+        "boundary": "KV",
+        "subsystem": "KnowledgeVault:Interlock"
+      },
+      "response": {
+        "source": {
+          "boundary": "KV",
+          "subsystem": "KnowledgeVault:Interlock"
+        },
+        "destination": {
+          "boundary": "DEVICE_SYSTEM",
+          "subsystem": "Device:KnowledgeVaultClient"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/continuity-vault-kit#79",
+      "custody_mode": "CANONICAL_STATE_CANDIDATE",
+      "display_projection": "Site:MyKV",
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "external-api-observation",
+      "request_class": "EXTERNAL_API_OBSERVATION",
+      "payload_schema": "stegverse.external-api.request/v1",
+      "operations": [
+        "OBSERVE",
+        "READ"
+      ],
+      "source": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "StegOS:ExternalAPIClient"
+      },
+      "destination": {
+        "boundary": "EXTERNAL_SYSTEM",
+        "subsystem": "ExternalProvider:API"
+      },
+      "response": {
+        "source": {
+          "boundary": "EXTERNAL_SYSTEM",
+          "subsystem": "ExternalProvider:API"
+        },
+        "destination": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "StegOS:ExternalAPIClient"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/.github#339",
+      "custody_mode": "REFERENCE",
+      "display_projection": null,
+      "authorization_required": false,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "kv-skap",
+      "request_class": "KV_SKAP_INTR",
+      "payload_schema": "stegverse.skap.reference-request/v1",
+      "operations": [
+        "RESOLVE_REFERENCE",
+        "VERIFY_SESSION"
+      ],
+      "source": {
+        "boundary": "KV",
+        "subsystem": "KnowledgeVault:SKAPClient"
+      },
+      "destination": {
+        "boundary": "SKAP_VAULT",
+        "subsystem": "SKAP:Vault"
+      },
+      "response": {
+        "source": {
+          "boundary": "SKAP_VAULT",
+          "subsystem": "SKAP:Vault"
+        },
+        "destination": {
+          "boundary": "KV",
+          "subsystem": "KnowledgeVault:SKAPClient"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/TVC",
+      "custody_mode": "REFERENCE",
+      "display_projection": null,
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "tvc-lifecycle-relay",
+      "request_class": "TVC_LIFECYCLE_RELAY",
+      "payload_schema": "stegverse.tvc.lifecycle-intent/v1",
+      "operations": [
+        "ADMIT_LIFECYCLE",
+        "RELAY"
+      ],
+      "source": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "Source:Custody"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "TVC:Lifecycle"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "TVC:Lifecycle"
+        },
+        "destination": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "Source:Custody"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/TVC",
+      "custody_mode": "REFERENCE",
+      "display_projection": null,
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "publisher-artifact-transfer",
+      "request_class": "PUBLISHER_ARTIFACT_TRANSFER",
+      "payload_schema": "stegverse.publisher.artifact-transfer/v1",
+      "operations": [
+        "TRANSFER",
+        "EXPORT"
+      ],
+      "source": {
+        "boundary": "KV",
+        "subsystem": "KnowledgeVault:DocumentExport"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "Publisher:Ingress"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "Publisher:Export"
+        },
+        "destination": {
+          "boundary": "KV",
+          "subsystem": "KnowledgeVault:DocumentImport"
+        }
+      },
+      "downstream_owner_ref": "GCAT-BCAT-Engine/Publisher",
+      "custody_mode": "EXACT_BYTES",
+      "display_projection": "Site:MyKVDocuments",
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "governance-external-action",
+      "request_class": "GOVERNANCE_EXTERNAL_ACTION",
+      "payload_schema": "stegverse.governance-connector.request/v1",
+      "operations": [
+        "GOVERN_ACTION"
+      ],
+      "source": {
+        "boundary": "EXTERNAL_SYSTEM",
+        "subsystem": "ExternalSystem:GovernedBoundary"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "StegCore:UniversalGovernanceConnector"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "StegCore:UniversalGovernanceConnector"
+        },
+        "destination": {
+          "boundary": "EXTERNAL_SYSTEM",
+          "subsystem": "ExternalSystem:GovernedBoundary"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/StegCore#163",
+      "custody_mode": "REFERENCE",
+      "display_projection": null,
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    }
+  ]
+}
