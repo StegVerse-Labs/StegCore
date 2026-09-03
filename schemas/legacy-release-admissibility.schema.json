@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stegverse:stegcore:legacy-release-admissibility:v1",
+  "title": "StegCore Legacy Release Admissibility Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "transition_id",
+    "capsule_id",
+    "recipient_identity_id",
+    "requested_transition",
+    "decision",
+    "reason_code",
+    "canonical_runtime",
+    "canonical_request_hash",
+    "canonical_receipt",
+    "disclosure_authority_granted",
+    "economic_transfer_authority_granted",
+    "external_execution_performed",
+    "authority_effect"
+  ],
+  "properties": {
+    "schema": {"const": "stegverse.stegcore.legacy_release_admissibility.v1"},
+    "transition_id": {"type": "string", "minLength": 1},
+    "capsule_id": {"type": "string", "minLength": 1},
+    "recipient_identity_id": {"type": "string", "minLength": 1},
+    "requested_transition": {
+      "enum": [
+        "DISCLOSE_CAPSULE",
+        "DISCLOSE_ORIGINATOR",
+        "DISCLOSE_ASSET_CLASS",
+        "DISCLOSE_TERMS",
+        "RELEASE_PAYLOAD",
+        "REQUEST_ECONOMIC_RELEASE"
+      ]
+    },
+    "decision": {"enum": ["ALLOW", "DENY", "FAIL-CLOSED"]},
+    "reason_code": {"type": "string", "minLength": 1},
+    "canonical_runtime": {"const": "stegcore.three_layer.evaluate_three_layer"},
+    "canonical_request_hash": {"type": "string", "minLength": 1},
+    "canonical_receipt": {"type": "object"},
+    "disclosure_authority_granted": {"const": false},
+    "economic_transfer_authority_granted": {"const": false},
+    "external_execution_performed": {"const": false},
+    "authority_effect": {"const": "NONE"}
+  }
+}
