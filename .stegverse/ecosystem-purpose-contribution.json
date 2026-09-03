@@ -1,0 +1,23 @@
+{
+  "schema": "stegverse.ecosystem-purpose-contribution/v1",
+  "repository": "StegVerse-Labs/StegCore",
+  "adopted": "2026-09-02",
+  "canonical_invariant": "StegVerse-Labs/.github:control/ecosystem-purpose-invariant.json",
+  "contribution_classes": [
+    "admissibility",
+    "execution",
+    "evidence",
+    "interoperability",
+    "consequence_containment"
+  ],
+  "authority_held": "UNCHANGED_FROM_REPOSITORY_LOCAL_HANDOFF",
+  "authority_not_held": "NO_NEW_AUTHORITY_GRANTED_BY_PURPOSE_INVARIANT",
+  "lifecycle_states_established": "UNCHANGED_FROM_REPOSITORY_LOCAL_EVIDENCE",
+  "evidence_outputs": "AS_DEFINED_BY_REPOSITORY_LOCAL_HANDOFF_AND_IMPLEMENTATION",
+  "upstream_interfaces": "AS_DEFINED_BY_REPOSITORY_LOCAL_HANDOFF",
+  "downstream_interfaces": "AS_DEFINED_BY_REPOSITORY_LOCAL_HANDOFF",
+  "consequence_boundary": "UNCHANGED_FROM_REPOSITORY_LOCAL_HANDOFF",
+  "maturity_gate": "NOT_ESTABLISHED_BY_PURPOSE_ADOPTION",
+  "intelligence_provider_independence": "PREFERRED_WHERE_ARCHITECTURALLY_APPLICABLE",
+  "runtime_activation_claim": false
+}
