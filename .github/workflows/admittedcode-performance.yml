@@ -22,6 +22,8 @@ on:
       - "tools/compare_admittedcode_baseline.py"
       - "tools/run_admittedcode_onboarding_rehearsal.py"
       - "tests/test_admittedcode_performance.py"
+      - "tests/test_legacy_release.py"
+      - "tests/test_legacy_release_source_contract.py"
       - "examples/steggate_allow_request.json"
       - "management/steggate-four-app-runtime-binding.json"
       - "docs/ADMITTEDCODE_PERFORMANCE.md"
@@ -56,6 +58,9 @@ jobs:
 
       - name: Run benchmark contract tests
         run: pytest -q tests/test_admittedcode_performance.py
+
+      - name: Run legacy release canonical-contract tests
+        run: pytest -q tests/test_legacy_release.py tests/test_legacy_release_source_contract.py
 
       - name: Run mechanical fresh-environment onboarding rehearsal
         run: python tools/run_admittedcode_onboarding_rehearsal.py --output artifacts/admittedcode-onboarding-rehearsal.json
