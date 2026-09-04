@@ -86,3 +86,10 @@ def test_economic_release_is_only_admissibility_not_transfer():
     assert result["decision"] == "ALLOW"
     assert result["economic_transfer_authority_granted"] is False
     assert result["external_execution_performed"] is False
+
+
+def test_unknown_governance_enum_fails_before_canonical_evaluation():
+    facts = base_facts()
+    facts["uncertainty_state"] = "invented-state"
+    with pytest.raises(LegacyReleaseError):
+        evaluate_legacy_release(facts)
