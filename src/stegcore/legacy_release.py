@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import asdict
 from typing import Any, Mapping
 
 from .three_layer import (
@@ -13,16 +12,37 @@ from .three_layer import (
 
 LEGACY_RELEASE_SCHEMA = "stegverse.stegcore.legacy_release_admissibility.v1"
 
+_ALLOWED_TRANSITIONS = {
+    "DISCLOSE_CAPSULE",
+    "DISCLOSE_ORIGINATOR",
+    "DISCLOSE_ASSET_CLASS",
+    "DISCLOSE_TERMS",
+    "RELEASE_PAYLOAD",
+    "REQUEST_ECONOMIC_RELEASE",
+}
+_ALLOWED_OPERATOR_RECOVERABILITY = {"available", "degraded", "unavailable", "unknown"}
+_ALLOWED_WORKLOAD = {"supported", "elevated", "overloaded", "unknown"}
+_ALLOWED_TIME_PRESSURE = {"normal", "elevated", "critical", "unknown"}
+_ALLOWED_ISOLATION = {"supported", "isolated", "unknown"}
+_ALLOWED_UNCERTAINTY = {"bounded", "material", "unknown"}
+_ALLOWED_RECOVERABILITY = {"recoverable", "constrained", "irreversible", "unknown"}
+
 
 class LegacyReleaseError(ValueError):
     pass
 
 
 def _require_bool(facts: Mapping[str, Any], key: str) -> bool:
-    value = facts.get(key)
-    if value is not True:
+    if facts.get(key) is not True:
         raise LegacyReleaseError(f"required predicate not satisfied: {key}")
     return True
+
+
+def _enum(facts: Mapping[str, Any], key: str, default: str, allowed: set[str]) -> str:
+    value = str(facts.get(key, default)).strip()
+    if value not in allowed:
+        raise LegacyReleaseError(f"invalid {key}: {value}")
+    return value
 
 
 def evaluate_legacy_release(facts: Mapping[str, Any]) -> dict[str, Any]:
@@ -47,7 +67,7 @@ def evaluate_legacy_release(facts: Mapping[str, Any]) -> dict[str, Any]:
 
     if not all((transition_id, capsule_id, recipient_identity_id, policy_ref, delegation_ref)):
         raise LegacyReleaseError("transition, capsule, recipient, policy, and delegation references are required")
-    if requested_transition not in {"DISCLOSE_CAPSULE", "DISCLOSE_ORIGINATOR", "DISCLOSE_ASSET_CLASS", "DISCLOSE_TERMS", "RELEASE_PAYLOAD", "REQUEST_ECONOMIC_RELEASE"}:
+    if requested_transition not in _ALLOWED_TRANSITIONS:
         raise LegacyReleaseError("unsupported legacy transition")
 
     _require_bool(facts, "recipient_identity_verified")
@@ -66,13 +86,24 @@ def evaluate_legacy_release(facts: Mapping[str, Any]) -> dict[str, Any]:
     if not evidence_refs:
         raise LegacyReleaseError("at least one evidence reference is required")
 
+    operator_recoverability = _enum(
+        facts, "operator_recoverability", "available", _ALLOWED_OPERATOR_RECOVERABILITY
+    )
+    workload_state = _enum(facts, "workload_state", "supported", _ALLOWED_WORKLOAD)
+    time_pressure = _enum(facts, "time_pressure", "normal", _ALLOWED_TIME_PRESSURE)
+    isolation_state = _enum(facts, "isolation_state", "supported", _ALLOWED_ISOLATION)
+    uncertainty_state = _enum(facts, "uncertainty_state", "bounded", _ALLOWED_UNCERTAINTY)
+    recoverability_profile = _enum(
+        facts, "recoverability_profile", "recoverable", _ALLOWED_RECOVERABILITY
+    )
+
     request = ThreeLayerRequest(
         judgment_conditions=JudgmentConditions(
             refusal_available=bool(facts.get("recipient_refusal_available", True)),
-            operator_recoverability=str(facts.get("operator_recoverability", "available")),
-            workload_state=str(facts.get("workload_state", "supported")),
-            time_pressure=str(facts.get("time_pressure", "normal")),
-            isolation_state=str(facts.get("isolation_state", "supported")),
+            operator_recoverability=operator_recoverability,
+            workload_state=workload_state,
+            time_pressure=time_pressure,
+            isolation_state=isolation_state,
             evidence_refs=evidence_refs,
         ),
         signal_admission=SignalAdmission(
@@ -80,7 +111,7 @@ def evaluate_legacy_release(facts: Mapping[str, Any]) -> dict[str, Any]:
             excluded_signal_refs=tuple(str(x) for x in facts.get("excluded_signal_refs", ())),
             transformations=tuple(str(x) for x in facts.get("transformations", ())),
             missing_inputs=tuple(str(x) for x in facts.get("missing_inputs", ())),
-            uncertainty_state=str(facts.get("uncertainty_state", "bounded")),
+            uncertainty_state=uncertainty_state,
             reference_state_hash=reference_state_hash,
             expected_reference_state_hash=expected_reference_state_hash,
             reconstruction_available=True,
@@ -92,7 +123,7 @@ def evaluate_legacy_release(facts: Mapping[str, Any]) -> dict[str, Any]:
             delegation_current=bool(facts.get("delegation_current", True)),
             evidence_current=True,
             affected_entity_conditions_represented=True,
-            recoverability_profile=str(facts.get("recoverability_profile", "recoverable")),
+            recoverability_profile=recoverability_profile,
             validity_window_open=True,
             policy_ref=policy_ref,
             delegation_ref=delegation_ref,
