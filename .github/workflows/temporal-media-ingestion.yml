@@ -1,0 +1,57 @@
+name: Validate Temporal Media Ingestion
+
+on:
+  pull_request:
+    paths:
+      - 'src/stegcore/temporal_media_ingestion.py'
+      - 'tests/test_temporal_media_ingestion.py'
+      - 'schemas/media-source-reference.schema.json'
+      - 'fixtures/temporal-governed-analysis/media-reference-baseball.json'
+      - 'docs/TGA_MEDIA_EVENT_INGESTION_MIRROR_HANDOFF.md'
+      - '.github/workflows/temporal-media-ingestion.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/stegcore/temporal_media_ingestion.py'
+      - 'tests/test_temporal_media_ingestion.py'
+      - 'schemas/media-source-reference.schema.json'
+      - 'fixtures/temporal-governed-analysis/media-reference-baseball.json'
+      - 'docs/TGA_MEDIA_EVENT_INGESTION_MIRROR_HANDOFF.md'
+      - '.github/workflows/temporal-media-ingestion.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install StegCore and tests
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+      - name: Compile adapter
+        run: python -m py_compile src/stegcore/temporal_media_ingestion.py
+      - name: Run media ingestion tests
+        run: pytest -q tests/test_temporal_media_ingestion.py
+      - name: Assert non-custodial no-network authority boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = Path('src/stegcore/temporal_media_ingestion.py').read_text(encoding='utf-8')
+          assert 'INTERPRETIVE_ENCODING_NOT_GROUND_TRUTH' in source
+          assert 'performs no network fetch' in source
+          assert 'custody change' in source
+          assert 'requests.' not in source
+          assert 'httpx.' not in source
+          assert 'urllib.request' not in source
+          print('TGA_MEDIA_INGESTION_BOUNDARY=PASS')
+          PY

@@ -1,0 +1,40 @@
+{
+  "media_reference": {
+    "source_id": "example-baseball-broadcast-1978",
+    "source_kind": "VIDEO",
+    "uri": "https://example.invalid/archive/baseball-1978",
+    "custody": "REFERENCED",
+    "integrity": {
+      "sha256": null,
+      "verification_state": "UNVERIFIED"
+    },
+    "window": {
+      "start_ms": 2600000,
+      "end_ms": 2615000,
+      "frame_anchors": [
+        {"label": "contact", "offset_ms": 2603500},
+        {"label": "tag-window", "offset_ms": 2610200}
+      ]
+    },
+    "provenance": [
+      "synthetic-fixture:no-real-media-fetch",
+      "tga-media-ingestion:test-only"
+    ]
+  },
+  "observations": [
+    {
+      "observation_id": "OBS-MEDIA-1",
+      "subject": "ball",
+      "predicate": "travels_toward_third_base_region",
+      "object": true,
+      "state": "INFERRED"
+    },
+    {
+      "observation_id": "OBS-MEDIA-2",
+      "subject": "runner.third",
+      "predicate": "tag_precedes_base_contact",
+      "object": null,
+      "state": "UNRESOLVED"
+    }
+  ]
+}
