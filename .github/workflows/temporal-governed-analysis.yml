@@ -1,0 +1,74 @@
+name: Validate Temporal Governed Analysis
+
+on:
+  pull_request:
+    paths:
+      - 'src/stegcore/temporal_governed_analysis.py'
+      - 'tests/test_temporal_governed_analysis.py'
+      - 'schemas/temporal-event.schema.json'
+      - 'schemas/governing-context.schema.json'
+      - 'schemas/governed-evaluation.schema.json'
+      - 'fixtures/temporal-governed-analysis/**'
+      - 'docs/TEMPORAL_GOVERNED_ANALYSIS_MIRROR_HANDOFF.md'
+      - '.github/workflows/temporal-governed-analysis.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/stegcore/temporal_governed_analysis.py'
+      - 'tests/test_temporal_governed_analysis.py'
+      - 'schemas/temporal-event.schema.json'
+      - 'schemas/governing-context.schema.json'
+      - 'schemas/governed-evaluation.schema.json'
+      - 'fixtures/temporal-governed-analysis/**'
+      - 'docs/TEMPORAL_GOVERNED_ANALYSIS_MIRROR_HANDOFF.md'
+      - '.github/workflows/temporal-governed-analysis.yml'
+  workflow_dispatch: {}
+
+concurrency:
+  group: temporal-governed-analysis-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out StegCore
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install StegCore and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest
+
+      - name: Compile TGA evaluator
+        run: python -m py_compile src/stegcore/temporal_governed_analysis.py
+
+      - name: Run focused TGA tests
+        run: pytest -q tests/test_temporal_governed_analysis.py
+
+      - name: Assert analysis-only authority boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = Path('src/stegcore/temporal_governed_analysis.py').read_text(encoding='utf-8')
+          assert 'NONE_ANALYSIS_ONLY' in source
+          assert 'INTERPRETIVE_ENCODING_NOT_GROUND_TRUTH' in source
+          print('TGA_AUTHORITY_BOUNDARY=PASS')
+          PY
+
+      - name: Record known repository regression boundary
+        run: |
+          echo 'TGA focused validation is authoritative only for TGA-001 source behavior.'
+          echo 'Repo-wide portable-release/version consistency failures are pre-existing on main and remain owned by the canonical portable artifact transport lane (StegCore PR #137).'
+          echo 'This workflow does not claim full-repository regression success.'

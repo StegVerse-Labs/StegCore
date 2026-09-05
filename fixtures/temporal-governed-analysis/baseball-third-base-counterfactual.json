@@ -1,0 +1,111 @@
+{
+  "event": {
+    "event_id": "SPORTS-BASEBALL-THIRD-001",
+    "event_time": "1978-06-14T20:15:00Z",
+    "source": {
+      "source_id": "video:example-baseball-1978",
+      "source_kind": "VIDEO",
+      "uri": null,
+      "custody": "REFERENCED",
+      "integrity": {
+        "sha256": null,
+        "verification_state": "UNVERIFIED"
+      }
+    },
+    "window": {
+      "start_ms": 2597220,
+      "end_ms": 2604880,
+      "frame_anchors": [
+        {"label": "tag_contact", "offset_ms": 2601010},
+        {"label": "base_contact", "offset_ms": 2601080}
+      ]
+    },
+    "observations": [
+      {
+        "observation_id": "OBS-1",
+        "subject": "fielder.third",
+        "predicate": "fielder_possesses_ball_before_tag",
+        "object": true,
+        "state": "OBSERVED",
+        "evidence_refs": ["video:example-baseball-1978#2600800-2601100"]
+      },
+      {
+        "observation_id": "OBS-2",
+        "subject": "runner",
+        "predicate": "tag_precedes_base_contact",
+        "object": null,
+        "state": "UNRESOLVED",
+        "evidence_refs": ["video:example-baseball-1978#2600950-2601150"]
+      }
+    ],
+    "representation": {
+      "assertion": "INTERPRETIVE_ENCODING_NOT_GROUND_TRUTH",
+      "encoding_version": "tga.event.v1",
+      "alternative_representation_ids": []
+    },
+    "uncertainty": {
+      "source_uncertainty": 0.15,
+      "observation_uncertainty": 0.25,
+      "semantic_mapping_uncertainty": 0.05,
+      "notes": ["Tag/base-contact ordering is occluded in the available angle."]
+    },
+    "provenance": ["fixture:baseball-third-base-counterfactual"]
+  },
+  "governing_context": {
+    "context_id": "BASEBALL-MODERN-TAG-PROJECTION-001",
+    "domain": "SPORTS.BASEBALL",
+    "jurisdiction": "demonstration-only",
+    "authority": {
+      "authority_type": "SYNTHETIC",
+      "authority_name": "StegVerse bounded demonstration ruleset",
+      "source_refs": ["fixture:synthetic-modern-tag-rule"]
+    },
+    "ruleset": {
+      "ruleset_id": "BASEBALL-TAG-RULE-DEMO",
+      "version": "modern-demo-v1",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "effective_to": null,
+      "provisions": [
+        {
+          "provision_id": "TAG-OUT-DEMO",
+          "title": "Demonstration tag-out predicate",
+          "source_ref": "fixture:synthetic-modern-tag-rule",
+          "predicates": [
+            {
+              "predicate_id": "P1",
+              "observation_predicate": "fielder_possesses_ball_before_tag",
+              "operator": "EQUALS",
+              "expected": true
+            },
+            {
+              "predicate_id": "P2",
+              "observation_predicate": "tag_precedes_base_contact",
+              "operator": "EQUALS",
+              "expected": true
+            }
+          ]
+        }
+      ]
+    },
+    "temporal_application": "COUNTERFACTUAL",
+    "interpretation": {
+      "profile_id": "demo-interpretation-v1",
+      "status": "SYNTHETIC",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "effective_to": null,
+      "source_refs": ["fixture:synthetic-modern-tag-rule"]
+    },
+    "enforcement": {
+      "profile_id": "not-applicable-demo",
+      "status": "NOT_APPLICABLE",
+      "effective_from": null,
+      "effective_to": null,
+      "source_refs": []
+    },
+    "uncertainty": {
+      "rule_mapping_uncertainty": 0.0,
+      "interpretation_uncertainty": 0.0,
+      "notes": ["Synthetic fixture is designed to test engine semantics, not an actual baseball rule claim."]
+    }
+  }
+}

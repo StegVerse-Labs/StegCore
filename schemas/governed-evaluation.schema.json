@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/governed-evaluation.schema.json",
+  "title": "Governed Evaluation",
+  "type": "object",
+  "required": ["evaluation_id", "event_id", "context_id", "results", "conclusion", "variance", "adjudicative_authority", "authority_effect", "provenance"],
+  "properties": {
+    "evaluation_id": {"type": "string", "minLength": 1},
+    "event_id": {"type": "string", "minLength": 1},
+    "context_id": {"type": "string", "minLength": 1},
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["provision_id", "predicate_id", "state", "evidence_refs"],
+        "properties": {
+          "provision_id": {"type": "string"},
+          "predicate_id": {"type": "string"},
+          "state": {"enum": ["SATISFIED", "DENIED", "UNRESOLVED", "NOT_APPLICABLE", "CONTRADICTORY"]},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}},
+          "reason": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "conclusion": {"enum": ["SATISFIED", "DENIED", "UNRESOLVED", "NOT_APPLICABLE", "CONTRADICTORY"]},
+    "temporal_application": {"enum": ["CONTEMPORANEOUS", "COUNTERFACTUAL", "RETROSPECTIVE", "PROSPECTIVE_SYNTHETIC"]},
+    "variance": {
+      "type": "object",
+      "required": ["source_uncertainty", "observation_uncertainty", "semantic_mapping_uncertainty", "rule_mapping_uncertainty", "interpretation_uncertainty", "evaluation_uncertainty"],
+      "properties": {
+        "source_uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "observation_uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "semantic_mapping_uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "rule_mapping_uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "interpretation_uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "evaluation_uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "adjudicative_authority": {"enum": ["NONE", "BOUND_EXTERNAL_AUTHORITY"]},
+    "authority_effect": {"const": "NONE_ANALYSIS_ONLY"},
+    "representation_assertion": {"const": "INTERPRETIVE_ENCODING_NOT_GROUND_TRUTH"},
+    "provenance": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

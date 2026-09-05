@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/governing-context.schema.json",
+  "title": "Governing Context",
+  "type": "object",
+  "required": ["context_id", "domain", "authority", "ruleset", "temporal_application", "interpretation", "enforcement", "uncertainty"],
+  "properties": {
+    "context_id": {"type": "string", "minLength": 1},
+    "domain": {"type": "string", "minLength": 1},
+    "jurisdiction": {"type": ["string", "null"]},
+    "authority": {
+      "type": "object",
+      "required": ["authority_type", "authority_name"],
+      "properties": {
+        "authority_type": {"enum": ["SPORT_GOVERNING_BODY", "LEGISLATURE", "COURT", "AGENCY", "STANDARD_BODY", "ORGANIZATION", "SYNTHETIC"]},
+        "authority_name": {"type": "string"},
+        "source_refs": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "ruleset": {
+      "type": "object",
+      "required": ["ruleset_id", "version", "effective_from", "provisions"],
+      "properties": {
+        "ruleset_id": {"type": "string"},
+        "version": {"type": "string"},
+        "effective_from": {"type": ["string", "null"], "format": "date-time"},
+        "effective_to": {"type": ["string", "null"], "format": "date-time"},
+        "provisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["provision_id", "predicates"],
+            "properties": {
+              "provision_id": {"type": "string"},
+              "title": {"type": ["string", "null"]},
+              "source_ref": {"type": ["string", "null"]},
+              "predicates": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["predicate_id", "observation_predicate", "operator"],
+                  "properties": {
+                    "predicate_id": {"type": "string"},
+                    "observation_predicate": {"type": "string"},
+                    "operator": {"enum": ["EXISTS", "EQUALS", "NOT_EQUALS", "IN", "NOT_IN"]},
+                    "expected": {}
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "temporal_application": {"enum": ["CONTEMPORANEOUS", "COUNTERFACTUAL", "RETROSPECTIVE", "PROSPECTIVE_SYNTHETIC"]},
+    "interpretation": {
+      "type": "object",
+      "required": ["profile_id", "status"],
+      "properties": {
+        "profile_id": {"type": "string"},
+        "status": {"enum": ["SETTLED", "CONTESTED", "UNKNOWN", "SYNTHETIC"]},
+        "effective_from": {"type": ["string", "null"], "format": "date-time"},
+        "effective_to": {"type": ["string", "null"], "format": "date-time"},
+        "source_refs": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "enforcement": {
+      "type": "object",
+      "required": ["profile_id", "status"],
+      "properties": {
+        "profile_id": {"type": "string"},
+        "status": {"enum": ["DOCUMENTED", "INFERRED", "UNKNOWN", "NOT_APPLICABLE"]},
+        "effective_from": {"type": ["string", "null"], "format": "date-time"},
+        "effective_to": {"type": ["string", "null"], "format": "date-time"},
+        "source_refs": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "uncertainty": {
+      "type": "object",
+      "required": ["rule_mapping_uncertainty", "interpretation_uncertainty"],
+      "properties": {
+        "rule_mapping_uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "interpretation_uncertainty": {"type": "number", "minimum": 0, "maximum": 1},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
