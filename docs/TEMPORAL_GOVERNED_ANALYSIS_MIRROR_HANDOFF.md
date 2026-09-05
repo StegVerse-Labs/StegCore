@@ -1,12 +1,15 @@
 # TEMPORAL_GOVERNED_ANALYSIS_MIRROR_HANDOFF.md
 
-Status: SOURCE_IMPLEMENTED_VALIDATION_IN_PROGRESS
+Status: SOURCE_IMPLEMENTED_VALIDATED_MERGED
 Updated: 2026-09-05
 Organization: StegVerse-Labs
 Repository: StegVerse-Labs/StegCore
-Branch: feature/temporal-governed-analysis
+Canonical branch: main
 Goal ID: TGA-001
-Pull request: #184
+Source pull request: #184
+Merge commit: 6e0e37ce796cb7c054dc1afebc0c925fd34a98d5
+Dedicated validation run: 33984082007 SUCCESS
+StegIndex registration issue: StegVerse-Labs/StegIndex#28
 
 ## Source of truth
 
@@ -71,20 +74,23 @@ Legal/domain-specific renderers may additionally expose descriptive states such 
 - ENFORCEMENT_HISTORICALLY_UNCOMMON
 - NO_ADJUDICATED_CONCLUSION
 
-## Source-complete target
+## Completed source goal
 
-The initial source build is complete when StegCore contains:
+All TGA-001 source-complete requirements are present on canonical `main` after merge commit `6e0e37ce796cb7c054dc1afebc0c925fd34a98d5`:
 
-1. generalized temporal-event schema;
-2. versioned governing-context/ruleset schema;
-3. governed evaluation schema;
-4. deterministic evaluator that preserves unresolved states and counterfactual markers;
-5. provenance/source binding contract;
-6. multi-dimensional uncertainty contract;
-7. deterministic tests covering historical and counterfactual projections;
-8. at least one bounded sports fixture proving cross-temporal rule projection semantics.
+- `schemas/temporal-event.schema.json`
+- `schemas/governing-context.schema.json`
+- `schemas/governed-evaluation.schema.json`
+- `src/stegcore/temporal_governed_analysis.py`
+- `tests/test_temporal_governed_analysis.py`
+- `fixtures/temporal-governed-analysis/baseball-third-base-counterfactual.json`
+- `.github/workflows/temporal-governed-analysis.yml`
 
-All eight source artifacts are present on PR #184. Source-complete remains unclaimed until the dedicated TGA validation workflow succeeds and the PR is merged.
+Dedicated validation run `33984082007` succeeded after the TGA workflow was narrowed to TGA-owned validation boundaries. The focused TGA suite passed all six tests, the evaluator compiled, package installation passed, and the analysis-only / non-ground-truth assertions passed.
+
+## Known unrelated repository regression boundary
+
+A prior dedicated TGA run exposed five pre-existing repository-wide portable-release/version-consistency failures. They are not TGA-owned. `docs/STEGVERSE_MICRO_ECOSYSTEM_MIRROR_HANDOFF.md` identifies StegCore PR #137 as the canonical artifact/version transport claimant. TGA must not modify or compete with that lane.
 
 ## Non-goals for TGA-001 source MVP
 
@@ -102,61 +108,30 @@ This engine evaluates represented evidence against represented constraints. It g
 
 `authority_effect = NONE_ANALYSIS_ONLY`
 
-## Installed modules
-
-Destination: `StegVerse-Labs/StegCore`
-
-- `schemas/temporal-event.schema.json`
-- `schemas/governing-context.schema.json`
-- `schemas/governed-evaluation.schema.json`
-- `src/stegcore/temporal_governed_analysis.py`
-- `tests/test_temporal_governed_analysis.py`
-- `fixtures/temporal-governed-analysis/baseball-third-base-counterfactual.json`
-- `.github/workflows/temporal-governed-analysis.yml`
-
 ## Remaining integration modules
 
-After validated merge:
-- `StegVerse-Labs/StegIndex`: capability/predicate registration for TGA-001; tracking issue #28;
-- `StegVerse-Labs/Site`: governed discovery/playback UI and temporal source references;
-- `GCAT-BCAT-Engine/Publisher`: governed publication projection;
-- `admissibility-wiki`: explanatory projection;
+Machine-owned successor work after source merge:
+
+- `StegVerse-Labs/StegIndex`: register the validated TGA capability and predicates; tracking issue #28.
+- `StegVerse-Labs/Site`: governed discovery/playback UI and temporal source references.
+- governed media/event ingestion owner: preserve source identity, exact temporal windows, provenance, and representational uncertainty while remaining separate from media custody.
+- `GCAT-BCAT-Engine/Publisher`: governed publication projection.
+- `admissibility-wiki`: explanatory projection.
 - `stegguardian-wiki`: governance/contestability projection.
-
-The media/event ingestion adapter must remain separate from media custody and must preserve source identity, exact temporal windows, provenance, and representational uncertainty.
-
-## Validation lane
-
-Dedicated workflow:
-- `.github/workflows/temporal-governed-analysis.yml`
-
-TGA-required checks:
-1. package install succeeds;
-2. evaluator compiles;
-3. focused TGA tests pass;
-4. analysis-only authority and non-ground-truth assertions remain present.
-
-Observed run `33983989348` proved:
-- package install: PASS;
-- evaluator compile: PASS;
-- focused TGA tests: PASS (`6 passed`);
-- repo-wide regression step: FAIL due five pre-existing portable-release/version-coherence tests.
-
-The repo-wide failures are not caused by TGA and are canonical to the existing portable artifact/version lane: `docs/STEGVERSE_MICRO_ECOSYSTEM_MIRROR_HANDOFF.md` names StegCore PR #137 as the active artifact-transport claimant and forbids competing artifact/publication implementation. Main currently has `VERSION=0.3.0` and `pyproject.toml version=0.3.0` while `tests/test_product_consistency.py` still asserts `0.2.0` and portable-release manifest validation likewise observes source-version mismatch.
-
-Commit `1987ee0380bf4ee333bda5ce6711024f8525a6a5` therefore narrows the dedicated TGA workflow to TGA-owned validation only and explicitly records the unrelated repository regression boundary rather than modifying PR #137-owned files.
 
 ## Current continuation
 
-pull_request: #184
-source_state: IMPLEMENTED_ON_FEATURE_BRANCH
-focused_validation_state: PASS_OBSERVED_RUN_33983989348_PRE_PATCH
-current_validation_state: DEDICATED_WORKFLOW_RERUN_REQUIRED_AFTER_1987ee0
-repo_wide_regression_state: PREEXISTING_VERSION_COHERENCE_FAILURE_OWNED_BY_PR_137
-merge_state: OPEN
-stegindex_registration_issue: StegVerse-Labs/StegIndex#28
-next_action: observe the post-1987ee0 dedicated TGA workflow; if successful and repository merge requirements allow, merge PR #184; then execute StegIndex #28 registration and open the governed media/event ingestion integration lane.
-manual_execution_allowed: true
+```yaml
+goal_id: TGA-001
+source_state: SOURCE_IMPLEMENTED_VALIDATED_MERGED
+source_pr: 184
+merge_commit: 6e0e37ce796cb7c054dc1afebc0c925fd34a98d5
+validation_run: 33984082007
+validation_state: SUCCESS
 runtime_activation_claim: NONE
 authority_effect: NONE_ANALYSIS_ONLY
+active_successor: StegVerse-Labs/StegIndex#28
+next_action: complete canonical StegIndex registration, then open governed media/event ingestion and Site projection lanes without creating media-custody or adjudicative authority
+manual_execution_allowed: true
 thread_archive_ready: false
+```
