@@ -1,6 +1,6 @@
 # TEMPORAL_GOVERNED_ANALYSIS_MIRROR_HANDOFF.md
 
-Status: SOURCE_IMPLEMENTED_AWAITING_VALIDATION
+Status: SOURCE_IMPLEMENTED_VALIDATION_IN_PROGRESS
 Updated: 2026-09-05
 Organization: StegVerse-Labs
 Repository: StegVerse-Labs/StegCore
@@ -84,7 +84,7 @@ The initial source build is complete when StegCore contains:
 7. deterministic tests covering historical and counterfactual projections;
 8. at least one bounded sports fixture proving cross-temporal rule projection semantics.
 
-All eight source artifacts are now present on PR #184. Source-complete remains unclaimed until the dedicated validation workflow succeeds and the PR is merged.
+All eight source artifacts are present on PR #184. Source-complete remains unclaimed until the dedicated TGA validation workflow succeeds and the PR is merged.
 
 ## Non-goals for TGA-001 source MVP
 
@@ -117,7 +117,7 @@ Destination: `StegVerse-Labs/StegCore`
 ## Remaining integration modules
 
 After validated merge:
-- `StegVerse-Labs/StegIndex`: capability/predicate registration for TGA-001;
+- `StegVerse-Labs/StegIndex`: capability/predicate registration for TGA-001; tracking issue #28;
 - `StegVerse-Labs/Site`: governed discovery/playback UI and temporal source references;
 - `GCAT-BCAT-Engine/Publisher`: governed publication projection;
 - `admissibility-wiki`: explanatory projection;
@@ -130,22 +130,32 @@ The media/event ingestion adapter must remain separate from media custody and mu
 Dedicated workflow:
 - `.github/workflows/temporal-governed-analysis.yml`
 
-Required checks:
+TGA-required checks:
 1. package install succeeds;
 2. evaluator compiles;
 3. focused TGA tests pass;
-4. complete StegCore regression suite passes;
-5. analysis-only authority and non-ground-truth assertions remain present.
+4. analysis-only authority and non-ground-truth assertions remain present.
 
-The absence of a validation workflow before commit `05955a111f8438e7e5b01e0f6fd5417b08d7c320` was a path-scoping omission and is now source-corrected. No successful validation receipt is claimed until a workflow run is observed.
+Observed run `33983989348` proved:
+- package install: PASS;
+- evaluator compile: PASS;
+- focused TGA tests: PASS (`6 passed`);
+- repo-wide regression step: FAIL due five pre-existing portable-release/version-coherence tests.
+
+The repo-wide failures are not caused by TGA and are canonical to the existing portable artifact/version lane: `docs/STEGVERSE_MICRO_ECOSYSTEM_MIRROR_HANDOFF.md` names StegCore PR #137 as the active artifact-transport claimant and forbids competing artifact/publication implementation. Main currently has `VERSION=0.3.0` and `pyproject.toml version=0.3.0` while `tests/test_product_consistency.py` still asserts `0.2.0` and portable-release manifest validation likewise observes source-version mismatch.
+
+Commit `1987ee0380bf4ee333bda5ce6711024f8525a6a5` therefore narrows the dedicated TGA workflow to TGA-owned validation only and explicitly records the unrelated repository regression boundary rather than modifying PR #137-owned files.
 
 ## Current continuation
 
 pull_request: #184
 source_state: IMPLEMENTED_ON_FEATURE_BRANCH
-validation_state: WORKFLOW_ADDED_AWAITING_OBSERVED_RUN
-merge_state: OPEN_BLOCKED_PENDING_REQUIRED_GATE
-next_action: observe the dedicated TGA workflow result; if successful, merge PR #184; then register TGA-001 in StegIndex and open the governed media/event ingestion integration lane.
+focused_validation_state: PASS_OBSERVED_RUN_33983989348_PRE_PATCH
+current_validation_state: DEDICATED_WORKFLOW_RERUN_REQUIRED_AFTER_1987ee0
+repo_wide_regression_state: PREEXISTING_VERSION_COHERENCE_FAILURE_OWNED_BY_PR_137
+merge_state: OPEN
+stegindex_registration_issue: StegVerse-Labs/StegIndex#28
+next_action: observe the post-1987ee0 dedicated TGA workflow; if successful and repository merge requirements allow, merge PR #184; then execute StegIndex #28 registration and open the governed media/event ingestion integration lane.
 manual_execution_allowed: true
 runtime_activation_claim: NONE
 authority_effect: NONE_ANALYSIS_ONLY
