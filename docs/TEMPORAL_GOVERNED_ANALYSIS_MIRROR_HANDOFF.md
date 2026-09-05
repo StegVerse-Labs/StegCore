@@ -1,11 +1,12 @@
 # TEMPORAL_GOVERNED_ANALYSIS_MIRROR_HANDOFF.md
 
-Status: ACTIVE_SOURCE_BUILD
+Status: SOURCE_IMPLEMENTED_AWAITING_VALIDATION
 Updated: 2026-09-05
 Organization: StegVerse-Labs
 Repository: StegVerse-Labs/StegCore
 Branch: feature/temporal-governed-analysis
 Goal ID: TGA-001
+Pull request: #184
 
 ## Source of truth
 
@@ -83,6 +84,8 @@ The initial source build is complete when StegCore contains:
 7. deterministic tests covering historical and counterfactual projections;
 8. at least one bounded sports fixture proving cross-temporal rule projection semantics.
 
+All eight source artifacts are now present on PR #184. Source-complete remains unclaimed until the dedicated validation workflow succeeds and the PR is merged.
+
 ## Non-goals for TGA-001 source MVP
 
 - media acquisition or redistribution;
@@ -99,27 +102,50 @@ This engine evaluates represented evidence against represented constraints. It g
 
 `authority_effect = NONE_ANALYSIS_ONLY`
 
-## Remaining modules to install
+## Installed modules
 
 Destination: `StegVerse-Labs/StegCore`
 
 - `schemas/temporal-event.schema.json`
 - `schemas/governing-context.schema.json`
 - `schemas/governed-evaluation.schema.json`
-- `stegcore/temporal_governed_analysis.py`
+- `src/stegcore/temporal_governed_analysis.py`
 - `tests/test_temporal_governed_analysis.py`
 - `fixtures/temporal-governed-analysis/baseball-third-base-counterfactual.json`
+- `.github/workflows/temporal-governed-analysis.yml`
 
-Future integration candidates after source validation:
-- StegVerse-Labs/StegIndex capability/predicate registration;
-- StegVerse-Labs/Site discovery/playback UI;
-- GCAT-BCAT-Engine/Publisher governed publication surfaces;
-- admissibility-wiki explanatory projection;
-- stegguardian-wiki governance/contestability projection.
+## Remaining integration modules
+
+After validated merge:
+- `StegVerse-Labs/StegIndex`: capability/predicate registration for TGA-001;
+- `StegVerse-Labs/Site`: governed discovery/playback UI and temporal source references;
+- `GCAT-BCAT-Engine/Publisher`: governed publication projection;
+- `admissibility-wiki`: explanatory projection;
+- `stegguardian-wiki`: governance/contestability projection.
+
+The media/event ingestion adapter must remain separate from media custody and must preserve source identity, exact temporal windows, provenance, and representational uncertainty.
+
+## Validation lane
+
+Dedicated workflow:
+- `.github/workflows/temporal-governed-analysis.yml`
+
+Required checks:
+1. package install succeeds;
+2. evaluator compiles;
+3. focused TGA tests pass;
+4. complete StegCore regression suite passes;
+5. analysis-only authority and non-ground-truth assertions remain present.
+
+The absence of a validation workflow before commit `05955a111f8438e7e5b01e0f6fd5417b08d7c320` was a path-scoping omission and is now source-corrected. No successful validation receipt is claimed until a workflow run is observed.
 
 ## Current continuation
 
-next_action: install the schemas, evaluator, deterministic tests, and bounded fixture on the feature branch; validate source behavior; open a PR to main.
+pull_request: #184
+source_state: IMPLEMENTED_ON_FEATURE_BRANCH
+validation_state: WORKFLOW_ADDED_AWAITING_OBSERVED_RUN
+merge_state: OPEN_BLOCKED_PENDING_REQUIRED_GATE
+next_action: observe the dedicated TGA workflow result; if successful, merge PR #184; then register TGA-001 in StegIndex and open the governed media/event ingestion integration lane.
 manual_execution_allowed: true
 runtime_activation_claim: NONE
 authority_effect: NONE_ANALYSIS_ONLY
