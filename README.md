@@ -4,9 +4,33 @@ StegCore is the canonical StegVerse commit-time governance runtime. **StegGate**
 
 Current portable product version: **0.3.0**.
 
+## Governance coordinate
+
+StegCore evaluates consequential transitions at the canonical governance coordinate:
+
+```text
+Governance = Authority × Time
+G = (Authority, Time)
+```
+
+Authority and Time are the coordinates of governance. Judgment, signal/state, policy, delegation, evidence, capability, continuity, approval, recoverability, and transition geometry are evaluated at that coordinate; they do not replace either coordinate.
+
+Temporal non-causality remains explicit:
+
+```text
+Time != Authority
+Delta-time -/-> Delta-authority
+wall-clock observation != Authority
+heartbeat cadence != Authority
+```
+
+These statements do not remove Time from governance. Time locates the governance evaluation; clocks, timestamps, freshness, expiry, duration, heartbeat cadence, and other temporal observations do not manufacture Authority.
+
+See `docs/AUTHORITY_TIME_GOVERNANCE_COORDINATE.md` and `MANIFOLD_GOVERNANCE_MIRROR_HANDOFF.md`.
+
 ## What it does
 
-StegGate accepts a structured commitment candidate plus current judgment, signal/state, execution, capability, continuity, and approval evidence. It evaluates that request through the canonical StegCore admissibility chain and returns exactly one disposition:
+StegGate accepts a structured commitment candidate plus current judgment, signal/state, execution, capability, continuity, and approval evidence. It evaluates that request through the canonical StegCore admissibility chain at the applicable Authority × Time coordinate and returns exactly one disposition:
 
 ```text
 ALLOW | DENY | REVIEW | FAIL_CLOSED
@@ -16,6 +40,8 @@ The product boundary is intentionally narrow:
 
 ```text
 candidate
+  + applicable (Authority, Time)
+  + evaluated context
   -> stegcore.three_layer.evaluate_three_layer
   -> stegcore.steggate.evaluate_admissibility
   -> disposition + reasons + complete predicate matrix + hashes
@@ -23,7 +49,7 @@ candidate
 
 For routes that declare fresh SPE standing as required, canonical execution also re-verifies the bound SDK/SPE/interlock evidence before commit coherence or consequence invocation. Missing, stale, DENY, tampered, or mismatched required standing fails closed before the bounded executor can run.
 
-Interfaces may adapt input or presentation, but they must not implement a separate policy or admissibility engine.
+Interfaces may adapt input or presentation, but they must not implement a separate policy, admissibility engine, or governance-coordinate system.
 
 StegCore does **not** mint continuity receipts, establish identity truth, grant provider authority, execute arbitrary external actions, publish content, or become durable evidence custody.
 
@@ -86,7 +112,7 @@ canonical_owner: StegVerse-Labs/StegCore
 canonical_admissibility_runtime: stegcore.three_layer.evaluate_three_layer
 ```
 
-A host URL, tunnel, heartbeat, lease, UI, CLI, SDK, or application integration is never policy authority.
+A host URL, tunnel, heartbeat, lease, UI, CLI, SDK, or application integration is never Authority merely because it exists or is reachable.
 
 ## Python API
 
@@ -120,24 +146,27 @@ Release-blocking benchmark policy is in `benchmarks/admittedcode-performance-pol
 
 See `docs/ADMITTEDCODE_PERFORMANCE.md` for the measurement contract and interpretation rules.
 
-## Runtime authority chain
+## Runtime governance chain
 
 ```text
-Governance policy/evidence
+Governance coordinate: (Authority, Time)
+  + policy/evidence/state/context
   -> stegcore.three_layer.evaluate_three_layer
   -> stegcore.steggate.evaluate_admissibility
   -> ALLOW | DENY | REVIEW | FAIL_CLOSED
-  -> governed execution boundary, when separately authorized
+  -> governed execution boundary, when separately admissible at that coordinate
   -> observation / reconciliation
 ```
 
-`ALLOW` is admissibility, not proof that execution occurred. `FAIL_CLOSED` applies when required authority or evidence cannot be established safely.
+`ALLOW` is an admissibility disposition, not proof that execution occurred and not a newly manufactured Authority coordinate. `FAIL_CLOSED` applies when required Authority basis or evidence cannot be established safely for the applicable coordinate.
 
 ## Canonical documentation map
 
 Read current-state documents before historical review material:
 
 - `STEGCORE_MIRROR_HANDOFF.md` — live repository source of truth, active claims, validation, and continuation.
+- `docs/AUTHORITY_TIME_GOVERNANCE_COORDINATE.md` — canonical runtime binding to Authority × Time.
+- `MANIFOLD_GOVERNANCE_MIRROR_HANDOFF.md` — manifold runtime semantics and Authority × Time correction state.
 - `docs/STEGGATE_PORTABLE_PRODUCT.md` — supported portable product surface and compatibility rules.
 - `docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md` — transport-independent runtime identity contract.
 - `docs/ADMITTEDCODE_PERFORMANCE.md` — canonical performance, benchmark, and release-measurement contract.
@@ -149,7 +178,7 @@ Historical receipts, review documents, activation artifacts, and schema-versione
 
 ## Current product status
 
-The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, and standing/interlock fail-closed consequence binding are implemented. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
+The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, and standing/interlock fail-closed consequence binding are implemented. The Authority × Time semantic correction is implemented on its dedicated correction branch and exact-head manifold production validation has passed; merge/release remains separately gated. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
 
 ## Development verification
 
@@ -158,9 +187,3 @@ pytest -q
 python scripts/verify_product_consistency.py
 python tools/run_admittedcode_benchmarks.py --iterations 25 --replay-iterations 10 --throughput-requests 50 --concurrency 1,5
 ```
-
-The consistency verifier fails when current package/service/CLI documentation drifts from the portable product version or canonical runtime identity. The benchmark exits non-zero when a release-blocking performance invariant fails.
-
-## Legacy substrate
-
-StegCore also contains earlier node-state, registry, orchestration, research, historical release, and ecosystem-management surfaces. They remain available for compatibility and provenance but are not the primary StegGate product entry point. Current product behavior is defined by the canonical files above.
