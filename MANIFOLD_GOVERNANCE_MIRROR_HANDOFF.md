@@ -21,6 +21,33 @@ archive_ready_for_source_claim: true
 
 This handoff is the canonical StegCore continuation record for the bounded manifold-orchestration kernel. It supplements `STEGCORE_MIRROR_HANDOFF.md`. Live repository/workflow evidence and the upstream `.github` orchestration handoff supersede stale branch-state prose.
 
+## Authority × Time semantic correction — 2026-09-06
+
+The completed manifold kernel remains historically released, but its governance wording is now bound to the ecosystem correction coordinated by `StegVerse-Labs/.github#1154` and StegCore `#188` / PR `#189`.
+
+Canonical governance coordinate:
+
+```text
+Governance = Authority × Time
+G = (Authority, Time)
+```
+
+State/manifold structure, policy, evidence, dependencies, recoverability, observation, HB cadence, and wall-clock readings are evaluated context or observations at that coordinate. They are not replacement governance coordinates.
+
+Temporal non-causality is preserved:
+
+```text
+Time != Authority
+Delta-time -/-> Delta-authority
+wall-clock observation != Authority
+heartbeat cadence != Authority
+observation != authorization
+```
+
+These statements do **not** mean `Time != governance`. Time is the second governance coordinate. A clock reading, duration, or heartbeat does not manufacture Authority.
+
+Local semantic anchor: `docs/AUTHORITY_TIME_GOVERNANCE_COORDINATE.md`.
+
 ## Claim reconciliation
 
 ```text
@@ -34,9 +61,14 @@ release_basis:
   - issue #91 closed completed
   - all five hosted StegCore validation gates passed
   - StegVerse-Labs/.github/FORMALISM_MANIFOLD_ORCHESTRATION_MIRROR_HANDOFF.md records branch implementation/validation admission COMPLETE and session_validation_claim RELEASED_COMPLETE
+semantic_correction:
+  task: AUTHORITY-TIME-GOVERNANCE-COORDINATE-001
+  issue: #188
+  pull_request: #189
+  state: PENDING_EXACT_HEAD_VALIDATION_AND_MERGE
 ```
 
-The previously claimed collision scope is released. Existing StegCore #70 remains the separate four-application runtime-binding owner. Resident formalism/manifold lane execution remains MACHINE_OWNED in `.github` and must not be duplicated by a chat session.
+The previously claimed collision scope is released. Existing StegCore #70 remains the separate four-application runtime-binding owner. Resident formalism/manifold lane execution remains MACHINE_OWNED in `.github` and must not be duplicated by a chat session. The Authority × Time correction is a bounded semantic/source reconciliation and does not reopen the historical implementation claim.
 
 ## Canonical implementation
 
@@ -44,6 +76,7 @@ The previously claimed collision scope is released. Existing StegCore #70 remain
 src/stegcore/manifold_governance.py
 tests/test_manifold_governance.py
 MANIFOLD_GOVERNANCE_MIRROR_HANDOFF.md
+docs/AUTHORITY_TIME_GOVERNANCE_COORDINATE.md
 ```
 
 The kernel:
@@ -59,8 +92,8 @@ The kernel:
 9. emits a replay-stable deterministic plan hash;
 10. resolves concurrent production manifold action into continue/review/held/denied/fail-closed classes;
 11. permits independent ALLOW branches to continue toward the governed commit boundary while protected REVIEW branches remain reviewable;
-12. treats wall-clock time and HB cadence as non-authorizing observations rather than human-governance authority.
-
+12. treats wall-clock readings and HB cadence as non-authorizing observations while preserving Time as a governance coordinate;
+13. evaluates transition context at the applicable `(Authority, Time)` coordinate and does not promote State/manifold variables into governance coordinates.
 
 ## Production governed-manifold action extension — 2026-08-27
 
@@ -89,19 +122,23 @@ fail_closed_transition_ids
 The central production invariant is:
 
 ```text
-human-in-the-loop timing != governance authority
-wall-clock time != governance authority
-heartbeat cadence != governance authority
+Governance = Authority × Time
+Time != Authority
+Delta-time -/-> Delta-authority
+human-in-the-loop timing != Authority
+wall-clock observation != Authority
+heartbeat cadence != Authority
 observation != authorization
 
 independent ALLOW transitions may continue to the separately governed commit boundary
 while unrelated REVIEW transitions remain reviewable
 and dependent transitions remain held.
 
-protected boundary crossing requires the separately applicable authority.
+protected boundary crossing requires resolution of the separately applicable Authority
+at the applicable governing Time.
 ```
 
-The emitted `stegcore.governed-manifold-projection.v1` is explicitly non-authorizing and reviewable. It represents a multi-variable concurrent transition space; a single linear path is not required.
+The emitted `stegcore.governed-manifold-projection.v1` is explicitly non-authorizing and reviewable. It represents a multi-variable concurrent transition space; a single linear path is not required. Those variables describe transition geometry/context, not additional governance coordinates.
 
 The resolver itself does not perform external execution, mint continuity/custody receipts, or bypass the existing governed commit boundary. Its role is production governance resolution before that boundary.
 
@@ -110,11 +147,12 @@ Focused validation coverage is installed in `tests/test_manifold_governance.py` 
 - dependent transitions remaining held behind a review boundary;
 - DENY preservation;
 - FAIL_CLOSED preservation;
-- non-temporal human authority semantics;
-- non-authorizing HB/time observations.
+- human presence/timing not manufacturing Authority;
+- HB/wall-clock observations not manufacturing Authority.
+
+Authority × Time exact-head validation is additionally required by PR #189 before this semantic correction may merge.
 
 SDK demo/test consumers must call this StegCore production capability rather than duplicate its logic.
-
 
 ## Replay-stability correction retained
 
@@ -127,6 +165,8 @@ failure: permutation invariance plan hash mismatch
 fix commit: 7070ae9cb244a95783ab613e31650eb39c0dde7b
 ```
 
+This replay-stability behavior does not remove Time from governance; it only prevents volatile time-bound fields from corrupting a deterministic plan identity.
+
 ## Hosted validation evidence
 
 ```text
@@ -137,25 +177,26 @@ Test Readiness: 31791206582 SUCCESS
 Validate StegVerse 001 002 Baseline: 31791206597 SUCCESS
 ```
 
-Hosted validation proves source correctness only and grants no production/runtime/credential authority.
+This is historical validation of the released manifold implementation. It does not by itself validate the 2026-09-06 Authority × Time correction. Hosted validation proves source correctness only and grants no production/runtime/credential authority.
 
 ## Mathematical / functional relationship
 
 ```text
-AE joint/compositional state
+Governance coordinate: Authority × Time
+  + AE joint/compositional state evaluated as context
   -> RTG relational transition geometry + composition invariants
   -> Admissible Resolution Function / minimum faithful resolution
   -> TT transition-block classification
   -> STCM moment-bound receipt relationships and branched routing
   -> GTG reconstruction
-  -> canonical StegGate evaluation per transition
+  -> canonical StegGate evaluation per transition at (Authority, Time)
   -> manifold_governance: deterministic population/bundle planning only
   -> separate governed commit boundary
 ```
 
 ## Authority boundary
 
-The module may evaluate canonically, order declared dependencies, surface conflicts, group candidates, and compute deterministic plan hashes. It may not redefine AE/RTG/GTG/TT/STCM mathematics, alter StegGate predicates/dispositions, turn analytics into authority, execute externally, mint continuity/custody receipts, merge/release/deploy/sign/broadcast, or use NON-TV/TVC secrets/tokens.
+The module may evaluate canonically, order declared dependencies, surface conflicts, group candidates, and compute deterministic plan hashes. It may not redefine the Authority × Time governance coordinate, AE/RTG/GTG/TT/STCM mathematics, alter StegGate predicates/dispositions, turn analytics into Authority, execute externally, mint continuity/custody receipts, merge/release/deploy/sign/broadcast, or use NON-TV/TVC secrets/tokens.
 
 ## Upstream continuation
 
@@ -164,9 +205,10 @@ Canonical upstream continuation is:
 ```text
 StegVerse-Labs/.github/FORMALISM_MANIFOLD_ORCHESTRATION_MIRROR_HANDOFF.md
 StegVerse-Labs/.github/data/formalism-manifold-orchestration/task-state.json
+StegVerse-Labs/.github/AUTHORITY_TIME_GOVERNANCE_COORDINATE_MIRROR_HANDOFF.md
 ```
 
-That handoff records five resident formalism/manifold worker lanes as MACHINE_OWNED. Current unresolved work is resident lane receipt production and reconciliation after prerequisite receipts exist. Those tasks are not StegCore source implementation work.
+That first handoff records five resident formalism/manifold worker lanes as MACHINE_OWNED. Current unresolved manifold work is resident lane receipt production and reconciliation after prerequisite receipts exist. Those tasks are not StegCore source implementation work. The third handoff separately owns the Authority × Time semantic correction.
 
 ## Validation commands
 
@@ -176,27 +218,28 @@ pytest -q
 python scripts/verify_product_consistency.py
 ```
 
+The correction branch must run these on its exact PR head before merge.
+
 ## Completion inventory
 
 ```text
-required developed files: 3/3 + production action extension
-scaffolding/stubs: 0
-missing required files: 0
-focused implementation: COMPLETE + PRODUCTION ACTION EXTENSION IMPLEMENTED
-hosted workflow gates: 5/5 PASS
-canonical StegCore merge: COMPLETE
-upstream .github re-observation: COMPLETE
-StegCore implementation claim: COMPLETE_RELEASED
+historical manifold required developed files: COMPLETE
+historical scaffolding/stubs: 0
+historical focused implementation: COMPLETE + PRODUCTION ACTION EXTENSION IMPLEMENTED
+historical hosted workflow gates: 5/5 PASS
+historical canonical StegCore merge: COMPLETE
+historical StegCore implementation claim: COMPLETE_RELEASED
 resident worker receipts/reconciliation: MACHINE_OWNED / NOT SOURCE-BLOCKING
+Authority × Time semantic correction: IMPLEMENTED_IN_BRANCH / VALIDATION_PENDING
 ```
 
 ## Propagation
 
-No Site, Publisher, admissibility-wiki, or stegguardian-wiki release propagation is authorized merely from this kernel. Propagation follows the eventual owning formalism/runtime release gates.
+No Site, Publisher, admissibility-wiki, or stegguardian-wiki release propagation is authorized merely from this kernel. Authority × Time propagation is coordinated separately by `StegVerse-Labs/.github#1156` after source correction merge/validation.
 
 ## Archive condition
 
-The StegCore manifold source claim is complete and released. No chat session needs to retain this collision scope. Remaining resident formalism/manifold execution is durably owned by `.github` workers and their machine-observable receipt/reconciliation conditions.
+The historical StegCore manifold source claim remains complete and released. The Authority × Time correction is durably owned by StegCore #188 / PR #189 and the cross-repository `.github` handoff; the originating chat thread is not required to preserve task ownership.
 
 ## Production validation continuation — 2026-08-27
 
