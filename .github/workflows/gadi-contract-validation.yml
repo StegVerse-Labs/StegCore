@@ -1,0 +1,29 @@
+name: GADI contract validation
+
+on:
+  pull_request:
+    paths:
+      - 'src/stegcore/gadi.py'
+      - 'tests/test_gadi.py'
+      - 'docs/GADI_STEGCORE_MIRROR_HANDOFF.md'
+      - '.github/workflows/gadi-contract-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-gadi-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install StegCore
+        run: python -m pip install -e . pytest
+      - name: Validate GADI reasoning contracts
+        run: python -m pytest -q tests/test_gadi.py
+      - name: Compile GADI implementation
+        run: python -m py_compile src/stegcore/gadi.py
