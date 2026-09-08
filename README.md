@@ -27,6 +27,16 @@ Interfaces may adapt input or presentation, but they must not implement a separa
 
 StegCore does **not** mint continuity receipts, establish identity truth, grant provider authority, execute arbitrary external actions, publish content, or become durable evidence custody.
 
+## GADI defensive reasoning surface
+
+StegCore also contains the bounded reasoning surface for `GADI-001` (Governed Autonomous Defensive Intervention). This layer can correlate manifested external autonomous-system observations, preserve uncertainty and semantic qualifiers, classify threat state, compare declared defensive capabilities using least-destructive-effective semantics, and construct `DEFENSIVE_INTERVENTION_REQUEST` candidates.
+
+This reasoning layer is **not execution authority and is not a parallel evaluator**. A threat assessment or intervention candidate cannot itself cause an external consequence. Every consequential defensive transition must still pass the canonical `stegcore.steggate.evaluate_admissibility` / InTr governance path and separately bind to a pre-authorized capability.
+
+Semantic-integrity evidence is preserved as part of threat reasoning. Qualified statements such as `may`, `might`, `possible`, or `likely` must not silently become stronger assertions during correlation. Material semantic drift can contribute evidence to a threat assessment, but it never independently authorizes intervention.
+
+Current bounded implementation and continuation state are recorded in `docs/GADI_STEGCORE_MIRROR_HANDOFF.md`.
+
 ## Install
 
 Python 3.11+ is required.
@@ -138,6 +148,7 @@ Governance policy/evidence
 Read current-state documents before historical review material:
 
 - `STEGCORE_MIRROR_HANDOFF.md` — live repository source of truth, active claims, validation, and continuation.
+- `docs/GADI_STEGCORE_MIRROR_HANDOFF.md` — bounded GADI threat-reasoning implementation and continuation.
 - `docs/STEGGATE_PORTABLE_PRODUCT.md` — supported portable product surface and compatibility rules.
 - `docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md` — transport-independent runtime identity contract.
 - `docs/ADMITTEDCODE_PERFORMANCE.md` — canonical performance, benchmark, and release-measurement contract.
@@ -149,7 +160,7 @@ Historical receipts, review documents, activation artifacts, and schema-versione
 
 ## Current product status
 
-The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, and standing/interlock fail-closed consequence binding are implemented. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
+The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, and standing/interlock fail-closed consequence binding are implemented. GADI threat reasoning is being integrated as a bounded proposal-generation surface that preserves the same authority boundary; it does not replace or bypass canonical admission. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` and `docs/GADI_STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
 
 ## Development verification
 
