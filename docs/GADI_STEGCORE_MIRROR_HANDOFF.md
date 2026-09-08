@@ -1,6 +1,6 @@
 # GADI StegCore Mirror Handoff
 
-Status: ACTIVE / STEGOS_CONTRACT_ALIGNED / VALIDATION_PENDING
+Status: ACTIVE / STEGOS_CONTRACT_ALIGNED / SOURCE_VALIDATION_PASS
 Repository: `StegVerse-Labs/StegCore`
 Canonical task: `GADI-001`
 Parent handoff: `StegVerse-Labs/.github/docs/GADI_MIRROR_HANDOFF.md`
@@ -66,7 +66,8 @@ The reasoning layer records semantic-integrity state as observation evidence. A 
   - timezone-aware deterministic correlation requirement.
 - `.github/workflows/gadi-contract-validation.yml`
   - bounded Python 3.11 validation lane for the GADI source/tests;
-  - compile check plus `tests/test_gadi.py`.
+  - compile check plus `tests/test_gadi.py`;
+  - branch-native push trigger plus PR/manual validation entry points.
 - `README.md`
   - documents GADI reasoning boundary and explicit non-authority semantics.
 
@@ -84,20 +85,30 @@ No runtime activation or external defensive effect is claimed by this source wor
 
 ## Acceptance criteria for this bounded owner
 
-1. A valid fresh threat observation can be correlated into a deterministic threat-state assessment.
-2. Expired, materially uncertain, unbound, or disproving critical evidence cannot produce an intervention-eligible `IMMINENT_HARM` assessment.
-3. Semantic qualifiers are preserved and material drift is surfaced as evidence without independently elevating threat state.
-4. Candidate interventions are selected only from fresh, mode-eligible, target-scoped TV/TVC capabilities and choose the least-destructive candidate satisfying the effectiveness threshold.
-5. Generated intervention requests match the canonical StegOS contract, begin with `PENDING` InTr admission, require reassessment/stop conditions, and preserve `model_output_authority: NONE`.
-6. Tests demonstrate the above behavior.
-7. README reflects the added behavior and authority boundary.
+1. A valid fresh threat observation can be correlated into a deterministic threat-state assessment. **PASS**
+2. Expired, materially uncertain, unbound, or disproving critical evidence cannot produce an intervention-eligible `IMMINENT_HARM` assessment. **PASS**
+3. Semantic qualifiers are preserved and material drift is surfaced as evidence without independently elevating threat state. **PASS**
+4. Candidate interventions are selected only from fresh, mode-eligible, target-scoped TV/TVC capabilities and choose the least-destructive candidate satisfying the effectiveness threshold. **PASS**
+5. Generated intervention requests match the canonical StegOS contract, begin with `PENDING` InTr admission, require reassessment/stop conditions, and preserve `model_output_authority: NONE`. **PASS**
+6. Tests demonstrate the above behavior. **PASS**
+7. README reflects the added behavior and authority boundary. **PASS**
 
-## Current validation state
+## Validation evidence
 
-- Source and tests are committed to PR #192.
-- The dedicated validation workflow is installed on the PR branch.
-- A completed workflow receipt has not yet been observed; validation remains pending until GitHub reports a run/result or an equivalent repository-native validation receipt is produced.
-- Merge/release readiness is **not** claimed while validation is pending.
+GitHub Actions run `34277838533` on branch commit `e113962c0016bb9f875b3574035f73c16f106bae` completed successfully:
+
+- checkout: PASS
+- Python 3.11 setup: PASS
+- editable StegCore install: PASS
+- `python -m pytest -q tests/test_gadi.py`: PASS
+- `python -m py_compile src/stegcore/gadi.py`: PASS
+- overall job `validate-gadi-contracts`: SUCCESS
+
+This proves the bounded StegCore source/tests compile and pass their GADI contract assertions. It does **not** prove runtime InTr admission, TV/TVC runtime binding, external safe-state effect, adaptive reassessment, Continuity reconstruction, or GADI activation.
+
+## Current bounded-owner disposition
+
+StegCore source implementation for the current GADI reasoning scope is validation-complete on PR #192 and mergeable according to the current PR state. Merge/release is still distinct from runtime activation and cross-repository GADI completion.
 
 ## Remaining ecosystem work after StegCore
 
