@@ -1,6 +1,14 @@
 name: GADI contract validation
 
 on:
+  push:
+    branches:
+      - gadi-001-stegcore-threat-reasoning
+    paths:
+      - 'src/stegcore/gadi.py'
+      - 'tests/test_gadi.py'
+      - 'docs/GADI_STEGCORE_MIRROR_HANDOFF.md'
+      - '.github/workflows/gadi-contract-validation.yml'
   pull_request:
     paths:
       - 'src/stegcore/gadi.py'
