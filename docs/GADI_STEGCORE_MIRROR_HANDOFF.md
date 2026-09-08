@@ -1,11 +1,12 @@
 # GADI StegCore Mirror Handoff
 
-Status: ACTIVE / THREAT_REASONING_IMPLEMENTATION
+Status: ACTIVE / STEGOS_CONTRACT_ALIGNED / VALIDATION_PENDING
 Repository: `StegVerse-Labs/StegCore`
 Canonical task: `GADI-001`
 Parent handoff: `StegVerse-Labs/.github/docs/GADI_MIRROR_HANDOFF.md`
 COSV: `10100000100000`
 Branch: `gadi-001-stegcore-threat-reasoning`
+PR: `StegVerse-Labs/StegCore#192`
 
 ## Purpose
 
@@ -15,9 +16,9 @@ Implement the StegCore reasoning surface for Governed Autonomous Defensive Inter
 
 - Canonical GADI handoff resolved before mutation.
 - Existing StegCore authority boundary inspected: StegCore/StegGate remains the canonical commit-time admissibility runtime.
-- No GADI-specific StegCore handoff existed on `main`; creating this file is therefore the first mutation for this bounded owner.
-- README impact: **required** because GADI adds a new repository behavior surface (threat correlation and intervention candidate generation) even though it does not add execution or credential authority. README must be updated in the same change set.
-- Existing authority boundaries must remain unchanged: no credential minting, no durable receipt minting, no external execution, no parallel policy evaluator.
+- No GADI-specific StegCore handoff existed on `main`; creating this file was therefore the first mutation for this bounded owner.
+- README impact: **required** because GADI adds a new repository behavior surface (threat correlation and intervention candidate generation) even though it does not add execution or credential authority. README is updated in the same change set.
+- Existing authority boundaries remain unchanged: no credential minting, no durable receipt minting, no external execution, no parallel policy evaluator.
 
 ## Core invariant
 
@@ -36,41 +37,71 @@ Examples that must remain distinguishable:
 - bounded scope must not silently broaden;
 - inferred motive must not silently become asserted motive.
 
-The reasoning layer records semantic-integrity state as observation evidence. A semantic-integrity finding alone does not authorize intervention; it can only contribute to correlation and threat assessment.
+The reasoning layer records semantic-integrity state as observation evidence. A semantic-integrity finding alone does not elevate the threat state and does not make an intervention eligible; it can only contribute observable evidence for correlation and later reconstruction.
 
-## Planned implementation
+## Installed implementation
 
 - `src/stegcore/gadi.py`
-  - typed threat states;
-  - observation correlation;
+  - canonical StegOS `stegos.autonomous_threat_observation.v1` input model;
+  - canonical StegOS `stegos.governed_intervention_capability.v1` capability model;
+  - canonical StegOS `stegos.defensive_intervention_request.v1` output model;
+  - typed GADI threat states;
+  - freshness-aware observation correlation;
+  - subject-binding checks;
   - uncertainty preservation;
   - semantic-integrity assessment;
-  - intervention candidate model;
-  - least-destructive-effective candidate selection;
-  - fail-closed behavior for incomplete or contradictory evidence.
+  - least-destructive-effective capability selection;
+  - PENDING InTr admission request generation;
+  - fail-closed behavior for expired, materially uncertain, unbound, or disproving evidence.
 - `tests/test_gadi.py`
-  - non-authorizing observation behavior;
+  - StegOS schema constant/authority-boundary assertions;
   - qualifier preservation;
   - material semantic drift detection;
-  - fail-closed uncertainty behavior;
-  - least-destructive-effective selection;
-  - canonical-admission handoff metadata.
+  - proof that semantic drift alone does not elevate threat state;
+  - expired observation rejection;
+  - uncertainty and disproving-evidence blocking;
+  - least-destructive effective capability selection;
+  - expired/wrong-mode capability exclusion;
+  - PENDING admission semantics and no model-output authority;
+  - timezone-aware deterministic correlation requirement.
+- `.github/workflows/gadi-contract-validation.yml`
+  - bounded Python 3.11 validation lane for the GADI source/tests;
+  - compile check plus `tests/test_gadi.py`.
 - `README.md`
-  - document GADI reasoning boundary and explicit non-authority semantics.
+  - documents GADI reasoning boundary and explicit non-authority semantics.
+
+## Contract alignment evidence
+
+The implementation was reconciled against the current canonical StegOS schemas on 2026-09-08:
+
+- `StegVerse-Labs/StegOS/schemas/autonomous-threat-observation.v1.schema.json`
+- `StegVerse-Labs/StegOS/schemas/defensive-intervention-request.v1.schema.json`
+- `StegVerse-Labs/StegOS/schemas/governed-intervention-capability.v1.schema.json`
+
+The first StegCore draft used local shorthand field shapes. That mismatch was identified before merge and replaced with models that preserve the canonical StegOS schema names, task/COSV constants, observation authority effect, TV/TVC capability authority boundary, PENDING InTr admission structure, stop/reassessment semantics, and model-output authority `NONE`.
+
+No runtime activation or external defensive effect is claimed by this source work.
 
 ## Acceptance criteria for this bounded owner
 
-1. A valid threat observation can be correlated into a deterministic threat-state assessment.
-2. Missing or contradictory critical evidence cannot produce an `IMMINENT_HARM` assessment.
-3. Semantic qualifiers are preserved and material drift is surfaced as evidence.
-4. Candidate interventions are ranked only among pre-declared capabilities and choose the least-destructive candidate that satisfies the required effectiveness threshold.
-5. Generated intervention requests explicitly require downstream canonical admission and do not claim execution authority.
+1. A valid fresh threat observation can be correlated into a deterministic threat-state assessment.
+2. Expired, materially uncertain, unbound, or disproving critical evidence cannot produce an intervention-eligible `IMMINENT_HARM` assessment.
+3. Semantic qualifiers are preserved and material drift is surfaced as evidence without independently elevating threat state.
+4. Candidate interventions are selected only from fresh, mode-eligible, target-scoped TV/TVC capabilities and choose the least-destructive candidate satisfying the effectiveness threshold.
+5. Generated intervention requests match the canonical StegOS contract, begin with `PENDING` InTr admission, require reassessment/stop conditions, and preserve `model_output_authority: NONE`.
 6. Tests demonstrate the above behavior.
 7. README reflects the added behavior and authority boundary.
 
+## Current validation state
+
+- Source and tests are committed to PR #192.
+- The dedicated validation workflow is installed on the PR branch.
+- A completed workflow receipt has not yet been observed; validation remains pending until GitHub reports a run/result or an equivalent repository-native validation receipt is produced.
+- Merge/release readiness is **not** claimed while validation is pending.
+
 ## Remaining ecosystem work after StegCore
 
-- StegOS contract validation receipt / repository validation path -> `StegVerse-Labs/StegOS`
+- StegOS contract validation receipt / existing repository validation path -> `StegVerse-Labs/StegOS`
 - Governed Intervention Capability Registry runtime data and TV/TVC bindings -> `StegVerse-Labs/StegOS`, `StegVerse-Labs/TV`, `StegVerse-Labs/TVC`
 - Defensive capability custody/runtime bindings -> `StegVerse-Labs/TV`, `StegVerse-Labs/TVC`
 - GADI resident executor/reassessment loop -> `StegVerse-002/micro-node-runtime`
@@ -86,3 +117,7 @@ When GADI reaches release/tag readiness, verify pertinent semantics are propagat
 - `GCAT-BCAT-Engine/Publisher`
 - `admissibility-wiki`
 - `stegguardian-wiki`
+
+## Continuation
+
+Resolve this handoff, the parent `.github` GADI handoff, PR #192, current workflow/check state, canonical StegOS schemas, and existing StegCore authority contracts before any further mutation.
