@@ -41,11 +41,19 @@ Current bounded implementation and continuation state are recorded in `docs/GADI
 
 Python 3.11+ is required.
 
+The public PyPI distribution is **`stegverse-stegcore`** while the Python import/module namespace remains **`stegcore`**:
+
+```bash
+python -m pip install stegverse-stegcore
+```
+
+For editable development from a repository checkout:
+
 ```bash
 python -m pip install -e .
 ```
 
-This installs the `steggate` CLI.
+Either installation exposes the `stegcore` Python API and the `steggate` CLI.
 
 ## Fastest verification
 
