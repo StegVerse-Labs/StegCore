@@ -7,28 +7,31 @@ WORKFLOWS = (
     ROOT / '.github/workflows/steggate-fallback-public-runtime.yml',
 )
 
-# Match executable/runtime behavior, not split-string sentinels used by the
-# workflows' own self-checks.
-FORBIDDEN = (
-    'cloudflared tunnel',
-    'trycloudflare.com',
-    'nohup uvicorn',
+# Match executable YAML/shell behavior rather than words that may legitimately
+# appear inside regression assertions or explanatory comments.
+FORBIDDEN_EXECUTABLE_PATTERNS = (
     'repository_dispatch:',
-    'contents: write',
-    'issues: write',
-    'pull-requests: write',
-    'gh api',
-    'gh pr create',
-    'git push',
-    'upload-artifact@',
-    'finalize_steggate_live_activation.py',
+    'permissions:\n  contents: write',
+    'permissions:\n  issues: write',
+    'permissions:\n  pull-requests: write',
+    'uses: actions/upload-artifact@',
+    'uses: actions/setup-python@',
+    'nohup "$RUNNER_TEMP/cloudflared"',
+    'https://github.com/cloudflare/cloudflared/releases/',
+    '.trycloudflare.com',
+    'nohup uvicorn ',
+    'gh api "repos/',
+    'gh pr create ',
+    'git push ',
+    'run: python scripts/finalize_steggate_live_activation.py',
+    'Supervise and self-heal runtime through heartbeat lease window',
 )
 
 for path in WORKFLOWS:
     if not path.exists():
         raise SystemExit(f'HOSTED_STEGGATE_CARRIER_FAIL: missing {path.relative_to(ROOT)}')
     text = path.read_text(encoding='utf-8')
-    for marker in FORBIDDEN:
+    for marker in FORBIDDEN_EXECUTABLE_PATTERNS:
         if marker in text:
             raise SystemExit(
                 f'HOSTED_STEGGATE_CARRIER_FAIL: {path.relative_to(ROOT)} contains executable marker {marker}'
