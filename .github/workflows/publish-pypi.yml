@@ -6,6 +6,7 @@ on:
     paths:
       - 'pyproject.toml'
       - '.github/workflows/publish-pypi.yml'
+      - 'docs/STEGVERSE_STEGCORE_PYPI_DISTRIBUTION.md'
   release:
     types: [published]
 
@@ -32,7 +33,7 @@ jobs:
       - name: Install build tooling
         run: python -m pip install --upgrade pip build
 
-      - name: Verify package identity
+      - name: Verify canonical source identity
         id: identity
         shell: bash
         env:
@@ -56,6 +57,26 @@ jobs:
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
+      - name: Apply deterministic public distribution name
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import tomllib
+
+          path = Path('pyproject.toml')
+          source = path.read_text()
+          exact = 'name = "stegcore"'
+          replacement = 'name = "stegverse-stegcore"'
+          if source.count(exact) != 1:
+              raise SystemExit('canonical_stegcore_distribution_name_not_unique')
+          path.write_text(source.replace(exact, replacement, 1))
+          project = tomllib.loads(path.read_text())['project']
+          assert project['name'] == 'stegverse-stegcore'
+          print('STEGVERSE_STEGCORE_DISTRIBUTION_RENAME_PASS')
+          PY
+
       - name: Build wheel and source distribution
         run: python -m build
 
@@ -63,12 +84,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(find dist -maxdepth 1 -type f -name '*.whl' | wc -l)" -eq 1
-          test "$(find dist -maxdepth 1 -type f -name '*.tar.gz' | wc -l)" -eq 1
+          test "$(find dist -maxdepth 1 -type f -name 'stegverse_stegcore-*.whl' | wc -l)" -eq 1
+          test "$(find dist -maxdepth 1 -type f -name 'stegverse_stegcore-*.tar.gz' | wc -l)" -eq 1
           python -m pip install dist/*.whl
           python - <<'PY'
+          import importlib.metadata
           import stegcore
-          print('STEGCORE_PUBLIC_PACKAGE_IMPORT_PASS')
+          assert importlib.metadata.version('stegverse-stegcore')
+          print('STEGVERSE_STEGCORE_PUBLIC_PACKAGE_IMPORT_PASS')
           PY
 
       - name: Upload distributions for publish job
@@ -85,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/stegcore/${{ needs.build.outputs.version }}/
+      url: https://pypi.org/project/stegverse-stegcore/${{ needs.build.outputs.version }}/
     permissions:
       id-token: write
       contents: read
