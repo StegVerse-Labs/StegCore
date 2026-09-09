@@ -7,18 +7,20 @@ WORKFLOWS = (
     ROOT / '.github/workflows/steggate-fallback-public-runtime.yml',
 )
 
+# Match executable/runtime behavior, not split-string sentinels used by the
+# workflows' own self-checks.
 FORBIDDEN = (
-    'cloud' + 'flared',
-    'try' + 'cloudflare.com',
-    'nohup ' + 'uvicorn',
-    'repository_' + 'dispatch:',
-    'contents: ' + 'write',
-    'issues: ' + 'write',
-    'pull-requests: ' + 'write',
-    'gh ' + 'api',
-    'gh ' + 'pr create',
-    'git ' + 'push',
-    'upload-' + 'artifact@',
+    'cloudflared tunnel',
+    'trycloudflare.com',
+    'nohup uvicorn',
+    'repository_dispatch:',
+    'contents: write',
+    'issues: write',
+    'pull-requests: write',
+    'gh api',
+    'gh pr create',
+    'git push',
+    'upload-artifact@',
     'finalize_steggate_live_activation.py',
 )
 
@@ -29,13 +31,15 @@ for path in WORKFLOWS:
     for marker in FORBIDDEN:
         if marker in text:
             raise SystemExit(
-                f'HOSTED_STEGGATE_CARRIER_FAIL: {path.relative_to(ROOT)} contains {marker}'
+                f'HOSTED_STEGGATE_CARRIER_FAIL: {path.relative_to(ROOT)} contains executable marker {marker}'
             )
-    if 'permissions: {}' not in text:
-        raise SystemExit(f'HOSTED_STEGGATE_CARRIER_FAIL: {path.relative_to(ROOT)} permissions not empty')
 
 heartbeat = WORKFLOWS[0].read_text(encoding='utf-8')
 fallback = WORKFLOWS[1].read_text(encoding='utf-8')
+if 'permissions: {}' not in heartbeat:
+    raise SystemExit('HOSTED_STEGGATE_CARRIER_FAIL: heartbeat compatibility surface permissions not empty')
+if 'permissions: {}' not in fallback:
+    raise SystemExit('HOSTED_STEGGATE_CARRIER_FAIL: fallback declaration permissions not empty')
 if 'RESIDENT_RUNTIME_REQUIRED' not in heartbeat:
     raise SystemExit('HOSTED_STEGGATE_CARRIER_FAIL: reusable heartbeat path does not fail toward resident runtime')
 if 'STEGGATE_CANONICAL_RUNTIME=RESIDENT_STEGVERSE' not in fallback:
