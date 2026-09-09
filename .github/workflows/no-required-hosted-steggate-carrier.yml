@@ -1,0 +1,43 @@
+name: No Required Hosted StegGate Carrier
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/steggate-heartbeat-worker-reusable.yml'
+      - '.github/workflows/steggate-fallback-public-runtime.yml'
+      - 'scripts/check_no_required_hosted_steggate_carrier.py'
+      - '.github/workflows/no-required-hosted-steggate-carrier.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/steggate-heartbeat-worker-reusable.yml'
+      - '.github/workflows/steggate-fallback-public-runtime.yml'
+      - 'scripts/check_no_required_hosted_steggate_carrier.py'
+      - '.github/workflows/no-required-hosted-steggate-carrier.yml'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fetch exact source anonymously
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            REF="refs/pull/${PR_NUMBER}/merge"
+          else
+            REF="${GITHUB_SHA}"
+          fi
+          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=5 origin "$REF"
+          git checkout --detach FETCH_HEAD
+          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
+      - name: Verify no required hosted StegGate carrier
+        run: python3 scripts/check_no_required_hosted_steggate_carrier.py
