@@ -1,6 +1,11 @@
 name: Publish StegCore to PyPI
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'pyproject.toml'
+      - '.github/workflows/publish-pypi.yml'
   release:
     types: [published]
 
@@ -13,10 +18,10 @@ jobs:
     outputs:
       version: ${{ steps.identity.outputs.version }}
     steps:
-      - name: Check out released tag
+      - name: Check out exact source
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.sha }}
           fetch-depth: 0
 
       - name: Set up Python
@@ -27,9 +32,12 @@ jobs:
       - name: Install build tooling
         run: python -m pip install --upgrade pip build
 
-      - name: Verify release/package identity
+      - name: Verify package identity
         id: identity
         shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           set -euo pipefail
           VERSION="$(python - <<'PY'
@@ -43,7 +51,9 @@ jobs:
           PY
           )"
           test "$NAME" = "stegcore"
-          test "${{ github.event.release.tag_name }}" = "v${VERSION}"
+          if [ "$EVENT_NAME" = "release" ]; then
+            test "$RELEASE_TAG" = "v${VERSION}"
+          fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Build wheel and source distribution
@@ -62,6 +72,7 @@ jobs:
           PY
 
       - name: Upload distributions for publish job
+        if: github.event_name == 'release'
         uses: actions/upload-artifact@v4
         with:
           name: python-package-distributions
@@ -69,6 +80,7 @@ jobs:
           if-no-files-found: error
 
   publish:
+    if: github.event_name == 'release'
     needs: build
     runs-on: ubuntu-latest
     environment:
