@@ -1,5 +1,10 @@
-name: Reusable StegGate Heartbeat Micro-Node
+name: Reusable StegGate Heartbeat Contract Validation
 
+# GitHub-hosted execution is not a StegGate runtime carrier. This workflow is
+# retained only as a compatibility/validation surface for callers that still
+# reference the historical reusable workflow. Resident StegVerse workers own
+# process execution, heartbeat continuity, public rendezvous materialization,
+# recovery, and runtime evidence.
 on:
   workflow_call:
     inputs:
@@ -20,183 +25,98 @@ on:
         type: string
     outputs:
       acceptance_state:
-        description: Hosted StegGate acceptance state.
-        value: ${{ jobs.micro-node.outputs.acceptance_state }}
+        description: Compatibility validation state; never runtime acceptance.
+        value: ${{ jobs.validate-contract.outputs.acceptance_state }}
+  workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
-  micro-node:
+  validate-contract:
     runs-on: ubuntu-latest
-    timeout-minutes: 355
+    timeout-minutes: 10
     outputs:
-      acceptance_state: ${{ steps.observe.outputs.state }}
+      acceptance_state: ${{ steps.contract.outputs.state }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: StegVerse-Labs/StegCore
-          ref: main
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Record canonical heartbeat and lease binding
+      - name: Refuse credential-bearing environment
+        shell: bash
         run: |
-          mkdir -p build
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          Path('build/heartbeat-binding.json').write_text(json.dumps({
-            'schema':'stegverse.steggate_heartbeat_binding.v2',
-            'heartbeat_id':'${{ inputs.heartbeat_id }}',
-            'heartbeat_epoch':'${{ inputs.heartbeat_epoch }}',
-            'subsignals':{
-              'steggate_transport_lease':{
-                'lease_id':'${{ inputs.lease_id }}',
-                'lease_action':'${{ inputs.lease_action }}',
-                'dependent_tasks':json.loads(r'''${{ inputs.lease_dependents_json }}''')
-              }
-            },
-            'scheduler':'stegverse-heartbeat',
-            'lease_is_per_heartbeat':False,
-            'wall_clock_expiry_authority':False,
-            'authority_effect':False
-          }, indent=2, sort_keys=True)+'\n')
-          PY
-
-      - name: Install canonical StegCore
-        run: python -m pip install -e .
-
-      - name: Start canonical StegGate
-        run: |
-          nohup uvicorn stegcore.service:app --host 127.0.0.1 --port 8000 > build/app.log 2>&1 &
-          echo $! > build/app.pid
-          for attempt in $(seq 1 30); do
-            curl --fail --silent http://127.0.0.1:8000/health >/dev/null && exit 0
-            sleep 1
+          set -euo pipefail
+          for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID ACTIONS_ID_TOKEN_REQUEST_TOKEN; do
+            if [ -n "${!name:-}" ]; then
+              echo "forbidden credential environment variable present: ${name}" >&2
+              exit 1
+            fi
           done
-          cat build/app.log
-          exit 1
+          echo 'STEGGATE_GITHUB_HOSTED_RUNTIME_AUTHORITY=NONE'
+          echo 'STEGGATE_THIRD_PARTY_CARRIER_REQUIRED=false'
 
-      - name: Start zero-credential public transport
-        id: tunnel
-        run: |
-          curl --fail --location --silent --show-error https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 --output "$RUNNER_TEMP/cloudflared"
-          chmod +x "$RUNNER_TEMP/cloudflared"
-          nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 > build/tunnel.log 2>&1 &
-          echo $! > build/tunnel.pid
-          ORIGIN=''
-          for attempt in $(seq 1 60); do
-            ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/tunnel.log | tail -1 || true)"
-            [ -n "$ORIGIN" ] && break
-            sleep 1
-          done
-          test -n "$ORIGIN"
-          echo "$ORIGIN" > build/tunnel-origin.txt
-          for attempt in $(seq 1 60); do
-            curl --fail --silent --max-time 10 "$ORIGIN/health" >/dev/null && { echo "origin=$ORIGIN" >> "$GITHUB_OUTPUT"; exit 0; }
-            sleep 2
-          done
-          exit 1
-
-      - name: Verify complete public acceptance
-        id: observe
+      - name: Fetch exact StegCore source anonymously
+        shell: bash
         env:
-          STEGGATE_ORIGIN: ${{ steps.tunnel.outputs.origin }}
+          SOURCE_SHA: ${{ github.sha }}
         run: |
-          python scripts/observe_steggate_live_service.py | tee build/observer.json
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import json
-          from pathlib import Path
-          d=json.loads(Path('build/steggate-live-observation.json').read_text())
-          print('state='+d['state'])
-          if d['state'] != 'PASS': raise SystemExit(1)
-          PY
+          set -euo pipefail
+          git init .
+          git remote add origin https://github.com/StegVerse-Labs/StegCore.git
+          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "$SOURCE_SHA"
+          git checkout --detach FETCH_HEAD
+          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
 
-      - name: Hold and self-heal tunnel under heartbeat lease subsignal
+      - name: Validate heartbeat/lease compatibility contract only
+        id: contract
+        shell: bash
         env:
+          HEARTBEAT_ID: ${{ inputs.heartbeat_id }}
+          HEARTBEAT_EPOCH: ${{ inputs.heartbeat_epoch }}
           LEASE_ID: ${{ inputs.lease_id }}
+          LEASE_ACTION: ${{ inputs.lease_action }}
           LEASE_DEPENDENTS_JSON: ${{ inputs.lease_dependents_json }}
         run: |
           set -euo pipefail
-          python - <<'PY'
+          python3 - <<'PY'
           import json, os
-          from pathlib import Path
-          Path('build/lease-state.json').write_text(json.dumps({
-            'schema':'stegverse.steggate_transport_lease_runtime.v1',
-            'lease_id':os.environ['LEASE_ID'],
-            'state':'OPEN',
-            'dependent_tasks':json.loads(os.environ['LEASE_DEPENDENTS_JSON']),
-            'release_reason':None,
-            'wall_clock_expiry_authority':False
-          },indent=2,sort_keys=True)+'\n')
+          heartbeat_id = os.environ.get('HEARTBEAT_ID','').strip()
+          epoch = os.environ.get('HEARTBEAT_EPOCH','').strip()
+          lease_id = os.environ.get('LEASE_ID','').strip()
+          lease_action = os.environ.get('LEASE_ACTION','').strip()
+          dependents_raw = os.environ.get('LEASE_DEPENDENTS_JSON','[]') or '[]'
+          dependents = json.loads(dependents_raw)
+          if not heartbeat_id or not epoch or not lease_id or not lease_action:
+              raise SystemExit('heartbeat/lease compatibility inputs incomplete')
+          if not isinstance(dependents, list):
+              raise SystemExit('lease_dependents_json must decode to a list')
+          print('STEGGATE_HEARTBEAT_COMPATIBILITY=PASS')
+          print('STEGGATE_RUNTIME_EXECUTION=RESIDENT_REQUIRED')
+          print('STEGGATE_PUBLIC_RENDEZVOUS=RESIDENT_OR_EXPLICIT_FALLBACK_REQUIRED')
+          print('STEGGATE_GITHUB_ACTIONS_RUNTIME_ROLE=NONE')
+          print('STEGGATE_CLOUDFLARE_REQUIRED=false')
           PY
-          while true; do
-            SIGNAL="$(curl --fail --silent --max-time 10 https://raw.githubusercontent.com/StegVerse-Labs/.github/main/control/heartbeat-subsignals.json || true)"
-            REGISTRY="$(curl --fail --silent --max-time 10 https://raw.githubusercontent.com/StegVerse-Labs/.github/main/control/worker-registry.json || true)"
-            DECISION="$(SIGNAL_JSON="$SIGNAL" REGISTRY_JSON="$REGISTRY" python - <<'PY'
-          import json, os
-          lease_id=os.environ['LEASE_ID']
-          dependents=json.loads(os.environ['LEASE_DEPENDENTS_JSON'])
-          try: signal=json.loads(os.environ.get('SIGNAL_JSON') or '{}')['subsignals']['steggate_transport_lease']
-          except Exception: signal={}
-          try: registry=json.loads(os.environ.get('REGISTRY_JSON') or '{}')
-          except Exception: registry={}
-          if signal.get('lease_action') == 'CLOSE' and signal.get('lease_id') == lease_id:
-              print('CLOSE_SIGNAL'); raise SystemExit
-          if signal.get('successor_lease_id') and signal.get('successor_lease_id') != lease_id and signal.get('state') == 'HANDOFF_READY':
-              print('SUCCESSOR_ACCEPTED'); raise SystemExit
-          if dependents:
-              terminal={'COMPLETE','CLOSED','CANCELLED','SUPERSEDED'}
-              rows={str(t.get('task_id')):str(t.get('state')) for t in registry.get('tasks',[])}
-              if all(rows.get(task) in terminal for task in dependents):
-                  print('DEPENDENTS_COMPLETE'); raise SystemExit
-          print('HOLD')
-          PY
-          )"
-            if [ "$DECISION" != "HOLD" ]; then
-              DECISION="$DECISION" python - <<'PY'
-          import json, os
-          from pathlib import Path
-          p=Path('build/lease-state.json'); d=json.loads(p.read_text())
-          d['state']='RELEASED'; d['release_reason']=os.environ['DECISION']
-          p.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n')
-          PY
-              break
-            fi
-            ORIGIN="$(cat build/tunnel-origin.txt)"
-            if ! curl --fail --silent --max-time 10 "$ORIGIN/health" >/dev/null 2>&1; then
-              kill "$(cat build/tunnel.pid)" 2>/dev/null || true
-              : > build/tunnel.log
-              nohup "$RUNNER_TEMP/cloudflared" tunnel --no-autoupdate --url http://127.0.0.1:8000 > build/tunnel.log 2>&1 &
-              echo $! > build/tunnel.pid
-              NEW_ORIGIN=''
-              for attempt in $(seq 1 60); do
-                NEW_ORIGIN="$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' build/tunnel.log | tail -1 || true)"
-                if [ -n "$NEW_ORIGIN" ] && curl --fail --silent --max-time 10 "$NEW_ORIGIN/health" >/dev/null 2>&1; then break; fi
-                sleep 2
-              done
-              if [ -n "$NEW_ORIGIN" ]; then
-                STEGGATE_ORIGIN="$NEW_ORIGIN" python scripts/observe_steggate_live_service.py >/dev/null
-                echo "$NEW_ORIGIN" > build/tunnel-origin.txt
-              fi
-            fi
-            sleep 30
-          done
+          echo 'state=RESIDENT_RUNTIME_REQUIRED' >> "$GITHUB_OUTPUT"
 
-      - name: Preserve heartbeat lease and micro-node evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: steggate-heartbeat-micronode-${{ inputs.heartbeat_epoch }}-${{ github.run_id }}
-          path: |
-            build/heartbeat-binding.json
-            build/steggate-live-observation.json
-            build/lease-state.json
-            build/tunnel-origin.txt
-            build/app.log
-            build/tunnel.log
-          if-no-files-found: warn
-          retention-days: 90
+      - name: Enforce no hosted runtime/carrier implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          source = Path('.github/workflows/steggate-heartbeat-worker-reusable.yml').read_text(encoding='utf-8')
+          forbidden = (
+              'cloudflared' + ' tunnel',
+              'trycloudflare' + '.com',
+              'actions/' + 'checkout@',
+              'actions/' + 'setup-python@',
+              'actions/' + 'upload-artifact@',
+              'raw.githubusercontent' + '.com',
+              'nohup uvicorn',
+              'sleep 30',
+              'timeout-minutes: 355',
+              'permissions:\n  contents: read',
+          )
+          assert 'permissions: {}' in source
+          assert 'RESIDENT_RUNTIME_REQUIRED' in source
+          assert 'STEGGATE_CLOUDFLARE_REQUIRED=false' in source
+          assert all(marker not in source for marker in forbidden), forbidden
+          print('STEGGATE_HOSTED_CARRIER_RETIREMENT=PASS')
+          print('STEGGATE_THIRD_PARTY_CARRIER_ROLE=OPTIONAL_EXPLICIT_FALLBACK_ONLY')
+          PY
