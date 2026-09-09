@@ -108,7 +108,7 @@ jobs:
               'actions/' + 'setup-python@',
               'actions/' + 'upload-artifact@',
               'raw.githubusercontent' + '.com',
-              'nohup uvicorn',
+              'nohup ' + 'uvicorn',
               'sleep 30',
               'timeout-minutes: 355',
               'permissions:\n  contents: read',
