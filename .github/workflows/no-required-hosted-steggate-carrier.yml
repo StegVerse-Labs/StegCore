@@ -16,28 +16,41 @@ on:
       - '.github/workflows/no-required-hosted-steggate-carrier.yml'
   workflow_dispatch:
 
-permissions: {}
+# GitHub is used here only as a read-only CI validation fallback for a private
+# repository. This permission cannot launch, route, activate, mutate, or own
+# the canonical StegGate runtime.
+permissions:
+  contents: read
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Fetch exact source anonymously
-        shell: bash
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          set -euo pipefail
-          git init .
-          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
-            REF="refs/pull/${PR_NUMBER}/merge"
-          else
-            REF="${GITHUB_SHA}"
-          fi
-          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=5 origin "$REF"
-          git checkout --detach FETCH_HEAD
-          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
+      - name: Checkout exact validation source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Verify no required hosted StegGate carrier
         run: python3 scripts/check_no_required_hosted_steggate_carrier.py
+      - name: Confirm validation-only boundary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          text = Path('.github/workflows/no-required-hosted-steggate-carrier.yml').read_text(encoding='utf-8')
+          forbidden = (
+              'contents: ' + 'write',
+              'issues: ' + 'write',
+              'pull-requests: ' + 'write',
+              'repository_' + 'dispatch:',
+              'git ' + 'push',
+              'gh ' + 'api',
+              'upload-' + 'artifact@',
+          )
+          assert 'contents: read' in text
+          assert 'persist-credentials: false' in text
+          assert all(marker not in text for marker in forbidden), forbidden
+          print('HOSTED_CARRIER_VALIDATION_ROLE=READ_ONLY_CI_FALLBACK')
+          print('HOSTED_CARRIER_RUNTIME_AUTHORITY=NONE')
+          PY
