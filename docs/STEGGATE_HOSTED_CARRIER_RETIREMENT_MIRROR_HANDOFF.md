@@ -3,60 +3,41 @@
 Updated: 2026-09-09
 Repository: `StegVerse-Labs/StegCore`
 Parent handoff: `STEGCORE_MIRROR_HANDOFF.md`
-Originating goal: `KV-CONNECTION-REVALIDATION-WORKER-001` / `SITE-497-THIRD-PARTY-DEPENDENCY-ERADICATION`
+Originating goal: `KV-CONNECTION-REVALIDATION-WORKER-001` / `SITE-497-THIRD-PARTY-DEPENDENDENCY-ERADICATION`
 COSV: `50000000102000`
-State: PRIMARY_HOSTED_CARRIER_RETIREMENT_MERGED / FALLBACK_HOSTED_CARRIER_RETIREMENT_IN_VALIDATION / RESIDENT_RUNTIME_OBSERVATION_SEPARATE
+State: PRIMARY_HOSTED_CARRIER_RETIREMENT_MERGED / FALLBACK_HOSTED_CARRIER_RETIREMENT_MERGED / ANTI_REGRESSION_VALIDATED / RESIDENT_RUNTIME_OBSERVATION_SEPARATE
 Authority effect: NONE
 
-## Merged correction
+## Merged corrections
 
 PR #193 merged at `084477a684193ad1b45d4403aa57844c5135638e`.
 
-The historical `.github/workflows/steggate-heartbeat-worker-reusable.yml` no longer acts as a long-running GitHub-hosted StegGate micro-node. It no longer starts the canonical service in a hosted runner, downloads Cloudflare tunnel software, creates a Cloudflare quick tunnel, polls raw GitHub control files, self-heals a hosted tunnel, or uploads runtime evidence. Its compatibility output is `RESIDENT_RUNTIME_REQUIRED`.
+PR #194 merged at `07632a7dcbd12d16440322f33269a51413fa3049` after `No Required Hosted StegGate Carrier` run `34312571953` completed SUCCESS on exact PR head `b5c44cda574889dafacd8d53a8ae720fcfaf1d24`.
 
-## Residual defect discovered after #193
+The two historical GitHub-hosted StegGate execution surfaces are now retired from runtime/carrier duty:
 
-A second active workflow remained: `.github/workflows/steggate-fallback-public-runtime.yml`.
+- `.github/workflows/steggate-heartbeat-worker-reusable.yml`
+- `.github/workflows/steggate-fallback-public-runtime.yml`
 
-Before the current repair it still:
+Neither active workflow now starts Uvicorn, downloads Cloudflare tunnel software, creates a Cloudflare quick tunnel, polls GitHub as a runtime control plane, mutates a GitHub runtime registry, finalizes activation, pushes activation branches, uploads runtime evidence, or self-heals a hosted tunnel.
 
-- launched Uvicorn on a GitHub-hosted runner;
-- downloaded the Cloudflare tunnel client from GitHub releases;
-- created a rotating Cloudflare quick tunnel;
-- treated that public tunnel as StegGate acceptance transport;
-- patched a GitHub issue comment as a runtime registry;
-- could finalize activation from hosted evidence;
-- created and pushed activation branches;
-- uploaded runtime artifacts;
-- supervised and self-healed the hosted tunnel for an extended lease window.
+The heartbeat compatibility surface returns `RESIDENT_RUNTIME_REQUIRED`. The fallback surface is a manual declaration only and states:
 
-That is a real runtime/carrier dependency and is not acceptable as a canonical StegVerse path.
+- `STEGGATE_CANONICAL_RUNTIME=RESIDENT_STEGVERSE`
+- `STEGGATE_HOSTED_RUNTIME=false`
+- `STEGGATE_HOSTED_PUBLIC_TUNNEL=false`
+- `STEGGATE_THIRD_PARTY_CARRIER_REQUIRED=false`
+- `STEGGATE_FALLBACK_SELECTION=EXPLICIT_OPT_IN_ONLY`
+- `STEGGATE_GITHUB_RUNTIME_AUTHORITY=NONE`
+- `STEGGATE_ACTIVATION_EFFECT=NONE`
+- `STEGGATE_REPOSITORY_MUTATION=NONE`
+- `STEGGATE_RUNTIME_EVIDENCE_CREATED=false`
 
-## Current repair — PR #194
+## Anti-regression boundary
 
-PR: `https://github.com/StegVerse-Labs/StegCore/pull/194`
+`scripts/check_no_required_hosted_steggate_carrier.py` and `.github/workflows/no-required-hosted-steggate-carrier.yml` verify both historical hosted workflow surfaces remain free of executable hosted-carrier behavior.
 
-The fallback workflow is being reduced to an explicit manual fallback declaration only. It now:
-
-1. has no repository-dispatch runtime trigger;
-2. has no write permission;
-3. refuses credential-bearing environments;
-4. starts no StegGate service;
-5. downloads no tunnel software;
-6. creates no public tunnel;
-7. mutates no GitHub registry/comment/branch;
-8. finalizes no activation;
-9. uploads no runtime evidence;
-10. performs no hosted supervision/self-heal;
-11. declares `STEGGATE_CANONICAL_RUNTIME=RESIDENT_STEGVERSE`;
-12. declares `STEGGATE_THIRD_PARTY_CARRIER_REQUIRED=false`;
-13. declares `STEGGATE_FALLBACK_SELECTION=EXPLICIT_OPT_IN_ONLY`.
-
-A repository anti-regression validator now checks both historical StegGate hosted workflow surfaces so tunnel/runtime/mutation behavior cannot silently return.
-
-## Validation boundary
-
-The repository is private, so the new anti-regression workflow uses GitHub only as a read-only CI fallback to fetch the source under test. That CI read dependency is not runtime, routing, activation, mutation, credential, custody, or continuity authority. The first anonymous-fetch version failed because a private repository cannot be fetched anonymously; the validation workflow was repaired to use `contents: read` with `persist-credentials: false`.
+Because this repository is private, GitHub is still used by that check as a read-only validation fallback with `contents: read` and `persist-credentials: false`. That validation transport does not own StegGate runtime, routing, activation, mutation, credential, custody, heartbeat, continuity, or publication state.
 
 ## Canonical continuation
 
@@ -70,24 +51,33 @@ StegVerse resident worker/runtime
   -> exact runtime evidence and downstream reconciliation
 ```
 
-A public rendezvous remains a real capability gap when direct public reachability is required. These source retirements do **not** claim that a provider-neutral public carrier has already been observed. They prevent GitHub + Cloudflare from being recreated as the canonical runtime merely to satisfy that gap.
+A provider-neutral/StegVerse-owned public rendezvous remains a real capability gap when direct public reachability is required. The merged source retirements do not claim that such a rendezvous has already been observed. They prevent GitHub + Cloudflare from being recreated as the canonical runtime merely to satisfy that gap.
 
 ## Historical evidence
 
-Historical GitHub-hosted/Cloudflare quick-tunnel receipts and URLs remain provenance. They may demonstrate prior compatibility or observation but must not be used as current endpoint identity, current liveness, production-continuity authority, or evidence that Cloudflare is required.
+Historical GitHub-hosted/Cloudflare quick-tunnel receipts and URLs remain provenance. They may demonstrate prior compatibility or prior observation but must not be used as current endpoint identity, current liveness, production-continuity dependency, or evidence that Cloudflare is required.
 
 ## Acceptance
 
-- primary hosted heartbeat carrier retirement: MERGED;
-- fallback hosted public runtime retirement: PR #194 IN VALIDATION;
-- no Cloudflare tunnel-client execution in either active canonical workflow after #194;
-- no rotating Cloudflare quick-tunnel creation in either active canonical workflow after #194;
-- no hosted Uvicorn StegGate runtime in either active canonical workflow after #194;
-- no GitHub runtime registry mutation or activation finalization in either active canonical workflow after #194;
+- primary hosted heartbeat carrier retirement: MERGED #193;
+- fallback hosted public runtime retirement: MERGED #194;
+- anti-regression exact-head validation: PASS;
+- Cloudflare tunnel-client execution in the two retired runtime workflows: NONE;
+- rotating Cloudflare quick-tunnel creation in the two retired runtime workflows: NONE;
+- hosted Uvicorn StegGate runtime in the two retired runtime workflows: NONE;
+- GitHub runtime registry mutation/activation finalization in the two retired runtime workflows: NONE;
 - canonical runtime declaration: `RESIDENT_STEGVERSE`;
 - third-party carrier policy: explicit fallback only;
-- authentic resident public-rendezvous observation: still pending and must not be fabricated.
+- authentic resident provider-neutral public-rendezvous observation: PENDING and must not be fabricated.
+
+## Remaining dependency work
+
+1. Reconcile downstream Site/provider inventories so they no longer classify Cloudflare quick tunnels as canonical or required runtime carriers.
+2. Continue eliminating required GitHub publication/source/recovery dependence while retaining GitHub only as optional source/validation transport.
+3. Establish deterministic DNS/edge portability and recovery so no single DNS/edge vendor is a continuity prerequisite.
+4. Materialize and authentically observe a resident/provider-neutral public rendezvous before claiming public-carrier independence at runtime.
+5. Preserve third-party carriers only as explicit fallback/interoperability choices.
 
 ## Manual work
 
-None during source retirement and validation. Do not create or authorize a Cloudflare tunnel for this task.
+None required. Do not create or authorize a Cloudflare tunnel for this task.
