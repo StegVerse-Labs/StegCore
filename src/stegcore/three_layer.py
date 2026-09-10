@@ -5,6 +5,11 @@ from __future__ import annotations
 This module evaluates conditions described by the Governance repository without
 verifying or minting Continuity receipts. Callers must provide already-resolved
 policy, authority, evidence, and state-integrity facts.
+
+Execution-boundary predicates are tri-state. ``None`` means the applicable fact
+has not yet been established. It must never be coerced to ``False`` because that
+would convert missing evidence into an affirmative stale/invalid finding. Unknown
+execution predicates fail closed with an explicit probe-required reason.
 """
 
 from dataclasses import asdict, dataclass, field
@@ -41,13 +46,13 @@ class SignalAdmission:
 
 @dataclass(frozen=True)
 class ExecutionBoundary:
-    actor_authority_current: bool
-    policy_current: bool
-    delegation_current: bool
-    evidence_current: bool
-    affected_entity_conditions_represented: bool
+    actor_authority_current: bool | None
+    policy_current: bool | None
+    delegation_current: bool | None
+    evidence_current: bool | None
+    affected_entity_conditions_represented: bool | None
     recoverability_profile: Literal["recoverable", "constrained", "irreversible", "unknown"]
-    validity_window_open: bool
+    validity_window_open: bool | None
     policy_ref: str
     delegation_ref: str
     evidence_refs: tuple[str, ...] = ()
@@ -123,6 +128,18 @@ def _result(
     )
 
 
+def _unknown_execution_predicates(boundary: ExecutionBoundary) -> tuple[str, ...]:
+    checks = (
+        ("actor_authority_current", boundary.actor_authority_current),
+        ("policy_current", boundary.policy_current),
+        ("delegation_current", boundary.delegation_current),
+        ("evidence_current", boundary.evidence_current),
+        ("affected_entity_conditions_represented", boundary.affected_entity_conditions_represented),
+        ("validity_window_open", boundary.validity_window_open),
+    )
+    return tuple(name for name, value in checks if value is None)
+
+
 def evaluate_three_layer(request: ThreeLayerRequest) -> ThreeLayerResult:
     """Evaluate judgment, state formation, and execution in restrictive order."""
 
@@ -187,24 +204,34 @@ def evaluate_three_layer(request: ThreeLayerRequest) -> ThreeLayerResult:
         return _result(request, "FAIL-CLOSED", finding.code, [finding])
 
     boundary = request.execution_boundary
-    if not boundary.actor_authority_current:
+    unknown_predicates = _unknown_execution_predicates(boundary)
+    if unknown_predicates:
+        finding = LayerFinding(
+            "execution_boundary",
+            "execution.probe_required",
+            "Current execution state is not sufficiently established; probe required for: "
+            + ", ".join(unknown_predicates),
+        )
+        return _result(request, "FAIL-CLOSED", finding.code, [finding])
+
+    if boundary.actor_authority_current is False:
         finding = LayerFinding("execution_boundary", "execution.authority_stale", "Actor authority is not current.")
         return _result(request, "DENY", finding.code, [finding])
-    if not boundary.policy_current or not boundary.delegation_current:
+    if boundary.policy_current is False or boundary.delegation_current is False:
         finding = LayerFinding(
             "execution_boundary",
             "execution.policy_or_delegation_stale",
             "Policy or delegation is not current at commit time.",
         )
         return _result(request, "DENY", finding.code, [finding])
-    if not boundary.evidence_current or not boundary.validity_window_open:
+    if boundary.evidence_current is False or boundary.validity_window_open is False:
         finding = LayerFinding(
             "execution_boundary",
             "execution.evidence_or_window_invalid",
             "Evidence freshness or the validity window failed at commit time.",
         )
         return _result(request, "DENY", finding.code, [finding])
-    if not boundary.affected_entity_conditions_represented:
+    if boundary.affected_entity_conditions_represented is False:
         finding = LayerFinding(
             "execution_boundary",
             "execution.affected_entities_missing",
