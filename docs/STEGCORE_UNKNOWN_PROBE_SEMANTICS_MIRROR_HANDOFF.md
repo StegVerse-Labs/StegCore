@@ -3,7 +3,7 @@
 Goal Task ID: `STEGCORE-UNKNOWN-PROBE-SEMANTICS-001`
 Parent Goal Task ID: `SDK-EVALUATOR-GOVERNANCE-POSTURE-MANIFEST-001`
 Repository: `StegVerse-Labs/StegCore`
-Status: `IMPLEMENTED_AWAITING_VALIDATION`
+Status: `IMPLEMENTED_VALIDATION_IN_PROGRESS`
 
 ## Objective
 
@@ -34,6 +34,29 @@ The historical finding established that native currentness was intentionally lef
 
 This is not an allow-on-unknown change. It preserves fail-closed behavior while separating `not established` from `affirmatively false`.
 
+## Validation evidence so far
+
+PR: `StegVerse-Labs/StegCore#199`
+
+The first focused semantic run proved the implementation cases before a workflow-path typo stopped the broader step:
+
+```text
+Unknown Probe Semantics Validation run 34531334208
+new semantic regression: 3 passed
+failure cause: referenced nonexistent tests/test_steggate.py
+implementation failure: none observed
+```
+
+After replacing that invalid target, run `34531423705` again passed the new semantic regression `3 passed`; the broader step then stopped because a second guessed filename, `tests/test_admissibility_baseline.py`, also does not exist. No semantic assertion failed. The workflow is now corrected to use the actual existing `tests/test_current_basis.py` suite only.
+
+Existing `tests/test_current_basis.py` already requires neutral currentness to remain `None` at native derivation and does not assert the historical false-stale disposition, so no old-result assertion is being silently rewritten.
+
+Independent existing validation:
+
+```text
+Current-Basis Neutral Derivation Validation run 34531423688: PASS
+```
+
 ## Regression tests
 
 `tests/test_unknown_probe_semantics.py` requires:
@@ -44,8 +67,8 @@ This is not an allow-on-unknown change. It preserves fail-closed behavior while 
 
 ## Remaining work
 
-- run repository validation and existing StegCore suites;
-- repair any compatibility failures without restoring UNKNOWN->False coercion;
+- obtain a fresh exact-head PASS from the corrected focused workflow;
+- require the existing external-evidence interoperability lane to remain green;
 - merge source remediation;
 - rerun the exact frozen SDK v0.4 artifact through the updated dependency path without modifying its bytes;
 - retain the new result separately from the historical run so longitudinal comparison remains reconstructable.
