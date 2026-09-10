@@ -1,0 +1,60 @@
+name: Frozen v0.4 Probe Regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/frozen-v04-probe-regression.yml'
+      - 'docs/STEGCORE_UNKNOWN_PROBE_SEMANTICS_MIRROR_HANDOFF.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-frozen-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install merged StegCore source
+        run: python -m pip install -e .
+      - name: Materialize exact frozen SDK manifest anonymously
+        env:
+          SDK_COMMIT: d661bee61697024c62a48206c5d2258b22ea1413
+          EXPECTED_SHA256: 07a08496c21b31f70f6f45ef731aa5f6b2522a6fc8f67f2d0a4c2b6fceda7a3f
+        run: |
+          set -eu
+          curl -fsSL "https://raw.githubusercontent.com/StegVerse-org/StegVerse-SDK/${SDK_COMMIT}/inspection/examples/cross-framework-current-basis-request.draft.json" -o /tmp/frozen-v04.json
+          observed="$(sha256sum /tmp/frozen-v04.json | awk '{print $1}')"
+          test "$observed" = "$EXPECTED_SHA256"
+      - name: Evaluate exact frozen bytes under repaired semantics
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from stegcore.current_basis import evaluate_current_basis_vector
+
+          manifest = json.loads(Path('/tmp/frozen-v04.json').read_text(encoding='utf-8'))
+          vector = manifest['input']['comparison_input']
+          result = evaluate_current_basis_vector(vector)
+          native = result['native_request']['execution']
+          for field in (
+              'actor_authority_current', 'policy_current', 'delegation_current',
+              'evidence_current', 'validity_window_open'
+          ):
+              assert native[field] is None, (field, native[field])
+          evaluation = result['evaluation']
+          assert evaluation['disposition'] == 'FAIL_CLOSED', evaluation
+          assert evaluation['canonical_three_layer_decision'] == 'FAIL-CLOSED', evaluation
+          assert evaluation['canonical_three_layer_reason'] == 'execution.probe_required', evaluation
+          assert evaluation['canonical_three_layer_reason'] != 'execution.authority_stale'
+          print('FROZEN_V04_PROBE_REGRESSION_PASS')
+          print(json.dumps({
+              'historical_reason': 'execution.authority_stale',
+              'repaired_reason': evaluation['canonical_three_layer_reason'],
+              'disposition': evaluation['disposition'],
+          }, sort_keys=True))
+          PY
