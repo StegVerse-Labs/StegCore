@@ -23,6 +23,8 @@ candidate
 
 For routes that declare fresh SPE standing as required, canonical execution also re-verifies the bound SDK/SPE/interlock evidence before commit coherence or consequence invocation. Missing, stale, DENY, tampered, or mismatched required standing fails closed before the bounded executor can run.
 
+Execution-boundary predicates preserve the distinction between **unknown** and **affirmatively false**. An unestablished applicable predicate remains `UNKNOWN` and produces `FAIL_CLOSED / execution.probe_required` until evidence or a governed probe establishes it; it is never coerced into a stale/false finding. An explicitly observed `False` predicate still follows its applicable DENY rule. This preserves fail-closed governance without converting absence of evidence into evidence of invalidity.
+
 Interfaces may adapt input or presentation, but they must not implement a separate policy or admissibility engine.
 
 StegCore does **not** mint continuity receipts, establish identity truth, grant provider authority, execute arbitrary external actions, publish content, or become durable evidence custody.
@@ -157,6 +159,7 @@ Read current-state documents before historical review material:
 
 - `STEGCORE_MIRROR_HANDOFF.md` — live repository source of truth, active claims, validation, and continuation.
 - `docs/GADI_STEGCORE_MIRROR_HANDOFF.md` — bounded GADI threat-reasoning implementation and continuation.
+- `docs/STEGCORE_UNKNOWN_PROBE_SEMANTICS_MIRROR_HANDOFF.md` — UNKNOWN-versus-false governance semantics and frozen-v0.4 longitudinal regression evidence.
 - `docs/STEGGATE_PORTABLE_PRODUCT.md` — supported portable product surface and compatibility rules.
 - `docs/STEGGATE_RUNTIME_IDENTITY_CONTRACT.md` — transport-independent runtime identity contract.
 - `docs/ADMITTEDCODE_PERFORMANCE.md` — canonical performance, benchmark, and release-measurement contract.
@@ -168,7 +171,7 @@ Historical receipts, review documents, activation artifacts, and schema-versione
 
 ## Current product status
 
-The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, and standing/interlock fail-closed consequence binding are implemented. GADI threat reasoning is being integrated as a bounded proposal-generation surface that preserves the same authority boundary; it does not replace or bypass canonical admission. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md` and `docs/GADI_STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
+The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, standing/interlock fail-closed consequence binding, and UNKNOWN-preserving probe-required execution semantics are implemented. GADI threat reasoning is being integrated as a bounded proposal-generation surface that preserves the same authority boundary; it does not replace or bypass canonical admission. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. See `STEGCORE_MIRROR_HANDOFF.md`, `docs/STEGCORE_UNKNOWN_PROBE_SEMANTICS_MIRROR_HANDOFF.md`, and `docs/GADI_STEGCORE_MIRROR_HANDOFF.md` for exact machine-owned state.
 
 ## Development verification
 
