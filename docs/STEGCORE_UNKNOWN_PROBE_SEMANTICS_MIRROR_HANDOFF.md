@@ -3,7 +3,7 @@
 Goal Task ID: `STEGCORE-UNKNOWN-PROBE-SEMANTICS-001`
 Parent Goal Task ID: `SDK-EVALUATOR-GOVERNANCE-POSTURE-MANIFEST-001`
 Repository: `StegVerse-Labs/StegCore`
-Status: `IMPLEMENTED_VALIDATION_IN_PROGRESS`
+Status: `SEMANTICS_MERGED_EXACT_FROZEN_REGRESSION_IN_PROGRESS`
 
 ## Objective
 
@@ -23,55 +23,48 @@ historical raw reason: execution.authority_stale
 
 The historical finding established that native currentness was intentionally left unestablished (`None`) but `_build_three_layer()` coerced those values with `bool(...)`, turning UNKNOWN into False before the canonical three-layer decision.
 
-## Implemented semantics
+## Merged semantics
 
-- `ExecutionBoundary` currentness/representation predicates now accept `bool | None`.
+StegCore PR `#199` merged at `a4348d3db8e22f89acad4ae7454341968e6046d6`.
+
+- `ExecutionBoundary` currentness/representation predicates accept `bool | None`.
 - `StegGate._build_three_layer()` passes execution predicates through without boolean coercion.
-- the three-layer evaluator detects any unknown execution predicates before stale/invalid rules;
+- the three-layer evaluator detects unknown execution predicates before stale/invalid rules;
 - unknown execution predicates return `FAIL-CLOSED / execution.probe_required` and identify the predicates requiring evidence;
 - explicit `False` retains the prior denial behavior and reason codes;
 - explicit `True` behavior remains unchanged.
 
 This is not an allow-on-unknown change. It preserves fail-closed behavior while separating `not established` from `affirmatively false`.
 
-## Validation evidence so far
-
-PR: `StegVerse-Labs/StegCore#199`
-
-The first focused semantic run proved the implementation cases before a workflow-path typo stopped the broader step:
+## Validation evidence
 
 ```text
-Unknown Probe Semantics Validation run 34531334208
-new semantic regression: 3 passed
-failure cause: referenced nonexistent tests/test_steggate.py
-implementation failure: none observed
+Unknown Probe Semantics Validation run 34531630404: PASS
+Current-Basis Neutral Derivation Validation run 34531630392: PASS
 ```
 
-After replacing that invalid target, run `34531423705` again passed the new semantic regression `3 passed`; the broader step then stopped because a second guessed filename, `tests/test_admissibility_baseline.py`, also does not exist. No semantic assertion failed. The workflow is now corrected to use the actual existing `tests/test_current_basis.py` suite only.
+The repository-wide External Evidence Interoperability run `34531630382` failed only after its pinned Governance external-evidence snapshot validation passed. All five full-suite failures were unrelated pre-existing portable-release version drift: current `VERSION` and `pyproject.toml` are `0.3.0` while `sdk/portable_release_manifest.v1.json` still declares `0.2.0`. No unknown/probe/current-basis assertion failed in that lane.
 
-Existing `tests/test_current_basis.py` already requires neutral currentness to remain `None` at native derivation and does not assert the historical false-stale disposition, so no old-result assertion is being silently rewritten.
+## Exact frozen regression
 
-Independent existing validation:
+`.github/workflows/frozen-v04-probe-regression.yml` materializes the exact frozen SDK manifest from immutable SDK commit `d661bee61697024c62a48206c5d2258b22ea1413`, verifies its SHA-256 is exactly `07a08496c21b31f70f6f45ef731aa5f6b2522a6fc8f67f2d0a4c2b6fceda7a3f`, and evaluates its unchanged comparison vector against merged StegCore semantics.
+
+Required longitudinal result:
 
 ```text
-Current-Basis Neutral Derivation Validation run 34531423688: PASS
+historical: DENY / execution.authority_stale
+repaired semantic evaluation: FAIL_CLOSED / execution.probe_required
+frozen manifest bytes changed: false
 ```
 
-## Regression tests
-
-`tests/test_unknown_probe_semantics.py` requires:
-
-1. `actor_authority_current=None` -> `FAIL-CLOSED / execution.probe_required`;
-2. `actor_authority_current=False` -> `DENY / execution.authority_stale`;
-3. the neutral v0.4 vector preserves all unestablished currentness values as `None` through native derivation and now yields `FAIL_CLOSED / execution.probe_required`, never the historical false-stale reason.
+This regression does not overwrite or retract the historical August execution evidence. It establishes how the same exact frozen test input is interpreted by the repaired governance semantics.
 
 ## Remaining work
 
-- obtain a fresh exact-head PASS from the corrected focused workflow;
-- require the existing external-evidence interoperability lane to remain green;
-- merge source remediation;
-- rerun the exact frozen SDK v0.4 artifact through the updated dependency path without modifying its bytes;
-- retain the new result separately from the historical run so longitudinal comparison remains reconstructable.
+- obtain PASS for the exact frozen v0.4 regression;
+- update the SDK governed-test StegCore pin from its historical commit to the merged repaired StegCore commit;
+- validate SDK compatibility without altering the frozen manifest;
+- retain any future authentic rerun as a separate longitudinal run rather than overwriting historical custody evidence.
 
 ## Manual work
 
