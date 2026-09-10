@@ -1,0 +1,36 @@
+name: Unknown Probe Semantics Validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/stegcore/three_layer.py'
+      - 'src/stegcore/steggate.py'
+      - 'src/stegcore/current_basis.py'
+      - 'tests/test_unknown_probe_semantics.py'
+      - 'docs/STEGCORE_UNKNOWN_PROBE_SEMANTICS_MIRROR_HANDOFF.md'
+      - '.github/workflows/unknown-probe-semantics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install package and test tooling
+        run: |
+          python -m pip install -e .
+          python -m pip install pytest
+      - name: Run unknown/probe regression
+        run: python -m pytest -q tests/test_unknown_probe_semantics.py
+      - name: Run existing current-basis and StegGate regressions
+        run: |
+          python -m pytest -q tests/test_current_basis.py tests/test_steggate.py
+      - name: Compile changed governance modules
+        run: python -m py_compile src/stegcore/three_layer.py src/stegcore/steggate.py src/stegcore/current_basis.py
