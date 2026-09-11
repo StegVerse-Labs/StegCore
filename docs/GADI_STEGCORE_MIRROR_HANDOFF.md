@@ -1,149 +1,138 @@
 # GADI StegCore Mirror Handoff
 
-Status: `ACTIVE / THREAT_REASONING_MERGED / GOVERNANCE_PROFILE_MERGED / GOVERNANCE_INTR_ADMISSION_PRODUCER_MERGED / LOCAL_ADMISSION_MATERIALIZER_IN_VALIDATION / AUTHENTIC_RUNTIME_ADMISSION_UNOBSERVED`
+Status: `ACTIVE / THREAT_REASONING_MERGED / GOVERNANCE_PROFILE_MERGED / GOVERNANCE_INTR_ADMISSION_PRODUCER_MERGED / LOCAL_ADMISSION_MATERIALIZER_MERGED / PENDING_GOVERNANCE_CANDIDATE_MATERIALIZER_IN_VALIDATION / AUTHENTIC_RUNTIME_ADMISSION_UNOBSERVED`
 Repository: `StegVerse-Labs/StegCore`
 Canonical task: `GADI-001`
 Parent handoff: `StegVerse-Labs/.github/docs/GADI_RESIDENT_EXECUTION_MIRROR_HANDOFF.md`
 COSV: `10100000100000`
-Current branch: `gadi-local-admission-materializer-001`
+Current branch: `gadi-pending-governance-candidate-materializer-001`
 
 ## Purpose
 
-StegCore owns GADI threat reasoning plus Governance evaluation/projection. It may correlate threat evidence, propose a bounded PENDING defensive intervention request, evaluate that exact candidate through the existing Universal Governance Connector, and project the resulting Governance decision into the existing GADI `Admission` field. It does not mint credentials, create runtime bindings, claim/fence work, execute defensive effects, or become a parallel InTr/StegGate authority.
+StegCore owns GADI threat reasoning plus Governance evaluation/projection. It may correlate already-observed threat evidence, select the least-destructive eligible pre-authorized capability, emit a bounded PENDING defensive-intervention request, bind that exact request into the Governance candidate, evaluate it through the existing Universal Governance Connector/InTr path, and project the result into the existing GADI `Admission` field. It does not observe threats, resolve Governance facts, mint credentials, create runtime bindings, claim/fence work, execute defensive effects, or become a parallel InTr/StegGate authority.
 
-## Merged GADI reasoning and admission chain
+## Merged chain
 
-`src/stegcore/gadi.py` remains the canonical reasoning surface for canonical StegOS threat observations/capabilities/intervention requests, freshness/subject binding, uncertainty/semantic-integrity preservation, threat correlation, least-destructive-effective capability selection, and PENDING requests with `model_output_authority=NONE`.
+- Governance PR #40 -> `2765854132872078bcd15a4432a65095831b432e`: authoritative `gadi.defensive-intervention.v1` profile.
+- StegCore PR #202 -> `282f30e9e46efc3a8d0d867f48e08c3aa6534e22`: exact Governance-decision -> GADI Admission projector.
+- StegCore PR #204 -> `44f4240c72ae1e64cefd829e469e64a40b5034a3`: local GADI `governance-external-action` InTr/Governance admission materializer. Repaired exact head `661a1e9736db4262c91c8246068ed6061217eae8` passed both observed task-specific workflow instances before merge.
 
-Governance PR #40 merged the authoritative `gadi.defensive-intervention.v1` connector profile as `2765854132872078bcd15a4432a65095831b432e`.
-
-StegCore PR #202 merged the exact Governance-decision -> GADI Admission projector as `282f30e9e46efc3a8d0d867f48e08c3aa6534e22`, with the Governance snapshot pinned byte-for-byte to that upstream merge. Projection semantics remain:
+Projection remains:
 
 ```text
 ALLOW       -> ADMITTED + intr://governance-decision/<receipt_hash>
-DENY        -> DENIED   + intr://governance-decision/<receipt_hash>
-FAIL-CLOSED -> DENIED   + intr://governance-decision/<receipt_hash>
+DENY        -> DENIED
+FAIL-CLOSED -> DENIED
 ```
 
-The projector grants no runtime binding or execution authority.
+No runtime binding, credential, claim/fence, or execution authority is minted.
 
-## Missing runtime caller identified
+## Newly identified pre-admission production gap
 
-After PR #202, `gadi_intr_admission.py` existed only as a library function used by tests. Repository audit found no production GADI runtime caller that:
-
-1. accepted an already-current PENDING `DefensiveInterventionRequest`;
-2. ran a matching canonical Governance request through the existing local `governance-external-action` InTr connector;
-3. derived `VerifiedTransportBindings` from completed local InTr transport;
-4. evaluated the authoritative GADI Governance profile;
-5. projected the decision into the GADI admission artifact.
-
-The existing `run_universal_governance_reference_boundary.py` already demonstrates this architecture generically. The current branch specializes only that existing local transport/evaluation pattern for GADI.
-
-## Local GADI admission materializer — in validation
-
-New runtime entrypoint:
-
-`scripts/materialize_gadi_local_admission.py`
-
-The materializer accepts two already-local inputs:
-
-- an exact PENDING canonical `DefensiveInterventionRequest`;
-- an exact canonical `stegverse.governance-connector.request/v1` whose resolved Governance facts are already present and whose `candidate_ref`/`candidate_hash` bind the exact PENDING request.
-
-It does not create threat observations or resolved Governance facts.
-
-### Exact request binding
-
-Before transport, it requires:
+Repository audit after #204 found that all three canonical pre-admission reasoning functions in `src/stegcore/gadi.py` remained library-only in production:
 
 ```text
-profile_id = gadi.defensive-intervention.v1
-operation_id = admit-defensive-intervention
-system_id = stegverse.gadi.defensive-intervention
-boundary_id = interlock:gadi.defensive-intervention
-candidate_ref = gadi-request:<request_id>
-candidate_hash = canonical SHA-256 of exact PENDING request
-authority_ref present
-intent_ref present
-evidence_refs present
-resolved_facts present
+correlate_threat()
+choose_least_destructive_effective_capability()
+build_intervention_request()
 ```
 
-A non-PENDING request, candidate mismatch, profile/operation drift, or malformed Governance payload fails closed.
+Their only callers were tests. Therefore an authentic current threat observation and authentic local capability evidence could not yet be transformed into the canonical PENDING intervention request expected by the merged local admission materializer without custom Python glue.
 
-### Existing local InTr transport reused
+## Pending Governance candidate materializer — in validation
 
-The materializer loads only the pinned local StegOS InTr snapshot and pinned local Governance snapshot already carried by StegCore. It uses:
+New entrypoint:
 
-- `connector_from_registry(..., governance-external-action)`;
-- `connector.prepare()`;
-- `connector.accept_hop()`;
-- `connector.validate_complete()`;
-- existing `build_reference_adapter()` / `validate_reference_adapter()`;
-- resulting `VerifiedTransportBindings`.
+`scripts/materialize_gadi_pending_governance_candidate.py`
 
-The Governance payload cannot self-assert transport fields; the canonical parser still rejects extra transport fields in the payload.
+It consumes only already-local inputs:
 
-No network fetch is performed.
+1. one or more canonical `stegos.autonomous_threat_observation.v1` objects;
+2. one or more canonical `stegos.governed_intervention_capability.v1` objects;
+3. an already-resolved Governance facts object containing exactly `judgment_conditions`, `signal_admission`, and `execution_boundary`;
+4. the pinned authoritative Governance registry.
 
-### Governance evaluation and admission projection
-
-The materializer then calls existing:
-
-- `parse_registered_governance_connector_request()`;
-- `evaluate_governance_connector()`;
-- `project_governance_decision_to_gadi_admission()`;
-- `projection_receipt()`.
-
-The result records exact local InTr packet/profile/payload/terminal receipt hashes plus the Governance decision and projected request.
-
-It explicitly records:
+The adapter reuses the existing GADI functions to:
 
 ```text
-resolved_governance_facts_created = false
+current observations
+-> correlate_threat()
+-> choose_least_destructive_effective_capability()
+-> build_intervention_request() [PENDING]
+-> exact canonical request SHA-256
+-> hash-bound gadi.defensive-intervention.v1 Governance request
+```
+
+It does not create the observations or resolved Governance facts. It validates the resolved-facts structure and requires the exact authoritative GADI policy reference before candidate emission.
+
+The emitted Governance request contains only the canonical payload fields; it does not self-assert InTr transport bindings. Those remain the responsibility of the already-merged local admission materializer.
+
+The adapter explicitly records:
+
+```text
 threat_observation_created = false
+resolved_governance_facts_created = false
+intr_transport_performed = false
+admission_created = false
 runtime_binding_created = false
 credential_minted = false
 claim_or_fence_minted = false
 execution_authority_granted = false
 network_fetch_performed = false
 credential_authority = TV/TVC
-authority_effect = NONE_ADMISSION_MATERIALIZATION_ONLY
+authority_effect = NONE_PENDING_REQUEST_AND_CANDIDATE_ONLY
 ```
 
-CLI mode writes the projected ADMITTED/DENIED request separately from the materialization receipt and hashes the exact input request/Governance files.
+CLI mode atomically writes the PENDING request, Governance request, and materialization receipt and hashes the exact observations, capabilities, resolved-facts, and pinned Governance-registry source bytes.
 
 ## Validation coverage
 
-New `tests/test_gadi_local_admission_materializer.py` uses the real pinned Governance registry and real pinned StegOS InTr registry. It verifies:
+`tests/test_gadi_pending_governance_candidate_materializer.py` verifies:
 
-- local InTr + Governance ALLOW projects ADMITTED without execution authority;
-- DENY/FAIL-CLOSED projects DENIED rather than execution;
-- exact candidate request hash/reference binding;
-- non-PENDING replay rejection;
-- transport fields cannot be self-asserted in the Governance payload;
-- profile/operation drift fails closed;
-- TV/TVC/non-authority boundaries remain intact.
+- fresh bound imminent-harm observations can produce an intervention-eligible assessment;
+- authoritative simulation-only safe-state capability is selected in simulation mode;
+- the request remains exactly PENDING with no InTr reference;
+- the Governance candidate hash equals the canonical exact PENDING request hash;
+- material uncertainty blocks intervention materialization;
+- expired capabilities are rejected;
+- simulation-only capability cannot be promoted to production;
+- Governance policy mismatch fails closed;
+- incomplete resolved-facts objects are rejected;
+- observation/fact/admission/runtime/claim/execution authority remains uncreated.
 
-The dedicated `.github/workflows/gadi-contract-validation.yml` now explicitly triggers on, tests, and compiles the local admission materializer and both pinned contract snapshots.
+The dedicated GADI workflow explicitly tests and compiles the new materializer.
 
 ## Authentic evidence boundary
 
-This branch is implementation/validation only. It does not prove a current threat observation, current PENDING request, current resolved Governance facts, current InTr traversal on the sovereign resident, current ADMITTED artifact, runtime binding, native command, controlled effect, WorkerCoordinator claim/fence, resident consumption, reassessment/termination, reconstruction, or activation.
+All work in this handoff remains source/runtime-adapter evidence only. The following still require actual sovereign-runtime observation:
+
+```text
+CURRENT_GADI_THREAT_OBSERVATION_NOT_OBSERVED
+CURRENT_GADI_RESOLVED_GOVERNANCE_FACTS_NOT_OBSERVED
+CURRENT_GADI_PENDING_INTERVENTION_REQUEST_NOT_OBSERVED
+CURRENT_GADI_INTR_ADMISSION_NOT_OBSERVED
+CURRENT_GADI_RUNTIME_BINDING_NOT_OBSERVED
+CURRENT_GADI_NATIVE_COMMAND_NOT_OBSERVED
+CONTROLLED_PREAUTHORIZED_ACTUATOR_RESULT_NOT_OBSERVED
+CURRENT_GADI_WORKERCOORDINATOR_CLAIM_FENCE_NOT_OBSERVED
+CURRENT_GADI_RESIDENT_CONSUMPTION_NOT_OBSERVED
+```
+
+Source fixtures, CI, controlled simulation, and merged adapters do not satisfy those predicates.
 
 ## Immediate continuation
 
-1. Validate and merge this branch only on an exact fully green head.
-2. Reconcile the parent `.github` GADI handoff with StegOS PR #342 and this StegCore materializer after merge.
-3. On the actual sovereign runtime, provide current threat/request/Governance-fact inputs rather than source fixtures.
-4. Run the local admission materializer using the resident-local `STEGVERSE_STEGCORE_SOURCE_ROOT`; no network fetch is required.
-5. Stage the resulting projected request as the parent GADI InTr-admission source only when it is genuinely current.
-6. Combine with the independently observed runtime binding and merged StegOS plan/command materializers.
+1. Validate this branch on its exact head and merge only when every applicable GADI check is green.
+2. Reconcile the parent `.github` handoff with StegOS PR #344 plus this materializer after merge.
+3. When the authorized resident runtime is reachable, provide actual current threat observations and current resolved Governance facts; do not synthesize them from source fixtures.
+4. Run this materializer to emit the exact PENDING request + hash-bound Governance candidate.
+5. Run merged `materialize_gadi_local_admission.py` to obtain the current ADMITTED/DENIED projection through actual local InTr transport.
+6. Combine an ADMITTED request with the independently observed runtime binding and merged StegOS command CLI.
 7. Preserve parent readiness: no WorkerCoordinator claim until command, admission, runtime binding, and controlled-output observation are coherent.
 
 ## README impact
 
-No root README mutation is required. This is a task-specific runtime adapter over already documented Universal Governance Connector/InTr authority boundaries.
+No root README mutation is required. This is a task-specific local artifact adapter over already documented GADI reasoning and Universal Governance authority boundaries.
 
 ## Release rule
 
