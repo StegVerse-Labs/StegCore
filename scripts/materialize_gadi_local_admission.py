@@ -91,7 +91,7 @@ def materialize_local_admission(
     pending_request_payload: Mapping[str, Any],
     governance_payload: Mapping[str, Any],
     governance_registry: Mapping[str, Any],
-    intr_registry: Mapping[str, Any],
+    intr_registry_path: Path,
     recorded_at: str,
 ) -> dict[str, Any]:
     """Run exact local GADI request bytes through existing InTr + Governance planes."""
@@ -123,7 +123,9 @@ def materialize_local_admission(
     _require(isinstance(payload.get("intent_ref"), str) and bool(payload["intent_ref"]), "governance request intent_ref required")
     _require(isinstance(recorded_at, str) and bool(recorded_at.strip()), "recorded_at required")
 
-    connector = connector_from_registry(intr_registry, profile["interlock"]["intr_profile_ref"])
+    registry_path = intr_registry_path.expanduser().resolve()
+    _require(registry_path.is_file(), "local InTr registry path missing")
+    connector = connector_from_registry(registry_path, profile["interlock"]["intr_profile_ref"])
     operation_id = f"GADI-GOVERNANCE-{pending.request_id}"
     packet = connector.prepare(
         payload,
@@ -187,6 +189,7 @@ def materialize_local_admission(
             "terminal_receipt_hash": complete["terminal_receipt_hash"],
             "interlock_exchange_id": reference["exchange_id"],
             "ingress_receipt_hash": ingress_receipt["receipt_hash"],
+            "registry_sha256": _file_sha256(registry_path),
         },
         "resolved_governance_facts_created": False,
         "threat_observation_created": False,
@@ -215,7 +218,7 @@ def main() -> int:
         pending_request_payload=_load(pending_path),
         governance_payload=_load(governance_path),
         governance_registry=_load(GOVERNANCE_REGISTRY),
-        intr_registry=_load(INTR_REGISTRY),
+        intr_registry_path=INTR_REGISTRY,
         recorded_at=args.recorded_at,
     )
     result["pending_request_source_sha256"] = _file_sha256(pending_path)
