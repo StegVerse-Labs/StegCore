@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from datetime import datetime, timedelta, timezone
+import json
+from pathlib import Path
 
 import pytest
 
@@ -23,7 +24,13 @@ from stegcore.gadi_intr_admission import (
     project_governance_decision_to_gadi_admission,
     projection_receipt,
 )
-from stegcore.universal_governance_connector import GovernanceConnectorResult
+from stegcore.universal_governance_connector import (
+    GovernanceConnectorResult,
+    resolve_governance_connector_profile,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
+REGISTRY = ROOT / "contracts" / "universal_governance_connector_snapshot" / "universal-governance-connector-profiles.v1.json"
 
 
 def request() -> DefensiveInterventionRequest:
@@ -76,6 +83,22 @@ def result(req: DefensiveInterventionRequest, *, decision: str = "ALLOW") -> Gov
         authority_effect="NONE",
         receipt_hash="a" * 64,
     )
+
+
+def test_registry_resolves_narrow_gadi_profile_without_execution_authority():
+    registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    profile = resolve_governance_connector_profile(registry, GADI_PROFILE_ID)
+    assert profile["system"]["system_id"] == GADI_SYSTEM_ID
+    assert profile["system"]["boundary_id"] == GADI_BOUNDARY_ID
+    assert profile["interlock"]["intr_profile_ref"] == "governance-external-action"
+    assert profile["interlock"]["governed_transition_profile_ref"] == "gadi.defensive-transition.v1"
+    assert profile["runtime"]["execution_requires_separate_authority"] is True
+    operation = profile["operations"][0]
+    assert operation["operation_id"] == GADI_OPERATION_ID
+    assert operation["protected_consequence"] is True
+    assert operation["bypass_disposition"] == "FAIL_CLOSED"
+    assert all(value is False for key, value in profile["authority_boundaries"].items() if key.endswith("grants_execution_authority"))
+    assert profile["authority_boundaries"]["credential_authority"] == "TV/TVC"
 
 
 def test_allow_projects_only_admission_not_execution_authority():
