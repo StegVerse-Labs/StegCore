@@ -4,15 +4,22 @@ on:
   push:
     branches:
       - gadi-001-stegcore-threat-reasoning
+      - gadi-intr-admission-producer-001
     paths:
       - 'src/stegcore/gadi.py'
+      - 'src/stegcore/gadi_intr_admission.py'
       - 'tests/test_gadi.py'
+      - 'tests/test_gadi_intr_admission.py'
+      - 'contracts/universal_governance_connector_snapshot/**'
       - 'docs/GADI_STEGCORE_MIRROR_HANDOFF.md'
       - '.github/workflows/gadi-contract-validation.yml'
   pull_request:
     paths:
       - 'src/stegcore/gadi.py'
+      - 'src/stegcore/gadi_intr_admission.py'
       - 'tests/test_gadi.py'
+      - 'tests/test_gadi_intr_admission.py'
+      - 'contracts/universal_governance_connector_snapshot/**'
       - 'docs/GADI_STEGCORE_MIRROR_HANDOFF.md'
       - '.github/workflows/gadi-contract-validation.yml'
   workflow_dispatch:
@@ -31,7 +38,7 @@ jobs:
           python-version: '3.11'
       - name: Install StegCore
         run: python -m pip install -e . pytest
-      - name: Validate GADI reasoning contracts
-        run: python -m pytest -q tests/test_gadi.py
+      - name: Validate GADI reasoning and admission contracts
+        run: python -m pytest -q tests/test_gadi.py tests/test_gadi_intr_admission.py
       - name: Compile GADI implementation
-        run: python -m py_compile src/stegcore/gadi.py
+        run: python -m py_compile src/stegcore/gadi.py src/stegcore/gadi_intr_admission.py

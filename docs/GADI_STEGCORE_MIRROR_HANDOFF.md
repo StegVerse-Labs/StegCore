@@ -1,134 +1,113 @@
 # GADI StegCore Mirror Handoff
 
-Status: ACTIVE / STEGOS_CONTRACT_ALIGNED / SOURCE_VALIDATION_PASS
+Status: `ACTIVE / THREAT_REASONING_MERGED / GOVERNANCE_PROFILE_UPSTREAM_MERGED / GOVERNANCE_INTR_ADMISSION_PRODUCER_IN_REVALIDATION / RUNTIME_ADMISSION_UNOBSERVED`
 Repository: `StegVerse-Labs/StegCore`
 Canonical task: `GADI-001`
-Parent handoff: `StegVerse-Labs/.github/docs/GADI_MIRROR_HANDOFF.md`
+Parent handoff: `StegVerse-Labs/.github/docs/GADI_RESIDENT_EXECUTION_MIRROR_HANDOFF.md`
 COSV: `10100000100000`
-Branch: `gadi-001-stegcore-threat-reasoning`
-PR: `StegVerse-Labs/StegCore#192`
+Current branch: `gadi-intr-admission-producer-001`
+Current PR: `StegVerse-Labs/StegCore#202`
 
 ## Purpose
 
-Implement the StegCore reasoning surface for Governed Autonomous Defensive Intervention (GADI): consume `AUTONOMOUS_THREAT_OBSERVATION`, correlate evidence into a threat state, preserve uncertainty and semantic qualifiers, generate bounded `DEFENSIVE_INTERVENTION_REQUEST` candidates, compare candidate interventions using least-destructive-effective semantics, and hand candidates to the existing canonical StegGate/InTr admissibility path without creating a parallel authority.
+StegCore owns GADI threat reasoning plus governance evaluation/projection. It may correlate threat evidence, propose a bounded defensive intervention request, evaluate that candidate through the existing Universal Governance Connector, and project the resulting governance decision into the existing GADI `Admission` field. It does not transport packets, mint credentials, create runtime bindings, execute defensive effects, or become a parallel InTr/StegGate authority.
 
-## Preflight
+## Existing merged reasoning surface
 
-- Canonical GADI handoff resolved before mutation.
-- Existing StegCore authority boundary inspected: StegCore/StegGate remains the canonical commit-time admissibility runtime.
-- No GADI-specific StegCore handoff existed on `main`; creating this file was therefore the first mutation for this bounded owner.
-- README impact: **required** because GADI adds a new repository behavior surface (threat correlation and intervention candidate generation) even though it does not add execution or credential authority. README is updated in the same change set.
-- Existing authority boundaries remain unchanged: no credential minting, no durable receipt minting, no external execution, no parallel policy evaluator.
+`src/stegcore/gadi.py` remains the canonical GADI reasoning implementation for canonical StegOS threat-observation/capability/intervention-request contracts, freshness and subject binding, uncertainty and semantic-integrity preservation, deterministic threat correlation, least-destructive-effective capability selection, and PENDING intervention requests with `model_output_authority=NONE`.
 
-## Core invariant
+## Missing producer identified
 
-StegCore may derive a threat assessment and propose a defensive transition, but it does not grant authority to execute that transition. Every consequential action candidate must still be submitted to the canonical StegGate/InTr governance path and separately bind to an available pre-authorized capability.
+The parent resident trajectory requires a current canonical GADI intervention admission with an exact `intr_decision_ref`. Inspection established that:
 
-## Semantic-integrity defensive posture
+1. StegCore could emit only `PENDING` GADI intervention requests;
+2. StegOS correctly requires canonical InTr admission plus a concrete runtime binding before native command materialization;
+3. the existing Universal Governance Connector already returns hash-bound `ALLOW / DENY / FAIL-CLOSED` decisions while granting no execution authority;
+4. no GADI-specific Governance profile or decision-to-`Admission` projection existed.
 
-External AI observations can be dangerous even when downstream execution uses valid permissions if the originating meaning is materially distorted before governance. GADI therefore preserves semantic qualifiers as evidence rather than silently strengthening them.
+## Governance-owned profile — merged upstream
 
-Examples that must remain distinguishable:
+The first PR #202 exact head `787e4a1180dfccd31d00909a8991a6fcac24f8c2` passed local compile/connector tests but failed `Verify pinned Governance connector contract` with an exact snapshot blob mismatch. This was a correct custody failure: StegCore consumes a pinned Governance-owned contract and may not mutate that snapshot independently.
 
-- `may` must not silently become `is`;
-- suspicion must not silently become fact;
-- analysis must not silently become instruction;
-- recommendation must not silently become authorization;
-- bounded scope must not silently broaden;
-- inferred motive must not silently become asserted motive.
+The authoritative registry was therefore updated first in `StegVerse-Labs/Governance` PR #40. Exact head `8bcd3f6586872c3c73d49242c9ec682319cedd14` passed all four observed Governance validation/smoke checks and squash-merged as:
 
-The reasoning layer records semantic-integrity state as observation evidence. A semantic-integrity finding alone does not elevate the threat state and does not make an intervention eligible; it can only contribute observable evidence for correlation and later reconstruction.
+`2765854132872078bcd15a4432a65095831b432e`
 
-## Installed implementation
+The merged Governance registry preserves its existing profiles and adds:
 
-- `src/stegcore/gadi.py`
-  - canonical StegOS `stegos.autonomous_threat_observation.v1` input model;
-  - canonical StegOS `stegos.governed_intervention_capability.v1` capability model;
-  - canonical StegOS `stegos.defensive_intervention_request.v1` output model;
-  - typed GADI threat states;
-  - freshness-aware observation correlation;
-  - subject-binding checks;
-  - uncertainty preservation;
-  - semantic-integrity assessment;
-  - least-destructive-effective capability selection;
-  - PENDING InTr admission request generation;
-  - fail-closed behavior for expired, materially uncertain, unbound, or disproving evidence.
-- `tests/test_gadi.py`
-  - StegOS schema constant/authority-boundary assertions;
-  - qualifier preservation;
-  - material semantic drift detection;
-  - proof that semantic drift alone does not elevate threat state;
-  - expired observation rejection;
-  - uncertainty and disproving-evidence blocking;
-  - least-destructive effective capability selection;
-  - expired/wrong-mode capability exclusion;
-  - PENDING admission semantics and no model-output authority;
-  - timezone-aware deterministic correlation requirement.
-- `.github/workflows/gadi-contract-validation.yml`
-  - bounded Python 3.11 validation lane for the GADI source/tests;
-  - compile check plus `tests/test_gadi.py`;
-  - branch-native push trigger plus PR/manual validation entry points.
-- `README.md`
-  - documents GADI reasoning boundary and explicit non-authority semantics.
+```text
+profile_id = gadi.defensive-intervention.v1
+system_id = stegverse.gadi.defensive-intervention
+boundary_id = interlock:gadi.defensive-intervention
+intr_profile_ref = governance-external-action
+governed_transition_profile_ref = gadi.defensive-transition.v1
+carrier_profile_ref = heartbeat-derived-intr.v1
+operation_id = admit-defensive-intervention
+action_class = ADMIT_DEFENSIVE_INTERVENTION
+policy_ref = policy.gadi.defensive-intervention.v1
+protected_consequence = true
+bypass_disposition = FAIL_CLOSED
+execution_requires_separate_authority = true
+credential_authority = TV/TVC
+```
 
-## Contract alignment evidence
+All profile/Interlock/InTr/carrier execution-authority grants remain false.
 
-The implementation was reconciled against the current canonical StegOS schemas on 2026-09-08:
+## StegCore pinned snapshot repair
 
-- `StegVerse-Labs/StegOS/schemas/autonomous-threat-observation.v1.schema.json`
-- `StegVerse-Labs/StegOS/schemas/defensive-intervention-request.v1.schema.json`
-- `StegVerse-Labs/StegOS/schemas/governed-intervention-capability.v1.schema.json`
+PR #202 now refreshes the Governance snapshot from exact authoritative merge `2765854132872078bcd15a4432a65095831b432e` and exact registry blob:
 
-The first StegCore draft used local shorthand field shapes. That mismatch was identified before merge and replaced with models that preserve the canonical StegOS schema names, task/COSV constants, observation authority effect, TV/TVC capability authority boundary, PENDING InTr admission structure, stop/reassessment semantics, and model-output authority `NONE`.
+`16c459103b1dfd580fa5ac4c2ad519728a1f9f17`
 
-No runtime activation or external defensive effect is claimed by this source work.
+The snapshot manifest and `verify_universal_governance_connector_contract.py` are repinned to that Governance merge. Cross-repository byte-level custody remains enforced; the verifier was not weakened.
 
-## Acceptance criteria for this bounded owner
+## GADI admission projector
 
-1. A valid fresh threat observation can be correlated into a deterministic threat-state assessment. **PASS**
-2. Expired, materially uncertain, unbound, or disproving critical evidence cannot produce an intervention-eligible `IMMINENT_HARM` assessment. **PASS**
-3. Semantic qualifiers are preserved and material drift is surfaced as evidence without independently elevating threat state. **PASS**
-4. Candidate interventions are selected only from fresh, mode-eligible, target-scoped TV/TVC capabilities and choose the least-destructive candidate satisfying the effectiveness threshold. **PASS**
-5. Generated intervention requests match the canonical StegOS contract, begin with `PENDING` InTr admission, require reassessment/stop conditions, and preserve `model_output_authority: NONE`. **PASS**
-6. Tests demonstrate the above behavior. **PASS**
-7. README reflects the added behavior and authority boundary. **PASS**
+`src/stegcore/gadi_intr_admission.py` binds an already-produced `GovernanceConnectorResult` to the exact PENDING `DefensiveInterventionRequest` using profile/operation/system/boundary identity, exact candidate reference, canonical request SHA-256, `execution_authority_granted=false`, `credential_authority=TV/TVC`, `authority_effect=NONE`, and no continuity-authority minting.
 
-## Validation evidence
+Projection semantics:
 
-GitHub Actions run `34277838533` on branch commit `e113962c0016bb9f875b3574035f73c16f106bae` completed successfully:
+```text
+ALLOW       -> ADMITTED + intr://governance-decision/<receipt_hash>
+DENY        -> DENIED   + intr://governance-decision/<receipt_hash>
+FAIL-CLOSED -> DENIED   + intr://governance-decision/<receipt_hash>
+```
 
-- checkout: PASS
-- Python 3.11 setup: PASS
-- editable StegCore install: PASS
-- `python -m pytest -q tests/test_gadi.py`: PASS
-- `python -m py_compile src/stegcore/gadi.py`: PASS
-- overall job `validate-gadi-contracts`: SUCCESS
+Any binding or authority mismatch fails closed. Already-projected non-PENDING requests cannot be reprojected.
 
-This proves the bounded StegCore source/tests compile and pass their GADI contract assertions. It does **not** prove runtime InTr admission, TV/TVC runtime binding, external safe-state effect, adaptive reassessment, Continuity reconstruction, or GADI activation.
+The projection receipt explicitly records:
 
-## Current bounded-owner disposition
+```text
+runtime_binding_minted = false
+execution_authority_granted = false
+credential_authority = TV/TVC
+authority_effect = NONE_ADMISSION_PROJECTION_ONLY
+```
 
-StegCore source implementation for the current GADI reasoning scope is validation-complete on PR #192 and mergeable according to the current PR state. Merge/release is still distinct from runtime activation and cross-repository GADI completion.
+## Runtime-binding boundary
 
-## Remaining ecosystem work after StegCore
+This repair intentionally does not create the GADI `runtime_binding_ref`. The parent runtime profile `runtime-node:gadi-resident-execution-001` is a profile declaration only and does not prove a concrete current resident runtime instance. The native StegOS command must continue to require an independently observed concrete runtime binding.
 
-- StegOS contract validation receipt / existing repository validation path -> `StegVerse-Labs/StegOS`
-- Governed Intervention Capability Registry runtime data and TV/TVC bindings -> `StegVerse-Labs/StegOS`, `StegVerse-Labs/TV`, `StegVerse-Labs/TVC`
-- Defensive capability custody/runtime bindings -> `StegVerse-Labs/TV`, `StegVerse-Labs/TVC`
-- GADI resident executor/reassessment loop -> `StegVerse-002/micro-node-runtime`
-- Intervention receipt/reconstruction package -> `StegVerse-Labs/Continuity`
-- External-threat/HIL readiness/proof surface -> `StegVerse-Labs/Site`
-- Cross-repo closed-loop simulation and activation evidence -> canonical runtime coordination
+## Validation coverage
 
-## Release propagation
+`tests/test_gadi_intr_admission.py` verifies authoritative profile resolution, reuse of `governance-external-action`, separate consequence authorization, ALLOW/ADMITTED and DENY/DENIED projection, exact request-hash binding, execution-authority drift rejection, and non-PENDING replay rejection.
 
-When GADI reaches release/tag readiness, verify pertinent semantics are propagated/applied to:
+## Evidence boundary
 
-- `StegVerse-Labs/Site`
-- `GCAT-BCAT-Engine/Publisher`
-- `admissibility-wiki`
-- `stegguardian-wiki`
+PR #202 and Governance PR #40 are source/contract evidence only. They do not prove a current governance traversal, current `ALLOW`, current GADI admission artifact, concrete runtime binding, native StegOS command, controlled actuator effect, WorkerCoordinator claim/fence, resident consumption, or activation.
 
-## Continuation
+## Immediate continuation
 
-Resolve this handoff, the parent `.github` GADI handoff, PR #192, current workflow/check state, canonical StegOS schemas, and existing StegCore authority contracts before any further mutation.
+1. Revalidate PR #202 on the new exact head after the authoritative Governance repin and merge only if all applicable checks pass.
+2. Reconcile the parent `.github` GADI handoff with Governance PR #40 and StegCore PR #202.
+3. Inspect the existing resident/runtime-node surfaces for a concrete current GADI runtime-instance binding producer.
+4. Only after an authentic governance decision plus concrete runtime binding exist may StegOS materialize the native GADI command.
+5. Preserve the parent readiness gate: no targeted WorkerCoordinator claim until command, InTr admission, runtime binding, and controlled-output evidence are locally coherent.
+
+## README impact
+
+Existing README content already documents GADI reasoning and Universal Governance Connector authority separation. This remains an internal specialization of those existing boundaries; no README mutation is required.
+
+## Release rule
+
+This admission-producer repair is not GADI activation or release evidence. Release/tag propagation remains deferred until authentic resident execution, closed-loop reassessment/termination, Continuity/Master Records reconstruction, and parent activation predicates are satisfied.
