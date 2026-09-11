@@ -1,43 +1,58 @@
 # GADI StegCore Mirror Handoff
 
-Status: `ACTIVE / THREAT_REASONING_MERGED / GOVERNANCE_PROFILE_MERGED / GOVERNANCE_INTR_ADMISSION_PRODUCER_MERGED / LOCAL_ADMISSION_MATERIALIZER_MERGED / PENDING_GOVERNANCE_CANDIDATE_MATERIALIZER_MERGED / EXTERNAL_EVIDENCE_FACT_PROJECTOR_IN_VALIDATION / AUTHENTIC_RUNTIME_ADMISSION_UNOBSERVED`
+Status: `ACTIVE / THREAT_REASONING_MERGED / GOVERNANCE_PROFILE_MERGED / GOVERNANCE_INTR_ADMISSION_PRODUCER_MERGED / LOCAL_ADMISSION_MATERIALIZER_MERGED / PENDING_GOVERNANCE_CANDIDATE_MATERIALIZER_MERGED / EXTERNAL_EVIDENCE_FACT_PROJECTOR_MERGED / VERIFIED_EXTERNAL_EVIDENCE_BINDING_IN_VALIDATION / AUTHENTIC_RUNTIME_ADMISSION_UNOBSERVED`
 Repository: `StegVerse-Labs/StegCore`
 Canonical task: `GADI-001`
 Parent handoff: `StegVerse-Labs/.github/docs/GADI_RESIDENT_EXECUTION_MIRROR_HANDOFF.md`
 COSV: `10100000100000`
-Current branch: `gadi-external-evidence-facts-projector-001`
+Current branch: `gadi-verified-external-evidence-binding-001`
 
 ## Purpose
 
-StegCore owns GADI threat reasoning plus Governance evaluation/projection. It may correlate already-observed threat evidence, select the least-destructive eligible pre-authorized capability, emit a bounded PENDING defensive-intervention request, bind that exact request into the Governance candidate, evaluate it through the existing Universal Governance Connector/InTr path, and project the resulting Governance decision into the existing GADI `Admission` field. It does not observe threats, mint external-evidence envelopes, invent Governance facts, mint credentials, create runtime bindings, claim/fence work, execute defensive effects, or become a parallel InTr/StegGate authority.
+StegCore owns GADI threat reasoning plus Governance evaluation/projection. It may correlate already-observed threat evidence, select the least-destructive eligible pre-authorized capability, emit a bounded PENDING defensive-intervention request, bind that exact request into the Governance candidate, evaluate it through the existing Universal Governance Connector/InTr path, and project the resulting Governance decision into the existing GADI `Admission` field. It does not observe threats, mint or verify external-evidence envelopes, mint credentials, create runtime bindings, claim/fence work, execute defensive effects, or become a parallel InTr/StegGate authority.
 
 ## Merged chain
 
 - Governance PR #40 -> `2765854132872078bcd15a4432a65095831b432e`: authoritative `gadi.defensive-intervention.v1` profile.
 - StegCore PR #202 -> `282f30e9e46efc3a8d0d867f48e08c3aa6534e22`: Governance-decision -> GADI Admission projector.
 - StegCore PR #204 -> `44f4240c72ae1e64cefd829e469e64a40b5034a3`: local GADI InTr/Governance admission materializer.
-- StegCore PR #205 -> `43f61a9feda8944a5551cfbc39b302f8c65ef69c`: PENDING intervention-request + hash-bound Governance-candidate materializer over canonical GADI reasoning. Exact head `dc9aa47feeded541fae0311581b4b7dc7ea193ed` passed both observed GADI workflow instances before merge.
+- StegCore PR #205 -> `43f61a9feda8944a5551cfbc39b302f8c65ef69c`: PENDING request + hash-bound Governance candidate materializer.
+- StegCore PR #206 -> `ed94d900c58c59e316a1591d27404cf372edaeb1`: external-evidence -> exact three-layer Governance facts projector. Exact head `b73a91bcb1a4eabe1a51fc898f33d3ddd5cbe898` passed both observed GADI workflow instances before merge.
 
-## External evidence -> Governance facts audit
+## Verified external-evidence binding gap
 
-After #205, the only remaining hand-authored pre-admission input was `resolved_governance_facts`.
+Post-#206 audit found that `src/stegcore/external_evidence.py` structurally consumes envelope fields including `integrity.chain_valid`, `authorization.provider_authorized`, `authorization.scope_match`, and `freshness.is_current`. No repository-surfaced cryptographic/provider verifier was found. Governance's provider contract explicitly treats cryptographic validity and provider authorization as facts distinct from the evidence payload itself.
 
-Repository audit found:
+Therefore a GADI facts projector must not accept the envelope's self-declared verification posture as sufficient evidence.
 
-- `external_governance_adapter.py` forwards already-resolved facts but does not derive them;
-- `steggate.py` evaluates an already-populated `AdmissibilityRequest` but does not collect facts;
-- `external_evidence.py` already provides the generic `request_from_external_evidence()` path that maps a current authorized Governance external-evidence envelope into the canonical three-layer request without granting provider execution authority;
-- no repository-surfaced resident producer of a current external-evidence envelope was found. Examples/validators are source fixtures only.
+## Independent verification binding — in validation
 
-Therefore the safe remaining adapter is serialization/projection from an already-authentic envelope, not a new evaluator or synthetic fact generator.
+`scripts/materialize_gadi_governance_facts_from_external_evidence.py` now requires two independent local artifacts:
 
-## External evidence facts projector — in validation
+1. the external-evidence envelope;
+2. a separate `stegcore.gadi-verified-external-evidence-binding/v1` artifact.
 
-New entrypoint:
+The binding must match the exact canonical envelope hash and the envelope's provider/key/content-digest/authorization identity, and must explicitly establish:
 
-`scripts/materialize_gadi_governance_facts_from_external_evidence.py`
+```text
+signature_verified = true
+chain_verified = true
+provider_authorized = true
+scope_match = true
+freshness_verified = true
+verification_receipt_ref = <non-empty>
+verifier_authority_ref = <non-empty>
+execution_authority_granted = false
+authority_effect = NONE_EVIDENCE_VERIFICATION_ONLY
+```
 
-It accepts only an already-local Governance external-evidence envelope and requires its commitment candidate to match the exact GADI Governance scope:
+The projector also requires the envelope's own posture to remain consistent with those independently verified facts. A binding mismatch, missing verification, authority drift, or stale/unauthorized envelope fails closed before Governance facts are emitted.
+
+The projector does not create the binding or perform cryptographic verification. It only requires and consumes the already-verified artifact, analogous to the existing separation between Governance payloads and `VerifiedTransportBindings` for InTr.
+
+## GADI scope retained
+
+The exact envelope candidate must still match:
 
 ```text
 action = ADMIT_DEFENSIVE_INTERVENTION
@@ -47,16 +62,7 @@ policy_ref = policy.gadi.defensive-intervention.v1
 evidence_provider_execution_authority = false
 ```
 
-The script reuses existing:
-
-- `evaluate_external_evidence()` for fail-closed envelope/provider/freshness validation;
-- `request_from_external_evidence()` for canonical three-layer fact derivation.
-
-Envelope-level failures such as incomplete evidence, stale evidence, unauthorized provider, or provider execution-authority claims are rejected before projection.
-
-A valid envelope may still project facts that later produce a DENY/FAIL-CLOSED Governance decision (for example reference-state drift). The projector preserves those facts rather than converting them into favorable observations.
-
-Output contains exactly:
+Only then may the existing external-evidence mapping project:
 
 ```text
 judgment_conditions
@@ -64,42 +70,28 @@ signal_admission
 execution_boundary
 ```
 
-plus a non-authorizing projection receipt. It explicitly records:
-
-```text
-external_evidence_envelope_created = false
-resolved_governance_facts_invented = false
-intr_transport_performed = false
-gadi_admission_created = false
-runtime_binding_created = false
-credential_minted = false
-claim_or_fence_minted = false
-execution_authority_granted = false
-network_fetch_performed = false
-authority_effect = NONE_FACT_PROJECTION_ONLY
-```
-
-CLI mode hashes the exact source envelope bytes and atomically writes the facts artifact and receipt.
+Unfavorable but valid facts remain preserved and may later yield DENY/FAIL-CLOSED.
 
 ## Validation coverage
 
-`tests/test_gadi_governance_facts_from_external_evidence.py` verifies:
+`tests/test_gadi_governance_facts_from_external_evidence.py` now verifies:
 
-- valid/current/authorized GADI-scoped external evidence projects the exact three-layer facts;
-- stale envelopes fail closed;
-- unauthorized providers fail closed;
-- evidence providers cannot claim execution authority;
-- wrong GADI policy or target fails closed;
-- valid evidence with reference-state drift can project denial facts without granting authority.
-
-The dedicated GADI workflow now tests and compiles the projector and includes the pinned Governance external-evidence snapshot in its trigger surface.
+- envelope self-assertion alone is insufficient;
+- exact envelope-hash binding is required;
+- provider ID/public-key mismatch fails closed;
+- signature, chain, provider authorization, scope, and freshness must each be independently verified;
+- envelope and verified-binding posture must agree;
+- neither envelope nor verification binding may grant execution authority;
+- wrong GADI target/policy fails closed;
+- valid reference-state drift still projects unfavorable facts without authority.
 
 ## Authentic evidence boundary
 
-The source/runtime-adapter chain no longer requires hand-authored Governance facts. The remaining authentic input boundary is the runtime evidence itself:
+The source/runtime-adapter chain now requires an independent verified-evidence binding rather than trusting an envelope's own claims. The following remain unobserved on the actual sovereign resident runtime:
 
 ```text
 CURRENT_GADI_EXTERNAL_EVIDENCE_ENVELOPE_NOT_OBSERVED
+CURRENT_GADI_VERIFIED_EXTERNAL_EVIDENCE_BINDING_NOT_OBSERVED
 CURRENT_GADI_THREAT_OBSERVATION_NOT_OBSERVED
 CURRENT_GADI_RUNTIME_BINDING_NOT_OBSERVED
 CURRENT_GADI_PENDING_INTERVENTION_REQUEST_NOT_OBSERVED
@@ -110,23 +102,17 @@ CURRENT_GADI_WORKERCOORDINATOR_CLAIM_FENCE_NOT_OBSERVED
 CURRENT_GADI_RESIDENT_CONSUMPTION_NOT_OBSERVED
 ```
 
-Source fixtures, examples, CI, and controlled simulation do not satisfy those predicates.
+Source fixtures, CI, old host self-attest receipts, and controlled simulation do not satisfy those predicates. The retained host self-attest receipt lacks the provider key/signature/chain/freshness/subject/candidate primitives required by this verification boundary.
 
 ## Immediate continuation
 
-1. Validate this projector on the exact branch head and merge only if all applicable GADI checks pass.
-2. Reconcile the parent `.github` handoff after merge.
-3. When an authorized sovereign resident is reachable, require a current runtime-produced Governance external-evidence envelope rather than source fixtures.
-4. Project that exact envelope to three-layer Governance facts with this adapter.
-5. Feed current threat observations + capability evidence + projected facts through merged PR #205 to create the PENDING request/Governance candidate.
-6. Run merged PR #204 for actual local InTr transport + Governance admission.
-7. Combine an ADMITTED request with the independently observed runtime binding and merged StegOS command CLI.
-8. Preserve parent readiness: no WorkerCoordinator claim until command, admission, runtime binding, and controlled-output observation are coherent.
-
-## README impact
-
-No root README mutation is required. This is a task-specific adapter over the existing Governance external-evidence interoperability and GADI reasoning surfaces.
+1. Validate and merge this independent-binding hardening only on an exact fully green head.
+2. Reconcile the parent `.github` GADI handoff after merge.
+3. Audit existing sovereign/runtime attestation services for a real provider verifier capable of producing the binding; do not fabricate a verifier artifact from source fixtures.
+4. When the authorized resident is reachable, require both the current GADI-scoped envelope and independently verified binding.
+5. Project exact facts, then use merged #205 -> #204 -> StegOS command path.
+6. Preserve parent readiness: no WorkerCoordinator claim until command, admission, runtime binding, and controlled-output observation are coherent.
 
 ## Release rule
 
-This projector is not GADI activation or release evidence. Release remains deferred until authentic resident execution, reassessment/termination, exact reconstruction, and parent activation predicates are observed.
+This hardening is not GADI activation or release evidence. Release remains deferred until authentic resident execution, reassessment/termination, exact reconstruction, and parent activation predicates are observed.

@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-"""Project exact GADI Governance facts from an already-current external-evidence envelope.
+"""Project exact GADI Governance facts from verified external evidence.
 
-This adapter reuses the existing Governance external-evidence interoperability surface.
-It does not create or sign an evidence envelope, invent facts, perform InTr transport,
-make a GADI admission decision, mint credentials, create a runtime binding, claim/fence
-work, execute an actuator, or grant execution authority.
+The external-evidence envelope remains evidence-only. This adapter requires a
+separate verification binding so the envelope cannot self-assert signer validity,
+chain validity, provider authorization, scope, or freshness. It does not create or
+sign evidence, perform verification, perform InTr transport, make admission or
+execution decisions, mint credentials, create runtime bindings, claim/fence work,
+execute an actuator, or grant execution authority.
 """
 
 import argparse
@@ -17,7 +19,8 @@ from typing import Any, Mapping
 
 from stegcore.external_evidence import evaluate_external_evidence, request_from_external_evidence
 
-OUTPUT_SCHEMA = "stegcore.gadi-governance-facts-from-external-evidence/v1"
+OUTPUT_SCHEMA = "stegcore.gadi-governance-facts-from-external-evidence/v2"
+VERIFIED_BINDING_SCHEMA = "stegcore.gadi-verified-external-evidence-binding/v1"
 GADI_ACTION = "ADMIT_DEFENSIVE_INTERVENTION"
 GADI_TARGET = "stegverse.gadi.defensive-intervention"
 GADI_SCOPE = "operation:admit-defensive-intervention"
@@ -55,8 +58,60 @@ def _sha(path: Path) -> str:
     return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def resolved_facts_from_external_evidence(envelope: Mapping[str, Any]) -> dict[str, Any]:
-    """Return canonical resolved_facts only from an envelope accepted by the existing adapter."""
+def canonical_envelope_hash(envelope: Mapping[str, Any]) -> str:
+    raw = json.dumps(
+        envelope,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+        default=str,
+    ).encode("utf-8")
+    return "sha256:" + hashlib.sha256(raw).hexdigest()
+
+
+def _verify_independent_binding(envelope: Mapping[str, Any], binding: Mapping[str, Any]) -> None:
+    _require(binding.get("schema") == VERIFIED_BINDING_SCHEMA, "verified evidence binding schema mismatch")
+    _require(binding.get("task_id") == "GADI-001", "verified evidence binding task mismatch")
+    _require(binding.get("envelope_hash") == canonical_envelope_hash(envelope), "verified evidence binding envelope hash mismatch")
+
+    provider = envelope.get("provider")
+    integrity = envelope.get("integrity")
+    authorization = envelope.get("authorization")
+    freshness = envelope.get("freshness")
+    _require(isinstance(provider, Mapping), "external evidence provider required")
+    _require(isinstance(integrity, Mapping), "external evidence integrity required")
+    _require(isinstance(authorization, Mapping), "external evidence authorization required")
+    _require(isinstance(freshness, Mapping), "external evidence freshness required")
+
+    _require(binding.get("provider_id") == provider.get("provider_id"), "verified evidence provider mismatch")
+    _require(binding.get("public_key_ref") == provider.get("public_key_ref"), "verified evidence public key mismatch")
+    _require(binding.get("content_digest") == integrity.get("content_digest"), "verified evidence content digest mismatch")
+    _require(binding.get("authorization_ref") == authorization.get("authorization_ref"), "verified evidence authorization reference mismatch")
+    _require(binding.get("signature_verified") is True, "external evidence signature not independently verified")
+    _require(binding.get("chain_verified") is True, "external evidence chain not independently verified")
+    _require(binding.get("provider_authorized") is True, "external evidence provider not independently authorized")
+    _require(binding.get("scope_match") is True, "external evidence scope not independently verified")
+    _require(binding.get("freshness_verified") is True, "external evidence freshness not independently verified")
+    _require(_nonempty(binding.get("verification_receipt_ref")), "verified evidence receipt reference missing")
+    _require(_nonempty(binding.get("verifier_authority_ref")), "verified evidence authority reference missing")
+    _require(binding.get("execution_authority_granted") is False, "verified evidence binding may not grant execution authority")
+    _require(binding.get("authority_effect") == "NONE_EVIDENCE_VERIFICATION_ONLY", "verified evidence binding authority drift")
+
+    # The envelope must remain consistent with the independently verified posture.
+    _require(integrity.get("chain_valid") is True, "external evidence envelope chain posture mismatch")
+    _require(authorization.get("provider_authorized") is True, "external evidence envelope provider posture mismatch")
+    _require(authorization.get("scope_match") is True, "external evidence envelope scope posture mismatch")
+    _require(freshness.get("is_current") is True, "external evidence envelope freshness posture mismatch")
+
+
+def resolved_facts_from_external_evidence(
+    envelope: Mapping[str, Any],
+    verified_binding: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Return canonical resolved_facts only from independently verified evidence."""
+    _verify_independent_binding(envelope, verified_binding)
+
     candidate = envelope.get("commitment_candidate")
     _require(isinstance(candidate, Mapping), "external evidence commitment_candidate required")
     _require(candidate.get("action") == GADI_ACTION, "external evidence GADI action mismatch")
@@ -110,12 +165,17 @@ def resolved_facts_from_external_evidence(envelope: Mapping[str, Any]) -> dict[s
     return {
         "schema": OUTPUT_SCHEMA,
         "task_id": "GADI-001",
-        "state": "RESOLVED_GOVERNANCE_FACTS_PROJECTED",
+        "state": "RESOLVED_GOVERNANCE_FACTS_PROJECTED_FROM_VERIFIED_EVIDENCE",
         "resolved_governance_facts": facts,
         "external_evidence_decision": result.decision,
         "external_evidence_reason_code": result.reason_code,
         "external_evidence_receipt": dict(result.receipt),
+        "verified_evidence_binding_ref": verified_binding.get("verification_receipt_ref"),
+        "verified_evidence_authority_ref": verified_binding.get("verifier_authority_ref"),
+        "verified_evidence_envelope_hash": verified_binding.get("envelope_hash"),
         "external_evidence_envelope_created": False,
+        "external_evidence_verified_by_projector": False,
+        "verified_binding_created": False,
         "resolved_governance_facts_invented": False,
         "intr_transport_performed": False,
         "gadi_admission_created": False,
@@ -131,13 +191,18 @@ def resolved_facts_from_external_evidence(envelope: Mapping[str, Any]) -> dict[s
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--external-evidence-envelope", type=Path, required=True)
+    parser.add_argument("--verified-evidence-binding", type=Path, required=True)
     parser.add_argument("--facts-output", type=Path, required=True)
     parser.add_argument("--receipt-output", type=Path, required=True)
     args = parser.parse_args()
 
     envelope_path = args.external_evidence_envelope.expanduser().resolve()
-    result = resolved_facts_from_external_evidence(_load(envelope_path))
+    binding_path = args.verified_evidence_binding.expanduser().resolve()
+    envelope = _load(envelope_path)
+    binding = _load(binding_path)
+    result = resolved_facts_from_external_evidence(envelope, binding)
     result["external_evidence_source_sha256"] = _sha(envelope_path)
+    result["verified_evidence_binding_source_sha256"] = _sha(binding_path)
     _write(args.facts_output, result["resolved_governance_facts"])
     _write(args.receipt_output, result)
     print(json.dumps(result, sort_keys=True, default=str))
