@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy
 import json
 from pathlib import Path
 
@@ -91,21 +90,17 @@ def governance_payload(request: DefensiveInterventionRequest, *, allow: bool = T
     }
 
 
-def registries() -> tuple[dict, dict]:
-    return (
-        json.loads(Path(GOVERNANCE_REGISTRY).read_text(encoding="utf-8")),
-        json.loads(Path(INTR_REGISTRY).read_text(encoding="utf-8")),
-    )
+def governance_registry() -> dict:
+    return json.loads(Path(GOVERNANCE_REGISTRY).read_text(encoding="utf-8"))
 
 
 def materialize(payload=None, *, allow=True):
     request = pending_request()
-    gov, intr = registries()
     return materialize_local_admission(
         pending_request_payload=request.model_dump(mode="json"),
         governance_payload=governance_payload(request, allow=allow) if payload is None else payload,
-        governance_registry=gov,
-        intr_registry=intr,
+        governance_registry=governance_registry(),
+        intr_registry_path=INTR_REGISTRY,
         recorded_at="2026-09-11T15:05:00Z",
     )
 
@@ -119,6 +114,7 @@ def test_local_intr_governance_allow_projects_admitted_without_execution_authori
     assert result["governance_decision"]["execution_authority_granted"] is False
     assert result["projection_receipt"]["execution_authority_granted"] is False
     assert result["intr_transport"]["profile_id"] == "governance-external-action"
+    assert result["intr_transport"]["registry_sha256"].startswith("sha256:")
     assert result["resolved_governance_facts_created"] is False
     assert result["threat_observation_created"] is False
     assert result["runtime_binding_created"] is False
@@ -158,13 +154,12 @@ def test_non_pending_request_is_rejected_before_transport():
     request = pending_request().model_copy(update={
         "admission": Admission(state="ADMITTED", intr_decision_ref="intr://existing"),
     })
-    gov, intr = registries()
     with pytest.raises(GADILocalAdmissionError, match="requires PENDING"):
         materialize_local_admission(
             pending_request_payload=request.model_dump(mode="json"),
             governance_payload=governance_payload(pending_request()),
-            governance_registry=gov,
-            intr_registry=intr,
+            governance_registry=governance_registry(),
+            intr_registry_path=INTR_REGISTRY,
             recorded_at="2026-09-11T15:05:00Z",
         )
 
@@ -173,13 +168,12 @@ def test_governance_payload_cannot_self_assert_transport_fields():
     request = pending_request()
     payload = governance_payload(request)
     payload["intr_packet_id"] = "forged"
-    gov, intr = registries()
     with pytest.raises(ValueError, match="request_field_set_invalid"):
         materialize_local_admission(
             pending_request_payload=request.model_dump(mode="json"),
             governance_payload=payload,
-            governance_registry=gov,
-            intr_registry=intr,
+            governance_registry=governance_registry(),
+            intr_registry_path=INTR_REGISTRY,
             recorded_at="2026-09-11T15:05:00Z",
         )
 
