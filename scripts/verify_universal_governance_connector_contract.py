@@ -18,6 +18,7 @@ from stegcore.universal_governance_connector import (
 
 ROOT=Path(__file__).resolve().parents[1]
 SNAP=ROOT/"contracts/universal_governance_connector_snapshot"
+GOVERNANCE_SOURCE_COMMIT="2765854132872078bcd15a4432a65095831b432e"
 
 
 def git_blob_sha(raw: bytes) -> str:
@@ -41,7 +42,7 @@ def transport_bindings(profile):
 def main() -> int:
     try:
         manifest=load(SNAP/"manifest.json")
-        if manifest["governance_source_commit"] != "3941c8b8596964240ac18dbe07cdb1c9a64f27c9":
+        if manifest["governance_source_commit"] != GOVERNANCE_SOURCE_COMMIT:
             raise ValueError("unexpected Governance source commit")
         for entry in manifest["source_files"]:
             path=ROOT/entry["snapshot_path"]
@@ -95,7 +96,7 @@ def main() -> int:
         print(f"UNIVERSAL_GOVERNANCE_CONNECTOR_CROSS_REPO: FAIL: {exc}")
         return 1
     print("UNIVERSAL_GOVERNANCE_CONNECTOR_CROSS_REPO: PASS")
-    print("governance_commit=3941c8b8596964240ac18dbe07cdb1c9a64f27c9")
+    print(f"governance_commit={GOVERNANCE_SOURCE_COMMIT}")
     print("registry_resolution=PASS")
     print("candidate_hash_binding=PASS")
     print("positive=SERIALIZED_REQUEST_ALLOW_NON_AUTHORIZING")
