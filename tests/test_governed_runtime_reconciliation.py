@@ -40,13 +40,22 @@ def base_binding():
     )
 
 
-def adapter(kind="api", request=None, supplied=None, admitted=None):
+def authority():
+    return {
+        "status": "approved",
+        "basis_invalidated_by_action": False,
+        "authority_ref": "authority-001",
+    }
+
+
+def adapter(kind="api", request=None, supplied=None, admitted=None, authority_state=None):
     admitted = admitted or base_binding()
     return GovernedAdapterRequest(
         adapter_kind=kind,
         decision_request=request or base_request(),
         binding=supplied or admitted,
         admitted_binding=admitted,
+        authority_resolution=authority() if authority_state is None else authority_state,
     )
 
 
@@ -59,6 +68,15 @@ def test_all_supported_entry_kinds_have_identical_allow_result():
         assert result.decision_state.commit_state == "COMMITTED"
         assert result.decision_state.previous_receipt_hash == "receipt-hash-000"
         assert calls == [kind]
+
+
+def test_missing_authority_never_reconciles_as_committed_allow():
+    calls = []
+    result = execute_adapter(adapter(authority_state={}), lambda: calls.append("called"))
+    assert result.status == "refused"
+    assert result.decision_state.outcome == "DENY"
+    assert result.decision_state.commit_state == "NOT_COMMITTED"
+    assert calls == []
 
 
 def test_missing_prior_pointer_fails_closed():
