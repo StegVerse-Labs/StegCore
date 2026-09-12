@@ -33,6 +33,14 @@ def allow_surface():
     }
 
 
+def authority():
+    return {
+        "status": "approved",
+        "basis_invalidated_by_action": False,
+        "authority_ref": "authority-1",
+    }
+
+
 def test_allow_executes_once():
     calls = []
 
@@ -44,12 +52,38 @@ def test_allow_executes_once():
         request(),
         executor,
         capability_surface=allow_surface(),
+        authority_resolution=authority(),
     )
 
     assert result.status == "executed"
     assert calls == ["called"]
     assert result.coherence_receipt["decision"] == "ALLOW"
     assert result.coherence_receipt["execution_status"] == "executed"
+    assert result.coherence_receipt["commit_state"]["authority_resolution"]["authority_ref"] == "authority-1"
+    assert result.coherence_receipt["commit_state"]["request"]["intent"]["target"] == "demo_target"
+    assert result.coherence_receipt["evaluation_time"] == result.observed_at
+    assert result.coherence_receipt["commit_state_hash"] == result.pre_state_hash
+
+
+def test_missing_authority_fails_closed_before_execution():
+    called = False
+
+    def executor():
+        nonlocal called
+        called = True
+
+    result = governed_execute(
+        request(),
+        executor,
+        capability_surface=allow_surface(),
+    )
+
+    assert result.status == "refused"
+    assert called is False
+    assert result.coherence_receipt["decision"] == "DENY"
+    assert result.coherence_receipt["authority_resolution"]["status"] == "missing"
+    assert result.coherence_receipt["commit_state"]["authority_resolution"]["status"] == "missing"
+    assert result.coherence_receipt["coherence_checks"]["authority_preserved"] is False
 
 
 def test_coherence_deny_never_invokes_executor():
@@ -68,6 +102,7 @@ def test_coherence_deny_never_invokes_executor():
             "execution_mode": "auto",
             "requires_governed_commit": True,
         },
+        authority_resolution=authority(),
     )
 
     assert result.status == "refused"
@@ -85,7 +120,12 @@ def test_admissibility_deny_never_reaches_coherence_or_executor():
         nonlocal called
         called = True
 
-    result = governed_execute(req, executor, capability_surface=allow_surface())
+    result = governed_execute(
+        req,
+        executor,
+        capability_surface=allow_surface(),
+        authority_resolution=authority(),
+    )
 
     assert result.status == "refused"
     assert result.decision.decision == "deny"
@@ -123,6 +163,7 @@ def test_executor_failure_is_observed_and_receipted():
         request(),
         executor,
         capability_surface=allow_surface(),
+        authority_resolution=authority(),
     )
 
     assert result.status == "failed"
@@ -136,6 +177,7 @@ def test_previous_receipt_hash_is_bound():
         request(),
         lambda: "ok",
         capability_surface=allow_surface(),
+        authority_resolution=authority(),
         previous_receipt_hash="prev-123",
     )
 
