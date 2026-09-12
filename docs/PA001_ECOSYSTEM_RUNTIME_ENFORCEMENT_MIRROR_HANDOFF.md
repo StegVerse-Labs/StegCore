@@ -12,176 +12,147 @@ registry: StegVerse-Labs/.github/control/worker-registry.d/pa001-ecosystem-runti
 registry_commit: a6c35cf87329cb4c444cc55266b3c5a8782daec8
 registry_state: HANDOFF_READY
 state: ACTIVE
-runtime_claim: SOURCE_PRESENT_STATE_ENFORCEMENT_INSTALLED_CURRENT_HEAD_VALIDATION_RUNNING
+runtime_claim: SOURCE_PRESENT_STATE_ENFORCEMENT_VALIDATED_RESIDENT_PROOF_PENDING
 release_claim: NOT_YET_PROVEN
 ```
 
 ## Goal
 
-Convert the already implemented and validated PA-001 permission/admissibility invariant into ecosystem-wide runtime enforcement without creating a second governance authority or conflating documentation/publication with execution authority.
-
-## Existing truth
-
-The canonical PA-001 handoff remains `docs/PERMISSION_ADMISSIBILITY_MIRROR_HANDOFF.md`. It proves the semantic contract, deterministic validator, tests, hosted CI evidence, and StegCore semantic integration. It explicitly does not prove resident commit-path enforcement or runtime activation.
+Convert the validated PA-001 permission/admissibility invariant into ecosystem-wide runtime enforcement without creating a second governance authority or conflating publication, documentation, observation, credential custody, or historical approval with execution authority.
 
 ## Architecture determination
 
-No architectural incompatibility has been found that prevents ecosystem-wide enforcement. Existing StegCore already has the required composition points: canonical admissibility, commit coherence, governed runtime wrappers, StegGate execution composition, adapter conformance, and reconstructable receipt chaining. Existing GTG/RTG/TT doctrine already requires proposal-time and commit-time state to remain distinguishable.
+No replacement-architecture blocker was found. Existing StegCore already owns canonical admissibility, commit coherence, governed runtime wrappers, StegGate execution composition, adapter conformance, and reconstructable receipt chaining. Existing GTG/RTG/TT doctrine already distinguishes proposal-time state from commit-time state.
 
-The conversion is therefore an integration/enforcement problem, not a replacement-architecture problem.
+The conversion is an enforcement/integration task. Two concrete fail-open/incomplete-state defects were found and corrected at source:
 
-Two fail-open/incomplete-state defects were confirmed in the first pass and corrected at source:
+1. `GovernedRuntime.evaluate_and_execute()` previously synthesized approved authority when callers omitted `authority_resolution`.
+2. `GovernedAdapterRequest` previously carried an authority reference without requiring present-tense authority state.
 
-1. `GovernedRuntime.evaluate_and_execute()` synthesized an approved authority state when callers omitted `authority_resolution`.
-2. `GovernedAdapterRequest` carried an authority reference but no present-tense authority resolution, allowing mere-reference substitution for current authority state.
+A broader consistency requirement was also resolved: direct governed runtime and StegGate runtime now reuse the same present-state evaluator rather than maintaining parallel semantics.
 
-The second pass found a broader consistency requirement: direct governed runtime and StegGate runtime must not maintain separate present-state semantics. Present-state evaluation is therefore now centralized in `src/stegcore/commit_governance.py` and reused by both consequence-bearing paths.
+## Canonical rule
 
-## Architectural rule
+**Authority and time are state variables.** A consequence-bearing transition is decided from reconstructed commit-time state, not presumed continuity of proposal-time permission or authority.
 
-Authority and time are state variables. A consequence-bearing execution must be decided from reconstructed commit-time state, not from presumed continuity of proposal-time permission or authority.
+Materially required state includes, directly or by reconstructably bound references, principal/subject identity, authority state/source, temporal state/validity, standing or consent where required, target binding, continuity, governing conditions, evidence identity/freshness, consequence attribution/reconstruction, and disposition semantics.
 
-The enforced commit-time state must include, directly or by reconstructably bound references, at least:
+Explicit negative state and indeterminate state remain distinct:
 
-- principal / subject identity,
-- authority state and source,
-- temporal state / evaluation instant / validity window,
-- standing or consent state when required,
-- target binding,
-- continuity state,
-- governing-condition state,
-- evidence identity and freshness where material,
-- consequence attribution and reconstruction data,
-- disposition semantics.
+- explicit stale, revoked, expired, false, or mismatched required state -> `DENY`;
+- materially missing or indeterminate required state -> `FAIL_CLOSED`;
+- neither may silently become `ALLOW` merely because invalidation was not observed.
 
-Missing materially required state must not become ALLOW by absence of observed invalidation. Explicit negative state and indeterminate state remain distinct: explicit negative state produces `DENY`; missing or indeterminate required state produces `FAIL_CLOSED`.
-
-## Conversion slices implemented on PR #209
+## Source enforcement installed on PR #209
 
 ### Shared present-state evaluator
 
-`src/stegcore/commit_governance.py` now exposes one reusable `evaluate_present_state()` primitive used by both governed execution paths. It does not grant authority or replace policy/admissibility evaluation. It checks:
+`src/stegcore/commit_governance.py` now provides `evaluate_present_state()` and `parse_state_time()` as shared state-validation primitives. They do not create authority or replace policy/admissibility evaluation. They evaluate:
 
 - current authority status;
-- authority-to-target binding;
-- authority validity window, or explicit unbounded temporal scope;
-- evidence freshness from exact evidence validity timestamps or an already-governed current-evidence finding;
-- explicit negative versus indeterminate state semantics.
+- exact authority-to-target binding;
+- authority validity window or explicitly declared unbounded temporal scope;
+- evidence freshness from exact validity timestamps or an already-governed current-evidence finding;
+- `DENY` versus `FAIL_CLOSED` semantics.
 
 ### Direct governed runtime
 
-`src/stegcore/runtime.py` now:
+`src/stegcore/runtime.py` now requires present-state establishment before commit coherence and consequence invocation. Missing authority is retained as missing, exact target binding is required, bounded authority windows are enforced, verified continuity evidence carries an optional `valid_until` in `src/stegcore/decision.py`, and stale/indeterminate evidence cannot silently allow execution.
 
-1. no longer synthesizes `approved` authority when authority state is absent;
-2. constructs the commit-time pre-state from the exact request, declared execution context, supplied authority state, and evaluation instant;
-3. uses the shared present-state evaluator before commit coherence;
-4. requires exact authority target binding;
-5. enforces bounded authority validity windows;
-6. requires continuity evidence freshness through `VerifiedReceiptEnvelope.valid_until`;
-7. returns `DENY` for explicitly stale/expired/mismatched state and `FAIL_CLOSED` for materially unestablished state;
-8. preserves present-state checks, reasons, target, evaluation time, complete commit state, and commit-state hash in the receipt;
-9. leaves the executor unreachable unless admissibility, present-state evaluation, and coherence all permit execution.
-
-`src/stegcore/decision.py` adds optional `valid_until` to the verified continuity envelope. The structural decision interface remains compatible; consequence-bearing runtime enforcement is what requires freshness to be established.
+The receipt binds the exact request, authority state, target, evaluation instant, present-state checks/reasons, complete commit-state object, and commit-state hash.
 
 ### Governed adapters
 
-`src/stegcore/runtime_adapters.py` carries explicit `authority_resolution` and preserves runtime `FAIL_CLOSED` separately from `DENY`. An authority reference is only an identity/reference binding; it does not substitute for current authority state.
+`src/stegcore/runtime_adapters.py` now carries explicit `authority_resolution`, preserves runtime `FAIL_CLOSED` distinctly from `DENY`, and treats `authority_reference` as a reference only. Adapter/reconciliation regression tests prove missing authority cannot execute or reconstruct as committed ALLOW; any later observed effect after a non-ALLOW state reconciles as governance bypass where applicable.
 
-Adapter and reconciliation regressions now prove missing authority cannot execute, cannot become committed ALLOW, and reconciles an externally observed effect as governance bypass.
+### Canonical StegGate execution
 
-### Canonical StegGate execution runtime
+`src/stegcore/steggate_runtime.py` uses the same shared present-state evaluator after canonical StegGate ALLOW and before commit coherence. Missing authority fails closed; changed target and expired authority deny; current target/time/authority/evidence state is required before the existing coherence gate can make the executor reachable.
 
-`src/stegcore/steggate_runtime.py` now consumes the same shared present-state evaluator before commit coherence. For an otherwise canonical StegGate ALLOW:
+### Dependent paths
 
-- missing authority -> `FAIL_CLOSED` before executor;
-- changed authority target -> `DENY` before executor;
-- expired authority -> `DENY` before executor;
-- current target/time/authority/evidence state -> proceeds to the existing coherence gate.
+Portable SDK/SPE/Interlock traversal, neural governed execution fixtures, manifested transaction/discovery fixtures, direct runtime tests, adapter tests, reconciliation tests, and StegGate runtime tests now supply explicit target- and time-bound authority state where ALLOW is intended.
 
-The exact StegGate request, authority state, evaluation time, target, decision-state hash, present-state checks, and commit-state hash are receipt-bound.
+## Source reconstruction proof
 
-### Fixtures and dependent paths
+`tests/test_runtime_commit_coherence.py` now proves deterministic non-executing reconstruction of present-state enforcement from the emitted receipt:
 
-The portable SDK/SPE/Interlock bounded traversal, neural governed path, manifested-transaction discovery fixture, direct runtime tests, adapter tests, reconciliation tests, and StegGate runtime tests have been updated to provide explicit target- and time-bound authority state rather than historical/implicit approval.
+1. execute one admitted consequence exactly once;
+2. recompute the retained commit-state hash from `receipt.commit_state`;
+3. parse the retained evaluation instant;
+4. re-run the shared `evaluate_present_state()` from retained authority, target, and evidence validity state;
+5. require reconstructed disposition/checks/reasons to equal the receipt;
+6. prove the consequence callback is not invoked again during reconstruction.
 
-## Validation evidence
+This is deterministic source-level reconstruction proof. It is **not** an authentic resident same-execution reconstruction claim.
 
-The earlier conversion head `df788b0f54138f42810399f42a564c548b8e3912` passed:
+## Hosted validation evidence
 
-- `Verify Production Runtime Coherence` run `34708563701` — SUCCESS;
-- `StegCore Package Version Identity Validation` run `34708563683` — SUCCESS.
+Exact code/reconstruction head `5fe92fdca8e61128cf7fe6a9ff238a52f4b3f5d0` passed all observed PR-head validation surfaces:
 
-Those runs validate the first source slice only and do not validate the newer temporal/target/freshness changes.
+- Verify Production Runtime Coherence `34713678975` — SUCCESS;
+- StegCore Package Version Identity Validation `34713678957` — SUCCESS;
+- SPE Standing Canonical Binding Validation `34713678994` — SUCCESS;
+- Verify Commit Coherence `34713678942` — SUCCESS;
+- Neural End-to-End Governance `34713678956` — SUCCESS.
 
-Current source head before this handoff update: `2b37139198e0faa463f0afa6e065edbe6e0670b4`.
+The immediately preceding documentation/source head `03db5954ef41c6540f595b0bf36c4865e4bcc276` also passed all five corresponding validation workflows (`34713607790`, `34713607797`, `34713607831`, `34713607792`, `34713607781`).
 
-Current exact-head workflows observed in progress/queued:
-
-- Neural End-to-End Governance `34713552543` — IN_PROGRESS;
-- SPE Standing Canonical Binding Validation `34713552535` — IN_PROGRESS;
-- StegCore Package Version Identity Validation `34713552542` — IN_PROGRESS;
-- Verify Production Runtime Coherence `34713552582` — IN_PROGRESS;
-- Verify Commit Coherence `34713552540` — QUEUED.
-
-No success claim is made for the current source head until these exact-head runs complete and any discovered regressions are repaired.
+This handoff update is a newer documentation commit and therefore requires its own exact-head validation before PR #209 may be merged.
 
 ## Conversion phases
 
-1. **Architecture reconciliation** — PASS FOR CURRENT SCOPE / no replacement-architecture blocker found; one shared present-state primitive now serves direct and StegGate consequence paths.
-2. **State materialization** — SOURCE INSTALLED / authority, target, evaluation time, authority validity, and evidence freshness are bound into current commit state.
-3. **Runtime enforcement** — SOURCE INSTALLED / missing authority/freshness fails closed; changed target and expired/stale state deny before executor. Authentic resident proof remains pending.
-4. **Receipt proof** — SOURCE SHAPE INSTALLED / present-state and commit-state evidence are receipt-bound; authentic resident receipt not yet observed.
-5. **Reconstruction proof** — PENDING authentic same-execution reconstruction.
-6. **Ecosystem propagation** — PENDING source validation/merge and resident enforcement proof; existing PA-001 publication propagation remains separate and non-authorizing.
+1. **Architecture reconciliation** — PASS FOR CURRENT SCOPE. No replacement architecture required; one shared present-state primitive serves both consequence-bearing runtime paths.
+2. **State materialization** — SOURCE INSTALLED AND HOSTED-VALIDATED through `5fe92fd...`.
+3. **Runtime enforcement** — SOURCE INSTALLED AND HOSTED-VALIDATED; authentic resident InTr/StegGate execution proof remains pending.
+4. **Receipt proof** — SOURCE RECEIPT SHAPE INSTALLED AND HOSTED-VALIDATED; authentic resident receipt remains pending.
+5. **Reconstruction proof** — SOURCE DETERMINISTIC RECONSTRUCTION INSTALLED AND HOSTED-VALIDATED; authentic resident same-execution reconstruction remains pending.
+6. **Ecosystem propagation** — PENDING merge plus resident enforcement proof. Publication propagation remains non-authorizing and separate from runtime enforcement.
 
-## No-duplicate-authority constraint
+## No-duplicate-authority boundary
 
 - TV/TVC remain credential authority where credentials are required.
 - InTr / canonical commit-governance remains transition authority.
-- Heartbeat remains observability/reference, not execution authority.
-- Publisher and documentation surfaces do not become execution authority.
-- This task reuses the existing StegCore/StegGate execution composition and existing resident execution ownership rather than instantiating a competing evaluator or executor.
+- Heartbeat remains a reference/observability surface, not execution authority.
+- Site, Publisher, admissibility-wiki, and Guardian documentation/projection surfaces do not become execution authority merely by propagation.
+- This goal reuses existing StegCore/StegGate and resident execution ownership rather than creating a competing evaluator or executor.
 
-## Evidence required for FULLY ENFORCED
+## FULLY ENFORCED gate
 
-FULLY ENFORCED may be claimed only when all are evidenced:
+Do not claim FULLY ENFORCED until all are evidenced:
 
-1. canonical runtime state includes or reconstructably binds authority and temporal state at commit;
-2. exact resident commit path consumes the state;
-3. negative cases prove stale/revoked authority, changed target, expired temporal condition, missing material state, and stale evidence cannot silently ALLOW;
-4. authentic resident runtime execution emits a receipt for the enforcement decision;
-5. same-execution reconstruction reproduces the decision from durable evidence;
-6. downstream targets have target-native propagation evidence or a named durable machine-owned continuation where runtime enforcement is not their authority domain;
-7. README and canonical handoff are current;
-8. no duplicate execution, credential, or publication authority has been introduced.
+1. canonical commit state reconstructably binds authority and temporal state;
+2. exact resident commit path consumes that state;
+3. negative cases cover revoked/stale authority, changed target, expired temporal condition, missing material state, and stale evidence;
+4. authentic resident execution emits a present-state enforcement receipt;
+5. same-execution reconstruction reproduces the resident decision from durable evidence without repeating the consequence;
+6. downstream targets have target-native propagation evidence or a named durable machine-owned continuation where runtime enforcement is outside their authority domain;
+7. README and this handoff remain current;
+8. no duplicate execution, credential, or publication authority is introduced.
 
-## Current evidence
+## Current evidence / lineage
 
-- canonical Task Registry fragment on `.github/main`: `control/worker-registry.d/pa001-ecosystem-runtime-enforcement-001.json`
-- registry commit: `a6c35cf87329cb4c444cc55266b3c5a8782daec8`
-- StegCore tracking issue: `#208`
-- StegCore draft PR: `#209`
-- initial handoff commit: `7b0083b9cee68ebaf4a8ca3d8d0129be2050577b`
-- first source validation head: `df788b0f54138f42810399f42a564c548b8e3912`
-- shared present-state evaluator commit: `9981ff3d7ca6cee3090f14fb04a86bc6e9f93751`
-- governed runtime shared-evaluator integration: `ee5cabd15e46c363329fca6abaa02140c38d3aa5`
+- Task Registry fragment: `StegVerse-Labs/.github/control/worker-registry.d/pa001-ecosystem-runtime-enforcement-001.json`
+- Registry commit: `a6c35cf87329cb4c444cc55266b3c5a8782daec8`
+- Tracking issue: `StegVerse-Labs/StegCore#208`
+- Source PR: `StegVerse-Labs/StegCore#209`
+- shared present-state evaluator: `9981ff3d7ca6cee3090f14fb04a86bc6e9f93751`
+- direct runtime shared-evaluator integration: `ee5cabd15e46c363329fca6abaa02140c38d3aa5`
 - StegGate runtime present-state integration: `6d6f8c664e78bf2070451da4edab2e9fd286ad00`
-- StegGate present-state regressions: `6f635fd18d23eef3fcce3b18d19f3cdc1b37cd3e`
-- portable traversal present-state binding: `0c8574648a91f302c8d0d14244c49b9a16876ed1`
-- manifested transaction fixture present-state binding: `6679c3161d1fe5e1c8fc65ef570a1cc4d364a86f`
-- neural fixture present-state binding: `2b37139198e0faa463f0afa6e065edbe6e0670b4`
+- portable traversal binding: `0c8574648a91f302c8d0d14244c49b9a16876ed1`
+- transaction fixture binding: `6679c3161d1fe5e1c8fc65ef570a1cc4d364a86f`
+- neural fixture binding: `2b37139198e0faa463f0afa6e065edbe6e0670b4`
+- deterministic reconstruction regression: `5fe92fdca8e61128cf7fe6a9ff238a52f4b3f5d0`
 
 ## Next executable actions
 
-1. Observe all exact-head workflows for the current branch and repair every regression caused by the stronger present-state contract.
-2. Inspect any remaining StegGate/transaction/portable fixture that still supplies historical-only authority and convert it to explicit target/time state where ALLOW is intended.
-3. Add deterministic reconstruction validation proving a receipt's commit-state hash and present-state disposition can be recomputed from the retained state object without invoking the consequence.
-4. Update README with the shared present-state enforcement contract after exact-head validation confirms the public description is accurate.
-5. Merge PR #209 only after exact-head validation is green and the handoff records the exact validated head.
-6. Then bind this source contract into the existing resident InTr/StegGate execution owner and preserve one authentic runtime receipt plus same-execution reconstruction evidence.
-7. Only after resident proof begin target-native propagation to Site, Publisher, admissibility-wiki, and Guardian.
+1. Observe exact-head CI for this handoff update; repair any regression.
+2. When exact-head validation is green, mark PR #209 ready and merge the source-enforcement slice.
+3. Reconcile `main` and this handoff to the exact merge commit.
+4. Locate and read the current resident InTr/StegGate execution owner/handoff; bind the merged present-state contract into that existing owner rather than creating a competing executor.
+5. Produce one authentic resident decision receipt plus same-execution reconstruction evidence.
+6. Only after resident proof create/advance target-native propagation verification for Site, Publisher, admissibility-wiki, and stegguardian-wiki as applicable.
 
 ## Manual work
 
-None at this stage.
+None.
