@@ -10,7 +10,8 @@ def base_request():
             receipt_id="receipt-001",
             key_id="key-001",
             verified=True,
-            issued_at="2026-08-08T00:00:00+00:00",
+            issued_at="2026-01-01T00:00:00+00:00",
+            valid_until="2027-01-01T00:00:00+00:00",
         ),
         actor_class="ai",
         intent=ActionIntent(
@@ -40,13 +41,25 @@ def base_binding():
     )
 
 
-def adapter(kind="api", request=None, supplied=None, admitted=None):
+def authority():
+    return {
+        "status": "approved",
+        "basis_invalidated_by_action": False,
+        "authority_ref": "authority-001",
+        "target_binding": "target-001",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "valid_until": "2027-01-01T00:00:00+00:00",
+    }
+
+
+def adapter(kind="api", request=None, supplied=None, admitted=None, authority_state=None):
     admitted = admitted or base_binding()
     return GovernedAdapterRequest(
         adapter_kind=kind,
         decision_request=request or base_request(),
         binding=supplied or admitted,
         admitted_binding=admitted,
+        authority_resolution=authority() if authority_state is None else authority_state,
     )
 
 
@@ -59,6 +72,16 @@ def test_all_supported_entry_kinds_have_identical_allow_result():
         assert result.decision_state.commit_state == "COMMITTED"
         assert result.decision_state.previous_receipt_hash == "receipt-hash-000"
         assert calls == [kind]
+
+
+def test_missing_authority_never_reconciles_as_committed_allow():
+    calls = []
+    result = execute_adapter(adapter(authority_state={}), lambda: calls.append("called"))
+    assert result.status == "refused"
+    assert result.decision_state.outcome == "FAIL_CLOSED"
+    assert result.decision_state.commit_state == "NOT_COMMITTED"
+    assert result.decision_state.reason_code == "authority_state_unestablished"
+    assert calls == []
 
 
 def test_missing_prior_pointer_fails_closed():
@@ -94,6 +117,14 @@ def test_non_allow_with_observed_effect_reconciles_to_bypass():
     result = execute_adapter(adapter(request=request), lambda: "not-reached")
     reconciled = reconcile_effect(result.decision_state, effect_observed=True)
     assert reconciled.outcome == "DENY"
+    assert reconciled.observation_state == "DIVERGENT"
+    assert reconciled.reconciliation == "GOVERNANCE_BYPASS"
+
+
+def test_fail_closed_with_observed_effect_reconciles_to_bypass():
+    result = execute_adapter(adapter(authority_state={}), lambda: "not-reached")
+    reconciled = reconcile_effect(result.decision_state, effect_observed=True)
+    assert reconciled.outcome == "FAIL_CLOSED"
     assert reconciled.observation_state == "DIVERGENT"
     assert reconciled.reconciliation == "GOVERNANCE_BYPASS"
 

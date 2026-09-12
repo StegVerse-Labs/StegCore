@@ -20,7 +20,8 @@ def decision_request(*, shapes=None, amount=5):
             receipt_id="receipt-verified-001",
             key_id="key-001",
             verified=True,
-            issued_at="2026-08-08T00:00:00+00:00",
+            issued_at="2026-01-01T00:00:00+00:00",
+            valid_until="2027-01-01T00:00:00+00:00",
         ),
         actor_class="ai",
         intent=ActionIntent(
@@ -54,7 +55,20 @@ def binding(**overrides):
     return ExecutionBinding(**values)
 
 
-def adapter(kind="api", *, req=None, supplied=None, admitted=None):
+def authority(**overrides):
+    value = {
+        "status": "approved",
+        "basis_invalidated_by_action": False,
+        "authority_ref": "authority-001",
+        "target_binding": "account-001",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "valid_until": "2027-01-01T00:00:00+00:00",
+    }
+    value.update(overrides)
+    return value
+
+
+def adapter(kind="api", *, req=None, supplied=None, admitted=None, authority_state=None):
     admitted = admitted or binding()
     supplied = supplied or admitted
     return GovernedAdapterRequest(
@@ -63,6 +77,7 @@ def adapter(kind="api", *, req=None, supplied=None, admitted=None):
         binding=supplied,
         admitted_binding=admitted,
         declared_execution_context={"transport_request_id": "transport-001"},
+        authority_resolution=authority() if authority_state is None else authority_state,
     )
 
 
@@ -76,6 +91,38 @@ def test_api_exact_binding_executes_once_and_preserves_receipt_pointer():
     assert result.decision_state.executor_invoked is True
     assert result.decision_state.previous_receipt_hash == "receipt-hash-000"
     assert result.runtime_observation.coherence_receipt["previous_receipt_hash"] == "receipt-hash-000"
+    assert result.runtime_observation.coherence_receipt["commit_state"]["authority_resolution"]["authority_ref"] == "authority-001"
+    assert all(result.runtime_observation.coherence_receipt["present_state_checks"].values())
+
+
+def test_missing_authority_state_fails_closed_before_executor():
+    calls = []
+    result = execute_adapter(
+        adapter("api", authority_state={}),
+        lambda: calls.append("called"),
+    )
+
+    assert result.status == "refused"
+    assert result.decision_state.outcome == "FAIL_CLOSED"
+    assert result.decision_state.phase == "COMMIT_COHERENCE"
+    assert result.decision_state.reason_code == "authority_state_unestablished"
+    assert result.decision_state.executor_invoked is False
+    assert result.runtime_observation.coherence_receipt["authority_resolution"]["status"] == "missing"
+    assert calls == []
+
+
+def test_changed_authority_target_is_denied_through_adapter():
+    calls = []
+    result = execute_adapter(
+        adapter("api", authority_state=authority(target_binding="account-002")),
+        lambda: calls.append("called"),
+    )
+
+    assert result.status == "refused"
+    assert result.decision_state.outcome == "DENY"
+    assert result.decision_state.reason_code == "authority_target_mismatch"
+    assert result.decision_state.executor_invoked is False
+    assert calls == []
 
 
 def test_all_required_adapter_kinds_share_same_allow_semantics():
