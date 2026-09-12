@@ -45,6 +45,7 @@ class GovernedAdapterRequest:
     binding: ExecutionBinding
     admitted_binding: ExecutionBinding
     declared_execution_context: Mapping[str, Any] = field(default_factory=dict)
+    authority_resolution: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -324,6 +325,7 @@ def execute_adapter(
             "authority_reference": request.binding.authority_reference,
         },
         capability_surface=request.binding.capability_surface,
+        authority_resolution=request.authority_resolution,
         previous_receipt_hash=request.binding.previous_receipt_hash,
     )
     state = _runtime_state(request, runtime)
