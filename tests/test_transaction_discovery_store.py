@@ -81,7 +81,14 @@ def make_result():
             "execution_mode": "manual",
             "requires_governed_commit": True,
         },
-        authority_resolution={"status": "approved", "basis_invalidated_by_action": False},
+        authority_resolution={
+            "status": "approved",
+            "basis_invalidated_by_action": False,
+            "authority_ref": "authority:review-finding",
+            "target_binding": "review-finding",
+            "valid_from": "2026-01-01T00:00:00+00:00",
+            "valid_until": "2027-01-01T00:00:00+00:00",
+        },
     )
 
 
