@@ -1,3 +1,4 @@
+from stegcore.commit_governance import canonical_hash, evaluate_present_state, parse_state_time
 from stegcore.decision import (
     ActionIntent,
     DecisionRequest,
@@ -272,3 +273,32 @@ def test_previous_receipt_hash_is_bound():
     )
 
     assert result.coherence_receipt["previous_receipt_hash"] == "prev-123"
+
+
+def test_present_state_reconstructs_from_receipt_without_reexecuting_consequence():
+    calls = []
+    result = governed_execute(
+        request(),
+        lambda: calls.append("executed") or {"ok": True},
+        capability_surface=allow_surface(),
+        authority_resolution=authority(),
+    )
+    assert calls == ["executed"]
+
+    receipt = result.coherence_receipt
+    commit_state = receipt["commit_state"]
+    assert canonical_hash(commit_state) == receipt["commit_state_hash"] == result.pre_state_hash
+    evaluation_time = parse_state_time(receipt["evaluation_time"])
+    assert evaluation_time is not None
+    evidence = commit_state["request"]["verified_receipt"]
+    reconstructed = evaluate_present_state(
+        authority_resolution=commit_state["authority_resolution"],
+        target_binding=receipt["target_binding"],
+        evaluation_time=evaluation_time,
+        evidence_issued_at=evidence["issued_at"],
+        evidence_valid_until=evidence["valid_until"],
+    )
+    assert reconstructed["disposition"] == "ALLOW"
+    assert reconstructed["checks"] == receipt["present_state_checks"]
+    assert list(reconstructed["reasons"]) == receipt["present_state_reasons"]
+    assert calls == ["executed"]
