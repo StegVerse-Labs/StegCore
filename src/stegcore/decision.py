@@ -18,11 +18,15 @@ class VerifiedReceiptEnvelope:
     Minimal envelope for verified continuity evidence (e.g., from StegID).
 
     StegCore does not verify receipts. This object must represent an already-verified result.
+    ``valid_until`` is optional at the data-model boundary for compatibility, but the
+    consequence-bearing governed runtime may require it to establish present-tense
+    evidence freshness before commit.
     """
     receipt_id: str
     key_id: str
     verified: bool
     issued_at: str  # RFC3339 string for now
+    valid_until: Optional[str] = None
     prev_receipt_id: Optional[str] = None
     notes: List[Dict[str, Any]] = field(default_factory=list)
 
@@ -114,7 +118,9 @@ def decide(req: DecisionRequest) -> DecisionResult:
     - if policy shapes include constraints, return `defer` with corresponding reason
     - otherwise default to `allow`
 
-    This is NOT a full policy engine.
+    This is NOT a full policy engine. Present-tense freshness/target/authority state is
+    enforced at the consequence-bearing governed commit boundary rather than inferred
+    from this structural decision interface.
     """
     if not req.actor_class:
         return DecisionResult("deny", REASON["actor_class_missing"])
