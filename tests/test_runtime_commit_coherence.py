@@ -13,7 +13,8 @@ def request() -> DecisionRequest:
             receipt_id="r-1",
             key_id="k-1",
             verified=True,
-            issued_at="2026-07-14T00:00:00+00:00",
+            issued_at="2026-01-01T00:00:00+00:00",
+            valid_until="2027-01-01T00:00:00+00:00",
         ),
         actor_class="ai",
         intent=ActionIntent(
@@ -33,12 +34,17 @@ def allow_surface():
     }
 
 
-def authority():
-    return {
+def authority(**overrides):
+    value = {
         "status": "approved",
         "basis_invalidated_by_action": False,
         "authority_ref": "authority-1",
+        "target_binding": "demo_target",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "valid_until": "2027-01-01T00:00:00+00:00",
     }
+    value.update(overrides)
+    return value
 
 
 def test_allow_executes_once():
@@ -63,6 +69,7 @@ def test_allow_executes_once():
     assert result.coherence_receipt["commit_state"]["request"]["intent"]["target"] == "demo_target"
     assert result.coherence_receipt["evaluation_time"] == result.observed_at
     assert result.coherence_receipt["commit_state_hash"] == result.pre_state_hash
+    assert all(result.coherence_receipt["present_state_checks"].values())
 
 
 def test_missing_authority_fails_closed_before_execution():
@@ -80,10 +87,96 @@ def test_missing_authority_fails_closed_before_execution():
 
     assert result.status == "refused"
     assert called is False
-    assert result.coherence_receipt["decision"] == "DENY"
+    assert result.coherence_receipt["decision"] == "FAIL_CLOSED"
     assert result.coherence_receipt["authority_resolution"]["status"] == "missing"
     assert result.coherence_receipt["commit_state"]["authority_resolution"]["status"] == "missing"
-    assert result.coherence_receipt["coherence_checks"]["authority_preserved"] is False
+    assert "authority_state_unestablished" in result.coherence_receipt["present_state_reasons"]
+
+
+def test_changed_target_denies_before_execution():
+    called = False
+    result = governed_execute(
+        request(),
+        lambda: called,
+        capability_surface=allow_surface(),
+        authority_resolution=authority(target_binding="different_target"),
+    )
+
+    assert result.status == "refused"
+    assert result.coherence_receipt["decision"] == "DENY"
+    assert "authority_target_mismatch" in result.coherence_receipt["present_state_reasons"]
+    assert result.coherence_receipt["present_state_checks"]["target_current"] is False
+
+
+def test_expired_authority_denies_before_execution():
+    calls = []
+    result = governed_execute(
+        request(),
+        lambda: calls.append("called"),
+        capability_surface=allow_surface(),
+        authority_resolution=authority(
+            valid_from="2025-01-01T00:00:00+00:00",
+            valid_until="2026-01-02T00:00:00+00:00",
+        ),
+    )
+
+    assert result.status == "refused"
+    assert calls == []
+    assert result.coherence_receipt["decision"] == "DENY"
+    assert "authority_expired" in result.coherence_receipt["present_state_reasons"]
+    assert result.coherence_receipt["present_state_checks"]["authority_temporal_current"] is False
+
+
+def test_missing_authority_temporal_state_fails_closed():
+    calls = []
+    auth = authority()
+    auth.pop("valid_until")
+    result = governed_execute(
+        request(),
+        lambda: calls.append("called"),
+        capability_surface=allow_surface(),
+        authority_resolution=auth,
+    )
+
+    assert result.status == "refused"
+    assert calls == []
+    assert result.coherence_receipt["decision"] == "FAIL_CLOSED"
+    assert "authority_temporal_state_unestablished" in result.coherence_receipt["present_state_reasons"]
+
+
+def test_stale_continuity_evidence_denies_before_execution():
+    calls = []
+    req = request()
+    req.verified_receipt.valid_until = "2026-01-02T00:00:00+00:00"
+    result = governed_execute(
+        req,
+        lambda: calls.append("called"),
+        capability_surface=allow_surface(),
+        authority_resolution=authority(),
+    )
+
+    assert result.status == "refused"
+    assert calls == []
+    assert result.coherence_receipt["decision"] == "DENY"
+    assert "continuity_evidence_stale" in result.coherence_receipt["present_state_reasons"]
+    assert result.coherence_receipt["present_state_checks"]["evidence_current"] is False
+
+
+def test_missing_evidence_freshness_fails_closed():
+    calls = []
+    req = request()
+    req.verified_receipt.valid_until = None
+    result = governed_execute(
+        req,
+        lambda: calls.append("called"),
+        capability_surface=allow_surface(),
+        authority_resolution=authority(),
+    )
+
+    assert result.status == "refused"
+    assert calls == []
+    assert result.coherence_receipt["decision"] == "FAIL_CLOSED"
+    assert "continuity_evidence_freshness_unestablished" in result.coherence_receipt["present_state_reasons"]
 
 
 def test_coherence_deny_never_invokes_executor():
@@ -144,10 +237,7 @@ def test_authority_loss_denies_before_execution():
         request(),
         executor,
         capability_surface=allow_surface(),
-        authority_resolution={
-            "status": "approved",
-            "basis_invalidated_by_action": True,
-        },
+        authority_resolution=authority(basis_invalidated_by_action=True),
     )
 
     assert result.status == "refused"
