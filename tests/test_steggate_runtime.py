@@ -69,8 +69,17 @@ def capability_surface():
     }
 
 
-def authority_resolution():
-    return {"status": "approved", "basis_invalidated_by_action": False}
+def authority_resolution(**overrides):
+    value = {
+        "status": "approved",
+        "basis_invalidated_by_action": False,
+        "authority_ref": "authority:record-writer",
+        "target_binding": "record:1",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "valid_until": "2027-01-01T00:00:00+00:00",
+    }
+    value.update(overrides)
+    return value
 
 
 def test_executor_is_unreachable_when_steggate_denies():
@@ -125,7 +134,7 @@ def test_executor_is_unreachable_when_commit_coherence_denies():
     assert calls == []
 
 
-def test_missing_commit_authority_fails_closed_at_coherence_boundary():
+def test_missing_commit_authority_fails_closed_before_coherence():
     req = allowed_request()
     calls = []
     result = governed_steggate_execute(
@@ -137,12 +146,49 @@ def test_missing_commit_authority_fails_closed_at_coherence_boundary():
     assert result.evaluation.disposition == "ALLOW"
     assert result.status == "refused"
     assert result.executor_invoked is False
-    assert result.coherence_receipt["decision"] == "DENY"
-    assert "authority_not_preserved" in result.coherence_receipt["coherence_reasons"]
+    assert result.coherence_receipt["decision"] == "FAIL_CLOSED"
+    assert "authority_state_unestablished" in result.coherence_receipt["present_state_reasons"]
     assert calls == []
 
 
-def test_allow_plus_coherence_executes_and_binds_decision_state_hash():
+def test_changed_target_denies_before_coherence():
+    req = allowed_request()
+    calls = []
+    result = governed_steggate_execute(
+        req,
+        lambda: calls.append("executed"),
+        capability_surface=capability_surface(),
+        authority_resolution=authority_resolution(target_binding="record:2"),
+    )
+    assert result.evaluation.disposition == "ALLOW"
+    assert result.status == "refused"
+    assert result.executor_invoked is False
+    assert result.coherence_receipt["decision"] == "DENY"
+    assert "authority_target_mismatch" in result.coherence_receipt["present_state_reasons"]
+    assert calls == []
+
+
+def test_expired_authority_denies_before_coherence():
+    req = allowed_request()
+    calls = []
+    result = governed_steggate_execute(
+        req,
+        lambda: calls.append("executed"),
+        capability_surface=capability_surface(),
+        authority_resolution=authority_resolution(
+            valid_from="2025-01-01T00:00:00+00:00",
+            valid_until="2026-01-01T00:00:00+00:00",
+        ),
+    )
+    assert result.evaluation.disposition == "ALLOW"
+    assert result.status == "refused"
+    assert result.executor_invoked is False
+    assert result.coherence_receipt["decision"] == "DENY"
+    assert "authority_expired" in result.coherence_receipt["present_state_reasons"]
+    assert calls == []
+
+
+def test_allow_plus_present_state_and_coherence_executes_and_binds_decision_state_hash():
     req = allowed_request()
     calls = []
 
@@ -162,3 +208,6 @@ def test_allow_plus_coherence_executes_and_binds_decision_state_hash():
     assert calls == ["executed"]
     assert result.coherence_receipt["decision"] == "ALLOW"
     assert result.coherence_receipt["steggate_decision_state_hash"] == result.evaluation.decision_state_hash
+    assert result.coherence_receipt["commit_state_hash"] == result.pre_state_hash
+    assert result.coherence_receipt["target_binding"] == "record:1"
+    assert all(result.coherence_receipt["present_state_checks"].values())
