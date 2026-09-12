@@ -10,7 +10,8 @@ def base_request():
             receipt_id="receipt-001",
             key_id="key-001",
             verified=True,
-            issued_at="2026-08-08T00:00:00+00:00",
+            issued_at="2026-01-01T00:00:00+00:00",
+            valid_until="2027-01-01T00:00:00+00:00",
         ),
         actor_class="ai",
         intent=ActionIntent(
@@ -45,6 +46,9 @@ def authority():
         "status": "approved",
         "basis_invalidated_by_action": False,
         "authority_ref": "authority-001",
+        "target_binding": "target-001",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "valid_until": "2027-01-01T00:00:00+00:00",
     }
 
 
@@ -74,8 +78,9 @@ def test_missing_authority_never_reconciles_as_committed_allow():
     calls = []
     result = execute_adapter(adapter(authority_state={}), lambda: calls.append("called"))
     assert result.status == "refused"
-    assert result.decision_state.outcome == "DENY"
+    assert result.decision_state.outcome == "FAIL_CLOSED"
     assert result.decision_state.commit_state == "NOT_COMMITTED"
+    assert result.decision_state.reason_code == "authority_state_unestablished"
     assert calls == []
 
 
@@ -112,6 +117,14 @@ def test_non_allow_with_observed_effect_reconciles_to_bypass():
     result = execute_adapter(adapter(request=request), lambda: "not-reached")
     reconciled = reconcile_effect(result.decision_state, effect_observed=True)
     assert reconciled.outcome == "DENY"
+    assert reconciled.observation_state == "DIVERGENT"
+    assert reconciled.reconciliation == "GOVERNANCE_BYPASS"
+
+
+def test_fail_closed_with_observed_effect_reconciles_to_bypass():
+    result = execute_adapter(adapter(authority_state={}), lambda: "not-reached")
+    reconciled = reconcile_effect(result.decision_state, effect_observed=True)
+    assert reconciled.outcome == "FAIL_CLOSED"
     assert reconciled.observation_state == "DIVERGENT"
     assert reconciled.reconciliation == "GOVERNANCE_BYPASS"
 
