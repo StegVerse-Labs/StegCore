@@ -70,7 +70,14 @@ def run_traversal(bundle_path: Path = DEFAULT_FIXTURE, request_path: Path = DEFA
             "execution_mode": "manual",
             "requires_governed_commit": True,
         },
-        authority_resolution={"status": "approved", "basis_invalidated_by_action": False},
+        authority_resolution={
+            "status": "approved",
+            "basis_invalidated_by_action": False,
+            "authority_ref": "portable-interlock-test-authority",
+            "target_binding": request.candidate.target,
+            "valid_from": "2026-01-01T00:00:00+00:00",
+            "valid_until": "2027-01-01T00:00:00+00:00",
+        },
     )
     standing_rows = [row for row in observation.evaluation.matrix if row.predicate == "standing.spe_binding"]
     checks = {
@@ -78,6 +85,8 @@ def run_traversal(bundle_path: Path = DEFAULT_FIXTURE, request_path: Path = DEFA
         "ingress_hash_verified": _hash(bundle["interlock_transition"]) == bundle["ingress_interlock_hash"],
         "standing_binding_pass": len(standing_rows) == 1 and standing_rows[0].state == "PASS",
         "admissibility_allow": observation.evaluation.disposition == "ALLOW",
+        "present_state_allow": bool(observation.coherence_receipt)
+        and all((observation.coherence_receipt.get("present_state_checks") or {}).values()),
         "coherence_allow": bool(observation.coherence_receipt) and observation.coherence_receipt.get("decision") == "ALLOW",
         "executor_invoked_once": observation.executor_invoked is True and state["count"] == 1,
         "bounded_consequence_observed": observation.status == "executed" and state["written"] is True,
