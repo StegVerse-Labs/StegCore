@@ -7,6 +7,10 @@ It neither verifies nor mints continuity receipts. The injected executor is invo
 only when the existing decision interface returns ``allow`` and the commit-coherence
 gate independently preserves authority, denial reachability, and governable
 continuation.
+
+Authority and evaluation time are part of the commit-time state. Missing authority
+must therefore remain missing and fail closed; it must never be synthesized as an
+implicit approval by the runtime.
 """
 
 from dataclasses import asdict, dataclass
@@ -54,19 +58,37 @@ class GovernedRuntime:
     ) -> ExecutionObservation[T]:
         context = dict(declared_execution_context or {})
         request_data = asdict(request)
+        observed_at = datetime.now(timezone.utc).isoformat()
+
+        # Authority is state, not a convenience default. If no authority state is
+        # supplied, retain that absence explicitly so coherence fails closed.
+        authority = dict(authority_resolution or {})
+        if not authority:
+            authority = {
+                "status": "missing",
+                "basis_invalidated_by_action": None,
+                "reason": "authority_state_not_supplied",
+            }
+
+        # Commit-time state binds the exact request (including target and request
+        # time), declared execution context, current authority state, and the
+        # evaluation instant. This hash is the state evaluated immediately before
+        # any consequence-bearing commit.
         pre_state = {
             "request": request_data,
             "declared_execution_context": context,
+            "authority_resolution": authority,
+            "evaluation_time": observed_at,
         }
         pre_state_hash = canonical_hash(pre_state)
         decision = decide(request)
-        observed_at = datetime.now(timezone.utc).isoformat()
 
         if decision.decision != "allow":
             post_state = {
                 "decision": asdict(decision),
                 "status": "refused",
                 "reason": "admissibility_not_allow",
+                "commit_state_hash": pre_state_hash,
             }
             return ExecutionObservation(
                 artifact_type="stegcore.execution_observation",
@@ -80,13 +102,6 @@ class GovernedRuntime:
         if request.intent is None:
             raise ValueError("Allowed decision has no action intent")
 
-        authority = dict(
-            authority_resolution
-            or {
-                "status": "approved",
-                "basis_invalidated_by_action": False,
-            }
-        )
         gate = coherence_gate(
             task=request.intent.action,
             payload=request.intent.parameters,
@@ -97,12 +112,31 @@ class GovernedRuntime:
             previous_receipt_hash=previous_receipt_hash,
         )
 
+        # Preserve the material commit-time state constituents in the receipt so a
+        # later reconstruction can prove which authority/target/time state was
+        # actually evaluated rather than only observing a boolean outcome.
+        gate_receipt = finalize_receipt(
+            {
+                key: value
+                for key, value in gate["receipt"].items()
+                if key != "receipt_hash"
+            }
+            | {
+                "commit_state": pre_state,
+                "commit_state_hash": pre_state_hash,
+                "evaluation_time": observed_at,
+                "target_binding": request.intent.target,
+            }
+        )
+        gate["receipt"] = gate_receipt
+
         if not gate["allowed"]:
             post_state = {
                 "decision": asdict(decision),
                 "status": "refused",
                 "reason": "coherence_failed",
                 "coherence_receipt_hash": gate["receipt"]["receipt_hash"],
+                "commit_state_hash": pre_state_hash,
             }
             return ExecutionObservation(
                 artifact_type="stegcore.execution_observation",
@@ -133,6 +167,7 @@ class GovernedRuntime:
                 "decision": asdict(decision),
                 "status": "failed",
                 "coherence_receipt_hash": receipt["receipt_hash"],
+                "commit_state_hash": pre_state_hash,
                 "error_type": type(exc).__name__,
                 "error_message": str(exc),
             }
@@ -163,6 +198,7 @@ class GovernedRuntime:
             "decision": asdict(decision),
             "status": "executed",
             "coherence_receipt_hash": receipt["receipt_hash"],
+            "commit_state_hash": pre_state_hash,
             "result": result,
         }
         return ExecutionObservation(
