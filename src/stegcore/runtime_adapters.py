@@ -179,6 +179,10 @@ def _runtime_state(
     observation: ExecutionObservation[T],
 ) -> DecisionStateRecord:
     decision_value = observation.decision.decision
+    receipt = observation.coherence_receipt or {}
+    receipt_decision = receipt.get("decision")
+    present_reasons = list(receipt.get("present_state_reasons") or [])
+
     if decision_value == "defer":
         outcome: DecisionOutcome = "REVIEW"
         phase = "ADMISSIBILITY"
@@ -187,10 +191,14 @@ def _runtime_state(
         outcome = "DENY"
         phase = "ADMISSIBILITY"
         reason = observation.decision.reason_code
-    elif observation.coherence_receipt and observation.coherence_receipt.get("decision") == "DENY":
+    elif receipt_decision == "FAIL_CLOSED":
+        outcome = "FAIL_CLOSED"
+        phase = "COMMIT_COHERENCE"
+        reason = present_reasons[0] if present_reasons else str(receipt.get("reason") or "present_state_not_established")
+    elif receipt_decision == "DENY":
         outcome = "DENY"
         phase = "COMMIT_COHERENCE"
-        reason = "coherence_failed"
+        reason = present_reasons[0] if present_reasons else "coherence_failed"
     else:
         outcome = "ALLOW"
         phase = "EXECUTION"
