@@ -10,6 +10,7 @@ issue: #208
 pull_request: #209
 registry: StegVerse-Labs/.github/control/worker-registry.d/pa001-ecosystem-runtime-enforcement-001.json
 registry_commit: a6c35cf87329cb4c444cc55266b3c5a8782daec8
+registry_state: HANDOFF_READY
 state: ACTIVE
 runtime_claim: SOURCE_CONVERSION_STARTED_RUNTIME_PROOF_PENDING
 release_claim: NOT_YET_PROVEN
@@ -29,7 +30,12 @@ No architectural incompatibility has been found that prevents ecosystem-wide enf
 
 The conversion is therefore an integration/enforcement problem, not a replacement-architecture problem.
 
-The first concrete defect discovered was material: `GovernedRuntime.evaluate_and_execute()` synthesized an approved authority state when callers omitted `authority_resolution`. That behavior was compatible with earlier commit-coherence tests but incompatible with the stronger invariant that authority is state and missing materially required state cannot silently become ALLOW.
+Two concrete fail-open/incomplete-state integration defects were found in the first pass:
+
+1. `GovernedRuntime.evaluate_and_execute()` synthesized an approved authority state when callers omitted `authority_resolution`.
+2. `GovernedAdapterRequest` carried an authority reference but no present-tense authority resolution, so adapter callers could reach the runtime without providing the state needed to prove current authority.
+
+Neither defect requires a new architecture. Both are being corrected inside the existing governed runtime and adapter path.
 
 ## Architectural rule
 
@@ -50,7 +56,9 @@ The enforced commit-time state must include, directly or by cryptographically/re
 
 Missing materially required state must not become ALLOW by absence of observed invalidation. The runtime must distinguish at least ALLOW, DENY, DEFER, FAIL_CLOSED, and ERROR where the owning transition contract supports those states.
 
-## First conversion slice implemented on PR #209
+## Conversion slices implemented on PR #209
+
+### Governed runtime
 
 `src/stegcore/runtime.py` now:
 
@@ -61,15 +69,21 @@ Missing materially required state must not become ALLOW by absence of observed i
 5. binds the exact target and evaluation time into the coherence receipt;
 6. preserves the complete commit-state object plus commit-state hash in the receipt for later same-execution reconstruction.
 
-`tests/test_runtime_commit_coherence.py` now requires explicit authority for successful execution and adds a negative control proving omitted authority refuses execution. It also asserts target, authority reference, evaluation time, and commit-state hash are preserved in the execution receipt.
+`tests/test_runtime_commit_coherence.py` requires explicit authority for successful execution, proves omitted authority refuses execution, and asserts authority reference, target, evaluation time, and commit-state hash are preserved in the execution receipt.
 
-This is source implementation only. Hosted exact-head validation, merge, resident execution, downstream propagation, and same-execution reconstruction are not yet claimed.
+### Governed adapters
+
+`src/stegcore/runtime_adapters.py` now carries `authority_resolution` as explicit adapter request state and passes it into the single `governed_execute()` path. An `authority_reference` remains an identity/reference binding only; it no longer substitutes for current authority state.
+
+`tests/test_governed_runtime_adapters.py` and `tests/test_governed_runtime_reconciliation.py` now provide explicit current authority for ALLOW fixtures and add negative controls proving missing adapter authority cannot invoke the executor or reconcile as a committed ALLOW.
+
+This remains source implementation. Hosted exact-head validation, merge, resident execution, downstream propagation, and same-execution reconstruction are not yet claimed. At the latest observation, no exact-head workflow run or commit status had appeared for the current branch head.
 
 ## Conversion phases
 
-1. **Architecture reconciliation** — IN PROGRESS / first pass found no replacement-architecture blocker and identified the implicit-authority defect.
-2. **State materialization** — STARTED / authority + evaluation time + target now bound into StegCore commit-time pre-state and receipt on PR #209.
-3. **Runtime enforcement** — STARTED AT SOURCE / omitted authority now fails closed before executor invocation; resident/runtime proof remains pending.
+1. **Architecture reconciliation** — IN PROGRESS / first pass found no replacement-architecture blocker; implicit-authority and adapter-state defects identified and source-corrected.
+2. **State materialization** — STARTED / authority + evaluation time + target are bound into the StegCore commit-time state; adapter path now carries explicit authority state.
+3. **Runtime enforcement** — STARTED AT SOURCE / omitted authority fails closed before executor invocation through direct runtime and governed adapters; resident proof remains pending.
 4. **Receipt proof** — SOURCE SHAPE STARTED / commit state is receipt-bound; authentic resident receipt not yet observed.
 5. **Reconstruction proof** — PENDING.
 6. **Ecosystem propagation** — PENDING after source validation/merge; existing PA-001 publication propagation remains separate and non-authorizing.
@@ -103,12 +117,16 @@ FULLY ENFORCED may be claimed only when all are evidenced:
 - StegCore draft PR: `#209`
 - initial handoff commit: `7b0083b9cee68ebaf4a8ca3d8d0129be2050577b`
 - runtime conversion commit: `d22694c8f0b6415137639ffb1542f0d0dff94e68`
-- regression-test conversion commit: `070bee26f95a63595192608cf7545671686baf3c`
+- direct runtime regression-test commit: `070bee26f95a63595192608cf7545671686baf3c`
+- adapter authority-state commit: `86f692209029f81a36db9aa7382609de959b2735`
+- adapter regression-test commit: `73df4c4bb13027c3b629428bb911eb3678247162`
+- reconciliation regression-test commit: `ff688970c6afc679967b2a65df8cf94d8c04f7cd`
+- README conversion documentation commit: `219bc0860c87e4936ffa7cd7a6976b325c8e7881`
 
 ## Next executable actions
 
-1. Observe exact-head CI for PR #209 and repair every regression caused by removing implicit authority.
-2. Inventory all governed-runtime callers that still rely on omitted authority and convert them to explicit present-state authority inputs or preserve their refusal behavior where absence is correct.
+1. Observe exact-head CI for PR #209 and repair every regression caused by removal of implicit authority.
+2. Inventory remaining direct `governed_execute()` and `coherence_gate()` callers for synthetic/implicit authority or mere-reference substitution.
 3. Extend temporal enforcement from evaluation-time binding to governed validity-window/freshness semantics; expired or indeterminate authority/evidence must not ALLOW.
 4. Add explicit changed-target and stale-evidence negative controls against the canonical runtime.
 5. Reconcile the resulting state shape with current InTr/StegGate and resident runtime consumers rather than creating a parallel path.
