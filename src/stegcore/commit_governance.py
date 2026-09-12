@@ -21,6 +21,126 @@ def canonical_hash(value: Any) -> str:
     return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
+def parse_state_time(value: Any) -> datetime | None:
+    """Parse an RFC3339/ISO-8601 timestamp as an aware UTC datetime."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+    text = value.strip()
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return None
+    return parsed.astimezone(timezone.utc)
+
+
+def evaluate_present_state(
+    *,
+    authority_resolution: Mapping[str, Any],
+    target_binding: str | None,
+    evaluation_time: datetime,
+    evidence_issued_at: str | None = None,
+    evidence_valid_until: str | None = None,
+    evidence_current: bool | None = None,
+) -> dict[str, Any]:
+    """Evaluate the minimum present state required before consequence-bearing commit.
+
+    This is a shared state-validation primitive, not a new policy engine. It preserves
+    the distinction between an explicit negative state (``DENY``) and an
+    unestablished/indeterminate state (``FAIL_CLOSED``). Callers may supply exact
+    evidence validity timestamps or an already-governed current-evidence finding.
+    """
+
+    authority = dict(authority_resolution)
+    checks: dict[str, bool] = {}
+    failures: list[str] = []
+    indeterminate: list[str] = []
+
+    authority_status = str(authority.get("status", "")).lower()
+    if authority_status in {"approved", "allow", "allowed", "valid"}:
+        checks["authority_current"] = True
+    elif authority_status in {"revoked", "denied", "deny", "invalid", "expired"}:
+        checks["authority_current"] = False
+        failures.append("authority_not_current")
+    else:
+        checks["authority_current"] = False
+        indeterminate.append("authority_state_unestablished")
+
+    authority_target = authority.get("target_binding")
+    if not target_binding:
+        checks["target_current"] = False
+        indeterminate.append("candidate_target_unavailable")
+    elif not isinstance(authority_target, str) or not authority_target:
+        checks["target_current"] = False
+        indeterminate.append("authority_target_unestablished")
+    elif authority_target != target_binding:
+        checks["target_current"] = False
+        failures.append("authority_target_mismatch")
+    else:
+        checks["target_current"] = True
+
+    temporal_scope = str(authority.get("temporal_scope", "bounded")).lower()
+    if temporal_scope == "unbounded":
+        checks["authority_temporal_current"] = True
+    else:
+        valid_from = parse_state_time(authority.get("valid_from"))
+        valid_until = parse_state_time(authority.get("valid_until"))
+        if valid_from is None or valid_until is None or valid_until < valid_from:
+            checks["authority_temporal_current"] = False
+            indeterminate.append("authority_temporal_state_unestablished")
+        elif evaluation_time < valid_from:
+            checks["authority_temporal_current"] = False
+            failures.append("authority_not_yet_valid")
+        elif evaluation_time > valid_until:
+            checks["authority_temporal_current"] = False
+            failures.append("authority_expired")
+        else:
+            checks["authority_temporal_current"] = True
+
+    if evidence_issued_at is not None or evidence_valid_until is not None:
+        issued_at = parse_state_time(evidence_issued_at)
+        valid_until = parse_state_time(evidence_valid_until)
+        if issued_at is None or valid_until is None or valid_until < issued_at:
+            checks["evidence_current"] = False
+            indeterminate.append("continuity_evidence_freshness_unestablished")
+        elif evaluation_time < issued_at:
+            checks["evidence_current"] = False
+            failures.append("continuity_evidence_not_yet_valid")
+        elif evaluation_time > valid_until:
+            checks["evidence_current"] = False
+            failures.append("continuity_evidence_stale")
+        else:
+            checks["evidence_current"] = True
+    elif evidence_current is True:
+        checks["evidence_current"] = True
+    elif evidence_current is False:
+        checks["evidence_current"] = False
+        failures.append("evidence_not_current")
+    else:
+        checks["evidence_current"] = False
+        indeterminate.append("evidence_current_state_unestablished")
+
+    if indeterminate:
+        disposition = "FAIL_CLOSED"
+        reasons = tuple(indeterminate + failures)
+    elif failures:
+        disposition = "DENY"
+        reasons = tuple(failures)
+    else:
+        disposition = "ALLOW"
+        reasons = ()
+
+    return {
+        "allowed": disposition == "ALLOW",
+        "disposition": disposition,
+        "checks": checks,
+        "reasons": reasons,
+    }
+
+
 @dataclass(frozen=True)
 class CoherenceResult:
     coherent: bool
