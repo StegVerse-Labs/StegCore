@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from __future__ import annotations
 
 import argparse
@@ -36,6 +35,7 @@ from stegcore.universal_governance_consequence_evidence import (
 )
 
 INTR_REGISTRY = STEGOS / "specs" / "universal-intr-connector-profiles.v1.json"
+TARGET_BINDING = "target:universal-governance-reference:bounded-state:1"
 
 
 def load(name: str) -> dict[str, Any]:
@@ -73,7 +73,6 @@ class BoundedReferenceTarget:
 
     def bypass_attempt(self, task: str, payload: dict[str, Any]) -> bool:
         before = self.snapshot()
-        # No direct mutation method exists for bypass callers.
         after = self.snapshot()
         return before == after
 
@@ -154,6 +153,7 @@ def execute(bound_state_root: Path) -> dict[str, Any]:
         governance,
         parameters={"x": 1},
         credential=credential,
+        target_binding=TARGET_BINDING,
     )
     authority = {
         "status": "approved",
@@ -162,6 +162,9 @@ def execute(bound_state_root: Path) -> dict[str, Any]:
         "credential_id": credential.credential_id,
         "credential_hash": credential.credential_hash,
         "subject_binding": credential.subject_binding,
+        "target_binding": TARGET_BINDING,
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "valid_until": "2027-01-01T00:00:00+00:00",
     }
 
     target = BoundedReferenceTarget(target_path)
@@ -175,9 +178,14 @@ def execute(bound_state_root: Path) -> dict[str, Any]:
         prepared_adapter_request=prepared,
         task_runner=target.governed_mutate,
         authority_resolution=authority,
+        evidence_current=True,
     )
     if execution.status != "COMPLETED":
         raise RuntimeError(f"reference consequence not completed: {execution.status}")
+    if execution.present_state_disposition != "ALLOW":
+        raise RuntimeError("reference present-state enforcement did not ALLOW")
+    if execution.target_binding != TARGET_BINDING:
+        raise RuntimeError("reference target binding drift")
     target_state = target.snapshot()
     if target_state.get("mutation_count") != 1:
         raise RuntimeError("governed target mutation count is not exactly one")
@@ -215,6 +223,11 @@ def execute(bound_state_root: Path) -> dict[str, Any]:
         "bypass_negative_control_passed": True,
         "governed_target_mutation_count": 1,
         "real_external_system_enforced_activation": False,
+        "target_binding": execution.target_binding,
+        "present_state_disposition": execution.present_state_disposition,
+        "present_state_checks": dict(execution.present_state_checks or {}),
+        "present_state_reasons": list(execution.present_state_reasons),
+        "present_state_evaluated_at": execution.present_state_evaluated_at,
         "target_state_ref": "target/state.json",
         "consequence_evidence_ref": "evidence/consequence.json",
         "master_records_projection_ref": "evidence/master-records-projection.json",

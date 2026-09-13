@@ -41,6 +41,7 @@ from stegcore.universal_governance_consequence_evidence import (
 )
 
 INTR_REGISTRY=STEGOS/"specs/universal-intr-connector-profiles.v1.json"
+TARGET_BINDING="target:external-system.example:bounded:1"
 
 
 def load(name):
@@ -109,6 +110,7 @@ def build_full_execution():
         adapter,registry,prepared,governance,
         parameters={"x":1},
         credential=credential,
+        target_binding=TARGET_BINDING,
     )
     authority={
         "status":"approved",
@@ -117,12 +119,16 @@ def build_full_execution():
         "credential_id":credential.credential_id,
         "credential_hash":credential.credential_hash,
         "subject_binding":credential.subject_binding,
+        "target_binding":TARGET_BINDING,
+        "valid_from":"2026-01-01T00:00:00+00:00",
+        "valid_until":"2027-01-01T00:00:00+00:00",
     }
     execution=execute_external_consequence_if_coherent(
         pe,
         prepared_adapter_request=prepared,
         task_runner=lambda task,payload: {"task":task,"payload":payload,"mutated":True},
         authority_resolution=authority,
+        evidence_current=True,
     )
     return adapter,registry,connector,packet,request_receipt,governance,execution
 
