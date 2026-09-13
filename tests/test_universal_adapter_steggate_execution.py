@@ -30,6 +30,7 @@ from stegcore.external_adapter_steggate_execution import (
 from stegcore.universal_governance_connector import VerifiedTransportBindings
 
 INTR_REGISTRY=STEGOS/"specs/universal-intr-connector-profiles.v1.json"
+TARGET_BINDING="target:external-system.example:bounded:1"
 
 
 def load(name):
@@ -105,38 +106,56 @@ def credential():
     )
 
 
-def authority_resolution(cred=None):
+def authority_resolution(cred=None, **changes):
     cred=cred or credential()
-    return {
+    value={
         "status":"approved",
         "basis_invalidated_by_action":False,
         "authority_ref":"target-authority:example:execute:1",
         "credential_id":cred.credential_id,
         "credential_hash":cred.credential_hash,
         "subject_binding":cred.subject_binding,
+        "target_binding":TARGET_BINDING,
+        "valid_from":"2026-01-01T00:00:00+00:00",
+        "valid_until":"2027-01-01T00:00:00+00:00",
     }
+    value.update(changes)
+    return value
+
+
+def build_execution(adapter,registry,prepared,result,**kwargs):
+    return build_steggate_execution_request(
+        adapter,registry,prepared,result,
+        parameters={"x":1},
+        credential=credential(),
+        target_binding=TARGET_BINDING,
+        **kwargs,
+    )
 
 
 class UniversalAdapterStegGateExecutionTests(unittest.TestCase):
-    def test_exact_candidate_and_target_authority_execute_once(self):
+    def test_exact_candidate_target_time_and_authority_execute_once(self):
         adapter,registry,prepared,result=evaluate_native(native_action())
         self.assertEqual(result.decision,"ALLOW")
-        pe=build_steggate_execution_request(
-            adapter,registry,prepared,result,
-            parameters={"x":1},
-            credential=credential(),
-        )
+        pe=build_execution(adapter,registry,prepared,result)
         calls=[]
         evidence=execute_external_consequence_if_coherent(
             pe,
             prepared_adapter_request=prepared,
             task_runner=lambda task,payload: calls.append((task,payload)) or {"mutated":True},
             authority_resolution=authority_resolution(),
+            evidence_current=True,
         )
         self.assertEqual(evidence.status,"COMPLETED")
         self.assertEqual(calls,[("native.execute",{"x":1})])
         self.assertTrue(evidence.executor_invoked)
         self.assertTrue(evidence.consequence_observed)
+        self.assertEqual(evidence.target_binding,TARGET_BINDING)
+        self.assertEqual(evidence.present_state_disposition,"ALLOW")
+        self.assertTrue(evidence.present_state_checks["authority_current"])
+        self.assertTrue(evidence.present_state_checks["target_current"])
+        self.assertTrue(evidence.present_state_checks["authority_temporal_current"])
+        self.assertTrue(evidence.present_state_checks["evidence_current"])
         self.assertEqual(evidence.candidate_hash,prepared.payload["candidate_hash"])
         self.assertEqual(evidence.governance_receipt_hash,result.receipt_hash)
         self.assertEqual(evidence.intr_packet_id,result.intr_packet_id)
@@ -146,11 +165,7 @@ class UniversalAdapterStegGateExecutionTests(unittest.TestCase):
 
     def test_same_candidate_ref_with_mutated_parameters_never_reaches_runner(self):
         adapter,registry,prepared,result=evaluate_native(native_action())
-        pe=build_steggate_execution_request(
-            adapter,registry,prepared,result,
-            parameters={"x":1},
-            credential=credential(),
-        )
+        pe=build_execution(adapter,registry,prepared,result)
         bad=deepcopy(dict(pe.execution_request))
         bad["action"]["parameters"]={"x":2}
         mutated=replace(pe,execution_request=bad)
@@ -161,16 +176,13 @@ class UniversalAdapterStegGateExecutionTests(unittest.TestCase):
                 prepared_adapter_request=prepared,
                 task_runner=lambda task,payload: calls.append((task,payload)),
                 authority_resolution=authority_resolution(),
+                evidence_current=True,
             )
         self.assertEqual(calls,[])
 
     def test_wrong_target_authority_never_reaches_runner(self):
         adapter,registry,prepared,result=evaluate_native(native_action())
-        pe=build_steggate_execution_request(
-            adapter,registry,prepared,result,
-            parameters={"x":1},
-            credential=credential(),
-        )
+        pe=build_execution(adapter,registry,prepared,result)
         auth=authority_resolution()
         auth["authority_ref"]="target-authority:wrong"
         calls=[]
@@ -179,19 +191,60 @@ class UniversalAdapterStegGateExecutionTests(unittest.TestCase):
             prepared_adapter_request=prepared,
             task_runner=lambda task,payload: calls.append((task,payload)),
             authority_resolution=auth,
+            evidence_current=True,
         )
         self.assertTrue(evidence.status.startswith("DENIED:AUTHORITY_REF_MISMATCH"))
         self.assertFalse(evidence.executor_invoked)
         self.assertFalse(evidence.consequence_observed)
         self.assertEqual(calls,[])
 
+    def test_changed_target_is_denied_by_shared_present_state_component(self):
+        adapter,registry,prepared,result=evaluate_native(native_action())
+        pe=build_execution(adapter,registry,prepared,result)
+        calls=[]
+        evidence=execute_external_consequence_if_coherent(
+            pe,
+            prepared_adapter_request=prepared,
+            task_runner=lambda task,payload: calls.append((task,payload)),
+            authority_resolution=authority_resolution(target_binding="target:changed"),
+            evidence_current=True,
+        )
+        self.assertIn("PRESENT_STATE_DENY:authority_target_mismatch",evidence.status)
+        self.assertEqual(evidence.present_state_disposition,"DENY")
+        self.assertEqual(calls,[])
+
+    def test_expired_authority_is_denied_by_shared_present_state_component(self):
+        adapter,registry,prepared,result=evaluate_native(native_action())
+        pe=build_execution(adapter,registry,prepared,result)
+        calls=[]
+        evidence=execute_external_consequence_if_coherent(
+            pe,
+            prepared_adapter_request=prepared,
+            task_runner=lambda task,payload: calls.append((task,payload)),
+            authority_resolution=authority_resolution(valid_until="2026-02-01T00:00:00+00:00"),
+            evidence_current=True,
+        )
+        self.assertIn("PRESENT_STATE_DENY:authority_expired",evidence.status)
+        self.assertEqual(calls,[])
+
+    def test_unestablished_evidence_freshness_fails_closed(self):
+        adapter,registry,prepared,result=evaluate_native(native_action())
+        pe=build_execution(adapter,registry,prepared,result)
+        calls=[]
+        evidence=execute_external_consequence_if_coherent(
+            pe,
+            prepared_adapter_request=prepared,
+            task_runner=lambda task,payload: calls.append((task,payload)),
+            authority_resolution=authority_resolution(),
+            evidence_current=None,
+        )
+        self.assertIn("PRESENT_STATE_FAIL_CLOSED:evidence_current_state_unestablished",evidence.status)
+        self.assertEqual(evidence.present_state_disposition,"FAIL_CLOSED")
+        self.assertEqual(calls,[])
+
     def test_wrong_credential_never_reaches_runner(self):
         adapter,registry,prepared,result=evaluate_native(native_action())
-        pe=build_steggate_execution_request(
-            adapter,registry,prepared,result,
-            parameters={"x":1},
-            credential=credential(),
-        )
+        pe=build_execution(adapter,registry,prepared,result)
         auth=authority_resolution()
         auth["credential_hash"]="sha256:"+"3"*64
         calls=[]
@@ -200,6 +253,7 @@ class UniversalAdapterStegGateExecutionTests(unittest.TestCase):
             prepared_adapter_request=prepared,
             task_runner=lambda task,payload: calls.append((task,payload)),
             authority_resolution=auth,
+            evidence_current=True,
         )
         self.assertTrue(evidence.status.startswith("DENIED:CREDENTIAL_HASH_MISMATCH"))
         self.assertFalse(evidence.executor_invoked)
@@ -212,6 +266,7 @@ class UniversalAdapterStegGateExecutionTests(unittest.TestCase):
                 adapter,registry,prepared,result,
                 parameters={"x":1},
                 credential=credential(),
+                target_binding=TARGET_BINDING,
                 capability_surface={
                     "actions_exposed":["native.execute"],
                     "execution_mode":"auto",
@@ -227,6 +282,7 @@ class UniversalAdapterStegGateExecutionTests(unittest.TestCase):
                 adapter,registry,prepared,result,
                 parameters={"x":1},
                 credential=credential(),
+                target_binding=TARGET_BINDING,
             )
 
 
