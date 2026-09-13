@@ -3,11 +3,16 @@ from __future__ import annotations
 """Bridge Universal Governance adapter admission into canonical StegGate commit execution."""
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from hashlib import sha256
 import json
 from typing import Any, Callable, Mapping
 
-from stegcore.commit_governance import execute_if_coherent, verify_receipt_integrity
+from stegcore.commit_governance import (
+    evaluate_present_state,
+    execute_if_coherent,
+    verify_receipt_integrity,
+)
 from stegcore.external_governance_adapter import (
     AdapterPreparedRequest,
     ConsequenceGateResult,
@@ -72,6 +77,11 @@ class ExternalConsequenceExecutionEvidence:
     credential_authority: str
     adapter_authority_effect: str
     target_authority_effect: str
+    target_binding: str | None = None
+    present_state_disposition: str | None = None
+    present_state_checks: Mapping[str, bool] | None = None
+    present_state_reasons: tuple[str, ...] = ()
+    present_state_evaluated_at: str | None = None
 
 
 def _native_operation_for_prepared(
@@ -99,6 +109,7 @@ def build_steggate_execution_request(
     *,
     parameters: Mapping[str, Any],
     credential: TargetCredentialBinding,
+    target_binding: str,
     capability_surface: Mapping[str, Any] | None = None,
 ) -> PreparedStegGateExecution:
     gate = gate_external_consequence(adapter, registry, prepared, governance_result)
@@ -108,6 +119,9 @@ def build_steggate_execution_request(
         raise ValueError("execution.credential_hash_invalid")
     if not credential.credential_id or not credential.subject_binding:
         raise ValueError("execution.credential_binding_missing")
+    if not isinstance(target_binding, str) or not target_binding.strip():
+        raise ValueError("execution.target_binding_missing")
+    target_binding = target_binding.strip()
 
     native_operation = _native_operation_for_prepared(adapter, prepared)
     action = {"name": native_operation, "parameters": dict(parameters)}
@@ -143,6 +157,7 @@ def build_steggate_execution_request(
         "candidate_hash": candidate_hash,
         "credential_hash": credential.credential_hash,
         "authority_ref": authority_ref,
+        "target_binding": target_binding,
         "governance_receipt_hash": governance_result.receipt_hash,
         "intr_packet_id": governance_result.intr_packet_id,
     }
@@ -161,6 +176,7 @@ def build_steggate_execution_request(
         "action": action,
         "capability_surface": surface,
         "authority_ref": authority_ref,
+        "target_binding": target_binding,
         "profile_ref": PROFILE_ID,
     }
     validate_steggate_execution_request(request, prepared=prepared)
@@ -180,7 +196,8 @@ def validate_steggate_execution_request(
 ) -> None:
     required = {
         "schema_version", "execution_id", "candidate_id", "candidate_hash",
-        "credential_binding", "action", "capability_surface", "authority_ref", "profile_ref",
+        "credential_binding", "action", "capability_surface", "authority_ref",
+        "target_binding", "profile_ref",
     }
     if set(request) != required:
         raise ValueError("execution.request_field_set_invalid")
@@ -190,6 +207,8 @@ def validate_steggate_execution_request(
         raise ValueError("execution.profile_ref_invalid")
     if request.get("candidate_id") != prepared.payload.get("candidate_ref"):
         raise ValueError("execution.candidate_id_mismatch")
+    if not isinstance(request.get("target_binding"), str) or not request["target_binding"]:
+        raise ValueError("execution.target_binding_missing")
     action = request.get("action")
     if not isinstance(action, Mapping) or set(action) != {"name", "parameters"}:
         raise ValueError("execution.action_invalid")
@@ -226,6 +245,7 @@ def execute_external_consequence_if_coherent(
     prepared_adapter_request: AdapterPreparedRequest,
     task_runner: Callable[[str, Mapping[str, Any]], Any],
     authority_resolution: Mapping[str, Any],
+    evidence_current: bool | None,
     previous_receipt_hash: str | None = None,
 ) -> ExternalConsequenceExecutionEvidence:
     request = prepared_execution.execution_request
@@ -240,6 +260,23 @@ def execute_external_consequence_if_coherent(
         return _blocked_evidence(prepared_execution, request, "CREDENTIAL_HASH_MISMATCH")
     if authority_resolution.get("subject_binding") != credential["subject_binding"]:
         return _blocked_evidence(prepared_execution, request, "SUBJECT_BINDING_MISMATCH")
+
+    evaluated_at = datetime.now(timezone.utc)
+    present_state = evaluate_present_state(
+        authority_resolution=authority_resolution,
+        target_binding=request["target_binding"],
+        evaluation_time=evaluated_at,
+        evidence_current=evidence_current,
+    )
+    if not present_state["allowed"]:
+        reason = present_state["reasons"][0] if present_state["reasons"] else "present_state_not_allow"
+        return _blocked_evidence(
+            prepared_execution,
+            request,
+            f"PRESENT_STATE_{present_state['disposition']}:{reason}",
+            present_state=present_state,
+            evaluated_at=evaluated_at.isoformat(),
+        )
 
     action = request["action"]
     result = execute_if_coherent(
@@ -273,6 +310,11 @@ def execute_external_consequence_if_coherent(
         credential_authority="TV/TVC",
         adapter_authority_effect="NONE",
         target_authority_effect="TARGET_CONSEQUENCE_ONLY" if completed else "NONE",
+        target_binding=request["target_binding"],
+        present_state_disposition=present_state["disposition"],
+        present_state_checks=dict(present_state["checks"]),
+        present_state_reasons=tuple(present_state["reasons"]),
+        present_state_evaluated_at=evaluated_at.isoformat(),
     )
 
 
@@ -280,6 +322,9 @@ def _blocked_evidence(
     prepared_execution: PreparedStegGateExecution,
     request: Mapping[str, Any],
     reason: str,
+    *,
+    present_state: Mapping[str, Any] | None = None,
+    evaluated_at: str | None = None,
 ) -> ExternalConsequenceExecutionEvidence:
     credential = request["credential_binding"]
     return ExternalConsequenceExecutionEvidence(
@@ -299,4 +344,9 @@ def _blocked_evidence(
         credential_authority="TV/TVC",
         adapter_authority_effect="NONE",
         target_authority_effect="NONE",
+        target_binding=request.get("target_binding"),
+        present_state_disposition=(present_state or {}).get("disposition"),
+        present_state_checks=dict((present_state or {}).get("checks", {})) if present_state is not None else None,
+        present_state_reasons=tuple((present_state or {}).get("reasons", ())),
+        present_state_evaluated_at=evaluated_at,
     )
