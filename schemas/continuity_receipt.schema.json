@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/continuity_receipt.schema.json",
+  "title": "StegVerse Continuity Receipt",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "entity",
+    "transition_id",
+    "repo",
+    "prior_state_hash",
+    "proposed_state_hash",
+    "evidence_refs",
+    "formalism_refs",
+    "continuity_status",
+    "drift_status",
+    "replay_available",
+    "created_at"
+  ],
+  "properties": {
+    "receipt_id": {"type": "string", "pattern": "^svcr_[A-Za-z0-9_\\-]+$"},
+    "entity": {"const": "StegVerse-001"},
+    "transition_id": {"type": "string", "minLength": 1},
+    "repo": {"type": "string", "minLength": 1},
+    "actor_identity": {"type": "string"},
+    "prior_state_hash": {"type": "string"},
+    "proposed_state_hash": {"type": "string"},
+    "evidence_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "policy_refs": {"type": "array", "items": {"type": "string"}},
+    "formalism_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "enum": ["BCAT", "GCAT", "ECAT", "ICAT"]}},
+    "continuity_status": {"type": "string", "enum": ["CONTINUOUS", "CONTINUITY_GAP", "UNRECONSTRUCTABLE", "INSUFFICIENT_EVIDENCE"]},
+    "drift_status": {"type": "string", "enum": ["NONE_DETECTED", "POLICY_DRIFT", "IDENTITY_DRIFT", "EVIDENCE_STALE", "CONTEXT_DRIFT", "AUTHORITY_DRIFT"]},
+    "replay_available": {"type": "boolean"},
+    "replay_pointer": {"type": "string"},
+    "denial_reason": {"type": "string"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

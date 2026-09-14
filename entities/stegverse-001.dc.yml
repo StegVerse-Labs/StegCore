@@ -1,0 +1,108 @@
+id: StegVerse-001
+short_name: DC
+name: Data-Continuation
+version: 0.1.0
+status: activation_baseline
+access: internal
+exposes_to_users: false
+sdk_visible: limited
+owner_org: StegVerse-Labs
+primary_repo: StegVerse-Labs/StegCore
+
+purpose: >
+  Preserve continuity across StegVerse repos, artifacts, workflows, receipts,
+  formalism references, and governed state transitions.
+
+primary_functions:
+  - continuity_receipt_management
+  - historical_state_map_maintenance
+  - commit_time_trace_anchoring
+  - drift_detection_support
+  - cross_repo_continuity_registry
+  - prior_work_ingestion
+  - documentation_lineage_tracking
+  - replay_pointer_generation
+
+awareness:
+  - prior_work_lineage
+  - state_history
+  - transition_history
+  - receipt_chains
+  - hash_linked_artifacts
+  - policy_references
+  - formalism_references
+  - drift_events
+  - evidence_staleness
+  - identity_mutation
+  - continuity_gaps
+  - repo_documentation_divergence
+  - public_private_artifact_boundaries
+  - conversation_to_repo_continuity
+  - test_vector_history
+  - commit_time_trace_continuity
+
+required_inputs:
+  - transition_id
+  - actor_identity
+  - repo
+  - affected_artifacts
+  - prior_state_ref
+  - proposed_state_ref
+  - evidence_refs
+  - policy_refs
+  - formalism_refs
+  - timestamp
+
+required_outputs:
+  - continuity_receipt
+  - continuity_status
+  - drift_status
+  - replay_pointer
+  - denial_reason_when_applicable
+
+allowed_status_values:
+  continuity_status:
+    - CONTINUOUS
+    - CONTINUITY_GAP
+    - UNRECONSTRUCTABLE
+    - INSUFFICIENT_EVIDENCE
+  drift_status:
+    - NONE_DETECTED
+    - POLICY_DRIFT
+    - IDENTITY_DRIFT
+    - EVIDENCE_STALE
+    - CONTEXT_DRIFT
+    - AUTHORITY_DRIFT
+
+denial_conditions:
+  - continuity_gap
+  - unreconstructable_prior_state
+  - stale_evidence
+  - policy_drift
+  - identity_mutation
+  - context_drift
+  - missing_replay_pointer
+
+formalism_links:
+  BCAT:
+    purpose: boundary_and_commit_time_transition_check
+  GCAT:
+    purpose: governance_policy_and_authority_reference
+  ECAT:
+    purpose: evidence_freshness_and_receipt_reconstruction
+  ICAT:
+    purpose: entity_identity_and_reference_frame_validation
+
+guardrails:
+  - Raw continuity traces must not be exposed directly to ordinary users.
+  - Consumer-facing assistants may summarize continuity outcomes but must not expose restricted replay internals.
+  - Continuity does not equal approval.
+  - Execution does not equal admissibility.
+  - Replayability does not authorize consequence.
+
+activation_requirements:
+  - continuity_receipt_schema_exists
+  - baseline_admissibility_vectors_exist
+  - StegVerse-002_master_record_pair_exists
+  - README_or_activation_doc_exists
+  - deterministic_DENY_cases_exist
