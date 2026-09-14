@@ -1,0 +1,31 @@
+suite: stegverse_001_002_admissibility_baseline
+version: 0.1.0
+purpose: >
+  Baseline vectors for validating StegVerse-001 continuity output,
+  StegVerse-002 master-record output, and deterministic admissibility behavior.
+
+cases:
+  - id: allow_valid_internal_entity_manifest
+    input: {continuity_status: CONTINUOUS, record_status: CANONICAL, authority_valid: true, policy_valid: true, evidence_current: true, identity_valid: true, reviewer_refusal: false, override_requested: false}
+    expected: {result: ALLOW, reason: valid_continuity_and_canonical_record}
+  - id: deny_on_policy_drift
+    input: {continuity_status: CONTINUOUS, record_status: CANONICAL, authority_valid: true, policy_valid: false, evidence_current: true, identity_valid: true, reviewer_refusal: false, override_requested: false}
+    expected: {result: DENY, reason: policy_drift}
+  - id: deny_on_stale_evidence
+    input: {continuity_status: CONTINUOUS, record_status: CANONICAL, authority_valid: true, policy_valid: true, evidence_current: false, identity_valid: true, reviewer_refusal: false, override_requested: false}
+    expected: {result: DENY, reason: evidence_stale}
+  - id: deny_on_identity_mutation
+    input: {continuity_status: CONTINUOUS, record_status: CANONICAL, authority_valid: true, policy_valid: true, evidence_current: true, identity_valid: false, reviewer_refusal: false, override_requested: false}
+    expected: {result: DENY, reason: identity_mutation}
+  - id: deny_when_reviewer_refusal_binds
+    input: {continuity_status: CONTINUOUS, record_status: CANONICAL, authority_valid: true, policy_valid: true, evidence_current: true, identity_valid: true, reviewer_refusal: true, refusal_binding: true, override_requested: false}
+    expected: {result: DENY, reason: reviewer_refusal_binds_consequence}
+  - id: deny_invalid_override
+    input: {continuity_status: CONTINUOUS, record_status: CANONICAL, authority_valid: true, policy_valid: true, evidence_current: true, identity_valid: true, reviewer_refusal: true, refusal_binding: true, override_requested: true, override_authority_valid: false}
+    expected: {result: DENY, reason: override_authority_invalid}
+  - id: deny_on_continuity_gap
+    input: {continuity_status: CONTINUITY_GAP, record_status: CANONICAL, authority_valid: true, policy_valid: true, evidence_current: true, identity_valid: true, reviewer_refusal: false, override_requested: false}
+    expected: {result: DENY, reason: continuity_gap}
+  - id: deny_on_conflicting_record
+    input: {continuity_status: CONTINUOUS, record_status: CONFLICTING, authority_valid: true, policy_valid: true, evidence_current: true, identity_valid: true, reviewer_refusal: false, override_requested: false}
+    expected: {result: DENY, reason: conflicting_master_record}

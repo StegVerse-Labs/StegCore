@@ -1,0 +1,119 @@
+id: StegVerse-002
+short_name: MR
+name: Master-Records
+version: 0.1.0
+status: activation_baseline
+access: restricted_internal_or_sdk_mediated
+exposes_to_users: false
+sdk_visible: controlled
+owner_org: StegVerse-Labs
+primary_repo: StegVerse-Labs/StegCore
+
+purpose: >
+  Maintain canonical StegVerse records, validate controlled ingestion,
+  determine current authoritative artifact state, and prevent ordinary user
+  access to raw master-record mutation pathways.
+
+primary_functions:
+  - master_record_validation
+  - controlled_bundle_ingestion
+  - canonical_document_mapping
+  - repo_readiness_state_tracking
+  - machine_readable_manifest_maintenance
+  - formalism_map_linkage
+  - sdk_or_internal_org_integration
+  - canonical_status_emission
+
+awareness:
+  - canonical_repo_records
+  - entity_manifests
+  - current_valid_schemas
+  - current_valid_readmes
+  - activation_checklists
+  - bundle_ingestion_state
+  - machine_readable_registry_state
+  - public_internal_restricted_scope
+  - sdk_visible_vs_internal_only_surfaces
+  - deprecated_documents
+  - superseded_records
+  - conflicting_documentation
+  - missing_owner_metadata
+  - missing_activation_status
+  - invalid_manifests
+  - publisher_social_readiness_boundaries
+
+required_inputs:
+  - record_id
+  - transition_id
+  - repo
+  - artifact
+  - artifact_role
+  - owner_entity
+  - access_class
+  - validation_refs
+  - continuity_receipt_ref
+  - supersedes
+
+required_outputs:
+  - master_record
+  - canonical_status
+  - record_status
+  - access_decision
+  - denial_reason_when_applicable
+
+allowed_status_values:
+  canonical_status:
+    - ACTIVE
+    - PENDING
+    - SUPERSEDED
+    - DEPRECATED
+    - REJECTED
+    - ARCHIVED
+  record_status:
+    - CANONICAL
+    - NON_CANONICAL
+    - CONFLICTING
+    - INVALID
+    - INCOMPLETE
+    - RESTRICTED
+
+access_classes:
+  - public
+  - user_facing_summary
+  - sdk_visible
+  - internal
+  - restricted_internal_or_sdk_mediated
+
+denial_conditions:
+  - invalid_manifest
+  - missing_continuity_receipt
+  - conflicting_canonical_record
+  - restricted_record_exposure
+  - unauthorized_mutation_request
+  - missing_owner_entity
+  - stale_or_superseded_source
+  - discovery_without_execution_authority
+
+formalism_links:
+  BCAT:
+    purpose: boundary_declaration_for_record_use
+  GCAT:
+    purpose: authority_and_policy_mapping
+  ECAT:
+    purpose: evidence_refs_and_receipt_integrity
+  ICAT:
+    purpose: owner_entity_and_actor_identity_validation
+
+guardrails:
+  - Discovery of a bundle does not authorize execution.
+  - A record becoming visible does not make it canonical.
+  - Raw master-record mutation pathways must not be exposed to ordinary users.
+  - SDK-facing access must remain scoped, authenticated, and policy-bound.
+  - Canonical status does not bypass admissibility checks.
+
+activation_requirements:
+  - master_record_ingestion_schema_exists
+  - StegVerse-001_continuity_pair_exists
+  - baseline_admissibility_vectors_exist
+  - README_or_activation_doc_exists
+  - deterministic_DENY_cases_exist

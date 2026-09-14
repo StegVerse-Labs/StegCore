@@ -1,0 +1,28 @@
+registry_id: stegverse_001_002_activation_registry
+version: 0.1.0
+generated: 2026-06-16
+owner_org: StegVerse-Labs
+repo: StegVerse-Labs/StegCore
+activation_target: StegVerse-001/002 Controlled Continuity + Master-Records Baseline
+status: activation_candidate
+entities:
+  - {id: StegVerse-001, short_name: DC, role: Data-Continuation, manifest: entities/stegverse-001.dc.yml, access: internal, status: baseline_defined}
+  - {id: StegVerse-002, short_name: MR, role: Master-Records, manifest: entities/stegverse-002.mr.yml, access: restricted_internal_or_sdk_mediated, status: baseline_defined}
+required_paths:
+  - entities/stegverse-001.dc.yml
+  - entities/stegverse-002.mr.yml
+  - schemas/continuity_receipt.schema.json
+  - schemas/master_record_ingestion.schema.json
+  - tests/vectors/admissibility_baseline_vectors.yml
+  - tools/evaluate_admissibility.py
+  - tests/test_admissibility_baseline.py
+  - .github/workflows/stegverse-001-002-validator.yml
+  - docs/STEGVERSE_001_002_BASELINE.md
+  - docs/STEGVERSE_001_002_VALIDATOR.md
+  - docs/STEGVERSE_001_002_CI.md
+required_commands:
+  - python tools/evaluate_admissibility.py tests/vectors/admissibility_baseline_vectors.yml
+  - python -m pytest tests/test_admissibility_baseline.py
+  - python tools/check_activation_registry.py
+  - python -m pytest tests/test_activation_registry.py
+current_registry_result: {status: ACTIVATION_CANDIDATE, reason: registry_defined_but_repo_install_and_ci_run_must_be_verified_after_commit}

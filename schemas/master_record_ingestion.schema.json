@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/master_record_ingestion.schema.json",
+  "title": "StegVerse Master Record Ingestion",
+  "type": "object",
+  "required": ["record_id", "entity", "transition_id", "repo", "artifact", "artifact_role", "owner_entity", "access_class", "canonical_status", "record_status", "validation", "created_at"],
+  "properties": {
+    "record_id": {"type": "string", "pattern": "^svmr_[A-Za-z0-9_\\-]+$"},
+    "entity": {"const": "StegVerse-002"},
+    "transition_id": {"type": "string", "minLength": 1},
+    "repo": {"type": "string", "minLength": 1},
+    "artifact": {"type": "string", "minLength": 1},
+    "artifact_role": {"type": "string", "enum": ["entity_manifest", "schema", "readme", "activation_doc", "test_vector", "workflow", "registry", "bundle_manifest", "public_explainer"]},
+    "owner_entity": {"type": "string", "minLength": 1},
+    "access_class": {"type": "string", "enum": ["public", "user_facing_summary", "sdk_visible", "internal", "restricted_internal_or_sdk_mediated"]},
+    "canonical_status": {"type": "string", "enum": ["ACTIVE", "PENDING", "SUPERSEDED", "DEPRECATED", "REJECTED", "ARCHIVED"]},
+    "record_status": {"type": "string", "enum": ["CANONICAL", "NON_CANONICAL", "CONFLICTING", "INVALID", "INCOMPLETE", "RESTRICTED"]},
+    "supersedes": {"type": ["string", "null"]},
+    "downstream_visibility": {"type": "object", "required": ["user_facing", "sdk_facing", "internal_org"], "properties": {"user_facing": {"type": "boolean"}, "sdk_facing": {"type": "boolean"}, "internal_org": {"type": "boolean"}}, "additionalProperties": false},
+    "validation": {"type": "object", "required": ["manifest_valid", "schema_valid", "continuity_receipt_required"], "properties": {"manifest_valid": {"type": "boolean"}, "schema_valid": {"type": "boolean"}, "continuity_receipt_required": {"type": "boolean"}, "continuity_receipt_ref": {"type": "string"}, "conflicts_detected": {"type": "boolean"}, "denial_reason": {"type": "string"}}, "additionalProperties": false},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}
