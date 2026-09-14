@@ -2,18 +2,15 @@
 
 Updated: 2026-09-14
 
-Goal: promote the StegVerse-001/002 controlled continuity + Master-Records baseline through its guarded activation path.
+Goal: STEGCORE-001-002-BASELINE-ACTIVATION-001
+Repository: `StegVerse-Labs/StegCore`
+Promotion branch: `stegcore-001-002-activation-promotion`
+Registry state: `activated`
 
-Current repository: `StegVerse-Labs/StegCore`
-Current promotion branch: `stegcore-001-002-activation-promotion`
-Current state: `activation_candidate` pending exact GitHub Actions validation and guarded promotion.
+Recovery restored the preserved 001/002 baseline manifests, schemas, vectors, deterministic validator, activation registry, guarded updater, CI workflow, and runbook. Isolated pre-promotion validation passed all declared gates. Exact-head GitHub Actions run `34851378273` passed the validator, validator tests, registry path check, registry tests, updater tests, and guarded updater dry-run.
 
-Recovered canonical source packs were preserved in the ChatGPT Library from 2026-06-16/17. The 2026-09-14 recovery restored the missing live baseline manifests, schemas, vectors, validator, machine-readable registry, guarded updater, CI workflow, and documentation. Local isolated validation passed the vectors, validator tests, registry path check, registry tests, updater tests, and updater `--dry-run` before GitHub mutation.
+The guarded updater was then executed after that exact-head PASS and returned `ALLOW_STATUS_UPDATE`, `registry_updated: true`, with evaluated time `2026-09-14T13:47:31+00:00`. The JSON and YAML registry outputs in this branch are the resulting promoted state.
 
-Repository-hygiene remediation applied during recovery:
-- activation-registry tests accept both declared lifecycle states and verify result/status consistency instead of hardcoding only the pre-promotion state;
-- the CI workflow watches its actual `.github/workflows/...` path.
+Post-promotion CI must pass on the exact promoted head before merge. Activation remains narrow: no runtime deployment, provider execution, downstream-agent activation, user-verification authority, raw continuity exposure, or direct master-record mutation authority is claimed.
 
-No runtime deployment, provider execution, raw continuity exposure, master-record mutation authority, or downstream-agent activation is implied by baseline activation.
-
-Next admissible action after exact-source CI success: guarded promotion to `activated`, followed by the StegAgents handshake gate evaluation.
+After the promoted head is merged and reverified on main, the dependent StegAgents handshake may evaluate promotion from `handshake_candidate` to `handshake_ready`.
