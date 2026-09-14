@@ -37,6 +37,14 @@ The current source conversion centralizes one reusable present-state evaluator i
 
 This source contract does not by itself prove resident runtime activation or ecosystem-wide enforcement. Current coordination, exact validation state, resident-proof requirements, and propagation gates are recorded in `docs/PA001_ECOSYSTEM_RUNTIME_ENFORCEMENT_MIRROR_HANDOFF.md`.
 
+## Exact fresh commit binding reference control
+
+The Universal Governance sovereign reference runner additionally exercises an exact consequence-time binding over `state_version`, `state_hash`, `policy_epoch`, `policy_hash`, `evidence_bundle_hash`, and a single-use `execution_binding_id`. The reusable predicate is `stegcore.fresh_commit_binding`; it is deliberately a state-binding check, not a policy engine or authority source.
+
+The bounded experiment first captures an authorization-aligned V0 binding, then performs a separately retained material state transition before any consequence. Both the canonical route and an alternate consequence-capable route must reject the stale V0 state without invoking the executor. A newly derived V1 binding may proceed through the existing Governance + StegGate consequence path exactly once; replay is denied after its execution binding is consumed. The alternate route reaches the same bounded consequence primitive but cannot supply the canonical commit-boundary permit.
+
+This source experiment strengthens the reference-boundary proof only. GitHub Actions validation does **not** establish resident WorkerCoordinator claim/fence, sovereign resident execution, Master Records custody of an authentic resident instance, or real external-system ENFORCED activation. Those predicates remain separately evidence-gated under `SHWP-UNIVERSAL-GOVERNANCE-ENFORCED-REFERENCE-001`.
+
 ## GADI defensive reasoning surface
 
 StegCore also contains the bounded reasoning surface for `GADI-001` (Governed Autonomous Defensive Intervention). This layer can correlate manifested external autonomous-system observations, preserve uncertainty and semantic qualifiers, classify threat state, compare declared defensive capabilities using least-destructive-effective semantics, and construct `DEFENSIVE_INTERVENTION_REQUEST` candidates.
@@ -156,12 +164,13 @@ Governance policy/evidence
   -> stegcore.steggate.evaluate_admissibility
   -> ALLOW | DENY | REVIEW | FAIL_CLOSED
   -> shared present-state check: authority + target + time + evidence
+  -> exact fresh commit binding when required: state + policy + evidence + single-use execution binding
   -> governed commit-coherence boundary
   -> consequence execution, when separately authorized
   -> observation / reconciliation
 ```
 
-`ALLOW` is admissibility, not proof that execution occurred. A consequence is still unreachable until the present state and commit-coherence gates pass. `FAIL_CLOSED` applies when required authority, target/time binding, or evidence cannot be established safely.
+`ALLOW` is admissibility, not proof that execution occurred. A consequence is still unreachable until the present state and commit-coherence gates pass. `FAIL_CLOSED` applies when required authority, target/time binding, evidence, or declared fresh-binding state cannot be established safely.
 
 ## Canonical documentation map
 
@@ -169,6 +178,7 @@ Read current-state documents before historical review material:
 
 - `STEGCORE_MIRROR_HANDOFF.md` — live repository source of truth, active claims, validation, and continuation.
 - `docs/PA001_ECOSYSTEM_RUNTIME_ENFORCEMENT_MIRROR_HANDOFF.md` — active conversion from the PA-001 semantic invariant to commit-time and ecosystem runtime enforcement.
+- `docs/UNIVERSAL_GOVERNANCE_REFERENCE_RUNNER_MIRROR_HANDOFF.md` — bounded two-route Universal Governance reference runner and fresh-binding proof contract.
 - `docs/GADI_STEGCORE_MIRROR_HANDOFF.md` — bounded GADI threat-reasoning implementation and continuation.
 - `docs/STEGCORE_UNKNOWN_PROBE_SEMANTICS_MIRROR_HANDOFF.md` — UNKNOWN-versus-false governance semantics and frozen-v0.4 longitudinal regression evidence.
 - `docs/STEGGATE_PORTABLE_PRODUCT.md` — supported portable product surface and compatibility rules.
@@ -182,7 +192,7 @@ Historical receipts, review documents, activation artifacts, and schema-versione
 
 ## Current product status
 
-The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, standing/interlock fail-closed consequence binding, and UNKNOWN-preserving probe-required execution semantics are implemented. GADI threat reasoning is being integrated as a bounded proposal-generation surface that preserves the same authority boundary; it does not replace or bypass canonical admission. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. The PA-001 ecosystem-enforcement conversion has now installed shared source-level present-state enforcement across the direct governed runtime and canonical StegGate consequence path; exact-head validation, authentic resident execution, same-execution reconstruction, and ecosystem-wide propagation remain separate proof gates. See `STEGCORE_MIRROR_HANDOFF.md`, `docs/STEGCORE_UNKNOWN_PROBE_SEMANTICS_MIRROR_HANDOFF.md`, `docs/GADI_STEGCORE_MIRROR_HANDOFF.md`, and `docs/PA001_ECOSYSTEM_RUNTIME_ENFORCEMENT_MIRROR_HANDOFF.md` for exact machine-owned state.
+The canonical StegGate runtime, HTTP service, runtime identity contract, four-disposition self-test, initial live activation, portable-product consistency lane, AdmittedCode performance benchmark lane, standing/interlock fail-closed consequence binding, and UNKNOWN-preserving probe-required execution semantics are implemented. GADI threat reasoning is being integrated as a bounded proposal-generation surface that preserves the same authority boundary; it does not replace or bypass canonical admission. Current integration work is proving complete successor release/custody/POST_RETURN behavior through the same runtime rather than creating per-application decision semantics. The PA-001 ecosystem-enforcement conversion has now installed shared source-level present-state enforcement across the direct governed runtime and canonical StegGate consequence path. The Universal Governance reference lane additionally carries a source-level V0→V1 fresh-binding and alternate-route negative-control experiment; exact-head CI, authentic resident execution, same-execution reconstruction, destination custody for authentic resident evidence, and ecosystem-wide propagation remain separate proof gates. See `STEGCORE_MIRROR_HANDOFF.md`, `docs/STEGCORE_UNKNOWN_PROBE_SEMANTICS_MIRROR_HANDOFF.md`, `docs/GADI_STEGCORE_MIRROR_HANDOFF.md`, `docs/UNIVERSAL_GOVERNANCE_REFERENCE_RUNNER_MIRROR_HANDOFF.md`, and `docs/PA001_ECOSYSTEM_RUNTIME_ENFORCEMENT_MIRROR_HANDOFF.md` for exact machine-owned state.
 
 ## Development verification
 
