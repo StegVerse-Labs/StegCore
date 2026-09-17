@@ -41,6 +41,8 @@ def request(*, role="board_member", authority_scope="approve_budget", delegation
         "authority_assertions": [authority],
         "delegation_assertions": [delegation] if delegation_required else [],
         "delegation_required": delegation_required,
+        "authority_basis_complete": True,
+        "delegation_basis_complete": True,
         "authority_effect": "NONE_TEST_EVIDENCE_ONLY",
     }
 
@@ -65,9 +67,26 @@ def test_scope_mismatch_denies_even_for_board_role():
     assert result["authority_reason"] == "actor_authority_assertions_do_not_cover_current_candidate"
 
 
-def test_no_authority_basis_fails_closed():
+def test_complete_empty_authority_basis_denies():
     value = request()
     value["authority_assertions"] = []
+    result = resolve(value)
+    assert result["disposition"] == "DENY"
+    assert result["actor_authority_current"] is False
+
+
+def test_incomplete_authority_basis_fails_closed():
+    value = request()
+    value["authority_assertions"] = []
+    value["authority_basis_complete"] = False
+    result = resolve(value)
+    assert result["disposition"] == "FAIL_CLOSED"
+    assert result["actor_authority_current"] is None
+
+
+def test_incomplete_nonmatching_authority_basis_fails_closed():
+    value = request(authority_scope="read_budget")
+    value["authority_basis_complete"] = False
     result = resolve(value)
     assert result["disposition"] == "FAIL_CLOSED"
     assert result["actor_authority_current"] is None
@@ -87,3 +106,11 @@ def test_revoked_delegation_denies():
     assert result["delegation_current"] is False
     assert result["authority_issued"] is False
     assert result["credential_verified"] is False
+
+
+def test_incomplete_delegation_basis_fails_closed():
+    value = request(delegation_required=True, delegation_status="REVOKED")
+    value["delegation_basis_complete"] = False
+    result = resolve(value)
+    assert result["disposition"] == "FAIL_CLOSED"
+    assert result["delegation_current"] is None
