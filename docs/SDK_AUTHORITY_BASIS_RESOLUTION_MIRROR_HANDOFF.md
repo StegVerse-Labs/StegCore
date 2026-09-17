@@ -3,7 +3,7 @@
 Goal Task ID: `SDK-EVALUATOR-GOVERNANCE-POSTURE-MANIFEST-001`
 Repository: `StegVerse-Labs/StegCore`
 Supporting branch: `sdk-authority-basis-resolution-001`
-Status: `COMPLETENESS_SEMANTICS_PATCH_IN_PROGRESS`
+Status: `VALIDATED_MERGED`
 
 ## Determination
 
@@ -106,4 +106,4 @@ Post-merge review identified one material unknown-versus-false edge in the first
 
 The patch on `authority-basis-completeness-001` therefore requires explicit `authority_basis_complete` and `delegation_basis_complete` booleans. A matching current assertion can establish TRUE regardless of set completeness. When no match exists, incomplete basis remains UNKNOWN/FAIL_CLOSED; only a declared complete basis can establish FALSE/DENY.
 
-This correction preserves StegCore's canonical UNKNOWN-versus-false contract and must merge before the SDK structured-authority claim is considered final.
+This correction preserves StegCore's canonical UNKNOWN-versus-false contract. Exact head `df03835dfa8046da190521d7ef55ece9634a576a` passed Authority Basis Resolution Validation run `35288540217`, StegVerse 001/002 validation, and package-version identity validation; PR #221 then merged with expected-head protection as `f45d52cb62db29418d88752fe38f68e9bcc3cf12`. The canonical resolver now requires explicit authority/delegation basis completeness before a no-match condition can establish FALSE/DENY.
