@@ -131,6 +131,8 @@ def validate_authority_basis_request(value: Any) -> dict[str, Any]:
         "authority_assertions",
         "delegation_assertions",
         "delegation_required",
+        "authority_basis_complete",
+        "delegation_basis_complete",
         "authority_effect",
     }
     unknown = sorted(set(request) - allowed)
@@ -160,6 +162,10 @@ def validate_authority_basis_request(value: Any) -> dict[str, Any]:
     request["delegation_assertions"] = [_normalize_assertion(item, delegation=True) for item in raw_delegation]
     if not isinstance(request.get("delegation_required"), bool):
         raise AuthorityBasisError("delegation_required must be boolean")
+    if not isinstance(request.get("authority_basis_complete"), bool):
+        raise AuthorityBasisError("authority_basis_complete must be boolean")
+    if not isinstance(request.get("delegation_basis_complete"), bool):
+        raise AuthorityBasisError("delegation_basis_complete must be boolean")
     if request.get("authority_effect") != REQUEST_AUTHORITY_EFFECT:
         raise AuthorityBasisError("authority basis request must be non-authorizing")
     return request
@@ -188,12 +194,12 @@ def resolve_authority_basis(value: Any, *, observed_at: str) -> dict[str, Any]:
     if selected_authority is not None:
         actor_current: bool | None = True
         authority_reason = "matching_current_authority_assertion"
-    elif actor_assertions:
+    elif request["authority_basis_complete"]:
         actor_current = False
-        authority_reason = "actor_authority_assertions_do_not_cover_current_candidate"
+        authority_reason = "complete_authority_basis_does_not_cover_current_candidate"
     else:
         actor_current = None
-        authority_reason = "actor_authority_unestablished"
+        authority_reason = "authority_basis_incomplete"
 
     selected_delegation = None
     if request["delegation_required"]:
@@ -217,12 +223,12 @@ def resolve_authority_basis(value: Any, *, observed_at: str) -> dict[str, Any]:
             if selected_delegation is not None:
                 delegation_current = True
                 delegation_reason = "matching_current_delegation_assertion"
-            elif related:
+            elif request["delegation_basis_complete"]:
                 delegation_current = False
-                delegation_reason = "delegation_assertions_do_not_cover_current_candidate"
+                delegation_reason = "complete_delegation_basis_does_not_cover_current_candidate"
             else:
                 delegation_current = None
-                delegation_reason = "delegation_unestablished"
+                delegation_reason = "delegation_basis_incomplete"
     else:
         delegation_current = True
         delegation_reason = "delegation_not_required_for_declared_basis"
@@ -250,6 +256,8 @@ def resolve_authority_basis(value: Any, *, observed_at: str) -> dict[str, Any]:
         "disposition": disposition,
         "actor_authority_current": actor_current,
         "delegation_current": delegation_current,
+        "authority_basis_complete": request["authority_basis_complete"],
+        "delegation_basis_complete": request["delegation_basis_complete"],
         "authority_reason": authority_reason,
         "delegation_reason": delegation_reason,
         "selected_authority_assertion_id": selected_authority["assertion_id"] if selected_authority else None,

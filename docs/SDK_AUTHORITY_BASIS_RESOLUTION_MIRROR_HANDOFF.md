@@ -3,7 +3,7 @@
 Goal Task ID: `SDK-EVALUATOR-GOVERNANCE-POSTURE-MANIFEST-001`
 Repository: `StegVerse-Labs/StegCore`
 Supporting branch: `sdk-authority-basis-resolution-001`
-Status: `VALIDATED_MERGED`
+Status: `COMPLETENESS_SEMANTICS_PATCH_IN_PROGRESS`
 
 ## Determination
 
@@ -24,6 +24,7 @@ Inputs bind:
 - exact candidate action, target, and scope;
 - authority assertions with status, time window, source reference, and evidence references;
 - delegation assertions, when delegation is required;
+- explicit `authority_basis_complete` / `delegation_basis_complete` declarations;
 - the evaluation instant.
 
 Outputs derive:
@@ -40,10 +41,10 @@ The resolver does not interpret a role label as authority, issue or mint authori
 
 ```text
 role label alone -> no authority effect
-no actor authority basis -> FAIL_CLOSED
-represented authority exists but is stale/out-of-scope -> DENY
-delegation required but unestablished -> FAIL_CLOSED
-represented delegation exists but is stale/out-of-scope -> DENY
+incomplete authority basis with no match -> FAIL_CLOSED
+complete authority basis with no current candidate-covering match -> DENY
+delegation required + incomplete delegation basis with no match -> FAIL_CLOSED
+delegation required + complete basis with no current candidate-covering match -> DENY
 current scoped authority (+ current required delegation) -> ALLOW currentness facts
 ```
 
@@ -97,3 +98,12 @@ With StegCore validation and merge complete:
 ## Manual work
 
 None.
+
+
+## Completeness correction — 2026-09-17
+
+Post-merge review identified one material unknown-versus-false edge in the first resolver revision: a non-matching assertion set cannot prove absence of authority unless the caller also asserts that the relevant basis is complete. Treating any non-matching partial set as DENY would convert missing evidence into an affirmative negative finding.
+
+The patch on `authority-basis-completeness-001` therefore requires explicit `authority_basis_complete` and `delegation_basis_complete` booleans. A matching current assertion can establish TRUE regardless of set completeness. When no match exists, incomplete basis remains UNKNOWN/FAIL_CLOSED; only a declared complete basis can establish FALSE/DENY.
+
+This correction preserves StegCore's canonical UNKNOWN-versus-false contract and must merge before the SDK structured-authority claim is considered final.

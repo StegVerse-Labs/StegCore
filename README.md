@@ -45,15 +45,15 @@ StegCore now exposes a bounded, non-authorizing authority-basis resolver for eva
 from stegcore.authority_basis import resolve_authority_basis
 ```
 
-The resolver consumes a frozen set of caller-supplied authority and delegation assertions plus one exact candidate `action`, `target`, `scope`, actor identity, and evaluation instant. It derives only whether the represented basis establishes current actor authority and, when required, current delegation. A role label such as `board_member` or `junior_operator` is preserved as context but is never interpreted as authority.
+The resolver consumes a frozen set of caller-supplied authority and delegation assertions, explicit completeness declarations for those assertion sets, plus one exact candidate `action`, `target`, `scope`, actor identity, and evaluation instant. It derives only whether the represented basis establishes current actor authority and, when required, current delegation. A role label such as `board_member` or `junior_operator` is preserved as context but is never interpreted as authority.
 
 ```text
 role label != authority
 structured authority assertion != issued authority
 authority-basis resolution != credential verification
 evaluator resolution != TV/TVC authority issuance
-missing basis -> FAIL_CLOSED
-represented stale/out-of-scope basis -> DENY
+incomplete/unestablished basis -> FAIL_CLOSED
+complete basis with no current candidate-covering authority/delegation -> DENY
 matching current scoped basis -> ALLOW as a currentness fact for downstream StegGate evaluation
 ```
 
