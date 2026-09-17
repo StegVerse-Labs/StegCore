@@ -37,6 +37,30 @@ The current source conversion centralizes one reusable present-state evaluator i
 
 This source contract does not by itself prove resident runtime activation or ecosystem-wide enforcement. Current coordination, exact validation state, resident-proof requirements, and propagation gates are recorded in `docs/PA001_ECOSYSTEM_RUNTIME_ENFORCEMENT_MIRROR_HANDOFF.md`.
 
+## Structured authority-basis resolution for evaluator tests
+
+StegCore now exposes a bounded, non-authorizing authority-basis resolver for evaluator and interoperability tests:
+
+```python
+from stegcore.authority_basis import resolve_authority_basis
+```
+
+The resolver consumes a frozen set of caller-supplied authority and delegation assertions plus one exact candidate `action`, `target`, `scope`, actor identity, and evaluation instant. It derives only whether the represented basis establishes current actor authority and, when required, current delegation. A role label such as `board_member` or `junior_operator` is preserved as context but is never interpreted as authority.
+
+```text
+role label != authority
+structured authority assertion != issued authority
+authority-basis resolution != credential verification
+evaluator resolution != TV/TVC authority issuance
+missing basis -> FAIL_CLOSED
+represented stale/out-of-scope basis -> DENY
+matching current scoped basis -> ALLOW as a currentness fact for downstream StegGate evaluation
+```
+
+This surface exists to prevent SDK or external-framework tests from hand-authoring `actor_authority_current` / `delegation_current` booleans while also avoiding a second authority plane. It does not define organizational role policy, mint authority, verify TVC credentials, or replace Interlock/InTr transition governance. Production credential and scoped-authority issuance remain separate TV/TVC responsibilities.
+
+Canonical continuation and scope are recorded in `docs/SDK_AUTHORITY_BASIS_RESOLUTION_MIRROR_HANDOFF.md`.
+
 ## Exact fresh commit binding reference control
 
 The Universal Governance sovereign reference runner additionally exercises an exact consequence-time binding over `state_version`, `state_hash`, `policy_epoch`, `policy_hash`, `evidence_bundle_hash`, and a single-use `execution_binding_id`. The reusable predicate is `stegcore.fresh_commit_binding`; it is deliberately a state-binding check, not a policy engine or authority source.
@@ -160,6 +184,7 @@ See `docs/ADMITTEDCODE_PERFORMANCE.md` for the measurement contract and interpre
 
 ```text
 Governance policy/evidence
+  -> structured authority/delegation basis resolution when supplied
   -> stegcore.three_layer.evaluate_three_layer
   -> stegcore.steggate.evaluate_admissibility
   -> ALLOW | DENY | REVIEW | FAIL_CLOSED
@@ -178,6 +203,7 @@ Read current-state documents before historical review material:
 
 - `STEGCORE_MIRROR_HANDOFF.md` — live repository source of truth, active claims, validation, and continuation.
 - `docs/PA001_ECOSYSTEM_RUNTIME_ENFORCEMENT_MIRROR_HANDOFF.md` — active conversion from the PA-001 semantic invariant to commit-time and ecosystem runtime enforcement.
+- `docs/SDK_AUTHORITY_BASIS_RESOLUTION_MIRROR_HANDOFF.md` — non-authorizing structured authority/delegation basis resolution used by SDK evaluator integration without creating a duplicate authority plane.
 - `docs/UNIVERSAL_GOVERNANCE_REFERENCE_RUNNER_MIRROR_HANDOFF.md` — bounded two-route Universal Governance reference runner and fresh-binding proof contract.
 - `docs/GADI_STEGCORE_MIRROR_HANDOFF.md` — bounded GADI threat-reasoning implementation and continuation.
 - `docs/STEGCORE_UNKNOWN_PROBE_SEMANTICS_MIRROR_HANDOFF.md` — UNKNOWN-versus-false governance semantics and frozen-v0.4 longitudinal regression evidence.
