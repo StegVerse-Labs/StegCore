@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install test dependency
-        run: python -m pip install pytest
+        run: python -m pip install -e . pytest
       - name: Run focused authority-basis tests
         run: PYTHONPATH=src python -m pytest -q tests/test_authority_basis.py
       - name: Compile resolver
