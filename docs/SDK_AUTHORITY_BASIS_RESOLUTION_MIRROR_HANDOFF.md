@@ -3,7 +3,7 @@
 Goal Task ID: `SDK-EVALUATOR-GOVERNANCE-POSTURE-MANIFEST-001`
 Repository: `StegVerse-Labs/StegCore`
 Supporting branch: `sdk-authority-basis-resolution-001`
-Status: `IMPLEMENTED_VALIDATION_PENDING`
+Status: `VALIDATED_MERGED`
 
 ## Determination
 
@@ -77,13 +77,15 @@ Focused tests cover role-label non-authority, scoped authority matching, missing
 
 ## Validation state
 
-Source implementation is present. Exact-head repository validation and merge evidence are still required before the SDK may pin or advertise this surface as merged canonical behavior.
+Exact-head `acf210f073a8d4350f56642b1ac6119fc68fbe52` passed the focused Authority Basis Resolution Validation in workflow run `35287845446`, the StegVerse 001/002 Validator in run `35287845509`, and StegCore Package Version Identity Validation in run `35287845651`. The BCAT lane was not applicable and was skipped rather than asserted as a credential-authority pass.
+
+PR #219 merged with expected-head protection to StegCore main as `1c045362726fd7ede0af3c1d6afb960d8dff70b8`. That merge is now the canonical SDK authority-basis resolver source pin.
 
 No live TV/TVC credential verification, live Interlock/InTr execution, or production role-policy resolution is claimed by this change.
 
 ## Next integration
 
-After exact-head StegCore validation and merge:
+With StegCore validation and merge complete:
 
 1. expose the structured request in the SDK evaluator manifest as non-authorizing evidence;
 2. invoke this StegCore resolver through an injected/canonical resolver boundary rather than reimplementing its semantics in the SDK;
