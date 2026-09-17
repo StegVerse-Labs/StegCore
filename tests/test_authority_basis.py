@@ -64,7 +64,7 @@ def test_scope_mismatch_denies_even_for_board_role():
     result = resolve(request(role="board_member", authority_scope="read_budget"))
     assert result["disposition"] == "DENY"
     assert result["actor_authority_current"] is False
-    assert result["authority_reason"] == "actor_authority_assertions_do_not_cover_current_candidate"
+    assert result["authority_reason"] == "complete_authority_basis_does_not_cover_current_candidate"
 
 
 def test_complete_empty_authority_basis_denies():
