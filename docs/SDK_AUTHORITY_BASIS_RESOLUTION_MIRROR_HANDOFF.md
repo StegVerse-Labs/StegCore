@@ -84,16 +84,11 @@ PR #219 merged with expected-head protection to StegCore main as `1c045362726fd7
 
 No live TV/TVC credential verification, live Interlock/InTr execution, or production role-policy resolution is claimed by this change.
 
-## Next integration
+## SDK integration completion
 
-With StegCore validation and merge complete:
+The SDK integration steps are complete at the merged source-contract level. The public SDK now preserves the structured request as non-authorizing evidence, invokes an injected canonical resolver rather than reimplementing StegCore semantics, binds the resulting authority/delegation currentness facts into the exact governance request, preserves the resolution binding, rejects pre-authored currentness conclusions, and documents the proven claim boundary. SDK completeness integration merged through PR #254 as `16d4bf1e40b4eac7313b3399e48ab880a6f53001`; final SDK source closeout merged through PR #255 as `ca5b349b76a3548a385aa65299d8b08664feedaa`.
 
-1. expose the structured request in the SDK evaluator manifest as non-authorizing evidence;
-2. invoke this StegCore resolver through an injected/canonical resolver boundary rather than reimplementing its semantics in the SDK;
-3. materialize the derived currentness facts into the exact governance request before canonical StegGate evaluation;
-4. preserve the original structured request and the exact resolution binding for custody/replay/reconstruction;
-5. test role-label invariance, scope-sensitive authority, stale/revoked delegation, missing evidence, and downstream StegGate outcomes;
-6. update public SDK claims only to the proven boundary.
+The parent Goal Task remains ACTIVE because authentic SDK-to-live StegOS/InTr posture-bound governance execution is still unproven. This supporting StegCore source work does not claim public resolver distribution, live TV/TVC credential verification, live Interlock/InTr transition execution, or production role-policy resolution.
 
 ## Manual work
 
