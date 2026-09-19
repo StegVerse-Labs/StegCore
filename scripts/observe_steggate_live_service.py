@@ -9,7 +9,7 @@ from urllib import error, request
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "build" / "steggate-live-observation.json"
-ORIGIN = os.getenv("STEGGATE_ORIGIN", "https://steggate-core.onrender.com").rstrip("/")
+ORIGIN = os.getenv("STEGGATE_ORIGIN", "https://stegverse.org/api/steggate").rstrip("/")
 TIMEOUT = float(os.getenv("STEGGATE_OBSERVER_TIMEOUT", "20"))
 
 LIVE_EVALUATION = {
