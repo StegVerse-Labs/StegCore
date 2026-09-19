@@ -229,3 +229,47 @@ def test_candidate_mutation_breaks_prior_approval_binding_without_erasing_prior_
     assert denied.execution_observation["executor_invoked"] is False
     assert calls == []
     assert allowed.manifest.candidate_hash != denied.manifest.candidate_hash
+
+
+def test_pre_execution_observer_runs_after_allow_before_executor():
+    calls: list[str] = []
+    observed: list[dict] = []
+
+    result = run_manifested_transaction(
+        allowed_request(),
+        lambda: calls.append("executor") or {"payment": "committed"},
+        input_data={"payment": 420},
+        source="sdk:test",
+        subject="evaluation:external",
+        capability_surface=capability_surface(),
+        authority_resolution=authority_resolution(),
+        pre_execution_observer=lambda evidence: (observed.append(dict(evidence)), calls.append("observer")),
+    )
+
+    assert result.execution_observation["status"] == "executed"
+    assert calls == ["observer", "executor"]
+    assert observed[0]["disposition"] == "ALLOW"
+    assert observed[0]["executor_invoked"] is False
+    assert observed[0]["authority_effect"] == "NONE_OBSERVATION_ONLY"
+
+
+def test_pre_execution_observer_failure_prevents_executor():
+    calls: list[str] = []
+
+    def fail(_evidence):
+        raise RuntimeError("custody incomplete")
+
+    result = run_manifested_transaction(
+        allowed_request(),
+        lambda: calls.append("executor") or {"payment": "committed"},
+        input_data={"payment": 420},
+        source="sdk:test",
+        subject="evaluation:external",
+        capability_surface=capability_surface(),
+        authority_resolution=authority_resolution(),
+        pre_execution_observer=fail,
+    )
+
+    assert result.execution_observation["status"] == "refused"
+    assert result.execution_observation["executor_invoked"] is False
+    assert calls == []

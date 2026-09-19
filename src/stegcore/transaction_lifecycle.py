@@ -270,6 +270,7 @@ def run_manifested_transaction(
     declared_execution_context: Optional[Mapping[str, Any]] = None,
     capability_surface: Optional[Mapping[str, Any]] = None,
     authority_resolution: Optional[Mapping[str, Any]] = None,
+    pre_execution_observer: Optional[Callable[[Mapping[str, Any]], Any]] = None,
 ) -> ManifestedTransactionResult:
     """Run one ordinary manifested transaction through canonical StegGate.
 
@@ -310,6 +311,7 @@ def run_manifested_transaction(
         declared_execution_context=declared_execution_context,
         capability_surface=capability_surface,
         authority_resolution=authority_resolution,
+        pre_execution_observer=pre_execution_observer,
     )
     evaluation = observation.evaluation
 
