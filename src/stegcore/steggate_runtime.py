@@ -52,6 +52,7 @@ def governed_steggate_execute(
     declared_execution_context: Optional[Mapping[str, Any]] = None,
     capability_surface: Optional[Mapping[str, Any]] = None,
     authority_resolution: Optional[Mapping[str, Any]] = None,
+    pre_execution_observer: Optional[Callable[[Mapping[str, Any]], Any]] = None,
 ) -> StegGateExecutionObservation[T]:
     """Evaluate, check present state/coherence, and only then invoke ``executor``."""
 
@@ -165,6 +166,50 @@ def governed_steggate_execute(
         }
     )
     gate["receipt"] = gate_receipt
+
+    if gate["allowed"] and pre_execution_observer is not None:
+        pre_execution_evidence = {
+            "schema": "stegcore.pre-execution-admission-observation/v1",
+            "disposition": evaluation.disposition,
+            "decision_state_hash": evaluation.decision_state_hash,
+            "pre_state_hash": pre_state_hash,
+            "coherence_receipt": gate["receipt"],
+            "candidate_hash": evaluation.candidate_hash,
+            "executor_invoked": False,
+            "authority_effect": "NONE_OBSERVATION_ONLY",
+        }
+        try:
+            pre_execution_observer(pre_execution_evidence)
+        except Exception as exc:
+            receipt = finalize_receipt(
+                {key: value for key, value in gate["receipt"].items() if key != "receipt_hash"}
+                | {
+                    "execution_status": "refused",
+                    "error_type": type(exc).__name__,
+                    "error_message": str(exc),
+                    "pre_execution_observer_failed": True,
+                }
+            )
+            post_state = {
+                "decision_state_hash": evaluation.decision_state_hash,
+                "disposition": evaluation.disposition,
+                "status": "refused",
+                "reason": "pre_execution_observer_failed",
+                "coherence_receipt_hash": receipt["receipt_hash"],
+                "commit_state_hash": pre_state_hash,
+            }
+            return StegGateExecutionObservation(
+                artifact_type="stegcore.steggate_execution_observation",
+                status="refused",
+                evaluation=evaluation,
+                pre_state_hash=pre_state_hash,
+                post_state_hash=canonical_hash(post_state),
+                executor_invoked=False,
+                coherence_receipt=receipt,
+                error_type=type(exc).__name__,
+                error_message=str(exc),
+                observed_at=observed_at,
+            )
 
     if not gate["allowed"]:
         post_state = {
