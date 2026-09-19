@@ -233,3 +233,8 @@ The consistency verifier fails when current package/service/CLI documentation dr
 ## Legacy substrate
 
 StegCore also contains earlier node-state, registry, orchestration, research, historical release, and ecosystem-management surfaces. They remain available for compatibility and provenance but are not the primary StegGate product entry point. Current product behavior is defined by the canonical files above.
+
+
+## Host-provider independence
+
+Current StegGate endpoint discovery is bounded to the StegVerse-owned stable rendezvous and fails closed when that endpoint is unavailable or not canonically bound. No third-party persistent host, tunnel, provider registry, or fallback runtime is selected by current discovery.

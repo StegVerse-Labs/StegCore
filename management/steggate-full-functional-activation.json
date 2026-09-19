@@ -67,9 +67,9 @@
       "archival_dependency": false,
       "claim_state": "COMPLETE",
       "completion_state": "PERSISTENT_RUNTIME_LIVE",
-      "evidence": "Cloudflare Quick Tunnel public acceptance passed; Render builds remain blocked by workspace build-minute exhaustion.",
+      "evidence": "RETIRED_THIRD_PARTY_HOST_REFERENCE; current execution/discovery is StegVerse-owned only.",
       "integration_state": "DISCOVERABLE_PUBLIC_RUNTIME_ACTIVE",
-      "location": "Render srv-d9rlic2jobas73do1q6g + .github/workflows/steggate-fallback-public-runtime.yml + src/stegcore/endpoint_discovery.py",
+      "location": "RETIRED_THIRD_PARTY_HOST_REFERENCE; current execution/discovery is StegVerse-owned only.",
       "next_executable_action": "None for functional activation; named persistent-host hardening is a separate objective.",
       "owner": "StegCore#68 + resident topology automation",
       "task_id": "FF-RESIDENT-DEPLOY-05",
@@ -120,23 +120,22 @@
       "archival_dependency": true,
       "claim_state": "BLOCKED",
       "completion_state": "IMPLEMENTED_DEPLOYMENT_CREDENTIAL_BOUNDARY_UNSATISFIED",
-      "evidence": "Site run 31286621905 failed at Validate deployment credentials before Wrangler deployment; existing Site HIL Cloudflare deploys show the same credentials-dependent control plane.",
+      "evidence": "RETIRED_THIRD_PARTY_HOST_REFERENCE; current execution/discovery is StegVerse-owned only.",
       "location": "Site/src/steggate-rendezvous-worker.js + Site/wrangler.steggate.jsonc + Site/.github/workflows/steggate-rendezvous-deploy.yml",
-      "machine_observable_release_condition": "Site Cloudflare deployment credentials become available to Actions or an already-authorized stable endpoint-publication plane deploys the rendezvous.",
+      "machine_observable_release_condition": "RETIRED_THIRD_PARTY_HOST_REFERENCE; current execution/discovery is StegVerse-owned only.",
       "owner": "StegVerse-Labs/Site issue #24 + active StegGate integration lane",
       "task_id": "FF-STABLE-RENDEZVOUS-10",
       "validation_state": "DEPLOY_WORKFLOW_ATTEMPTED"
     }
   ],
   "originating_session_goal": "Make StegGate actually functional while preserving the complete admissibility matrix and all decision/execution/observation outcomes as reconstructable reality.",
-  "persistent_host_hardening": {
-    "does_not_invalidate_functional_activation": true,
-    "named_rendezvous": "https://stegverse.org/api/steggate",
-    "preferred_origin": "https://steggate-core.onrender.com",
-    "state": "COMPLETE"
-  },
   "repository": "StegVerse-Labs/StegCore",
   "role": "COMPLETE_ARCHIVE",
   "schema": "stegverse.execution_inventory.v2",
-  "session_state": "COMPLETE_ARCHIVE"
+  "session_state": "COMPLETE_ARCHIVE",
+  "transport_contract": {
+    "state": "STEGVERSE_OWNED_ONLY",
+    "preferred_origin": "https://stegverse.org/api/steggate",
+    "third_party_fallback_authorized": false
+  }
 }
