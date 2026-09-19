@@ -64,29 +64,25 @@
     "deployment_state": "LIVE",
     "full_live_observer_finalizer": "scripts/finalize_steggate_live_activation.py",
     "full_live_observer_finalizer_test": "tests/test_finalize_steggate_live_activation.py",
-    "full_live_observer_semantics": "stable rendezvous preferred, then persistent Render, then verified ephemeral registry; health + exact four-outcome self-test + deterministic POST /v1/evaluate complete matrix/hash verification",
+    "full_live_observer_semantics": "StegVerse-owned stable rendezvous only; fail closed when unavailable; health + exact four-outcome self-test + deterministic POST /v1/evaluate complete matrix/hash verification",
     "goal_activation_state": "COMPLETE",
     "governed_execution_composition_state": "COMPLETE_AND_HOSTED_VALIDATED",
     "hosted_evaluate": "PASS_WITH_COMPLETE_MATRIX_AND_HASHES",
     "hosted_health": "PASS",
     "hosted_self_test": "PASS",
     "implementation_owner": "StegVerse-Labs/StegCore#68 + StegCore hourly live observer + StegVerse-Labs/Site#24 rendezvous automation",
-    "latest_inspected_render_deploy_id": "dep-d9ru30bl550s73dt3vf0",
-    "latest_inspected_render_head": "9cdc0b3b158e86046f117ade9ec513360b286310",
     "live_observer_state": "PASS",
     "live_observer_workflow": ".github/workflows/steggate-live-observer.yml",
     "portable_topology_state": "COMPLETE_AND_HOSTED_VALIDATED",
     "provisional_files": [
       "none; architecture reconciliation, portable topology, and consumer integration are complete"
     ],
-    "render_service_id": "srv-d9rlic2jobas73do1q6g",
-    "render_service_origin": "https://steggate-core.onrender.com",
     "repository_validation_job": 93185008397,
     "repository_validation_run": 31289831506,
     "repository_validation_state": "GREEN_169_TESTS_133_SUBTESTS",
     "service_classification": "CANONICAL_HTTP_ADAPTER_TO_RECONCILED_STEGGATE_COMPOSITION",
     "stable_rendezvous_owner": "StegVerse-Labs/Site#24 + data/steggate-rendezvous-activation.json + .github/workflows/steggate-rendezvous-deploy.yml",
-    "stable_rendezvous_state": "BLOCKED_CLOUDFLARE_ACTIONS_BINDINGS_WITH_HOURLY_RETRY_ACTIVE"
+    "stable_rendezvous_state": "STEGVERSE_OWNED_DISCOVERY_REQUIRED"
   },
   "goal_activation_complete": true,
   "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
@@ -111,10 +107,8 @@
     "machine_owned_continuation": true,
     "merged_into": "StegVerse-Labs/StegCore#68 + StegVerse-Labs/Site#24 + repository-native scheduled workflows",
     "remaining_tasks": [
-      "FF-STABLE-RENDEZVOUS-10: Site hourly workflow retries the Cloudflare credential boundary and deploys/verifies automatically when released.",
-      "FF-OBSERVE-06: StegCore hourly observer independently resolves the stable rendezvous/other verified origin and executes full hosted acceptance.",
-      "FF-ACTIVATE-07: existing StegCore finalizer persists activation receipt and closes #68 only after full PASS.",
-      "FF-RESIDENT-DEPLOY-05: Render remains a secondary machine-owned lane blocked by build-minute exhaustion; it is not required for portable topology operation."
+      "FF-OBSERVE-06: StegCore observer evaluates only the StegVerse-owned stable rendezvous and executes full acceptance.",
+      "FF-ACTIVATE-07: existing StegCore finalizer persists activation evidence only after full PASS."
     ]
   },
   "session_state": "COMPLETE_ARCHIVE",
@@ -123,7 +117,6 @@
     "emit_next_action": true,
     "fail_closed_on_missing_context": true,
     "machine_observable_release_conditions": [
-      "Site Actions exposes both CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID or equivalent authorized endpoint-publication plane becomes available",
       "data/steggate-rendezvous-activation.json deployment_state == LIVE_ACCEPTANCE_PASS when stable rendezvous succeeds",
       "resolved StegGate /health == PASS",
       "resolved StegGate /v1/self-test == PASS with ALLOW,DENY,REVIEW,FAIL_CLOSED",
@@ -132,6 +125,6 @@
       "issue #68 == CLOSED",
       "goal_activation_complete == true"
     ],
-    "next_action": "Functional activation complete; preserve receipt. Persistent-host and named-route migration are separate non-blocking hardening goals."
+    "next_action": "Functional activation complete; preserve receipt. Current discovery is StegVerse-owned only and fails closed otherwise."
   }
 }
