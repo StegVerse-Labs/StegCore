@@ -42,16 +42,12 @@ def update_context(observation: dict[str, Any], deployment_source: str) -> None:
     current["hosted_evaluate"] = "PASS_WITH_COMPLETE_MATRIX_AND_HASHES"
     current["goal_activation_state"] = "COMPLETE"
     current["activation_receipt"] = "data/steggate-live-activation-receipt.json"
-    if deployment_source == "github_actions_fallback_registry":
-        current["persistent_host_state"] = "HARDENING_PENDING_NON_BLOCKING"
-        current["stable_rendezvous_state"] = "SUPERSEDED_FOR_FUNCTIONAL_ACTIVATION_BY_DISCOVERABLE_AUTONOMOUS_RUNTIME"
-        current["endpoint_discovery"] = "src/stegcore/endpoint_discovery.py"
-    context["goal_activation_complete"] = True
+    current["endpoint_discovery"] = "src/stegcore/endpoint_discovery.py"\n    context["goal_activation_complete"] = True
     context["session_state"] = "COMPLETE_ARCHIVE"
     context["archive_allowed"] = True
     context["conversation_archive_allowed"] = True
     worker = context.setdefault("worker_policy", {})
-    worker["next_action"] = "Functional activation complete; preserve receipt. Persistent-host and named-route migration are separate non-blocking hardening goals."
+    worker["next_action"] = "Functional activation complete; preserve receipt. StegVerse-owned transport remains the only admissible discovery surface."
     worker["archive_status_when_active"] = "ARCHIVE"
     CONTEXT.write_text(json.dumps(context, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
@@ -62,15 +58,10 @@ def update_inventory(deployment_source: str) -> None:
         task_id = task.get("task_id")
         if task_id in {"FF-DEPLOY-05", "FF-RESIDENT-DEPLOY-05"}:
             task["claim_state"] = "COMPLETE"
-            task["completion_state"] = (
-                "PUBLIC_RUNTIME_LIVE_VIA_DISCOVERABLE_AUTONOMOUS_FALLBACK"
-                if deployment_source == "github_actions_fallback_registry"
-                else "PERSISTENT_RUNTIME_LIVE"
-            )
-            task["validation_state"] = "HOSTED_PASS"
+            task["completion_state"] = "STEGVERSE_RUNTIME_LIVE"\n            task["validation_state"] = "HOSTED_PASS"
             task["integration_state"] = "DISCOVERABLE_PUBLIC_RUNTIME_ACTIVE"
             task["archival_dependency"] = False
-            task["next_executable_action"] = "None for functional activation; named persistent-host hardening is a separate objective."
+            task["next_executable_action"] = "None for functional activation; retain StegVerse-owned transport only."
         elif task_id in {"FF-OBSERVE-06", "FF-ACTIVATE-07"}:
             task["claim_state"] = "COMPLETE"
             task["completion_state"] = "COMPLETE_AND_ACTIVATED"
@@ -78,13 +69,6 @@ def update_inventory(deployment_source: str) -> None:
             task["integration_state"] = "COMPLETE"
             task["archival_dependency"] = False
             task["next_executable_action"] = "None; preserve canonical activation evidence."
-        elif task_id == "FF-STABLE-RENDEZVOUS-10" and deployment_source == "github_actions_fallback_registry":
-            task["claim_state"] = "SUPERSEDED"
-            task["completion_state"] = "SUPERSEDED_FOR_FUNCTIONAL_ACTIVATION_BY_AUTONOMOUS_DISCOVERABLE_RUNTIME"
-            task["validation_state"] = "NOT_REQUIRED_FOR_FUNCTIONAL_ACTIVATION"
-            task["integration_state"] = "SEPARATE_NON_BLOCKING_HARDENING"
-            task["archival_dependency"] = False
-            task["next_executable_action"] = "Optional named-route hardening may continue when an authorized deployment plane exists; it cannot block StegGate functional activation."
     denom = inventory.setdefault("completion_denominators", {})
     total = denom.get("tasks_total", len(inventory.get("inventory", [])))
     denom["tasks_complete"] = total
@@ -103,12 +87,7 @@ def update_inventory(deployment_source: str) -> None:
     inventory["session_state"] = "COMPLETE_ARCHIVE"
     inventory["role"] = "COMPLETE_ARCHIVE"
     inventory["functional_deployment_source"] = deployment_source
-    inventory["persistent_host_hardening"] = {
-        "state": "SEPARATE_NON_BLOCKING_OBJECTIVE" if deployment_source == "github_actions_fallback_registry" else "COMPLETE",
-        "preferred_origin": "https://steggate-core.onrender.com",
-        "named_rendezvous": "https://stegverse.org/api/steggate",
-        "does_not_invalidate_functional_activation": True,
-    }
+    inventory["transport_contract"] = {\n        "state": "STEGVERSE_OWNED_ONLY",\n        "preferred_origin": "https://stegverse.org/api/steggate",\n        "third_party_fallback_authorized": False,\n    }
     inventory["exact_archive_condition"] = "SATISFIED: hosted functional activation PASS receipt persisted; all activation tasks are complete or explicitly superseded by equivalent autonomous runtime evidence."
     INVENTORY.write_text(json.dumps(inventory, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
@@ -116,14 +95,7 @@ def update_inventory(deployment_source: str) -> None:
 def update_handoff(receipt: dict[str, Any], deployment_source: str) -> None:
     text = HANDOFF.read_text(encoding="utf-8")
     marker = "## Machine-finalized live activation"
-    persistence_note = (
-        "The active public runtime is the discoverable rotating GitHub-Actions/Cloudflare fallback. "
-        "It is scheduled, zero-credential, self-healing during each overlap window, republishes only after the full acceptance contract, and is resolved through the durable registry. "
-        "The named Site rendezvous and persistent Render host are separate hardening topologies and do not block functional activation.\n\n"
-        if deployment_source == "github_actions_fallback_registry"
-        else "The persistent hosted origin is healthy and was used for activation.\n\n"
-    )
-    block = (
+    persistence_note = "The retained activation evidence is transport-neutral; current discovery admits only the StegVerse-owned stable rendezvous and fails closed otherwise.\\n\\n"\n    block = (
         f"\n{marker}\n\n"
         "Canonical hosted functional activation is COMPLETE. The repository-native runtime recorded PASS for "
         "`/health`, exact four-disposition `/v1/self-test`, and deterministic complete-matrix "
@@ -145,7 +117,7 @@ def update_handoff(receipt: dict[str, Any], deployment_source: str) -> None:
 def main() -> int:
     observation = json.loads(OBS.read_text(encoding="utf-8"))
     require_pass(observation)
-    deployment_source = os.getenv("STEGGATE_DEPLOYMENT_SOURCE", "direct_hosted_origin")
+    deployment_source = os.getenv("STEGGATE_DEPLOYMENT_SOURCE", "stegverse_owned_rendezvous")
     receipt_body = {
         "schema": "stegverse.steggate_live_activation_receipt.v1",
         "goal_id": "STEGGATE-FULL-FUNCTIONAL-ACTIVATION-001",
