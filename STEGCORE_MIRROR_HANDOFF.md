@@ -220,7 +220,7 @@ Portable product version and runtime identity contract version are distinct comp
 
 ## Functional activation and transport
 
-Issue #68 remains complete. Historical activation evidence is retained at `data/steggate-live-activation-receipt.json`; it is not a continuously rewritten health record. Canonical transport continuity remains machine-owned under the StegVerse-Labs `.github` durable runtime activation handoff/worker registry. Persistent Render authority remains `NONE` for this boundary.
+Issue #68 remains complete. Historical activation evidence is retained at `data/steggate-live-activation-receipt.json`; it is not a continuously rewritten health record. Canonical transport continuity remains machine-owned under the StegVerse-Labs `.github` durable runtime activation handoff/worker registry. Third-party host authority remains `NONE` for this boundary; current discovery admits only the StegVerse-owned stable rendezvous and fails closed otherwise.
 
 ## Four-app canonical runtime integration — ACTIVE
 
@@ -322,3 +322,8 @@ This repository contributes to the StegVerse ecosystem sum through: **admissibil
 This binding grants no new authority, does not change repository-local execution/credential/admission/routing/custody/publication/consequence boundaries, and does not establish a new runtime or maturity state. Existing handoff evidence remains authoritative for what this repository has actually implemented, validated, released, deployed, activated, observed, or reconstructed.
 
 The repository should continue advancing the shared objective: preserve agency and explicit authority while making consequential transitions bounded and reconstructable, without requiring a specific intelligence provider or collapsing governance into a universal correctness authority.
+
+
+## Enterprise host-provider eradication — 2026-09-19
+
+StegCore current discovery no longer selects a third-party persistent host, public tunnel, issue-comment registry, or fallback runtime. `src/stegcore/endpoint_discovery.py` admits only `https://stegverse.org/api/steggate` after canonical health verification and otherwise returns `FAIL_CLOSED`. Provider-specific capacity-watch state, service identifiers, provider defaults, and active status projections were removed from the current tree. Historical provider evidence remains recoverable from Git history and is not current execution guidance.
