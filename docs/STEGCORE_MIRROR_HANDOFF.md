@@ -225,3 +225,8 @@ The runtime validates system/boundary/operation/Interlock/InTr/carrier/policy/au
 An `ALLOW` result sets only `eligible_for_separate_consequence_authorization=true`; it always retains `execution_authority_granted=false`, `credential_authority=TV/TVC`, and `continuity_receipt_minted=false`.
 
 This lane does not alter the active external-evidence workstream or any provider/custody authority boundary.
+
+
+## Repository hygiene reusable adoption — 2026-09-21
+
+Canonical ecosystem hygiene goal `HYGIENE-CAUSAL-ROOTS-001` / COSV `10100000100000` is adopted as a non-authorizing terminal-sink inventory surface. Pre-adoption census observed **138 branches**. The central anonymous bulk census could not clone this private repository, so StegCore uses the same read-only in-repository caller pattern validated on private Wave-1 repositories. Source/CI inventory evidence does not grant StegCore runtime, release, governance, custody, publication, or ref-mutation authority. First hosted inventory remains evidence-gated until the caller succeeds. Detailed adoption handoff: `docs/REPOSITORY_HYGIENE_ADOPTION_MIRROR_HANDOFF.md`.

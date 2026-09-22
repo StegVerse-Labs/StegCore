@@ -238,3 +238,8 @@ StegCore also contains earlier node-state, registry, orchestration, research, hi
 ## Host-provider independence
 
 Current StegGate endpoint discovery is bounded to the StegVerse-owned stable rendezvous and fails closed when that endpoint is unavailable or not canonically bound. No third-party persistent host, tunnel, provider registry, or fallback runtime is selected by current discovery.
+
+
+## Repository hygiene baseline — 2026-09-21
+
+StegCore adopts canonical hygiene goal `HYGIENE-CAUSAL-ROOTS-001` through a read-only in-repository caller because the central anonymous bulk census cannot access this private repository. The pre-adoption census observed 138 branches. Classification produces evidence only and has no branch-deletion, runtime, release, or governance authority. See `docs/REPOSITORY_HYGIENE_ADOPTION_MIRROR_HANDOFF.md`.
