@@ -166,3 +166,30 @@ The required existing-owner implementation/review path is:
 5. Route conceptual corrections in Governance taxonomy and Admissibility Wiki, progressive-delegation policy implementation, cross-agent proposals, and automation bootstrap descriptions through their **existing canonical owners and handoffs**. Do not equate draft documentation with active resident enforcement.
 
 This section clarifies PA-001's source contract only. Existing PR #211, its exact-head CI, authenticated resident reference, registry checkout, and propagation requirements retain their independent status. No live-run or root-cause claim is made by this documentation update.
+
+## Existing-owner collision and adjacency census — 2026-09-25 (Registry generation 243 inspected)
+
+This is a **source coordination finding** and does not change canonical Task Registry checkout/state or create a new goal. PA-001 registry fragment remains `HANDOFF_READY`; this handoff is still the PA-001 source-of-truth document. Draft PR #228 is documentation-only. Reconcile existing implementation PR #211 first; preserve its exact-head validation and resident proof path, and do not overwrite that source work.
+
+| Existing owner | Evidence | Relationship and nonduplicate resolution |
+| --- | --- | --- |
+| `AUTHORITY-TIME-GOVERNANCE-COORDINATE-001`, COSV `50000000101000` | `.github/docs/AUTHORITY_TIME_GOVERNANCE_COORDINATE_MIRROR_HANDOFF.md`, existing worker and nine fixtures, vector `IMPLEMENTED_VALIDATION_PENDING` | **Adjacent control-plane conformance owner**, not a substitute for PA-001 commit-time evaluation. Coordinate conformance must preserve no time/HB-derived permission. |
+| `.github#1154` cross-repository `Authority × Time` correction and StegCore #188 / PR #189 | Existing canonical cross-repo coordination handoff and source branches; downstream ARA #137/#138 and admissibility-wiki #134/#135 | **Direct semantic overlap, unresolved architectural interpretation**. Its `G=(Authority, Time)` vocabulary cannot be assumed equivalent to the user-specified constraint-dependent state-transition construction. Compare formal predicate meanings with this PA-001 interpretation, identify a compatible mapping or exact conflict, and send that distinction to #1154; do **not** silently overwrite mathematical formalisms or merge incompatible PR text. |
+| `StegCore#208` / merged #209 / draft #211 | Existing PA-001 implementation owner | **Same goal:** reconcile PR #228 documentation into the current #211 implementation owner after resolving branch/CI conflicts. No duplicate present-state evaluator. |
+| `continuity-vault-kit#32` / PR #33 | Existing progressive-delegation policy and lifecycle evaluator | **Consumer integration:** map user preferences, standing scope, consent, revocation, and adaptation to governed policy/state transitions. Preserve `ACT/ASK/DENY` interface until owner-validated compatibility migration. |
+| `StegScholar#52` / PR #53 | Governance-native epistemic transition falsification research | **Adjacent research:** compare wrapper-derived authority vocabulary to intrinsic transition constraints; research findings are not runtime enforcement. |
+| `StegAgents/docs/STEGAGENTS_CROSS_AGENT_AUTHORITY_HANDOFF.md` | Existing cross-agent identity/quorum proposal | **Separate owner:** verify that quorum and identity are current predicate evidence and cannot mint independent permission; do not duplicate coordination substrate. |
+| `.github#1156` | Post-merge Authority × Time propagation-verification issue | **Downstream verification:** after agreed source changes and source-owner validation, verify Site, Publisher, admissibility-wiki, stegguardian-wiki, relevant index, and Master Records surfaces. Do not report propagation from documentation alone. |
+
+### Exact earliest-failure investigation
+
+For every actual Task Registry failure tentatively attributed to authority/permission vocabulary, collect the exact goal task, current canonical owner, predecessor state/hash, proposed action and target, applicable constraint/policy version, current evidence, first observed non-ALLOW disposition, reason code, and matching source + Master Records record where available. Partition failures by **observable failed predicate**, such as `missing_current_policy`, `scope_target_mismatch`, `expired_or_revoked_condition`, `evidence_unknown`, `schema_contract_mismatch`, or `runtime_carrier_unavailable`. Only the first four are candidates for this semantics remediation, and even these require causal evidence; schema/transport/runtime failures must remain with their existing owners. Example existing separate source defect: `.github#2079` canonical Master Records local adapter schema mismatch. Do not count it as authority-rooted without evidence.
+
+### Change sequence and evidence gates
+
+1. Reconcile #211 and #228 with #189 under their existing review owners; identify exact compatible and conflicting statements, tests, and machine-field semantics.
+2. Have .github#1154 and PA-001 agree on whether `Authority × Time` is a descriptive coordinate indexing externally evaluated constraint state or asserts an independently sourced privilege; formalize any conflict before modifying runtime semantics. Preserve `Time != permission` and `elapsed duration != automatic scope expansion`.
+3. Under each native owner, change only proven mismatches; use current schemas and backward-compatible aliases during migration, with explicit policy-amendment-as-transition and failure-receipt fixtures.
+4. Run source/exact-head CI, then existing sovereign resident path, record authentic first DENY/FAIL_CLOSED or ALLOW and predecessor-linked Master Records reconstruction; only then trigger #1156 propagation verification.
+
+**Evidence boundary:** Issue/PR presence is not completion, merge, runtime activation, or proof that terminology caused most registry failures. This census is intentionally bounded to discoverable direct and adjacent owners, not a full exhaustive shard-by-shard failure classification.
