@@ -243,3 +243,21 @@ Current StegGate endpoint discovery is bounded to the StegVerse-owned stable ren
 ## Repository hygiene baseline — 2026-09-21
 
 StegCore adopts canonical hygiene goal `HYGIENE-CAUSAL-ROOTS-001` through a read-only in-repository caller because the central anonymous bulk census cannot access this private repository. The pre-adoption census observed 138 branches. Classification produces evidence only and has no branch-deletion, runtime, release, or governance authority. See `docs/REPOSITORY_HYGIENE_ADOPTION_MIRROR_HANDOFF.md`.
+
+## State-transition dependency contract (PA-001)
+
+StegVerse governance evaluates **proposed state transitions under the constraints applicable to the current state**. Time, actor identity, user preferences, scopes, consent, evidence, prior outcomes, and policy versions are state/evidence inputs, not independently accumulating AI authority. A relationship or record of successful activity neither confers permission nor establishes a new rule for obtaining permission.
+
+Existing public and machine-readable fields named `authority`, `delegation`, `approval`, or `authorization` remain compatibility labels for **evidenced transition predicates**. A passing predicate means that the exact candidate satisfies the applicable constraint at the evaluation point; it does not establish a durable privilege, transfer sovereignty to the actor, or permit that actor to modify the constraints. A policy change is a **separate proposed state transition**, with its own governance evaluation and evidence. A historic ALLOW or direct instruction cannot be projected forward after a material change to policy, target, consent, context, or evidence freshness.
+
+The canonical interpretation is:
+
+```text
+observed predecessor state + declared objectives/preferences
+  + current applicable constraints + current evidence + proposed transition
+  -> existing StegCore / Interlock-InTr evaluation at the relevant boundary
+  -> ALLOW | DENY | REVIEW | FAIL_CLOSED
+  -> independent consequence evidence and continuity reconstruction
+```
+
+Absence of an applicable fact is not proof of violation; keep UNKNOWN distinct from observed false. A denied, unauthorized, or externally occurring transition remains part of the observed continuity history if it occurred; governance refusal does not erase history. Master Records retains evidence and reconstructs reality but does not grant admission. This interpretation **does not** rename existing serialized fields or alter execution gates without owner-reviewed compatibility tests, and source agreement does not demonstrate resident or ecosystem-wide enforcement.
