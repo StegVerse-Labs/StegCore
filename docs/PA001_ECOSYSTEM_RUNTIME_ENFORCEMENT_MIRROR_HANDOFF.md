@@ -152,3 +152,17 @@ Never upgrade an evidence class because a reusable component exists or passes CI
 ## Manual work
 
 None.
+
+## State-transition dependency reconciliation — source semantics, not resident proof
+
+The PA-001 constraint is **state-transition dependent**, not AI-authority accumulation. Existing `authority` and `delegation` fields in StegCore and downstream interfaces refer to current, scoped, evidenced predicates evaluated for one proposed transition. They do not assert that an AI acquires legitimacy through the passage of time, familiarity, successful interactions, possession of credentials, prior approvals, or prior execution. Temporal validity is a constraint input; it is not a permission source. Changes to the governing policy or delegation scope are separately governed transitions and require their own current evidence and decision.
+
+The required existing-owner implementation/review path is:
+
+1. Preserve the canonical `RTC-GOVERNED-PROCESSING-002` present-state evaluator and existing Interlock/InTr admission and Master Records custody owners. Do not introduce another authority, scheduler, ledger, or runtime.
+2. Audit the exact input/output semantics of `actor_authority_current`, `delegation_current`, `authority_reference`, time validity, target binding, scope, consent/revocation, policy version, and approval within **each owning consumer**. Map each to a named current-state predicate, not a transferable AI property; retain serialized names until compatibility is established.
+3. Reuse existing tests to establish the earliest failed transition for any task-register failure attributed to authority or delegation. Group multiple occurrences by shared predicate/owner rather than claiming that terminology alone caused those failures.
+4. Add/retain tests for historical success without current coverage, expired temporal conditions, revoked consent, changed target, unknown evidence, and attempted self-amendment of governance. Require exact commit-time evidence and predecessor-linked reconstruction; preserve observed consequences even when governance denied them.
+5. Route conceptual corrections in Governance taxonomy and Admissibility Wiki, progressive-delegation policy implementation, cross-agent proposals, and automation bootstrap descriptions through their **existing canonical owners and handoffs**. Do not equate draft documentation with active resident enforcement.
+
+This section clarifies PA-001's source contract only. Existing PR #211, its exact-head CI, authenticated resident reference, registry checkout, and propagation requirements retain their independent status. No live-run or root-cause claim is made by this documentation update.
