@@ -193,3 +193,33 @@ For every actual Task Registry failure tentatively attributed to authority/permi
 4. Run source/exact-head CI, then existing sovereign resident path, record authentic first DENY/FAIL_CLOSED or ALLOW and predecessor-linked Master Records reconstruction; only then trigger #1156 propagation verification.
 
 **Evidence boundary:** Issue/PR presence is not completion, merge, runtime activation, or proof that terminology caused most registry failures. This census is intentionally bounded to discoverable direct and adjacent owners, not a full exhaustive shard-by-shard failure classification.
+
+## Formal reconciliation candidate and observed failure triage — current registry generation 243
+
+**Architectural source correction proposed for native-owner review:** `.github#1154` defines `G=(Authority,Time)`; StegCore #188 / PR #189's branch introduces that formula into its README. PA-001 PR #211's source `external_adapter_steggate_execution.py` instead implements `evaluate_present_state` before consequence. These are not competing runtime evaluators when the coordinate means *the evaluation point* and the constraints remain the actual transition decision function. They are incompatible **if** `Authority` means AI-owned permission, if mere historical delegation changes the evaluated set of admissible actions, or if a coordinate alone can ALLOW an action.
+
+A candidate compatibility mapping for review, not a change to the central formalism:
+
+```text
+C = current declared governance constraints, policy scope and amendment rules
+S_t = observed state at evaluation instant t (actor, target, consent, evidence, context)
+T = exact proposed transition with bounded requested effect
+D = existing StegCore + Interlock/InTr evaluator
+D(T, S_t, C) -> ALLOW | DENY | REVIEW | FAIL_CLOSED
+G=(Authority, Time) may index the governance review context;
+G by itself cannot issue a transition disposition or enlarge C.
+```
+
+An amendment to `C` is itself a separate `T_amend` evaluated under the current constraints; history or time cannot silently amend `C`. The field `authority_current` is the *evaluated assertion that current applicable constraints cover the actor's exact proposed effect*, not AI-owned standing. Preserve existing wire fields and artifact identifiers until #189, #211 and #1154 owners agree and contract tests validate consumers. In particular, `Time` may be a governance coordinate while `elapsed time` does not confer additional permission.
+
+**Exact registry-sourced incident sampling (not an exhaustive root-cause census):** `.github/data/canonical-task-registry.json` generation 243 has 90 task rows and an empty `systemic_incidents` array. Three current failure-remediation child records were retrieved and classified:
+
+| Canonical remediation child | Earliest evidence presently available | First authentic transition disposition / provenance | Classification and owner |
+| --- | --- | --- | --- |
+| `SDK-TT-PURPOSE-BOUND-WORKER-RUNTIME-PROOF-001-FAILURE-REMEDIATION-20260920-001` | StegHealth #94: Sep 20 evaluator-manifest tests 1–3 and StegAgents replay email failure notification | No exact failing test log, immutable run receipt, predecessor hash, or Master Records matching event in the retrieved central task record | `FAILURE_NOT_YET_CAUSALLY_CLASSIFIED`; StegHealth #94 + SDK and StegAgents native owners. Do not count as an authority failure without exact failing assertion. |
+| `STEGHEALTH-KV-INTERLOCK-PRODUCTION-ENDPOINT-001-FAILURE-REMEDIATION-20260920-001` | Registered StegHealth #95: continuity-vault-kit StegDB/KnowledgeVault sync notifications | No exact failing test log or native runtime predecessor found in retrieved central task record | `SYNC_FAILURE_CAUSE_UNVERIFIED`; StegHealth #95 and continuity-vault-kit native owner. |
+| `SITE-HIL-PAYLOAD-CONTINUITY-OUTBOX-1425-FAILURE-REMEDIATION-20260920-001` | Registered StegHealth #96: failed Site PR #1425 notifications; later merge `5e9da5b8ee04fb0019199d7268ddfa03d18e09f3` recorded as potential recovery evidence | No exact failed transition, predecessor hash or Master Records readback in retrieved central record | `SOURCE_FAILURE_SIGNATURE_PENDING`; StegHealth #96 + Site/HIL native owner; a later merge is not runtime repair proof. |
+
+A separate evidenced **source contract defect**, `.github#2079`, records that a canonical state-transition receipt was supplied to a Master Records adapter expecting the reusable-task custody-request schema and genuine lifecycle evidence. That is a `SCHEMA_CONTRACT_MISMATCH` under the existing custody owner, **not evidence of authority-terminology causation**.
+
+**Next testable failure boundary:** for each child, fetch exact native failing job/test output and the immutable candidate+policy+evidence packet; extract the first failing check and current evaluator result. If the first failure concerns `current_scope`, `policy_version`, `consent`, `revocation`, `temporal_validity` or `evidence_freshness`, route only its shared predicate defect to the relevant #211/#189/#1154 owner. Otherwise leave it with its native repair owner. Never synthesize a resident DENY from a CI failure or claim a corresponding Master Records predecessor without authentic retained readback.
