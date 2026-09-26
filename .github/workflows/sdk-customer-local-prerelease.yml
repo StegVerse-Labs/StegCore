@@ -4,6 +4,7 @@ on:
     paths:
       - 'tests/test_sdk_customer_local_prerelease.py'
       - '.github/workflows/sdk-customer-local-prerelease.yml'
+      - 'STEGCORE_MIRROR_HANDOFF.md'
   workflow_dispatch:
 permissions:
   contents: read
