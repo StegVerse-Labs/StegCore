@@ -15,14 +15,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: StegVerse-org/StegVerse-SDK
-          ref: f6aeb1e4e21ba247af0230958fd38e3ec5d0e445
+          ref: 212c0bfa3e69b88f98797c74e2043f6e056a2cbf
           path: .upstream/local-sdk
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Verify public SDK draft exact source identity
-        run: test "$(git -C .upstream/local-sdk rev-parse HEAD)" = "f6aeb1e4e21ba247af0230958fd38e3ec5d0e445"
+        run: test "$(git -C .upstream/local-sdk rev-parse HEAD)" = "212c0bfa3e69b88f98797c74e2043f6e056a2cbf"
       - name: Install native private StegCore and public SDK draft from source
         run: python -m pip install . ./.upstream/local-sdk
       - name: Real canonical StegCore plus actual SDK source (fixture authority only)
