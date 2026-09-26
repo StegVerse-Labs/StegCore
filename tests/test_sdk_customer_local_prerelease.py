@@ -117,6 +117,30 @@ class RealStegCorePlusLocalSDKSource(unittest.TestCase):
         self.assertEqual(result["disposition"], "DENY")
         self.assertEqual(modified, ["result"])
 
+    def test_real_precommit_checkpoint_failure_remains_non_allow(self):
+        # Actual canonical StegCore initially admits; the customer writer
+        # then refuses, so the bounded executor MUST remain unreachable.
+        mutations = []
+        results = []
+        def custody_unavailable(observation):
+            raise OSError("customer offline checkpoint is unavailable")
+        result = execute_local_manifest(
+            source_manifest(),
+            authority_evidence={"fixture_approved": True},
+            authority_verifier=TEST_FIXTURE_verifier,
+            precommit_recorder=custody_unavailable,
+            executor=lambda: mutations.append("FORBIDDEN"),
+            result_recorder=lambda row: results.append(row),
+        )
+        self.assertEqual(result["status"], "refused")
+        self.assertEqual(result["canonical_admissibility_disposition"], "ALLOW")
+        self.assertEqual(result["disposition"], "FAIL_CLOSED")
+        self.assertEqual(result["local_execution_reason"], "precommit_observer_failed")
+        self.assertFalse(result["executor_invoked"])
+        self.assertTrue(result["canonical_coherence_receipt"]["pre_execution_observer_failed"])
+        self.assertEqual(mutations, [])
+        self.assertEqual(len(results), 1)
+
     def test_unverified_customer_authority_fails_before_canonical_executor(self):
         touched = []
         with self.assertRaisesRegex(CustomerLocalRouteRefused, "AUTHORITY_VERIFICATION_FAILED"):
