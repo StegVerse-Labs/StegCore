@@ -1,0 +1,31 @@
+name: Private StegCore plus pinned public SDK local route (non-release)
+on:
+  pull_request:
+    paths:
+      - 'tests/test_sdk_customer_local_prerelease.py'
+      - '.github/workflows/sdk-customer-local-prerelease.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-private-owner-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: StegVerse-org/StegVerse-SDK
+          ref: f6aeb1e4e21ba247af0230958fd38e3ec5d0e445
+          path: .upstream/local-sdk
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify public SDK draft exact source identity
+        run: test "$(git -C .upstream/local-sdk rev-parse HEAD)" = "f6aeb1e4e21ba247af0230958fd38e3ec5d0e445"
+      - name: Install native private StegCore and public SDK draft from source
+        run: python -m pip install . ./.upstream/local-sdk
+      - name: Real canonical StegCore plus actual SDK source (fixture authority only)
+        env:
+          STEGCORE_TEST_LOCAL_SDK_ROOT: .upstream/local-sdk
+        run: python -m unittest discover -s tests -p test_sdk_customer_local_prerelease.py -v
