@@ -33,7 +33,7 @@ def evaluate_trace(trace: dict) -> dict:
     if decision not in OUTCOMES:
         return {"disposition": "FAIL_CLOSED", "reason": "INVALID_DISPOSITION"}
     expected = hashlib.sha256(json.dumps(
-        [trace[s] for s in STAGES[:-1]], sort_keys=True, separators=(",", ":")
+        [trace[s] if s != 'evidence' else {} for s in STAGES[:-1]], sort_keys=True, separators=(",", ":")
     ).encode()).hexdigest()
     if trace["evidence"].get("synthetic_predecessor_hash") != expected:
         return {"disposition": "FAIL_CLOSED", "reason": "LINEAGE_MISMATCH"}
@@ -48,7 +48,7 @@ def specimen(decision="ALLOW"):
          "evidence": {}, "next_constraint": "policy-fixture-v1"}
     # The digest binds stage values, excluding next_constraint; no custody is implied.
     t["evidence"]["synthetic_predecessor_hash"] = hashlib.sha256(json.dumps(
-        [t[s] for s in STAGES[:-1]], sort_keys=True, separators=(",", ":")
+        [t[s] if s != 'evidence' else {} for s in STAGES[:-1]], sort_keys=True, separators=(",", ":")
     ).encode()).hexdigest()
     return t
 
