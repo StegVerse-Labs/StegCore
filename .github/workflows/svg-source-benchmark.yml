@@ -1,0 +1,20 @@
+name: SVG synthetic source benchmark
+on:
+  pull_request:
+    paths:
+      - 'benchmarks/svg_governance_cycle.py'
+      - 'tests/test_svg_governance_cycle.py'
+      - '.github/workflows/svg-source-benchmark.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-source-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Deterministic SVG trace regression
+        run: python -m unittest discover -s tests -p test_svg_governance_cycle.py -v
+      - name: Synthetic CPU trace timing
+        run: python -m benchmarks.svg_governance_cycle --iterations 1000
