@@ -247,3 +247,7 @@ StegCore adopts canonical hygiene goal `HYGIENE-CAUSAL-ROOTS-001` through a read
 ## SVG synthetic governance-cycle trace benchmark (source candidate)
 
 Run `python -m benchmarks.svg_governance_cycle --iterations 1000` and `python -m unittest discover -s tests -p test_svg_governance_cycle.py`. This is synthetic trace bookkeeping only; it is not native Governance/InTr admission, authorized consequence or Master Records reconstruction. Central admission request: StegVerse-Labs/.github#2757; native StegCore source benchmark ownership does not allocate a central SVG Goal Task ID or COSV.
+
+## SVG native three-layer source adapter
+
+`benchmarks/svg_native_source_adapter.py` binds the SVG source-only trace work to the installed `stegcore.three_layer.evaluate_three_layer` callable. `python -m unittest discover -s tests -p test_svg_native_source_adapter.py -v` checks native ALLOW, DENY and FAIL-CLOSED, malformed requests, and Governance A0–A8 stage-reference shape. Shape checking is **not** validation against Governance's authoritative JSON Schema; native evaluator receipts are **not** original InTr/Master Records custody or authorized consequences. Central issue: StegVerse-Labs/.github#2757; do not infer SVG admission or COSV from this source PR.
