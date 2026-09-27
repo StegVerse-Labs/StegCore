@@ -7,7 +7,7 @@ from benchmarks.svg_governance_cycle import STAGES, benchmark, evaluate_trace, s
 def rebind(t):
     t["evidence"] = {}
     t["evidence"]["synthetic_predecessor_hash"] = hashlib.sha256(json.dumps(
-        [t[s] for s in STAGES[:-1]], sort_keys=True, separators=(",", ":")
+        [t[s] if s != 'evidence' else {} for s in STAGES[:-1]], sort_keys=True, separators=(",", ":")
     ).encode()).hexdigest()
     return t
 
