@@ -243,3 +243,7 @@ Current StegGate endpoint discovery is bounded to the StegVerse-owned stable ren
 ## Repository hygiene baseline — 2026-09-21
 
 StegCore adopts canonical hygiene goal `HYGIENE-CAUSAL-ROOTS-001` through a read-only in-repository caller because the central anonymous bulk census cannot access this private repository. The pre-adoption census observed 138 branches. Classification produces evidence only and has no branch-deletion, runtime, release, or governance authority. See `docs/REPOSITORY_HYGIENE_ADOPTION_MIRROR_HANDOFF.md`.
+
+## SVG synthetic governance-cycle trace benchmark (source candidate)
+
+Run `python -m benchmarks.svg_governance_cycle --iterations 1000` and `python -m unittest discover -s tests -p test_svg_governance_cycle.py`. This is synthetic trace bookkeeping only; it is not native Governance/InTr admission, authorized consequence or Master Records reconstruction. Central admission request: StegVerse-Labs/.github#2757; native StegCore source benchmark ownership does not allocate a central SVG Goal Task ID or COSV.
