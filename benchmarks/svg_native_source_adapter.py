@@ -5,9 +5,10 @@ records stage references only; it does not re-evaluate stage vectors or
 authenticate external receipts. Native evaluation is not sovereign execution.
 """
 from __future__ import annotations
-from dataclasses import asdict
 from hashlib import sha256
 import json
+from pathlib import Path
+from jsonschema import Draft202012Validator
 import time
 from typing import Any
 
@@ -25,21 +26,23 @@ def evaluate_native_source(request: ThreeLayerRequest, *, governance_stage_vecto
     start = time.perf_counter_ns()
     result = evaluate_three_layer(request)
     elapsed_ns = time.perf_counter_ns() - start
-    # Never convert an unverified stage vector into original Governance evidence.
+    # Validate the pinned exact Governance schema, not just the A0-A8 labels.
     stage_status = "NOT_PROVIDED"
+    stage_errors = []
     if governance_stage_vector is not None:
-        if not isinstance(governance_stage_vector, dict):
+        schema_path = Path(__file__).parent / "schemas/governance_admissibility_stage_vector.schema.json"
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema)
+        stage_errors = sorted(e.message for e in validator.iter_errors(governance_stage_vector))
+        stage_status = "INVALID" if stage_errors else "SCHEMA_VALID_SOURCE_ONLY"
+        if not stage_errors and governance_stage_vector["aggregate_disposition"] not in (
+            result.decision.replace("-", "_"), "UNKNOWN"
+        ):
             stage_status = "INVALID"
-        elif (governance_stage_vector.get("schema_version") == "1.0.0"
-              and isinstance(governance_stage_vector.get("stages"), list)
-              and [s.get("stage") for s in governance_stage_vector["stages"] if isinstance(s, dict)]
-              == list(GOVERNANCE_STAGES)
-              and len(governance_stage_vector["stages"]) == 9):
-            stage_status = "SHAPE_ONLY_UNVALIDATED"
-        else:
-            stage_status = "INVALID"
+            stage_errors.append("AGGREGATE_DISPOSITION_CONFLICTS_WITH_NATIVE_EVALUATION")
+    # Schema validation is source conformance only, never authenticated custody.
     # The native evaluator uses FAIL-CLOSED, whereas source benchmark uses FAIL_CLOSED.
-    disposition = result.decision.replace("-", "_")
+    disposition = "FAIL_CLOSED" if stage_status == "INVALID" else result.decision.replace("-", "_")
     return {
         "schema": "stegverse.svg.native-source-observation/v0.1",
         "evidence_class": "SOURCE_ONLY",
@@ -47,7 +50,8 @@ def evaluate_native_source(request: ThreeLayerRequest, *, governance_stage_vecto
         "native_evaluator": "stegcore.three_layer.evaluate_three_layer",
         "native_disposition": result.decision,
         "disposition": disposition,
-        "reason": result.reason_code,
+        "reason": "INVALID_GOVERNANCE_STAGE_VECTOR" if stage_status == "INVALID" else result.reason_code,
+        "governance_validation_errors": stage_errors,
         "request_hash": result.request_hash,
         "native_receipt_hash": result.receipt.get("receipt_hash"),
         "native_continuity_receipt_minted": result.receipt.get("continuity_receipt_minted"),
@@ -55,7 +59,7 @@ def evaluate_native_source(request: ThreeLayerRequest, *, governance_stage_vecto
         "governance_stage_vector_status": stage_status,
         "governance_stage_vector_sha256": (
             sha256(json.dumps(governance_stage_vector, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-            if stage_status == "SHAPE_ONLY_UNVALIDATED" else None
+            if stage_status == "SCHEMA_VALID_SOURCE_ONLY" else None
         ),
         "native_evaluator_elapsed_ns": elapsed_ns,
         "authentic_consequence_observed": False,
