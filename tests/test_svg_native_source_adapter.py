@@ -49,16 +49,60 @@ class SVGNativeAdapterTests(unittest.TestCase):
     def test_malformed_request_fails_closed(self):
         self.assertEqual(evaluate_native_source({})["disposition"], "FAIL_CLOSED")
 
-    def test_stage_shape_is_not_authentication(self):
-        stages = [{"stage": f"A{i}"} for i in range(9)]
-        r = evaluate_native_source(request(), governance_stage_vector={
-            "schema_version": "1.0.0", "stages": stages})
-        self.assertEqual(r["governance_stage_vector_status"], "SHAPE_ONLY_UNVALIDATED")
+    def stage_vector(self, disposition="ALLOW"):
+        return {
+            "schema_version": "1.0.0", "transition_id": "synthetic:transition",
+            "governance_classes": ["G0"],
+            "stages": [
+                {"stage": f"A{i}", "name": f"synthetic stage {i}",
+                 "status": "PASS", "evidence_refs": [f"synthetic:stage:{i}"]}
+                for i in range(9)
+            ],
+            "aggregate_disposition": disposition,
+            "authority_boundaries": {
+                "taxonomy_grants_execution_authority": False,
+                "continuity_receipt_minted": False,
+                "certification_granted": False,
+                "custody_granted": False,
+            },
+        }
+
+    def test_governance_schema_valid_is_not_authentication(self):
+        r = evaluate_native_source(request(), governance_stage_vector=self.stage_vector())
+        self.assertEqual(r["governance_stage_vector_status"], "SCHEMA_VALID_SOURCE_ONLY")
+        self.assertEqual(r["disposition"], "ALLOW")
         self.assertEqual(r["authority_effect"], "NONE")
-        stages.pop()
+        self.assertFalse(r["authentic_consequence_observed"])
+        self.assertFalse(r["original_master_records_reconstruction_observed"])
+        self.assertTrue(r["governance_stage_vector_sha256"])
+
+    def test_shape_only_vector_fails_closed(self):
         r = evaluate_native_source(request(), governance_stage_vector={
-            "schema_version": "1.0.0", "stages": stages})
+            "schema_version": "1.0.0",
+            "stages": [{"stage": f"A{i}"} for i in range(9)]})
+        self.assertEqual(r["disposition"], "FAIL_CLOSED")
         self.assertEqual(r["governance_stage_vector_status"], "INVALID")
+
+    def test_invalid_authority_boundary_fails_closed(self):
+        v = self.stage_vector()
+        v["authority_boundaries"]["custody_granted"] = True
+        r = evaluate_native_source(request(), governance_stage_vector=v)
+        self.assertEqual(r["disposition"], "FAIL_CLOSED")
+        self.assertEqual(r["native_disposition"], "ALLOW")
+
+    def test_native_disposition_conflict_fails_closed(self):
+        r = evaluate_native_source(request(authority=False), governance_stage_vector=self.stage_vector("ALLOW"))
+        self.assertEqual(r["native_disposition"], "DENY")
+        self.assertEqual(r["disposition"], "FAIL_CLOSED")
+        self.assertIn("AGGREGATE_DISPOSITION_CONFLICTS_WITH_NATIVE_EVALUATION", r["governance_validation_errors"])
+
+    def test_stage_order_and_missing_evidence_fail_closed(self):
+        v = self.stage_vector()
+        v["stages"][0], v["stages"][1] = v["stages"][1], v["stages"][0]
+        self.assertEqual(evaluate_native_source(request(), governance_stage_vector=v)["disposition"], "FAIL_CLOSED")
+        v = self.stage_vector()
+        del v["stages"][4]["evidence_refs"]
+        self.assertEqual(evaluate_native_source(request(), governance_stage_vector=v)["disposition"], "FAIL_CLOSED")
 
 
 if __name__ == "__main__":
