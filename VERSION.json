@@ -2,15 +2,18 @@
   "schema_version": "1.0.0",
   "component_id": "STEGVERSE-STEGCORE",
   "repository": "StegVerse-Labs/StegCore",
-  "component_version": "0.2.0",
-  "version_stage": "DEVELOPMENT",
+  "component_version": "0.3.0",
+  "version_stage": "SOURCE_VALIDATED_NOT_RELEASED",
   "release": {
     "tag": null,
     "commit": null,
-    "release_evidence": []
+    "release_evidence": [
+      "docs/STEGCORE_0_3_RELEASE_CANDIDATE_MIRROR_HANDOFF.md",
+      "STEGCORE_MIRROR_HANDOFF.md"
+    ]
   },
   "product_identity": {
-    "portable_product_version": "0.2.0",
+    "portable_product_version": "0.3.0",
     "canonical_runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
     "canonical_admissibility_runtime": "stegcore.three_layer.evaluate_three_layer"
   },
@@ -43,10 +46,10 @@
     "current_projection": "STEGGATE_FOUR_APP_RUNTIME_BINDING_ACTIVE"
   },
   "expected_aggregate_release_binding": {
-    "tag": "v0.2.0",
-    "commit": "23b388ce23b08097593b5b5593eb4061e0ff5242",
+    "tag": "v0.3.0",
+    "commit": "58445bb14642c1889cf9802666c15bd48c6d2e39",
     "observed_as_released": false,
-    "source": "StegVerse-Labs/TVC/TVC_MIRROR_HANDOFF.md"
+    "source": "docs/STEGCORE_0_3_RELEASE_CANDIDATE_MIRROR_HANDOFF.md"
   },
   "source_of_truth": "STEGCORE_MIRROR_HANDOFF.md",
   "version_contract": "StegVerse-Labs/Site:docs/ECOSYSTEM_COMPONENT_VERSION_CONTRACT.md",
