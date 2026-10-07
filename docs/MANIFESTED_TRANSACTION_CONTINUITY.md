@@ -4,7 +4,7 @@
 
 StegGate governs whether a proposed consequential transition is currently admissible. This continuity layer makes the transaction itself discoverable, replayable, and reconstructable across the SDK/ingestion/governance/return path.
 
-The manifest is **not authority**. It declares identity, provenance, routing intent, hashes, and the canonical runtime expected to evaluate the transaction. Execution authority remains exclusively with the existing StegGate + commit-coherence path.
+The manifest is **not authority**. It carries the already-admitted `processing_capability` and `route_id` plus identity, provenance, and hashes. StegCore does not derive processing semantics from source, subject, provider, framework, or a locally hard-coded itinerary. Execution authority remains with the admitted manifest route and its existing governed owner.
 
 ## Canonical path
 
@@ -32,10 +32,9 @@ Every manifested transaction receives a durable `transaction_id` plus:
 - input hash;
 - canonical candidate hash;
 - full request hash;
-- declared route;
-- source and subject;
-- canonical runtime identity;
-- canonical evaluator identity;
+- admitted processing capability;
+- admitted route ID;
+- source and subject as provenance only;
 - manifest hash.
 
 The manifest field `manifest_grants_authority` is always `false`.
@@ -129,10 +128,16 @@ Public fixtures, workflow names, subjects, receipt metadata, PR descriptions, ev
 
 The boundary is considered installed when tests prove:
 
-- manifests cannot bypass ingestion;
+- processing capability and route are required from the admitted manifest boundary;
+- source/framework/provider identity cannot change those semantics;
 - manifests do not grant authority;
 - an ordinary ALLOW traverses ingestion -> canonical StegGate -> return ingestion;
 - a current-state change refuses consequence while preserving the earlier transaction chain;
 - candidate mutation invalidates prior approval binding;
 - receipt chains verify and reconstruct;
 - no parallel evaluator is introduced.
+
+
+## ACTIONS BY MANIFEST conformance
+
+StegCore transaction continuity is a receiving boundary, not a processor selector. `processing_capability` and `route_id` are required inputs inherited from the admitted manifest. The former local `declared_route` itinerary and hard-coded canonical evaluator/runtime identity were removed because they duplicated semantic selection inside StegCore. Source, subject, framework, and provider labels remain provenance only.
