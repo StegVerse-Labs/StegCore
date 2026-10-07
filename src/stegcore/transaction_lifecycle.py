@@ -19,13 +19,16 @@ from dataclasses import asdict, dataclass, is_dataclass
 from datetime import datetime, timezone
 import json
 from pathlib import Path
-from typing import Any, Callable, Iterable, Mapping, Optional
+from typing import Any, Callable, Mapping, Optional
 import uuid
 
 from pydantic import BaseModel, Field
 
 from .steggate import AdmissibilityRequest, canonical_sha256
 from .steggate_runtime import StegGateExecutionObservation, governed_steggate_execute
+
+GOVERNANCE_CAPABILITY = "governance"
+GOVERNANCE_ROUTE_ID = "stegverse.route.canonical-governed.v1"
 
 
 def _now() -> str:
@@ -196,6 +199,11 @@ def manifest_transaction(
     if not isinstance(route_id, str) or not route_id.strip():
         raise ValueError("manifest route_id required")
 
+    if processing_capability != GOVERNANCE_CAPABILITY:
+        raise ValueError("manifest processing_capability does not address this StegCore owner")
+    if route_id != GOVERNANCE_ROUTE_ID:
+        raise ValueError("manifest route_id does not address this StegCore owner")
+
     request_body = request.model_dump(mode="json", exclude_none=False)
     candidate_body = request.candidate.model_dump(mode="json", exclude_none=True)
     body = {
@@ -343,7 +351,7 @@ def run_manifested_transaction(
         input_state_hash=observation.post_state_hash,
         output_state_hash=canonical_sha256(_jsonable(observation)),
         decision_ref=evaluation.decision_state_hash,
-        route_from="steggate",
+        route_from=manifest.route_id,
         route_to="sdk_output",
         details={"execution_status": observation.status},
     )
