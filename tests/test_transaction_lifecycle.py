@@ -86,34 +86,71 @@ def test_manifest_declares_route_but_never_grants_authority():
         {"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
     )
     assert manifest.manifest_grants_authority is False
-    assert manifest.declared_route == [
-        "sdk",
-        "ingestion",
-        "steggate",
-        "return_ingestion",
-        "sdk_output",
-    ]
+    assert manifest.processing_capability == "governance"
+    assert manifest.route_id == "stegverse.route.canonical-governed.v1"
     assert manifest.candidate_hash
     assert manifest.request_hash
     assert manifest.manifest_hash
 
 
-def test_manifest_rejects_test_route_that_bypasses_ingestion():
+def test_manifest_requires_manifest_selected_capability_and_route():
     request = allowed_request()
-    try:
+    for capability, route in (("", "route"), ("governance", "")):
+        try:
+            manifest_transaction(
+                request,
+                {"payment": 420},
+                source="provider:any",
+                subject="evaluation:external",
+                processing_capability=capability,
+                route_id=route,
+            )
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("StegCore must fail closed without manifest-selected semantics")
+
+
+def test_manifest_route_mismatch_fails_closed_instead_of_selecting_local_semantics():
+    request = allowed_request()
+    for capability, route in (
+        ("other-capability", "stegverse.route.canonical-governed.v1"),
+        ("governance", "stegverse.route.other.v1"),
+    ):
+        try:
+            manifest_transaction(
+                request,
+                {"payment": 420},
+                source="framework:any",
+                subject="evaluation:external",
+                processing_capability=capability,
+                route_id=route,
+            )
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("a manifest addressed to another owner must fail closed")
+
+
+def test_source_identity_does_not_change_manifest_selected_semantics():
+    request = allowed_request()
+    manifests = [
         manifest_transaction(
             request,
             {"payment": 420},
-            source="sdk:test",
+            source=source,
             subject="evaluation:external",
-            declared_route=("sdk", "steggate", "return_ingestion"),
+            processing_capability="governance",
+            route_id="stegverse.route.canonical-governed.v1",
         )
-    except ValueError as exc:
-        assert "ingestion" in str(exc)
-    else:
-        raise AssertionError("manifest must reject an ingestion bypass")
+        for source in ("sdk:test", "provider:other", "framework:arbitrary")
+    ]
+    assert {item.processing_capability for item in manifests} == {"governance"}
+    assert {item.route_id for item in manifests} == {"stegverse.route.canonical-governed.v1"}
 
 
 def test_normal_manifested_allow_traverses_canonical_runtime_and_returns():
@@ -126,6 +163,8 @@ def test_normal_manifested_allow_traverses_canonical_runtime_and_returns():
         input_data={"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -155,6 +194,8 @@ def test_prior_validity_can_remain_replayable_while_current_execution_is_refused
         input_data={"payment": 420, "phase": "t0"},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -171,6 +212,8 @@ def test_prior_validity_can_remain_replayable_while_current_execution_is_refused
         input_data={"payment": 420, "phase": "t1", "policy_current": False},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -205,6 +248,8 @@ def test_candidate_mutation_breaks_prior_approval_binding_without_erasing_prior_
         input_data={"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
     )
@@ -221,6 +266,8 @@ def test_candidate_mutation_breaks_prior_approval_binding_without_erasing_prior_
         input_data={"payment": 4200},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
     )
@@ -241,6 +288,8 @@ def test_pre_execution_observer_runs_after_allow_before_executor():
         input_data={"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
         pre_execution_observer=lambda evidence: (observed.append(dict(evidence)), calls.append("observer")),
@@ -265,6 +314,8 @@ def test_pre_execution_observer_failure_prevents_executor():
         input_data={"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
         pre_execution_observer=fail,

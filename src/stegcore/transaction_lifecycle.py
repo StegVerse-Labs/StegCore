@@ -19,13 +19,16 @@ from dataclasses import asdict, dataclass, is_dataclass
 from datetime import datetime, timezone
 import json
 from pathlib import Path
-from typing import Any, Callable, Iterable, Mapping, Optional
+from typing import Any, Callable, Mapping, Optional
 import uuid
 
 from pydantic import BaseModel, Field
 
 from .steggate import AdmissibilityRequest, canonical_sha256
 from .steggate_runtime import StegGateExecutionObservation, governed_steggate_execute
+
+GOVERNANCE_CAPABILITY = "governance"
+GOVERNANCE_ROUTE_ID = "stegverse.route.canonical-governed.v1"
 
 
 def _now() -> str:
@@ -53,12 +56,11 @@ class TransactionManifest(BaseModel):
     created_at: str
     source: str
     subject: str
-    declared_route: list[str]
+    processing_capability: str
+    route_id: str
     input_hash: str
     candidate_hash: str
     request_hash: str
-    canonical_runtime_identity: str = "stegverse:steggate:canonical:three-layer:v1"
-    canonical_evaluator: str = "stegcore.three_layer.evaluate_three_layer"
     manifest_grants_authority: bool = False
     metadata: dict[str, Any] = Field(default_factory=dict)
     manifest_hash: str
@@ -185,20 +187,22 @@ def manifest_transaction(
     *,
     source: str,
     subject: str,
-    declared_route: Iterable[str] = ("sdk", "ingestion", "steggate", "return_ingestion", "sdk_output"),
+    processing_capability: str,
+    route_id: str,
     metadata: Optional[Mapping[str, Any]] = None,
     transaction_id: Optional[str] = None,
 ) -> TransactionManifest:
     """Validate SDK intake and create a non-authoritative routing manifest."""
 
-    route = list(declared_route)
-    required = {"ingestion", "steggate", "return_ingestion"}
-    if not required.issubset(route):
-        raise ValueError("declared route must include ingestion, steggate, and return_ingestion")
-    if route.index("ingestion") > route.index("steggate"):
-        raise ValueError("ingestion must precede steggate")
-    if route.index("return_ingestion") < route.index("steggate"):
-        raise ValueError("return_ingestion must follow steggate")
+    if not isinstance(processing_capability, str) or not processing_capability.strip():
+        raise ValueError("manifest processing_capability required")
+    if not isinstance(route_id, str) or not route_id.strip():
+        raise ValueError("manifest route_id required")
+
+    if processing_capability != GOVERNANCE_CAPABILITY:
+        raise ValueError("manifest processing_capability does not address this StegCore owner")
+    if route_id != GOVERNANCE_ROUTE_ID:
+        raise ValueError("manifest route_id does not address this StegCore owner")
 
     request_body = request.model_dump(mode="json", exclude_none=False)
     candidate_body = request.candidate.model_dump(mode="json", exclude_none=True)
@@ -209,12 +213,11 @@ def manifest_transaction(
         "created_at": _now(),
         "source": source,
         "subject": subject,
-        "declared_route": route,
+        "processing_capability": processing_capability,
+        "route_id": route_id,
         "input_hash": canonical_sha256(_jsonable(input_data)),
         "candidate_hash": canonical_sha256(candidate_body),
         "request_hash": canonical_sha256(request_body),
-        "canonical_runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
-        "canonical_evaluator": "stegcore.three_layer.evaluate_three_layer",
         "manifest_grants_authority": False,
         "metadata": dict(metadata or {}),
     }
@@ -264,7 +267,8 @@ def run_manifested_transaction(
     source: str,
     subject: str,
     ledger: Optional[TransactionLedger] = None,
-    declared_route: Iterable[str] = ("sdk", "ingestion", "steggate", "return_ingestion", "sdk_output"),
+    processing_capability: str,
+    route_id: str,
     metadata: Optional[Mapping[str, Any]] = None,
     transaction_id: Optional[str] = None,
     declared_execution_context: Optional[Mapping[str, Any]] = None,
@@ -285,7 +289,8 @@ def run_manifested_transaction(
         input_data,
         source=source,
         subject=subject,
-        declared_route=declared_route,
+        processing_capability=processing_capability,
+        route_id=route_id,
         metadata=metadata,
         transaction_id=transaction_id,
     )
@@ -299,9 +304,9 @@ def run_manifested_transaction(
         previous_receipt_hash=None,
         input_state_hash=manifest.input_hash,
         output_state_hash=manifest.manifest_hash,
-        route_from="sdk",
-        route_to="steggate",
-        details={"manifest_hash": manifest.manifest_hash, "request_hash": manifest.request_hash},
+        route_from="intr",
+        route_to=manifest.route_id,
+        details={"manifest_hash": manifest.manifest_hash, "request_hash": manifest.request_hash, "processing_capability": manifest.processing_capability, "route_id": manifest.route_id},
     )
     ledger.append(admitted)
 
@@ -325,7 +330,7 @@ def run_manifested_transaction(
         input_state_hash=observation.pre_state_hash,
         output_state_hash=observation.post_state_hash,
         decision_ref=evaluation.decision_state_hash,
-        route_from="ingestion",
+        route_from=manifest.route_id,
         route_to="return_ingestion",
         details={
             "candidate_hash": evaluation.candidate_hash,
@@ -346,7 +351,7 @@ def run_manifested_transaction(
         input_state_hash=observation.post_state_hash,
         output_state_hash=canonical_sha256(_jsonable(observation)),
         decision_ref=evaluation.decision_state_hash,
-        route_from="steggate",
+        route_from=manifest.route_id,
         route_to="sdk_output",
         details={"execution_status": observation.status},
     )
@@ -357,7 +362,7 @@ def run_manifested_transaction(
         transaction_id=manifest.transaction_id,
         manifest_hash=manifest.manifest_hash,
         request_hash=manifest.request_hash,
-        canonical_runtime_identity=manifest.canonical_runtime_identity,
+        canonical_runtime_identity=f"{manifest.processing_capability}@{manifest.route_id}",
         receipt_chain_head=receipts[-1].receipt_hash,
         receipt_count=len(receipts),
         expected_disposition=evaluation.disposition,
