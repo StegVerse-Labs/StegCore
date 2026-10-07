@@ -115,6 +115,27 @@ def test_manifest_requires_manifest_selected_capability_and_route():
             raise AssertionError("StegCore must fail closed without manifest-selected semantics")
 
 
+def test_manifest_route_mismatch_fails_closed_instead_of_selecting_local_semantics():
+    request = allowed_request()
+    for capability, route in (
+        ("other-capability", "stegverse.route.canonical-governed.v1"),
+        ("governance", "stegverse.route.other.v1"),
+    ):
+        try:
+            manifest_transaction(
+                request,
+                {"payment": 420},
+                source="framework:any",
+                subject="evaluation:external",
+                processing_capability=capability,
+                route_id=route,
+            )
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("a manifest addressed to another owner must fail closed")
+
+
 def test_source_identity_does_not_change_manifest_selected_semantics():
     request = allowed_request()
     manifests = [
@@ -142,6 +163,8 @@ def test_normal_manifested_allow_traverses_canonical_runtime_and_returns():
         input_data={"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -171,6 +194,8 @@ def test_prior_validity_can_remain_replayable_while_current_execution_is_refused
         input_data={"payment": 420, "phase": "t0"},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -187,6 +212,8 @@ def test_prior_validity_can_remain_replayable_while_current_execution_is_refused
         input_data={"payment": 420, "phase": "t1", "policy_current": False},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         ledger=ledger,
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
@@ -221,6 +248,8 @@ def test_candidate_mutation_breaks_prior_approval_binding_without_erasing_prior_
         input_data={"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
     )
@@ -237,6 +266,8 @@ def test_candidate_mutation_breaks_prior_approval_binding_without_erasing_prior_
         input_data={"payment": 4200},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
     )
@@ -257,6 +288,8 @@ def test_pre_execution_observer_runs_after_allow_before_executor():
         input_data={"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
         pre_execution_observer=lambda evidence: (observed.append(dict(evidence)), calls.append("observer")),
@@ -281,6 +314,8 @@ def test_pre_execution_observer_failure_prevents_executor():
         input_data={"payment": 420},
         source="sdk:test",
         subject="evaluation:external",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
         pre_execution_observer=fail,
