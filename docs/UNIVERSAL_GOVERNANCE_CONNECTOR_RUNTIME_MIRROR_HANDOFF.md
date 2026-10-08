@@ -466,7 +466,7 @@ Destination repository: master-records/core-lite
 Issue: #33 CLOSED_COMPLETED
 PR: #34 MERGED
 Merge commit: 78abdcad9ee4a82f6ae71cc68bcfdfb867f86880
-Focused workflow: Universal Governance Consequence Custody
+Focused workflow: Universal Governance Consequence Organization Record
 Focused PR run: 33427730279 PASS
 Focused PR job: 99605309994 PASS
 ```
@@ -476,7 +476,7 @@ The destination validates the canonical consequence evidence plus source project
 Destination organization-record semantics remain bounded:
 
 ```text
-destination_custody_accepted=true
+destination_record_accepted=true
 destination_acknowledgement_minted=true
 independent_validation_complete=true
 runtime_activation=false
@@ -487,7 +487,7 @@ credential_authority=TV/TVC
 authority_effect=NONE_ORGANIZATION_RECORD_ONLY
 ```
 
-`NONE_ORGANIZATION_RECORD_ONLY` replaces the legacy wire value `NONE_CUSTODY_ONLY` (MASTER-RECORDS-BULK-SEMANTIC-REMEDIATION-002). `destination_custody_accepted` is the destination's field name as merged; it means the destination recorded the artifact as an organization record.
+`NONE_ORGANIZATION_RECORD_ONLY` replaces the legacy wire value `NONE_CUSTODY_ONLY` (MASTER-RECORDS-BULK-SEMANTIC-REMEDIATION-002). `destination_record_accepted` means the destination recorded the artifact as an organization record; it replaces the legacy wire field `destination_custody_accepted`, which readers still accept.
 
 No synthetic live organization record was committed. Authentic organization-record materialization still requires an authentic external-system consequence evidence/projection instance. The generic source/destination organization-record contract is therefore MERGED_VALIDATED, while live ENFORCED observation remains a deployment/runtime task.
 
