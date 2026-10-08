@@ -51,21 +51,21 @@ class ManifestReceiptProviderTests(unittest.TestCase):
         self.assertEqual(record.record_hash, package["record_hash"])
         self.assertFalse(package["locator_grants_authority"])
 
-    def test_provider_retain_verifies_custody_boundary(self):
+    def test_provider_retain_verifies_record_boundary(self):
         record = self.record()
         captured = {}
 
         def submit(request):
             captured.update(request)
             return {
-                "schema": "stegverse.master-records.manifest-receipt-custody-receipt.v1",
+                "schema": "stegverse.master-records.manifest-receipt-organization-record-receipt.v1",
                 "manifest_receipt_id": record.manifest_receipt_id,
                 "transaction_id": record.transaction_id,
                 "master_record_sha256": "d" * 64,
-                "custody_status": "RECORDED",
+                "record_status": "RECORDED",
                 "locator_grants_authority": False,
-                "custody_grants_execution_authority": False,
-                "custody_grants_admissibility": False,
+                "record_grants_execution_authority": False,
+                "record_grants_admissibility": False,
             }
 
         provider = MasterRecordsManifestReceiptProvider(
@@ -82,8 +82,45 @@ class ManifestReceiptProviderTests(unittest.TestCase):
             },
         )
         response = provider.retain(record, self.evidence())
-        self.assertEqual("RECORDED", response["custody_status"])
+        self.assertEqual("RECORDED", response["record_status"])
+        self.assertTrue(captured["record_requested"])
+        self.assertNotIn("custody_requested", captured)
         self.assertFalse(captured["authority_requested"])
+
+    def test_provider_accepts_legacy_master_records_response(self):
+        record = self.record()
+        provider = MasterRecordsManifestReceiptProvider(
+            submit_call=lambda request: {
+                "schema": "stegverse.master-records.manifest-receipt-custody-receipt.v1",
+                "manifest_receipt_id": record.manifest_receipt_id,
+                "transaction_id": record.transaction_id,
+                "custody_status": "RECORDED",
+                "locator_grants_authority": False,
+                "custody_grants_execution_authority": False,
+                "custody_grants_admissibility": False,
+            },
+            evidence_call=lambda receipt_id: {},
+            reconstruction_call=lambda receipt_id: {},
+        )
+        self.assertEqual("RECORDED", provider.retain(record, self.evidence())["custody_status"])
+
+    def test_provider_rejects_legacy_authority_escalation(self):
+        record = self.record()
+        provider = MasterRecordsManifestReceiptProvider(
+            submit_call=lambda request: {
+                "schema": "stegverse.master-records.manifest-receipt-custody-receipt.v1",
+                "manifest_receipt_id": record.manifest_receipt_id,
+                "transaction_id": record.transaction_id,
+                "custody_status": "RECORDED",
+                "locator_grants_authority": False,
+                "custody_grants_execution_authority": True,
+                "custody_grants_admissibility": False,
+            },
+            evidence_call=lambda receipt_id: {},
+            reconstruction_call=lambda receipt_id: {},
+        )
+        with self.assertRaises(ValueError):
+            provider.retain(record, self.evidence())
 
     def test_provider_rejects_authority_escalation(self):
         record = self.record()

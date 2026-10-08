@@ -111,7 +111,7 @@ def run_traversal(bundle_path: Path = DEFAULT_FIXTURE, request_path: Path = DEFA
             "result": observation.result,
         },
         "next_boundary": "SDK_INTERLOCK_RETURN_ASSEMBLY",
-        "master_records_custody_claimed": False,
+        "master_records_organization_record_claimed": False,
     }
 
 

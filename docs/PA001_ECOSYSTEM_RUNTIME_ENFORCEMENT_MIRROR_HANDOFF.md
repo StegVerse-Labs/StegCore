@@ -38,7 +38,7 @@ This does not stop the Goal Task. It stops further bespoke orchestration and req
 1. **RTC-GOVERNED-PROCESSING-002** — existing canonical StegCore present-state/admissibility/commit processing. `evaluate_present_state()` is the reusable state-validation primitive; no PA-001-local duplicate validator is permitted.
 2. **RTC-INTERLOCK-INTR-TRANSPORT-008** — existing Universal InTr transport, repeated for the request ingress and consequence-evidence return where the resident reference proof requires both. No PA-001 transport wrapper is permitted.
 3. **GLOBAL-RUNTIME-EVIDENCE-MEASUREMENT-001** — existing resident WorkerCoordinator/runtime-observation machinery. `SHWP-UNIVERSAL-GOVERNANCE-ENFORCED-REFERENCE-001` remains the resident execution proof owner; no second scheduler/worker is permitted.
-4. **RTC-EVIDENCE-CUSTODY-004** — existing Master Records custody/readback/reconstruction. No task-specific durable custody implementation is permitted.
+4. **RTC-EVIDENCE-CUSTODY-004** — existing Master Records organization records and reconstruction. No task-specific durable record implementation is permitted.
 
 Not selected as mandatory for the current proof: a new manifest stage, a separate provider/framework round-trip component, SDK return assembly, Publisher projection before resident proof, an extra StegVerse egress stage, a far-side final transition except where a later propagation target independently requires it, or a new credential/session component. TV/TVC remains credential/provider/release authority whenever credentials are applicable.
 
@@ -51,7 +51,7 @@ Interlock/InTr: governed state-transition/admission authority
 TV/TVC: credential/provider/release authority
 KV/SKAP Vault: sole user-verification authority
 StegOS devices: interchangeable transport/execution nodes; never user verifiers
-Master Records: observed-reality custody/reconstruction
+Master Records: organization records/reconstruction
 HeartBeat: synchronization/timing/freshness/liveness/correlation/observability only
 GitHub: source/evidence coordination only; runtime authority NONE
 ```
@@ -108,7 +108,7 @@ The canonical resident reference path already exists under:
 - task `SHWP-UNIVERSAL-GOVERNANCE-ENFORCED-REFERENCE-001`;
 - existing resident WorkerCoordinator request/consumer/worker;
 - this repository's `scripts/run_universal_governance_reference_boundary.py`;
-- Master Records independent custody validation.
+- Master Records independent organization-record validation.
 
 It remains `SOURCE_MERGED_VALIDATED / RESIDENT_EXECUTION_PENDING` until new authentic runtime evidence says otherwise. It is an adjacent/dependency execution owner, not a replacement Goal Task and not a child that resets PA-001 completion semantics.
 
@@ -131,13 +131,13 @@ Historical evidence remains intact; only future orchestration is rebound to cano
 3. Authentic WorkerCoordinator claim/fence is observed for the resident reference proof.
 4. Authentic resident receipt proves present-state disposition and that stale/revoked authority, changed target, expired temporal state, missing material state, and stale evidence cannot silently ALLOW.
 5. Required request/return InTr transitions are authentically observed and receipt-linked.
-6. Master Records accepts custody and reconstructs the same resident decision from retained evidence without repeating the consequence.
+6. Master Records records the organization record and reconstructs the same resident decision from retained evidence without repeating the consequence.
 7. Applicable ecosystem targets receive target-native propagation evidence or a named durable machine-owned continuation where enforcement is outside their authority domain.
 8. README and canonical handoffs remain current; no duplicate execution, credential, publication, transition, custody, or user-verification authority is introduced.
 
 ## Runtime/evidence discipline
 
-Source construction, CI, merge state, static compatibility, and component reuse do not prove resident execution, InTr admission, WorkerCoordinator claim/fence, credential/session issuance, callback, custody/readback, Master Records reconstruction, publication, far-side transition, cleanup, or end-to-end completion.
+Source construction, CI, merge state, static compatibility, and component reuse do not prove resident execution, InTr admission, WorkerCoordinator claim/fence, credential/session issuance, callback, readback, Master Records organization record and reconstruction, publication, far-side transition, cleanup, or end-to-end completion.
 
 Never upgrade an evidence class because a reusable component exists or passes CI.
 

@@ -7,7 +7,7 @@
   "github_token_runtime_authority": false,
   "heartbeat_role": "CARRIER_SYNCHRONIZATION_ONLY",
   "worker_control_plane_separate": true,
-  "master_records_custody_separate": true,
+  "master_records_organization_record_separate": true,
   "temporal_classes": ["RECENTLY_COMPLETED", "CURRENT", "FUTURE"],
   "ae_impacts": ["CAPABILITY", "NONE"],
   "existence_phases": ["DECLARED", "STANDING", "ADMISSIBLE", "ACTIVATED", "SUSPENDED", "SUPERSEDED", "TERMINATED"],

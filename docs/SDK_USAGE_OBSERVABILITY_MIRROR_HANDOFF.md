@@ -18,7 +18,7 @@ release_state: NOT_RELEASED
 
 ## Goal
 
-Provide a non-authoritative GitHub notification projection for SDK activity and its five-choice usage census without moving canonical evidence custody out of Master Records.
+Provide a non-authoritative GitHub notification projection for SDK activity and its five-choice usage census without moving canonical evidence records out of Master Records.
 
 ## Canonical choice semantics
 
@@ -50,7 +50,7 @@ The notification census counts all observed uses of each choice while separately
 payload_disclosed: false
 observation_grants_authority: false
 notification_grants_authority: false
-master_records_remains_canonical_custody: true
+master_records_remains_canonical_organization_record: true
 github_remains_notification_projection_only: true
 ```
 

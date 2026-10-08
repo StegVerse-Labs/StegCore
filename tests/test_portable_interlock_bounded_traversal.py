@@ -24,7 +24,7 @@ def test_public_interlock_bundle_executes_bounded_canonical_path():
     assert evidence["execution"]["executor_invoked"] is True
     assert evidence["execution"]["coherence_receipt"]["decision"] == "ALLOW"
     assert evidence["next_boundary"] == "SDK_INTERLOCK_RETURN_ASSEMBLY"
-    assert evidence["master_records_custody_claimed"] is False
+    assert evidence["master_records_organization_record_claimed"] is False
 
 
 def test_tampered_ingress_hash_is_rejected_before_runtime():

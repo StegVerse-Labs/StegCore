@@ -36,18 +36,18 @@ The runner must:
 6. receive commit-coherence `ALLOW`;
 7. invoke the bounded in-memory consequence exactly once;
 8. retain deterministic pre-state, post-state, decision-state, and coherence receipt hashes;
-9. stop at `SDK_INTERLOCK_RETURN_ASSEMBLY` without claiming a return receipt or Master Records custody.
+9. stop at `SDK_INTERLOCK_RETURN_ASSEMBLY` without claiming a return receipt or a Master Records organization record.
 
 Negative coverage must prove tampered ingress state, tampered SPE receipt, and mismatched participant identity fail closed before consequence invocation.
 
 ## Collision boundary
 
-This slice does not modify any file owned by open StegCore PR #141. It does not create or replace transaction-lifecycle receipts, manifested transaction reconstruction, Master Records custody, or SDK reciprocal-return semantics.
+This slice does not modify any file owned by open StegCore PR #141. It does not create or replace transaction-lifecycle receipts, manifested transaction reconstruction, Master Records organization records, or SDK reciprocal-return semantics.
 
 ## Authority boundary
 
-SDK authority: NONE. SPE execution authority: NONE. Master Records custody is not claimed. The bounded executor is reachable only after canonical StegGate ALLOW plus commit-coherence ALLOW.
+SDK authority: NONE. SPE execution authority: NONE. No Master Records organization record is claimed. The bounded executor is reachable only after canonical StegGate ALLOW plus commit-coherence ALLOW.
 
 ## Completion boundary
 
-Source presence is not completion. Merge only after exact-head repository validation executes the positive traversal and negative/tamper cases. Full portable-governance activation remains open until the governed result is assembled into the SDK reciprocal return, bound into a participant successor receipt, custodied/reconstructed through Master Records material causal closure, and independently verified in POST_RETURN mode.
+Source presence is not completion. Merge only after exact-head repository validation executes the positive traversal and negative/tamper cases. Full portable-governance activation remains open until the governed result is assembled into the SDK reciprocal return, bound into a participant successor receipt, recorded as a Master Records organization record and reconstructed from it, and independently verified in POST_RETURN mode.

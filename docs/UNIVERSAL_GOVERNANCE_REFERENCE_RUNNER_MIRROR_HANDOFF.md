@@ -18,7 +18,7 @@ The runner executes the already-merged Universal Governance reference path and w
 
 native reference action -> thin external adapter -> Universal InTr request -> registered Governance profile -> StegCore evaluation -> exact commit-time fresh-binding check -> deterministic StegGate target-authority/credential/capability/commit gate -> bounded target mutation -> consequence evidence -> Universal InTr return -> Master Records source projection -> runner receipt
 
-The runner does not perform Master Records destination custody. The resident `.github` worker independently invokes the locally materialized Master Records validator after this runner succeeds.
+The runner does not create the Master Records destination organization record. The resident `.github` worker independently invokes the locally materialized Master Records validator after this runner succeeds.
 
 ## Bound-state outputs
 
@@ -104,7 +104,7 @@ Continuity minting = false
 publication authority = false
 ```
 
-Source tests and GitHub Actions prove deterministic software behavior only. They do not establish resident WorkerCoordinator claim/fence, resident execution, reference-boundary observation on the sovereign resident, Master Records destination custody for an authentic resident instance, or real external-system ENFORCED activation.
+Source tests and GitHub Actions prove deterministic software behavior only. They do not establish resident WorkerCoordinator claim/fence, resident execution, reference-boundary observation on the sovereign resident, a Master Records destination organization record for an authentic resident instance, or real external-system ENFORCED activation.
 
 ## Lifecycle
 

@@ -113,6 +113,6 @@ Continuation is owned by TV/TVC successor aggregate runtime:
 3. immutable tag/release creation or exact-existing verification;
 4. verified aggregate receipt;
 5. genuine SDK POST_RETURN production proof;
-6. Master Records custody + reciprocal ACK + portable verification + replay/reconstruction PASS.
+6. Master Records organization record + reciprocal ACK + portable verification + replay/reconstruction PASS.
 
 StegCore PR #141 remains a separate active capability-context/transaction-lifecycle lane and is not satisfied or superseded by this 0.3 release preparation.

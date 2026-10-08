@@ -58,7 +58,7 @@ StegCore resolution -> currentness facts for StegGate
 StegGate -> admissibility
 Interlock/InTr -> governed transition authority
 TV/TVC -> protected credential / scoped authority issuance and verification
-Master Records -> custody/reconstruction where applicable
+Master Records -> organization records/reconstruction where applicable
 ```
 
 The SDK must not gain an independent role-policy engine, token issuer, credential verifier, or authority graph with separate semantics.

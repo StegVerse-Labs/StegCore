@@ -186,7 +186,8 @@ class UniversalGovernanceConsequenceEvidenceTests(unittest.TestCase):
                 complete["terminal_receipt_hash"],
             ],
         )
-        self.assertTrue(projection["custody_requested"])
+        self.assertTrue(projection["record_requested"])
+        self.assertNotIn("custody_requested", projection)
         self.assertFalse(projection["destination_acknowledgement_minted"])
         self.assertFalse(projection["execution_authority_granted"])
         self.assertEqual(projection["authority_effect"],"NONE_SOURCE_PROJECTION_ONLY")

@@ -57,8 +57,8 @@ tests/test_ae_continuation_conformance.py
 6. Current unresolved work must have an owner and, when blocked/constraint-bearing, a durable continuation owner. Constraint is not terminal completion.
 7. Future capability-producing work may be `DECLARED` or pre-declaration planning, but may never pre-claim `ACTIVATED` or fabricate activation evidence.
 8. HANDOFF and Worker Task Registry records must reconcile task ID, goal ID, owner repository, AE impact, capability ID/phase, evidence, blockers, and continuation ownership where both surfaces carry the task.
-9. Heartbeat is carrier/synchronization continuity only. Worker/task coordination is a separate control-plane capability synchronized to heartbeat observation; heartbeat cannot be declared worker executor, communication transport authority, or Master Records custody authority.
-10. Master Records custody/EOL authority remains separate from worker execution and communication transport authority.
+9. Heartbeat is carrier/synchronization continuity only. Worker/task coordination is a separate control-plane capability synchronized to heartbeat observation; heartbeat cannot be declared worker executor, communication transport authority, or a Master Records organization-record authority.
+10. Master Records organization records and reconstruction remain separate from worker execution and communication transport authority.
 11. Credential authority is TV/TVC only. GitHub token production/runtime authority is NONE.
 
 ## Canonical procedure
