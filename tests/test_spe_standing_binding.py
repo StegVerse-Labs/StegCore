@@ -107,7 +107,7 @@ def standing_context():
             "spe_execution_authority": "NONE",
             "steggate_decision_authority": "CANONICAL_RUNTIME_ONLY",
             "execution_authorized": False,
-            "master_records_custody_claimed": False,
+            "master_records_organization_record_claimed": False,
         },
     }
     bridge = {**bridge_core, "bridge_hash": stable_hash(bridge_core)}

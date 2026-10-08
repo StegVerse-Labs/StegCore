@@ -196,7 +196,10 @@ def verify_spe_standing_binding(evidence: Mapping[str, Any]) -> dict[str, Any]:
         raise ValueError("SPE execution authority escalation")
     if authority.get("execution_authorized") is not False:
         raise ValueError("bridge cannot authorize execution")
-    if authority.get("master_records_custody_claimed") is not False:
+    # LEGACY_MASTER_RECORDS_CLAIM_FIELD: pre-migration bridges send
+    # master_records_custody_claimed (MASTER-RECORDS-BULK-SEMANTIC-REMEDIATION-002).
+    claimed = authority.get("master_records_organization_record_claimed", authority.get("master_records_custody_claimed"))
+    if claimed is not False:
         raise ValueError("bridge cannot claim a Master Records organization record")
 
     return {

@@ -212,7 +212,7 @@ def build_master_records_projection(
         ],
         "consequence_status": evidence["consequence"]["status"],
         "consequence_observed": evidence["consequence"]["consequence_observed"],
-        "custody_requested": True,
+        "record_requested": True,
         "destination_acknowledgement_minted": False,
         "execution_authority_granted": False,
         "credential_authority": "TV/TVC",
