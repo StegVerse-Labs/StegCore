@@ -397,7 +397,7 @@ The already-existing Universal InTr response path returns the exact evidence byt
 The source-side Master Records projection names `master-records/core-lite`, binds the exact evidence hash and source commit, and sets:
 
 ```text
-custody_requested=true
+record_requested=true
 destination_acknowledgement_minted=false
 execution_authority_granted=false
 credential_authority=TV/TVC
@@ -440,7 +440,7 @@ and a mismatched return payload hash fails closed.
 Destination semantics remain unchanged:
 
 ```text
-custody_requested=true
+record_requested=true
 destination_acknowledgement_minted=false
 execution_authority_granted=false
 credential_authority=TV/TVC
@@ -459,7 +459,7 @@ The runner proves exactly one governed target mutation, a bypass-negative-contro
 
 ## Master Records destination organization record — master-records/core-lite #33 / PR #34
 
-Destination custody machinery is now merged and independently validated.
+Destination organization-record machinery is now merged and independently validated.
 
 ```text
 Destination repository: master-records/core-lite
@@ -471,9 +471,9 @@ Focused PR run: 33427730279 PASS
 Focused PR job: 99605309994 PASS
 ```
 
-The destination validates the canonical consequence evidence plus source projection, exact source commit/evidence hash, candidate and Governance bindings, request/return InTr lineage, return payload equality, TV/TVC credential authority, completed consequence observation/coherence, and all non-authority boundaries before minting a destination-owned custody acknowledgement.
+The destination validates the canonical consequence evidence plus source projection, exact source commit/evidence hash, candidate and Governance bindings, request/return InTr lineage, return payload equality, TV/TVC credential authority, completed consequence observation/coherence, and all non-authority boundaries before minting a destination-owned organization-record acknowledgement.
 
-Destination custody semantics remain bounded:
+Destination organization-record semantics remain bounded:
 
 ```text
 destination_custody_accepted=true
@@ -484,10 +484,12 @@ execution_authority_granted=false
 continuity_receipt_minted=false
 publication_authority_granted=false
 credential_authority=TV/TVC
-authority_effect=NONE_CUSTODY_ONLY
+authority_effect=NONE_ORGANIZATION_RECORD_ONLY
 ```
 
-No synthetic live custody record was committed. Authentic custody materialization still requires an authentic external-system consequence evidence/projection instance. The generic source/destination custody contract is therefore MERGED_VALIDATED, while live ENFORCED observation remains a deployment/runtime task.
+`NONE_ORGANIZATION_RECORD_ONLY` replaces the legacy wire value `NONE_CUSTODY_ONLY` (MASTER-RECORDS-BULK-SEMANTIC-REMEDIATION-002). `destination_custody_accepted` is the destination's field name as merged; it means the destination recorded the artifact as an organization record.
+
+No synthetic live organization record was committed. Authentic organization-record materialization still requires an authentic external-system consequence evidence/projection instance. The generic source/destination organization-record contract is therefore MERGED_VALIDATED, while live ENFORCED observation remains a deployment/runtime task.
 
 Updated lifecycle:
 
@@ -497,7 +499,7 @@ MASTER_RECORDS_DESTINATION_ORGANIZATION_RECORD_VALIDATOR: MERGED_VALIDATED
 SOVEREIGN_REFERENCE_BOUNDARY_RUNNER: MERGED_VALIDATED_SOURCE
 LIVE_EXTERNAL_SYSTEM: false
 ENFORCED_BOUNDARY_OBSERVED: false
-AUTHENTIC_MASTER_RECORDS_CUSTODY: false
+AUTHENTIC_MASTER_RECORDS_ORGANIZATION_RECORD: false
 ACTIVATED: false
 COMPLETE: false
 ```
