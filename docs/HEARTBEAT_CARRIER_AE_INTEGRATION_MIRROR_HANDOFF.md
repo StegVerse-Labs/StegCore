@@ -21,7 +21,7 @@ This scoped handoff is subordinate to the canonical Admissible-Existence capabil
 
 ## Installed architecture
 
-Heartbeat is now explicitly registered as a carrier/synchronization capability only. It does not transport application messages, dispatch tasks, issue claims or fences, execute routes, grant credentials, or perform Master Records custody.
+Heartbeat is now explicitly registered as a carrier/synchronization capability only. It does not transport application messages, dispatch tasks, issue claims or fences, execute routes, grant credentials, or perform the Master Records organization record.
 
 The canonical capability registry now structurally distinguishes:
 

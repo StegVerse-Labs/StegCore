@@ -38,7 +38,7 @@ This does not stop the Goal Task. It stops further bespoke orchestration and req
 1. **RTC-GOVERNED-PROCESSING-002** — existing canonical StegCore present-state/admissibility/commit processing. `evaluate_present_state()` is the reusable state-validation primitive; no PA-001-local duplicate validator is permitted.
 2. **RTC-INTERLOCK-INTR-TRANSPORT-008** — existing Universal InTr transport, repeated for the request ingress and consequence-evidence return where the resident reference proof requires both. No PA-001 transport wrapper is permitted.
 3. **GLOBAL-RUNTIME-EVIDENCE-MEASUREMENT-001** — existing resident WorkerCoordinator/runtime-observation machinery. `SHWP-UNIVERSAL-GOVERNANCE-ENFORCED-REFERENCE-001` remains the resident execution proof owner; no second scheduler/worker is permitted.
-4. **RTC-EVIDENCE-CUSTODY-004** — existing Master Records custody/readback/reconstruction. No task-specific durable custody implementation is permitted.
+4. **RTC-EVIDENCE-CUSTODY-004** — existing Master Records organization records and reconstruction. No task-specific durable custody implementation is permitted.
 
 Not selected as mandatory for the current proof: a new manifest stage, a separate provider/framework round-trip component, SDK return assembly, Publisher projection before resident proof, an extra StegVerse egress stage, a far-side final transition except where a later propagation target independently requires it, or a new credential/session component. TV/TVC remains credential/provider/release authority whenever credentials are applicable.
 
@@ -51,7 +51,7 @@ Interlock/InTr: governed state-transition/admission authority
 TV/TVC: credential/provider/release authority
 KV/SKAP Vault: sole user-verification authority
 StegOS devices: interchangeable transport/execution nodes; never user verifiers
-Master Records: observed-reality custody/reconstruction
+Master Records: organization records/reconstruction
 HeartBeat: synchronization/timing/freshness/liveness/correlation/observability only
 GitHub: source/evidence coordination only; runtime authority NONE
 ```
