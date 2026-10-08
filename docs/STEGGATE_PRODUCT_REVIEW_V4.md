@@ -1014,7 +1014,7 @@ StegGate = protocol / decision / consequence boundary
 execution plane = constructs/runs nodes
 StegID / Continuity = continuity artifacts
 Governance = policy semantics
-Master Records = organization records/reconstruction
+Master Records = custody/reconstruction
 StegVerse Node = user/entity interface
 ```
 
