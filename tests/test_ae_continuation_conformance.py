@@ -95,7 +95,7 @@ def base_bundle():
             "github_token_runtime_authority": False,
             "heartbeat_role": "CARRIER_SYNCHRONIZATION_ONLY",
             "worker_control_plane_separate": True,
-            "master_records_custody_separate": True,
+            "master_records_organization_record_separate": True,
         },
         "handoff": {"tasks": [completed.copy(), current.copy(), future.copy(), none.copy()]},
         "worker_registry": {"tasks": [completed.copy(), current.copy()]},

@@ -37,7 +37,7 @@ SDK-local disposition logic: PROHIBITED
 external consequence: NONE
 credential authority: TV/TVC
 GitHub runtime authority: NONE
-Master Records custody: separate downstream runtime step
+Master Records organization record: separate downstream runtime step
 ```
 
 ## Implementation target
@@ -60,6 +60,6 @@ merge to main: PENDING
 SDK thin-client integration: PENDING
 authentic independent run: NOT OBSERVED
 S1 transition receipt: NOT PRESENT / correctly post-observation
-Master Records custody/replay/reconstruction: NOT PRESENT
+Master Records organization record/reconstruction: NOT PRESENT
 cross-framework comparison: NOT PERFORMED
 ```

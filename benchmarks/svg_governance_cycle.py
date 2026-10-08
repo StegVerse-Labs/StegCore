@@ -2,7 +2,7 @@
 """Synthetic SVG governance-cycle trace benchmark; NEVER an authority evaluator.
 
 This measures deterministic trace bookkeeping on an interchangeable CPU.
-It cannot establish real InTr execution or original Master Records custody.
+It cannot establish real InTr execution or an original Master Records organization record.
 """
 from __future__ import annotations
 import argparse

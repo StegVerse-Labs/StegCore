@@ -67,7 +67,7 @@ The Universal Governance sovereign reference runner additionally exercises an ex
 
 The bounded experiment first captures an authorization-aligned V0 binding, then performs a separately retained material state transition before any consequence. Both the canonical route and an alternate consequence-capable route must reject the stale V0 state without invoking the executor. A newly derived V1 binding may proceed through the existing Governance + StegGate consequence path exactly once; replay is denied after its execution binding is consumed. The alternate route reaches the same bounded consequence primitive but cannot supply the canonical commit-boundary permit.
 
-This source experiment strengthens the reference-boundary proof only. GitHub Actions validation does **not** establish resident WorkerCoordinator claim/fence, sovereign resident execution, Master Records custody of an authentic resident instance, or real external-system ENFORCED activation. Those predicates remain separately evidence-gated under `SHWP-UNIVERSAL-GOVERNANCE-ENFORCED-REFERENCE-001`.
+This source experiment strengthens the reference-boundary proof only. GitHub Actions validation does **not** establish resident WorkerCoordinator claim/fence, sovereign resident execution, a Master Records organization record of an authentic resident instance, or real external-system ENFORCED activation. Those predicates remain separately evidence-gated under `SHWP-UNIVERSAL-GOVERNANCE-ENFORCED-REFERENCE-001`.
 
 ## GADI defensive reasoning surface
 
@@ -250,4 +250,4 @@ Run `python -m benchmarks.svg_governance_cycle --iterations 1000` and `python -m
 
 ## SVG native three-layer source adapter
 
-`benchmarks/svg_native_source_adapter.py` binds the SVG source-only trace work to the installed `stegcore.three_layer.evaluate_three_layer` callable. `python -m unittest discover -s tests -p test_svg_native_source_adapter.py -v` checks native ALLOW, DENY and FAIL-CLOSED, malformed requests, and Governance A0–A8 stage-reference shape. Shape checking is **not** validation against Governance's authoritative JSON Schema; native evaluator receipts are **not** original InTr/Master Records custody or authorized consequences. Central issue: StegVerse-Labs/.github#2757; do not infer SVG admission or COSV from this source PR.
+`benchmarks/svg_native_source_adapter.py` binds the SVG source-only trace work to the installed `stegcore.three_layer.evaluate_three_layer` callable. `python -m unittest discover -s tests -p test_svg_native_source_adapter.py -v` checks native ALLOW, DENY and FAIL-CLOSED, malformed requests, and Governance A0–A8 stage-reference shape. Shape checking is **not** validation against Governance's authoritative JSON Schema; native evaluator receipts are **not** original InTr execution, Master Records organization records, or authorized consequences. Central issue: StegVerse-Labs/.github#2757; do not infer SVG admission or COSV from this source PR.

@@ -140,7 +140,7 @@ def verify_spe_standing_binding(evidence: Mapping[str, Any]) -> dict[str, Any]:
     if receipt.get("execution_performed") is not False:
         raise ValueError("SPE receipt cannot claim execution")
     if receipt.get("master_record_installed") is not False:
-        raise ValueError("SPE receipt cannot claim Master Records custody")
+        raise ValueError("SPE receipt cannot claim a Master Records organization record")
     receipt_core = dict(receipt)
     receipt_hash = _hex64(receipt_core.pop("receipt_hash", None), "receipt_hash")
     if _stable_hash(receipt_core) != receipt_hash:
@@ -197,7 +197,7 @@ def verify_spe_standing_binding(evidence: Mapping[str, Any]) -> dict[str, Any]:
     if authority.get("execution_authorized") is not False:
         raise ValueError("bridge cannot authorize execution")
     if authority.get("master_records_custody_claimed") is not False:
-        raise ValueError("bridge cannot claim Master Records custody")
+        raise ValueError("bridge cannot claim a Master Records organization record")
 
     return {
         "verified": True,

@@ -43,7 +43,7 @@ replay(manifest_receipt_id, replay_handler)
 
 Registration requires an already verified transaction chain. Duplicate IDs with different immutable content fail closed. Unknown IDs fail closed. Replay is prohibited from claiming consequence re-execution and checks the original retained record for mutation. Reconstruction distinguishes persisted historical receipt evidence from reconstructed summary material and records `consequence_reexecuted: false`.
 
-`manifest_receipt_provider.py` installs the shared-backing contract. `build_master_records_submission()` promotes the exact run identity into the Master Records manifest-receipt custody envelope, while `MasterRecordsManifestReceiptProvider` validates custody, evidence retrieval, and reconstruction responses without selecting credentials/providers or granting authority.
+`manifest_receipt_provider.py` installs the shared-backing contract. `build_master_records_submission()` promotes the exact run identity into the Master Records manifest-receipt organization-record envelope, while `MasterRecordsManifestReceiptProvider` validates the recording, evidence retrieval, and reconstruction responses without selecting credentials/providers or granting authority.
 
 ## Full custody before caller projection
 
@@ -100,7 +100,7 @@ The canonical Master Records deployment surface contains the authenticated manif
 [done] explicit shared-backing provider interface
 [done] shared-backing authority-boundary verification tests installed
 [done] Master Records exact-run API primitives installed
-[done] Master Records exact-run routes composed into canonical custody deployment target
+[done] Master Records exact-run routes composed into the canonical organization-record deployment target
 [done] full-custody-before-caller-projection invariant recorded
 ```
 
@@ -109,10 +109,10 @@ The canonical Master Records deployment surface contains the authenticated manif
 Do not create another receipt-ID algorithm, local authority store, custody service, or parallel evaluator. Remaining StegCore work is integration proof:
 
 ```text
-1. connect `MasterRecordsManifestReceiptProvider` to an admitted transport for the canonical Master Records custody deployment;
+1. connect `MasterRecordsManifestReceiptProvider` to an admitted transport for the canonical Master Records organization-record deployment;
 2. prove one canonical ID resolves to one immutable retained run through that transport;
 3. prove full canonical evidence retention occurs before caller projection;
-4. prove ALL/SELECTED/NONE caller projection cannot change run identity or Master Records custody;
+4. prove ALL/SELECTED/NONE caller projection cannot change run identity or the Master Records organization record;
 5. prove replay leaves the retained original unchanged and never re-executes consequence;
 6. prove reconstruction distinguishes persisted historical evidence from reconstructed summary material;
 7. expose the same provider contract to SDK and LLM-adapter callers;

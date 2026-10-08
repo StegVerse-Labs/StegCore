@@ -60,4 +60,4 @@ jobs:
 
       - name: Record authority boundary
         run: |
-          echo 'This workflow validates source only. It does not execute the external comparison consequence, mint the S0->S1 transition receipt, create Master Records custody, or grant runtime/release authority.'
+          echo 'This workflow validates source only. It does not execute the external comparison consequence, mint the S0->S1 transition receipt, create a Master Records organization record, or grant runtime/release authority.'

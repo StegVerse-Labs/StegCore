@@ -46,8 +46,8 @@ def _validate_policy_identity(record: dict[str, Any], findings: list[dict[str, s
         findings.append(_finding("heartbeat_role_invalid", None, "heartbeat is carrier/synchronization continuity only"))
     if authority.get("worker_control_plane_separate") is not True:
         findings.append(_finding("worker_control_plane_not_separate", None, "worker control plane must be separate from heartbeat"))
-    if authority.get("master_records_custody_separate") is not True:
-        findings.append(_finding("master_records_custody_not_separate", None, "Master Records custody must be separate from execution/transport"))
+    if authority.get("master_records_organization_record_separate") is not True:
+        findings.append(_finding("master_records_organization_record_not_separate", None, "Master Records organization records must be separate from execution/transport"))
 
 
 def _validate_task(task: dict[str, Any], findings: list[dict[str, str]], surface: str) -> None:

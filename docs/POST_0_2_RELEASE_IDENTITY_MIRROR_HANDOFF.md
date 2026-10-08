@@ -19,7 +19,7 @@ PR #148 merge: 124ea6b53ff79db8f514cacf1aab295f03cacf74
   bounded public interlock -> standing -> canonical consequence traversal proof
 ```
 
-The #148 runner intentionally stops before SDK interlock return assembly and does not by itself prove reciprocal return, Master Records custody, or full production activation. Those downstream proof stages are owned by the SDK successor POST_RETURN runner and successor aggregate release lane.
+The #148 runner intentionally stops before SDK interlock return assembly and does not by itself prove reciprocal return, a Master Records organization record, or full production activation. Those downstream proof stages are owned by the SDK successor POST_RETURN runner and successor aggregate release lane.
 
 ## Package identity
 

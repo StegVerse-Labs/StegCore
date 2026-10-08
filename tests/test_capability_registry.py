@@ -61,14 +61,14 @@ def test_heartbeat_carrier_is_separate_non_authorizing_capability():
     carrier = entries["stegverse:capability:heartbeat-carrier:v1"]
     control = entries["stegverse:capability:worker-control-plane:v1"]
     communication = entries["stegverse:capability:manifest-communication:v1"]
-    custody = entries["stegverse:capability:master-records-terminal-custody:v1"]
+    custody = entries["stegverse:capability:master-records-organization-record:v1"]
 
     assert carrier.phase == "DECLARED"
     assert carrier.declaration.metadata["canonical_role"] == "carrier_synchronization_only"
     assert carrier.declaration.metadata["frequency_rule"] == "gate_passband_derived"
     assert "route_execution" in carrier.declaration.authority.may_not
     assert "task_dispatch" in carrier.declaration.authority.may_not
-    assert "master_records_custody" in carrier.declaration.authority.may_not
+    assert "master_records_organization_record" in carrier.declaration.authority.may_not
 
     assert control.declaration.capability_id != carrier.declaration.capability_id
     assert communication.declaration.capability_id != carrier.declaration.capability_id
@@ -85,7 +85,7 @@ def test_all_new_capability_boundaries_preserve_tvtvc_authority():
         "stegverse:capability:heartbeat-carrier:v1",
         "stegverse:capability:worker-control-plane:v1",
         "stegverse:capability:manifest-communication:v1",
-        "stegverse:capability:master-records-terminal-custody:v1",
+        "stegverse:capability:master-records-organization-record:v1",
         "stegverse:capability:formalism-source-generation:v1",
     }
     for entry in registry.entries:

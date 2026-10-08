@@ -2,9 +2,11 @@ from __future__ import annotations
 
 """Shared-backing provider contract for canonical manifest receipt records.
 
-StegCore owns exact-run receipt semantics; Master Records owns durable custody.
-This module serializes one already-governed immutable run into the Master Records
-manifest-receipt custody contract without granting new authority.
+StegCore owns exact-run receipt semantics; Master Records holds the durable
+organization record. This module serializes one already-governed immutable run
+into the Master Records manifest-receipt record contract without granting new
+authority. The wire field names below (schema ids, ``custody_*``) are the Master
+Records service contract and change only together with that service.
 """
 
 from dataclasses import dataclass
@@ -27,7 +29,7 @@ def build_master_records_submission(
     record: ManifestReceiptRecord,
     evidence_package: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Build the canonical non-authorizing exact-run custody request."""
+    """Build the canonical non-authorizing exact-run organization-record request."""
     if record.locator_grants_authority:
         raise ValueError("manifest_receipt_locator_cannot_grant_authority")
     if str(evidence_package.get("manifest_receipt_id") or "").upper() != record.manifest_receipt_id.upper():
@@ -68,20 +70,20 @@ def build_master_records_submission(
 
 def verify_custody_response(record: ManifestReceiptRecord, response: Mapping[str, Any]) -> None:
     if response.get("schema") != MASTER_RECORDS_CUSTODY_RECEIPT_SCHEMA:
-        raise ValueError("master_records_custody_response_schema_invalid")
+        raise ValueError("master_records_record_response_schema_invalid")
     if str(response.get("manifest_receipt_id") or "").upper() != record.manifest_receipt_id.upper():
-        raise ValueError("master_records_custody_receipt_id_mismatch")
+        raise ValueError("master_records_record_receipt_id_mismatch")
     if response.get("transaction_id") != record.transaction_id:
-        raise ValueError("master_records_custody_transaction_id_mismatch")
+        raise ValueError("master_records_record_transaction_id_mismatch")
     if response.get("custody_status") != "RECORDED":
-        raise ValueError("master_records_custody_not_recorded")
+        raise ValueError("master_records_record_not_recorded")
     for key in (
         "locator_grants_authority",
         "custody_grants_execution_authority",
         "custody_grants_admissibility",
     ):
         if response.get(key) is not False:
-            raise ValueError(f"master_records_custody_authority_boundary_invalid:{key}")
+            raise ValueError(f"master_records_record_authority_boundary_invalid:{key}")
 
 
 @dataclass

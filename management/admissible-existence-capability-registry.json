@@ -80,11 +80,11 @@
         "capability_id": "stegverse:capability:heartbeat-carrier:v1", "capability_version": "1.0.0",
         "owner_repository": "StegVerse-Labs/.github", "purpose": "Canonical StegVerse carrier and synchronization continuity signal",
         "dependencies": [],
-        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["application_message_transport", "task_dispatch", "claim_or_fence_issuance", "route_execution", "credential_authority", "master_records_custody"]},
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["application_message_transport", "task_dispatch", "claim_or_fence_issuance", "route_execution", "credential_authority", "master_records_organization_record"]},
         "evidence_refs": ["StegVerse-Labs/.github#120", "StegVerse-Labs/.github#122"],
         "metadata": {"canonical_role": "carrier_synchronization_only", "frequency_rule": "gate_passband_derived", "amplitude_rule": "minimum_simultaneous_composite_load_plus_bounded_margin"}
       },
-      "existence_hash": "33ffe972504ff707f2fe4bd1ba65d85a03a5633ed23344e3ef483c3310eeb6bc", "phase": "DECLARED",
+      "existence_hash": "1b11ab984e47f336414dbd49faafe0e514a6904b85d10f9433de638093e76bb7", "phase": "DECLARED",
       "evidence": {"standing_evidence_refs": [], "admissibility_evidence_refs": [], "integration_evidence_refs": [], "activation_proof_ref": null, "blockers": ["CANONICAL_CARRIER_CONTRACT_NOT_MERGED", "RUNTIME_SEMANTIC_SEPARATION_PENDING"], "continuation_owner": "StegVerse-Labs/.github#120 -> StegVerse-Labs/.github#122"}
     },
     {
@@ -93,10 +93,10 @@
         "capability_id": "stegverse:capability:worker-control-plane:v1", "capability_version": "1.0.0",
         "owner_repository": "StegVerse-Labs/.github", "purpose": "Worker and task coordination, claims, fences, leases and routing control plane separate from heartbeat carrier",
         "dependencies": ["stegverse:capability:heartbeat-carrier:v1"],
-        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["credential_authority", "application_payload_transport", "master_records_custody"]},
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["credential_authority", "application_payload_transport", "master_records_organization_record"]},
         "evidence_refs": ["StegVerse-Labs/.github#122"], "metadata": {"heartbeat_relationship": "observes_synchronization_continuity_only"}
       },
-      "existence_hash": "b7f97cc01fdc518d3acc0b45c44fe10d6be1c736a53665b9fc26f7bd8a886f7c", "phase": "DECLARED",
+      "existence_hash": "2bf41a5c30d08c514401e22be9c7cab09536d9e03a7a3a16891de8cfe62e2f03", "phase": "DECLARED",
       "evidence": {"standing_evidence_refs": [], "admissibility_evidence_refs": [], "integration_evidence_refs": [], "activation_proof_ref": null, "blockers": ["CONTROL_PLANE_SEPARATION_FROM_HEARTBEAT_RUNTIME_PENDING"], "continuation_owner": "StegVerse-Labs/.github#122"}
     },
     {
@@ -105,24 +105,24 @@
         "capability_id": "stegverse:capability:manifest-communication:v1", "capability_version": "1.0.0",
         "owner_repository": "StegVerse-Labs/repo-standards", "purpose": "Subsystem communication object composed of manifest packet, expiration wrapper and data packet",
         "dependencies": [],
-        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["credential_authority", "heartbeat_authority", "master_records_custody"]},
+        "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["credential_authority", "heartbeat_authority", "master_records_organization_record"]},
         "evidence_refs": ["StegVerse-Labs/.github#120", "StegVerse-Labs/repo-standards#39"],
         "metadata": {"communication_object": "manifest+expiration_wrapper+data", "terminal_triggers": "endpoint_complete|expired"}
       },
-      "existence_hash": "0530d8b2c618c16c7f70cfb32bd153da3d4c550ab1e501877e25d96beeafe55f", "phase": "DECLARED",
+      "existence_hash": "00375e1e4bd96295e814e661e9e4f05f41c0d23a9af1d942892c77b64a8dfed9", "phase": "DECLARED",
       "evidence": {"standing_evidence_refs": [], "admissibility_evidence_refs": [], "integration_evidence_refs": [], "activation_proof_ref": null, "blockers": ["PACKET_STANDARD_RECONCILIATION_PENDING"], "continuation_owner": "StegVerse-Labs/repo-standards#39"}
     },
     {
       "declaration": {
         "artifact_type": "stegcore.capability_existence_declaration", "schema_version": "1.0",
-        "capability_id": "stegverse:capability:master-records-terminal-custody:v1", "capability_version": "1.0.0",
-        "owner_repository": "master-records/orchestration", "purpose": "Terminal custody of completed or expired Transition Table communication objects as Master Records packets",
+        "capability_id": "stegverse:capability:master-records-organization-record:v1", "capability_version": "1.0.0",
+        "owner_repository": "master-records/orchestration", "purpose": "Terminal organization records of completed or expired Transition Table communication objects as Master Records packets, and their reconstruction",
         "dependencies": ["stegverse:capability:manifest-communication:v1"],
         "authority": {"credential_authority": "TV/TVC", "github_token_runtime_authority": false, "may": [], "may_not": ["credential_authority", "heartbeat_transport", "task_dispatch"]},
         "evidence_refs": ["master-records/orchestration#33", "StegVerse-Labs/repo-standards#39"],
         "metadata": {"transition_table_eol": "master_records", "terminal_object": "master_records_packet"}
       },
-      "existence_hash": "6c2cb076589e42e58fd8a4fc2bc69a4db5501d38046609cbb0269967c52374f5", "phase": "DECLARED",
+      "existence_hash": "3d2d66df2d49e5f76dd758c450c3b4da8582584006b4e505abb61d54db31f096", "phase": "DECLARED",
       "evidence": {"standing_evidence_refs": [], "admissibility_evidence_refs": [], "integration_evidence_refs": [], "activation_proof_ref": null, "blockers": ["MASTER_RECORDS_EOL_PACKET_IMPLEMENTATION_PENDING"], "continuation_owner": "master-records/orchestration#33"}
     },
     {

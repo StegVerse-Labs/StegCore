@@ -404,7 +404,7 @@ credential_authority=TV/TVC
 authority_effect=NONE_SOURCE_PROJECTION_ONLY
 ```
 
-Master Records must independently validate/custody the artifact before any destination acknowledgement exists.
+Master Records must independently validate and record the artifact as an organization record before any destination acknowledgement exists.
 
 Negative controls cover false completion/observation, candidate hash drift, missing coherence receipt, evidence tamper, and exact-byte return transport tamper.
 
@@ -447,7 +447,7 @@ credential_authority=TV/TVC
 authority_effect=NONE_SOURCE_PROJECTION_ONLY
 ```
 
-This closes the source-side travel-reporting gap. Master Records still must independently validate and accept custody.
+This closes the source-side travel-reporting gap. Master Records still must independently validate and record it as an organization record.
 
 
 ## Sovereign reference-boundary runner — issue #179
@@ -457,7 +457,7 @@ The merged Universal Governance architecture now has a bounded local-source runn
 The runner proves exactly one governed target mutation, a bypass-negative-control that leaves target state unchanged, consequence evidence return over Universal InTr, and a Master Records source projection. It explicitly records `real_external_system_enforced_activation=false`; source/CI validation of this runner is not resident observation.
 
 
-## Master Records destination custody — master-records/core-lite #33 / PR #34
+## Master Records destination organization record — master-records/core-lite #33 / PR #34
 
 Destination custody machinery is now merged and independently validated.
 
@@ -493,7 +493,7 @@ Updated lifecycle:
 
 ```text
 UNIVERSAL_GOVERNANCE_GENERIC_SOURCE_PATH: MERGED_VALIDATED
-MASTER_RECORDS_DESTINATION_CUSTODY_VALIDATOR: MERGED_VALIDATED
+MASTER_RECORDS_DESTINATION_ORGANIZATION_RECORD_VALIDATOR: MERGED_VALIDATED
 SOVEREIGN_REFERENCE_BOUNDARY_RUNNER: MERGED_VALIDATED_SOURCE
 LIVE_EXTERNAL_SYSTEM: false
 ENFORCED_BOUNDARY_OBSERVED: false
