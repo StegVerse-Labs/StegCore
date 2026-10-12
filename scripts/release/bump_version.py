@@ -114,6 +114,9 @@ def main() -> None:
     current = current_versions[0]
     arg = sys.argv[1].strip()
     next_version = arg if SEMVER_RE.fullmatch(arg) else bump(current, arg)
+    if tuple(map(int, next_version.split("."))) <= tuple(map(int, current.split("."))):
+        die(f"successor version must strictly advance: current={current}, requested={next_version}")
+
     write_versions(next_version)
 
     observed = read_versions()
