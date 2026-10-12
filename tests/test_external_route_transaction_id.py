@@ -22,6 +22,8 @@ class ExternalRouteTransactionIdentityTests(unittest.TestCase):
             input_data={"value": 1},
             source="route-carrier",
             subject="test",
+            processing_capability="governance",
+            route_id="stegverse.route.canonical-governed.v1",
             transaction_id="TX-EXTERNAL-ROUTE-1",
         )
         self.assertEqual("TX-EXTERNAL-ROUTE-1", result.transaction_id)

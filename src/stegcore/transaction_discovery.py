@@ -124,8 +124,11 @@ class TransactionDiscoveryIndex:
             "input_hash": result.manifest.input_hash,
             "candidate_hash": result.manifest.candidate_hash,
             "request_hash": result.manifest.request_hash,
-            "canonical_runtime_identity": result.manifest.canonical_runtime_identity,
-            "canonical_evaluator": result.manifest.canonical_evaluator,
+            # The manifest no longer declares runtime semantics (SDK-MANIFEST-STEGCORE-ENTRY-
+            # CONFORMANCE-001); the replay descriptor and the StegGate-stage receipt record them.
+            "canonical_runtime_identity": result.replay.canonical_runtime_identity,
+            "canonical_evaluator": next(
+                (receipt.processor for receipt in result.receipts if receipt.stage == "steggate"), ""),
             "source": result.manifest.source,
             "subject": result.manifest.subject,
             "stages": [receipt.stage for receipt in result.receipts],

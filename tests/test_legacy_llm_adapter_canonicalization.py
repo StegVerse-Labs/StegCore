@@ -85,7 +85,13 @@ def capability_surface():
 
 
 def authority_resolution():
-    return {"status": "approved", "basis_invalidated_by_action": False}
+    return {
+        "status": "approved",
+        "basis_invalidated_by_action": False,
+        "target_binding": "record:llm-adapter",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "valid_until": "2100-01-01T00:00:00+00:00",
+    }
 
 
 def test_legacy_evaluate_action_fails_closed_without_canonical_request(tmp_path):
@@ -122,6 +128,8 @@ def test_manifested_method_traverses_canonical_transaction_lifecycle(tmp_path):
         lambda: calls.append("executed") or {"record": "written"},
         prompt="Write this governed record",
         entity_subject_id="steg:agent/personal:test",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
     )

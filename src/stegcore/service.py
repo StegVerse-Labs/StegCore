@@ -40,6 +40,10 @@ class ManifestedValidationRequest(BaseModel):
 
     transaction_id: str = Field(min_length=1)
     request: AdmissibilityRequest
+    # Manifest-selected semantics: the already-admitted manifest names the
+    # processing capability and route; StegCore never substitutes its own.
+    processing_capability: str = Field(min_length=1)
+    route_id: str = Field(min_length=1)
     input_data: Any = Field(default_factory=dict)
     source: str = Field(default="stegverse-sdk:production-validation", min_length=1)
     subject: str = Field(default="external-validation", min_length=1)
@@ -184,6 +188,8 @@ def manifested_validation(payload: ManifestedValidationRequest) -> dict[str, Any
         source=payload.source,
         subject=payload.subject,
         ledger=ledger,
+        processing_capability=payload.processing_capability,
+        route_id=payload.route_id,
         transaction_id=payload.transaction_id,
         metadata=metadata,
     )

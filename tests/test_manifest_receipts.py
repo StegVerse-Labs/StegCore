@@ -13,7 +13,8 @@ class ManifestReceiptRegistryTests(unittest.TestCase):
             created_at="2026-08-12T19:00:00Z",
             source="test",
             subject="case",
-            declared_route=["sdk", "ingestion", "steggate", "return_ingestion", "sdk_output"],
+            processing_capability="governance",
+            route_id="stegverse.route.canonical-governed.v1",
             input_hash="a" * 64,
             candidate_hash="b" * 64,
             request_hash="c" * 64,
@@ -34,7 +35,7 @@ class ManifestReceiptRegistryTests(unittest.TestCase):
         replay = ReplayDescriptor(
             transaction_id="TX-1", manifest_hash=manifest.manifest_hash,
             request_hash=manifest.request_hash,
-            canonical_runtime_identity=manifest.canonical_runtime_identity,
+            canonical_runtime_identity=f"{manifest.processing_capability}@{manifest.route_id}",
             receipt_chain_head="f" * 64, receipt_count=2,
             expected_disposition="ALLOW", expected_executor_invoked=False,
         )
