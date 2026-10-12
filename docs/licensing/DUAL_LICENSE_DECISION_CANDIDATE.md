@@ -2,6 +2,10 @@
 
 Status: CANDIDATE / RIGHTS_REVIEW_REQUIRED / NO GRANT. Parent governance task: ECOSYSTEM-OPEN-SOURCE-STRATEGY-001 (COSV 20010010100000), ACTIVE / CHECKED_OUT at inspected canonical sharded record. This document does not authorize distribution, relicensing, certification or release.
 
+## Immediate commercial-preservation posture
+
+Until the owner explicitly approves an OSI grant, preserve existing no-new-license status for StegCore's canonical decision engine. Do not install Apache-2.0 over the entire repository merely to satisfy a public-release check. Any future OSI community grant must be limited to a verified, explicitly selected rights-cleared component boundary. The commercial engine may remain proprietary or use separately approved source-available terms. This is a policy proposal, not a claim that historical grants are revoked.
+
 ## Proposed model
 **Community lane:** Select either (A) an OSI-approved license such as Apache-2.0, with commercial use, modification and redistribution permitted and no field-of-use restrictions; or (B) a separately drafted source-available agreement restricting specified uses. Do not describe option B as OSI open source. No choice is effective until explicit rights-holder approval and an operative root LICENSE is adopted.
 
