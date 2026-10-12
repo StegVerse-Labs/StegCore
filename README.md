@@ -251,3 +251,7 @@ Run `python -m benchmarks.svg_governance_cycle --iterations 1000` and `python -m
 ## SVG native three-layer source adapter
 
 `benchmarks/svg_native_source_adapter.py` binds the SVG source-only trace work to the installed `stegcore.three_layer.evaluate_three_layer` callable. `python -m unittest discover -s tests -p test_svg_native_source_adapter.py -v` checks native ALLOW, DENY and FAIL-CLOSED, malformed requests, and Governance A0–A8 stage-reference shape. Shape checking is **not** validation against Governance's authoritative JSON Schema; native evaluator receipts are **not** original InTr execution, Master Records organization records, or authorized consequences. Central issue: StegVerse-Labs/.github#2757; do not infer SVG admission or COSV from this source PR.
+
+## Licensing candidate (not an operative grant)
+
+A dual-license decision candidate and nonbinding commercial terms outline are under review in `docs/licensing/`. No root LICENSE has been adopted by this candidate, and public repository access alone grants no additional rights. See `docs/licensing/DUAL_LICENSE_DECISION_CANDIDATE.md` and `docs/licensing/LICENSING_MIRROR_HANDOFF.md`.
