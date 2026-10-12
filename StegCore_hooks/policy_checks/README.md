@@ -9,3 +9,10 @@ Drop-in templates to enforce:
 Files:
 - `validate_ai_registry.py` — validates registry entries and class transitions
 - `workflow_ai_registry_validate.yml` — CI gate on PRs touching registry/ethics
+
+Missing inputs fail closed: if `registry/ai_entity_schema.json` or
+`ethics/ai_classes.yaml` is absent, the validator prints one JSON line with
+`"disposition": "FAIL_CLOSED"` and the failed predicate
+(`AI_REGISTRY_SCHEMA_PRESENT` or `AI_CLASSES_PRESENT`) and exits 2. A repo
+that cannot provide these files must declare an exemption rather than copy
+the hook without them.
