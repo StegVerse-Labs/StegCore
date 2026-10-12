@@ -54,3 +54,27 @@ def test_repository_consistency_verifier_passes():
         check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_unreleased_manifest_rejects_false_release_claims(monkeypatch):
+    from scripts import verify_product_consistency as verifier
+
+    original = verifier._read
+    manifest = json.loads(original("VERSION.json"))
+    assert manifest["version_stage"] == "SOURCE_VALIDATED_NOT_RELEASED"
+    assert verifier.check() == []
+
+    mutations = [
+        (lambda m: m["release"].update(tag="v0.3.0"), "unreleased product must not claim an immutable tag or release commit"),
+        (lambda m: m["release"].update(commit="58445bb14642c1889cf9802666c15bd48c6d2e39"), "unreleased product must not claim an immutable tag or release commit"),
+        (lambda m: m["expected_aggregate_release_binding"].update(observed_as_released=True), "unreleased product must not claim observed aggregate publication"),
+        (lambda m: m.update(component_version="0.2.0"), "VERSION.json component_version drift"),
+        (lambda m: m["product_identity"].update(portable_product_version="0.2.0"), "VERSION.json portable_product_version drift"),
+    ]
+    for mutate, expected in mutations:
+        changed = json.loads(json.dumps(manifest))
+        mutate(changed)
+        monkeypatch.setattr(verifier, "_read", lambda relative, changed=changed: json.dumps(changed) if relative == "VERSION.json" else original(relative))
+        assert expected in verifier.check()
+    monkeypatch.setattr(verifier, "_read", original)
+    assert verifier.check() == []
