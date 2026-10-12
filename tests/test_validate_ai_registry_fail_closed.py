@@ -47,5 +47,29 @@ class ValidateAiRegistryFailClosedTest(unittest.TestCase):
             self._assert_fail_closed(_run(tmp), "AI_CLASSES_PRESENT")
 
 
+    def _with_inputs(self, tmp):
+        root = pathlib.Path(tmp)
+        (root / "registry").mkdir()
+        (root / "registry" / "ai_entity_schema.json").write_text("{}")
+        (root / "ethics").mkdir()
+        (root / "ethics" / "ai_classes.yaml").write_text("transitions:\n  prohibited: []\n")
+        return root
+
+    def test_missing_entities_directory_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            self._with_inputs(tmp)
+            result = _run(tmp)
+            if "No module named" in result.stderr:
+                self.skipTest("yaml/jsonschema not installed in this environment")
+            self._assert_fail_closed(result, "AI_REGISTRY_ENTITIES_PRESENT")
+
+    def test_empty_entities_directory_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (self._with_inputs(tmp) / "registry" / "entities").mkdir()
+            result = _run(tmp)
+            if "No module named" in result.stderr:
+                self.skipTest("yaml/jsonschema not installed in this environment")
+            self._assert_fail_closed(result, "AI_REGISTRY_ENTITIES_PRESENT")
+
 if __name__ == "__main__":
     unittest.main()

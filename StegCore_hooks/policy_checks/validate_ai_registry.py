@@ -41,11 +41,13 @@ def main():
 
     prohibited = {(t["from"], t["to"]) for t in yaml.safe_load(classes_path.read_text())["transitions"]["prohibited"]}
 
-    if not entities_dir.exists():
-        print("No registry/entities directory; skipping.")
-        return 0
+    # An empty population is not evidence: a missing or empty entities directory
+    # validates nothing, so it fails closed rather than reporting OK.
+    entity_files = sorted(entities_dir.glob("*.json")) if entities_dir.is_dir() else []
+    if not entity_files:
+        fail_closed("AI_REGISTRY_ENTITIES_PRESENT", "registry/entities/*.json")
 
-    for p in entities_dir.glob("*.json"):
+    for p in entity_files:
         data = json.loads(p.read_text())
         errs = sorted(validator.iter_errors(data), key=lambda e: e.path)
         if errs:

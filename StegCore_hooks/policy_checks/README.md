@@ -15,4 +15,6 @@ Missing inputs fail closed: if `registry/ai_entity_schema.json` or
 `"disposition": "FAIL_CLOSED"` and the failed predicate
 (`AI_REGISTRY_SCHEMA_PRESENT` or `AI_CLASSES_PRESENT`) and exits 2. A repo
 that cannot provide these files must declare an exemption rather than copy
-the hook without them.
+the hook without them. A missing or empty `registry/entities/` directory fails
+closed the same way (`AI_REGISTRY_ENTITIES_PRESENT`): an empty population is not
+evidence.
