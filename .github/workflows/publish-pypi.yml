@@ -57,6 +57,23 @@ jobs:
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
+      - name: Verify immutable release candidate binding
+        if: github.event_name == 'release'
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          test "$RELEASE_TAG" = "v0.3.0"
+          EXPECTED="58445bb14642c1889cf9802666c15bd48c6d2e39"
+          PARENT="ef38410505b0ef3e84148892b1d6e3cdef20f300"
+          ACTUAL="$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")"
+          test "$ACTUAL" = "$EXPECTED"
+          test "$(git rev-parse "$EXPECTED^")" = "$PARENT"
+          test "$(git rev-parse HEAD)" = "$EXPECTED"
+          test "$(git diff --name-only "$PARENT" "$EXPECTED" | wc -l)" -eq 1
+          test "$(git diff --name-only "$PARENT" "$EXPECTED")" = "RELEASE_NOTES.md"
+
       - name: Apply deterministic public distribution name
         shell: bash
         run: |
