@@ -5,13 +5,15 @@ Repository: `StegVerse-Labs/StegCore`
 Goal Task ID: `STEGCORE-PYPI-PROPAGATION-VERIFICATION-001`
 Parent goal: `SDK-GENERIC-MANIFEST-DOWNSTREAM-PROPAGATION-003`
 Canonical issue: `StegVerse-Labs/StegCore#203`
-Status: `ACTIVE / RELEASE READY / RELEASE PUBLICATION PENDING`
+Status: `RELEASE IDENTITY CONFLICT / FAIL_CLOSED FOR PUBLICATION UNTIL TV/TVC RESOLUTION`
 
 ## Exact release identity
 
 ```text
 source repository: StegVerse-Labs/StegCore
-exact release candidate commit: 282f30e9e46efc3a8d0d867f48e08c3aa6534e22
+historical downstream requested commit: 282f30e9e46efc3a8d0d867f48e08c3aa6534e22
+frozen TVC source parent: ef38410505b0ef3e84148892b1d6e3cdef20f300
+frozen TVC note-only release commit: 58445bb14642c1889cf9802666c15bd48c6d2e39
 canonical source package: stegcore
 source version: 0.3.0
 public distribution: stegverse-stegcore
@@ -30,7 +32,7 @@ publish workflow: .github/workflows/publish-pypi.yml
 
 ## Release publication predicate
 
-Publish a GitHub Release tagged exactly `v0.3.0` from commit `282f30e9e46efc3a8d0d867f48e08c3aa6534e22`. The existing workflow is the only approved publication path for this task. Do not introduce token-based Twine credentials or an alternate package name.
+DO NOT publish `v0.3.0` from `282f30e9e46efc3a8d0d867f48e08c3aa6534e22`: this later descendant is not the immutable note-only release commit frozen under TVC. The TVC release-candidate contract specifies `58445bb14642c1889cf9802666c15bd48c6d2e39` with parent `ef38410505b0ef3e84148892b1d6e3cdef20f300`. Obtain current TV/TVC authorization and independently verify the exact tag/release state before publication. The earlier issue #203 instruction is superseded for release-target selection, not erased as historical evidence. The existing workflow is the only approved publication path for this task. Do not introduce token-based Twine credentials or an alternate package name.
 
 ## Propagation verification sequence
 
@@ -54,4 +56,4 @@ Root `README.md` was reviewed for this release task. No new runtime capability i
 
 ## Human action
 
-The GitHub connector available in the current session cannot create a GitHub Release. The required manual action is to open the repository Releases page, create/publish release `v0.3.0` targeting exact commit `282f30e9e46efc3a8d0d867f48e08c3aa6534e22`, and make no other source change. After publication, automated propagation verification can continue from this handoff.
+The GitHub connector available in the current session cannot create a GitHub Release. The required manual action is to open the repository Releases page, do not publish a release from the historical #203 commit; resolve the TVC release authority and frozen exact commit first. No alternate machine or manual action is a prerequisite for this documentation reconciliation. After publication, automated propagation verification can continue from this handoff.
