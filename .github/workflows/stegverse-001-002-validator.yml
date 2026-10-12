@@ -5,15 +5,34 @@ on:
   pull_request:
     paths: ['entities/**','schemas/**','tests/**','tools/evaluate_admissibility.py','tools/check_activation_registry.py','tools/update_activation_status.py','registry/**','docs/STEGVERSE_001_002_BASELINE.md','docs/STEGVERSE_001_002_VALIDATOR.md','docs/STEGVERSE_001_002_CI.md','.github/workflows/stegverse-001-002-validator.yml']
   workflow_dispatch:
-permissions: {contents: read}
+permissions: {}
 jobs:
   validate-001-002-baseline:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: {python-version: '3.11'}
-      - run: python -m pip install --upgrade pip && python -m pip install pyyaml pytest
+      - name: Assert credential-clean validation environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in GITHUB_TOKEN GH_TOKEN GITHUB_PAT TVC_EPHEMERAL_GITHUB_TOKEN; do
+            if [ -n "${!name:-}" ]; then echo "forbidden credential environment variable present: ${name}" >&2; exit 1; fi
+          done
+      - name: Anonymous public repository fetch
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then SOURCE_REF="refs/pull/${PR_NUMBER}/merge"; else SOURCE_REF="${GITHUB_SHA}"; fi
+          git -c credential.helper= -c http.extraheader= fetch --no-tags --depth=1 origin "${SOURCE_REF}"
+          git checkout --detach FETCH_HEAD
+          test -z "$(git config --local --get-regexp 'extraheader|credential' || true)"
+      - name: Verify preinstalled Python
+        run: python3 --version
+      - name: Install deps
+        run: python3 -m pip install pyyaml pytest
       - run: python tools/evaluate_admissibility.py tests/vectors/admissibility_baseline_vectors.yml
       - run: python -m pytest tests/test_admissibility_baseline.py
       - run: python tools/check_activation_registry.py
