@@ -13,6 +13,7 @@ CANONICAL_RUNTIME = "stegcore.three_layer.evaluate_three_layer"
 REQUIRED_CURRENT_PATHS = (
     "README.md",
     "VERSION",
+    "VERSION.json",
     "pyproject.toml",
     "src/stegcore/version.py",
     "src/stegcore/steggate.py",
@@ -62,6 +63,21 @@ def check() -> list[str]:
     source_version = _source_version()
     if len({version_file, package_version, source_version}) != 1:
         failures.append(f"portable product version drift: VERSION={version_file}, pyproject={package_version}, source={source_version}")
+
+    release_manifest = json.loads(_read("VERSION.json"))
+    if release_manifest.get("component_version") != version_file:
+        failures.append("VERSION.json component_version drift")
+    if release_manifest.get("product_identity", {}).get("portable_product_version") != version_file:
+        failures.append("VERSION.json portable_product_version drift")
+    release = release_manifest.get("release", {})
+    stage = release_manifest.get("version_stage")
+    if stage == "SOURCE_VALIDATED_NOT_RELEASED":
+        if release.get("tag") is not None or release.get("commit") is not None:
+            failures.append("unreleased product must not claim an immutable tag or release commit")
+        if release_manifest.get("expected_aggregate_release_binding", {}).get("observed_as_released") is not False:
+            failures.append("unreleased product must not claim observed aggregate publication")
+    elif stage is None:
+        failures.append("VERSION.json missing version_stage")
 
     service = _read("src/stegcore/service.py")
     if "SERVICE_VERSION = __version__" not in service:
