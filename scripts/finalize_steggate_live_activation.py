@@ -42,7 +42,8 @@ def update_context(observation: dict[str, Any], deployment_source: str) -> None:
     current["hosted_evaluate"] = "PASS_WITH_COMPLETE_MATRIX_AND_HASHES"
     current["goal_activation_state"] = "COMPLETE"
     current["activation_receipt"] = "data/steggate-live-activation-receipt.json"
-    current["endpoint_discovery"] = "src/stegcore/endpoint_discovery.py"\n    context["goal_activation_complete"] = True
+    current["endpoint_discovery"] = "src/stegcore/endpoint_discovery.py"
+    context["goal_activation_complete"] = True
     context["session_state"] = "COMPLETE_ARCHIVE"
     context["archive_allowed"] = True
     context["conversation_archive_allowed"] = True
@@ -58,7 +59,8 @@ def update_inventory(deployment_source: str) -> None:
         task_id = task.get("task_id")
         if task_id in {"FF-DEPLOY-05", "FF-RESIDENT-DEPLOY-05"}:
             task["claim_state"] = "COMPLETE"
-            task["completion_state"] = "STEGVERSE_RUNTIME_LIVE"\n            task["validation_state"] = "HOSTED_PASS"
+            task["completion_state"] = "STEGVERSE_RUNTIME_LIVE"
+            task["validation_state"] = "HOSTED_PASS"
             task["integration_state"] = "DISCOVERABLE_PUBLIC_RUNTIME_ACTIVE"
             task["archival_dependency"] = False
             task["next_executable_action"] = "None for functional activation; retain StegVerse-owned transport only."
@@ -87,7 +89,11 @@ def update_inventory(deployment_source: str) -> None:
     inventory["session_state"] = "COMPLETE_ARCHIVE"
     inventory["role"] = "COMPLETE_ARCHIVE"
     inventory["functional_deployment_source"] = deployment_source
-    inventory["transport_contract"] = {\n        "state": "STEGVERSE_OWNED_ONLY",\n        "preferred_origin": "https://stegverse.org/api/steggate",\n        "third_party_fallback_authorized": False,\n    }
+    inventory["transport_contract"] = {
+        "state": "STEGVERSE_OWNED_ONLY",
+        "preferred_origin": "https://stegverse.org/api/steggate",
+        "third_party_fallback_authorized": False,
+    }
     inventory["exact_archive_condition"] = "SATISFIED: hosted functional activation PASS receipt persisted; all activation tasks are complete or explicitly superseded by equivalent autonomous runtime evidence."
     INVENTORY.write_text(json.dumps(inventory, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
@@ -95,7 +101,8 @@ def update_inventory(deployment_source: str) -> None:
 def update_handoff(receipt: dict[str, Any], deployment_source: str) -> None:
     text = HANDOFF.read_text(encoding="utf-8")
     marker = "## Machine-finalized live activation"
-    persistence_note = "The retained activation evidence is transport-neutral; current discovery admits only the StegVerse-owned stable rendezvous and fails closed otherwise.\\n\\n"\n    block = (
+    persistence_note = "The retained activation evidence is transport-neutral; current discovery admits only the StegVerse-owned stable rendezvous and fails closed otherwise.\n\n"
+    block = (
         f"\n{marker}\n\n"
         "Canonical hosted functional activation is COMPLETE. The repository-native runtime recorded PASS for "
         "`/health`, exact four-disposition `/v1/self-test`, and deterministic complete-matrix "

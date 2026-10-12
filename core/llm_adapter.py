@@ -279,6 +279,8 @@ class LLMAdapter:
         *,
         prompt: str,
         entity_subject_id: str,
+        processing_capability: str,
+        route_id: str,
         source: str = "llm-adapter",
         metadata: Optional[Mapping[str, Any]] = None,
         declared_execution_context: Optional[Mapping[str, Any]] = None,
@@ -297,6 +299,8 @@ class LLMAdapter:
             source=source,
             subject=entity_subject_id,
             ledger=self.transaction_ledger,
+            processing_capability=processing_capability,
+            route_id=route_id,
             metadata={
                 "adapter": "legacy-llm-adapter-compatibility",
                 "parallel_evaluator_used": False,

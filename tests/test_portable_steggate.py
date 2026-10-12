@@ -77,7 +77,13 @@ def capability_surface():
 
 
 def authority_resolution():
-    return {"status": "approved", "basis_invalidated_by_action": False}
+    return {
+        "status": "approved",
+        "basis_invalidated_by_action": False,
+        "target_binding": "record:portable:1",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "valid_until": "2100-01-01T00:00:00+00:00",
+    }
 
 
 def package():

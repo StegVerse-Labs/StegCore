@@ -83,6 +83,8 @@ def make_result():
         input_data={"secret_payload": "must-not-be-indexed"},
         source="sdk:review",
         subject="reviewer:mansoor",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface=capability_surface(),
         authority_resolution=authority_resolution(),
     )
@@ -119,7 +121,7 @@ def test_discovery_queries_find_transaction_by_runtime_state_and_finding(tmp_pat
     assert len(index.query(state="ALLOW")) == 1
     assert len(index.query(stage="return_ingestion")) == 1
     assert len(index.query(finding_ref="finding:M-001")) == 1
-    assert len(index.query(DiscoveryQuery(runtime_identity="stegverse:steggate:canonical:three-layer:v1"))) == 1
+    assert len(index.query(DiscoveryQuery(runtime_identity="governance@stegverse.route.canonical-governed.v1"))) == 1
     assert index.query(finding_ref="finding:missing") == []
 
 

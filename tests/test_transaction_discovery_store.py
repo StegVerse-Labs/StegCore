@@ -76,6 +76,8 @@ def make_result():
         input_data={"secret_payload": "must-not-be-indexed"},
         source="sdk:review",
         subject="reviewer:mansoor",
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         capability_surface={
             "actions_exposed": ["write_record"],
             "execution_mode": "manual",

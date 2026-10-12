@@ -183,6 +183,8 @@ def test_manifested_validation_preserves_upstream_transaction_identity_and_is_bo
     payload = ManifestedValidationRequest(
         transaction_id="TX-PRODUCTION-VALIDATION-001",
         request=request_all_pass(),
+        processing_capability="governance",
+        route_id="stegverse.route.canonical-governed.v1",
         input_data={"amount": 420},
         metadata={"execution_provenance": {"lane_class": "PRODUCTION_VALIDATION"}},
         external_side_effects_enabled=False,

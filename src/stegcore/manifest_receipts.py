@@ -71,7 +71,7 @@ def manifest_receipt_id_for(result: ManifestedTransactionResult) -> str:
         "transaction_id": result.transaction_id,
         "manifest_hash": result.manifest.manifest_hash,
         "receipt_chain_head": result.replay.receipt_chain_head,
-        "canonical_runtime_identity": result.manifest.canonical_runtime_identity,
+        "canonical_runtime_identity": result.replay.canonical_runtime_identity,
     }
     return "MR-" + canonical_sha256(locator_material).upper()
 
@@ -119,7 +119,7 @@ class ManifestReceiptRegistry:
             "transaction_id": result.transaction_id,
             "manifest_hash": result.manifest.manifest_hash,
             "receipt_chain_head": result.replay.receipt_chain_head,
-            "canonical_runtime_identity": result.manifest.canonical_runtime_identity,
+            "canonical_runtime_identity": result.replay.canonical_runtime_identity,
             "registered_at": _now(),
             "result": result_body,
             "locator_grants_authority": False,
