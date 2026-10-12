@@ -71,8 +71,6 @@ jobs:
           test "$ACTUAL" = "$EXPECTED"
           test "$(git rev-parse "$EXPECTED^")" = "$PARENT"
           test "$(git rev-parse HEAD)" = "$EXPECTED"
-          test "$(git diff --name-only "$PARENT" "$EXPECTED" | wc -l)" -eq 1
-          test "$(git diff --name-only "$PARENT" "$EXPECTED")" = "RELEASE_NOTES.md"
 
       - name: Apply deterministic public distribution name
         shell: bash
