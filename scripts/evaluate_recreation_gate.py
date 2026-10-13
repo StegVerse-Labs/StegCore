@@ -23,12 +23,20 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
-    request = load(args.request)
-    request_schema = load(args.request_schema)
-    receipt_schema = load(args.receipt_schema)
-
-    jsonschema.Draft202012Validator.check_schema(request_schema)
-    jsonschema.Draft202012Validator.check_schema(receipt_schema)
+    try:
+        request = load(args.request)
+        request_schema = load(args.request_schema)
+        receipt_schema = load(args.receipt_schema)
+        jsonschema.Draft202012Validator.check_schema(request_schema)
+        jsonschema.Draft202012Validator.check_schema(receipt_schema)
+    except (OSError, ValueError, jsonschema.exceptions.SchemaError) as exc:
+        print(json.dumps({
+            "disposition": "FAIL_CLOSED",
+            "failed_predicate": "RECREATION_SOURCE_EVIDENCE_VALID",
+            "error_type": type(exc).__name__,
+            "authority_effect": "NONE",
+        }, sort_keys=True))
+        return 2
     request_errors = sorted(
         jsonschema.Draft202012Validator(
             request_schema, format_checker=jsonschema.FormatChecker(),
