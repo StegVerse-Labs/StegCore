@@ -105,5 +105,23 @@ class SVGNativeAdapterTests(unittest.TestCase):
         self.assertEqual(evaluate_native_source(request(), governance_stage_vector=v)["disposition"], "FAIL_CLOSED")
 
 
+    def test_undecodable_pinned_governance_schema_fails_closed(self):
+        from pathlib import Path
+        from unittest.mock import patch
+
+        original_read_text = Path.read_text
+
+        def read_text_with_corrupt_schema(path, *args, **kwargs):
+            if path.name == "governance_admissibility_stage_vector.schema.json":
+                raise UnicodeDecodeError("utf-8", b"\\xff", 0, 1, "invalid start byte")
+            return original_read_text(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", read_text_with_corrupt_schema):
+            result = evaluate_native_source(request(), governance_stage_vector=self.stage_vector())
+        self.assertEqual(result["disposition"], "FAIL_CLOSED")
+        self.assertEqual(result["governance_stage_vector_status"], "INVALID")
+        self.assertIn("GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:UnicodeDecodeError", result["governance_validation_errors"])
+
+
 if __name__ == "__main__":
     unittest.main()
