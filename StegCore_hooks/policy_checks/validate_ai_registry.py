@@ -32,15 +32,20 @@ def main():
 
     # Imported after the presence checks so a missing input fails closed
     # even where the validation dependencies are not installed.
-    import yaml
-    from jsonschema import Draft202012Validator
-    from jsonschema.exceptions import SchemaError
+    try:
+        import yaml
+        from jsonschema import Draft202012Validator
+        from jsonschema.exceptions import SchemaError, ValidationError
+    except ImportError as exc:
+        fail_closed("AI_REGISTRY_VALIDATOR_DEPENDENCIES_PRESENT", type(exc).__name__)
 
     try:
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         Draft202012Validator.check_schema(schema)
         classes = yaml.safe_load(classes_path.read_text(encoding="utf-8"))
         transitions = classes["transitions"]["prohibited"]
+        if not isinstance(transitions, list):
+            raise ValueError("prohibited transitions must be an array")
         prohibited = {(t["from"], t["to"]) for t in transitions}
     except (OSError, ValueError, TypeError, KeyError, SchemaError) as exc:
         fail_closed("AI_REGISTRY_POLICY_INPUTS_VALID", f"valid schema/classes ({type(exc).__name__})")
@@ -55,18 +60,24 @@ def main():
     for p in entity_files:
         try:
             data = json.loads(p.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
-            fail_closed("AI_REGISTRY_ENTITY_JSON_VALID", f"{p.name} ({type(exc).__name__})")
-        errs = sorted(validator.iter_errors(data), key=lambda e: tuple(map(str, e.path)))
-        if errs:
-            fail(f"{p.name}: schema validation failed: " + "; ".join([e.message for e in errs]))
-
-        for t in data.get("class_history", []):
-            if (t["from"], t["to"]) in prohibited:
-                fail(f"{p.name}: prohibited transition {t['from']} -> {t['to']}")
-
-        if not data.get("acknowledgements"):
-            fail(f"{p.name}: missing acknowledgements")
+            errs = sorted(validator.iter_errors(data), key=lambda e: tuple(map(str, e.path)))
+            if errs:
+                fail_closed("AI_REGISTRY_ENTITY_SCHEMA_VALID", f"{p.name} ({errs[0].message})")
+            if not isinstance(data, dict):
+                raise ValueError("entity must be an object")
+            history = data.get("class_history", [])
+            if not isinstance(history, list):
+                raise ValueError("class_history must be an array")
+            for transition in history:
+                if not isinstance(transition, dict):
+                    raise ValueError("class_history entries must be objects")
+                origin, destination = transition["from"], transition["to"]
+                if (origin, destination) in prohibited:
+                    fail_closed("AI_REGISTRY_PROHIBITED_TRANSITION_ABSENT", p.name)
+            if not data.get("acknowledgements"):
+                fail_closed("AI_REGISTRY_ACKNOWLEDGEMENTS_PRESENT", p.name)
+        except (OSError, ValueError, TypeError, KeyError, ValidationError, RecursionError) as exc:
+            fail_closed("AI_REGISTRY_ENTITY_INPUT_VALID", f"{p.name} ({type(exc).__name__})")
 
     print("AI registry validation OK")
     return 0

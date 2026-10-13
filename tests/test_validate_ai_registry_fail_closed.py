@@ -71,5 +71,38 @@ class ValidateAiRegistryFailClosedTest(unittest.TestCase):
                 self.skipTest("yaml/jsonschema not installed in this environment")
             self._assert_fail_closed(result, "AI_REGISTRY_ENTITIES_PRESENT")
 
+    def test_malformed_entity_history_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._with_inputs(tmp)
+            entities = root / "registry" / "entities"
+            entities.mkdir()
+            (entities / "bad.json").write_text(json.dumps({
+                "class_history": [{"from": "alpha"}],
+                "acknowledgements": ["present"],
+            }))
+            result = _run(tmp)
+            self._assert_fail_closed(result, "AI_REGISTRY_ENTITY_INPUT_VALID")
+            self.assertNotIn("Traceback", result.stderr)
+
+    def test_non_object_entity_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._with_inputs(tmp)
+            entities = root / "registry" / "entities"
+            entities.mkdir()
+            (entities / "array.json").write_text("[]")
+            result = _run(tmp)
+            self._assert_fail_closed(result, "AI_REGISTRY_ENTITY_INPUT_VALID")
+            self.assertNotIn("Traceback", result.stderr)
+
+    def test_malformed_prohibited_policy_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._with_inputs(tmp)
+            (root / "ethics" / "ai_classes.yaml").write_text(
+                "transitions:\\n  prohibited: not-an-array\\n".replace("\\n", "\n")
+            )
+            result = _run(tmp)
+            self._assert_fail_closed(result, "AI_REGISTRY_POLICY_INPUTS_VALID")
+            self.assertNotIn("Traceback", result.stderr)
+
 if __name__ == "__main__":
     unittest.main()
