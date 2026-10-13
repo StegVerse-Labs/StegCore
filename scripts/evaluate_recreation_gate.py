@@ -37,12 +37,21 @@ def main() -> int:
             "authority_effect": "NONE",
         }, sort_keys=True))
         return 2
-    request_errors = sorted(
-        jsonschema.Draft202012Validator(
-            request_schema, format_checker=jsonschema.FormatChecker(),
-        ).iter_errors(request),
-        key=lambda error: (tuple(map(str, error.absolute_path)), error.message),
-    )
+    try:
+        request_errors = sorted(
+            jsonschema.Draft202012Validator(
+                request_schema, format_checker=jsonschema.FormatChecker(),
+            ).iter_errors(request),
+            key=lambda error: (tuple(map(str, error.absolute_path)), error.message),
+        )
+    except (TypeError, ValueError, KeyError, RecursionError) as exc:
+        print(json.dumps({
+            "disposition": "FAIL_CLOSED",
+            "failed_predicate": "RECREATION_REQUEST_SCHEMA_VALID",
+            "error_type": type(exc).__name__,
+            "authority_effect": "NONE",
+        }, sort_keys=True))
+        return 2
     if request_errors:
         print(json.dumps({
             "disposition": "FAIL_CLOSED",
@@ -84,13 +93,21 @@ def main() -> int:
         ],
     }
 
-    jsonschema.Draft202012Validator(
-        receipt_schema,
-        format_checker=jsonschema.FormatChecker(),
-    ).validate(receipt)
-
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    try:
+        jsonschema.Draft202012Validator(
+            receipt_schema,
+            format_checker=jsonschema.FormatChecker(),
+        ).validate(receipt)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    except (OSError, TypeError, ValueError, jsonschema.exceptions.ValidationError, RecursionError) as exc:
+        print(json.dumps({
+            "disposition": "FAIL_CLOSED",
+            "failed_predicate": "RECREATION_RECEIPT_VALID_AND_PERSISTED",
+            "error_type": type(exc).__name__,
+            "authority_effect": "NONE",
+        }, sort_keys=True))
+        return 2
     print(json.dumps(receipt, indent=2, sort_keys=True))
     return 0 if receipt["decision"] == "ALLOW" else 1
 
