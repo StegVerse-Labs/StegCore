@@ -88,7 +88,7 @@ note-only release commit: PREPARED
 v0.3.0 immutable tag: NOT RELEASED
 GitHub Release: NOT RELEASED
 successor aggregate receipt: NOT PRODUCED
-POST_RETURN production proof: NOT COMPLETE
+SDK POST_RETURN (downstream SDK transition): NOT OBSERVED, not a release predicate
 ```
 
 ## Authority boundary
@@ -107,12 +107,15 @@ credential/release authority: TV/TVC
 
 No further StegCore source reconciliation is required for this successor release lane.
 
-Continuation is owned by TV/TVC successor aggregate runtime:
+Continuation is the manifest-bound release transition owned by TV/TVC (ACTIONS BY MANIFEST; `StegVerse-Labs/.github` `data/task-registry-global-invariants.json`). Its transition predicates are only:
 1. real current GRANTED authorization;
 2. real resident SKAP double-interlock credential custody;
 3. immutable tag/release creation or exact-existing verification;
-4. verified aggregate receipt;
-5. genuine SDK POST_RETURN production proof;
-6. Master Records organization record + reciprocal ACK + portable verification + replay/reconstruction PASS.
+4. verified aggregate receipt appended to the Organization ledger (runtime reality).
+
+Downstream of an ALLOW release, and never predicates of it:
+- SDK POST_RETURN is a separate SDK-owned transition that consumes the published distribution;
+- Master Records recording, acknowledgement, portable verification and replay/reconstruction are optional downstream evidence (`master_records_may_gate_organization_runtime_reality: false`). An unrecorded batch is a value in the evidence state, not a blocker;
+- no external machine, destination liveness, always-on receiver or post-closure authentic observer is awaited (`external_machine_awaiting_allowed: false`, `post_closure_authentic_observer_gate_allowed: false`).
 
 StegCore PR #141 remains a separate active capability-context/transaction-lifecycle lane and is not satisfied or superseded by this 0.3 release preparation.
