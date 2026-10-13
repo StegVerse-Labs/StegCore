@@ -123,5 +123,22 @@ class SVGNativeAdapterTests(unittest.TestCase):
         self.assertIn("GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:UnicodeDecodeError", result["governance_validation_errors"])
 
 
+    def test_prefix_items_ref_allof_rejects_duplicate_stage_identity(self):
+        vector = self.stage_vector()
+        vector["stages"][1]["stage"] = "A0"
+        result = evaluate_native_source(request(), governance_stage_vector=vector)
+        self.assertEqual(result["disposition"], "FAIL_CLOSED")
+        self.assertEqual(result["governance_stage_vector_status"], "INVALID")
+        self.assertTrue(result["governance_validation_errors"])
+
+    def test_ref_stage_required_status_fails_closed(self):
+        vector = self.stage_vector()
+        del vector["stages"][8]["status"]
+        result = evaluate_native_source(request(), governance_stage_vector=vector)
+        self.assertEqual(result["disposition"], "FAIL_CLOSED")
+        self.assertEqual(result["governance_stage_vector_status"], "INVALID")
+        self.assertTrue(result["governance_validation_errors"])
+
+
 if __name__ == "__main__":
     unittest.main()
