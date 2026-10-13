@@ -69,3 +69,15 @@ def test_receipt_write_failure_fails_closed(tmp_path, monkeypatch, capsys):
     assert payload["disposition"] == "FAIL_CLOSED"
     assert payload["failed_predicate"] == "RECREATION_RECEIPT_VALID_AND_PERSISTED"
     assert not output.exists()
+
+def test_missing_request_field_fails_closed(tmp_path, monkeypatch, capsys):
+    incomplete = _request()
+    incomplete.pop("recreation_complete")
+    monkeypatch.setattr(gate, "load", lambda path: incomplete if path.name == "request.json" else {})
+    code, stdout = _run(tmp_path, monkeypatch, capsys, tmp_path / "receipt.json", {})
+    assert code == 2
+    payload = json.loads(stdout.strip().splitlines()[-1])
+    assert payload["disposition"] == "FAIL_CLOSED"
+    assert payload["failed_predicate"] == "RECREATION_REQUEST_REQUIRED_EVIDENCE_PRESENT"
+    assert payload["authority_effect"] == "NONE"
+    assert not (tmp_path / "receipt.json").exists()
