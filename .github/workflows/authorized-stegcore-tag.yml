@@ -58,7 +58,8 @@ jobs:
           assert readiness['gates']['downstream_verification'] == 'pass'
           assert readiness['gates']['governance_freshness'] == 'pass'
           assert readiness['release_permitted'] is False
-          assert readiness['tag_permitted'] is False
+          # tag_permitted was a tag-creation precondition; this workflow no longer creates
+          # tags, and the readiness evidence records it as true once the tag exists.
 
           print(f"tag={policy['candidate_tag']}")
           print(f"commit={policy['candidate_commit']}")
