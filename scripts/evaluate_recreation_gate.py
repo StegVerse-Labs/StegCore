@@ -61,37 +61,47 @@ def main() -> int:
         }, sort_keys=True))
         return 2
 
-    checks = {
-        "recreation_complete": request["recreation_complete"],
-        "recovery_proof_complete": request["recovery_proof_complete"],
-        "verification_margin_complete": request["verification_margin_complete"],
-        "external_exposures_complete": request["external_exposures_complete"],
-        "state_hash_match": request["trusted_pre_state_hash"] == request["recreated_state_hash"],
-        "divergence_resolved": (
-            not request["divergence_detected"]
-            or request["divergence_resolution_status"] == "resolved_by_admissible_transition"
-        ),
-        "authority_current": request["authority_current"],
-        "consent_current": request["consent_current"],
-        "policy_current": request["policy_current"],
-        "unresolved_conditions_evaluated": request["unresolved_conditions_evaluated"],
-    }
+    try:
+        checks = {
+            "recreation_complete": request["recreation_complete"],
+            "recovery_proof_complete": request["recovery_proof_complete"],
+            "verification_margin_complete": request["verification_margin_complete"],
+            "external_exposures_complete": request["external_exposures_complete"],
+            "state_hash_match": request["trusted_pre_state_hash"] == request["recreated_state_hash"],
+            "divergence_resolved": (
+                not request["divergence_detected"]
+                or request["divergence_resolution_status"] == "resolved_by_admissible_transition"
+            ),
+            "authority_current": request["authority_current"],
+            "consent_current": request["consent_current"],
+            "policy_current": request["policy_current"],
+            "unresolved_conditions_evaluated": request["unresolved_conditions_evaluated"],
+        }
 
-    failed = [name for name, passed in checks.items() if not passed]
-    receipt = {
-        "gate_id": f"recreation-gate:{request['request_id']}",
-        "request_id": request["request_id"],
-        "created_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "decision": "ALLOW" if not failed else "BLOCK",
-        "standing_basis": "SV-CONTINUITY-109 evidence evaluated under StegCore fail-closed recreation gate",
-        "checks": checks,
-        "reasons": [] if not failed else [f"failed:{name}" for name in failed],
-        "source_refs": [
-            request["continuity_receipt_ref"],
-            request["recovery_receipt_ref"],
-            request["divergence_report_ref"],
-        ],
-    }
+        failed = [name for name, passed in checks.items() if not passed]
+        receipt = {
+            "gate_id": f"recreation-gate:{request['request_id']}",
+            "request_id": request["request_id"],
+            "created_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "decision": "ALLOW" if not failed else "BLOCK",
+            "standing_basis": "SV-CONTINUITY-109 evidence evaluated under StegCore fail-closed recreation gate",
+            "checks": checks,
+            "reasons": [] if not failed else [f"failed:{name}" for name in failed],
+            "source_refs": [
+                request["continuity_receipt_ref"],
+                request["recovery_receipt_ref"],
+                request["divergence_report_ref"],
+            ],
+        }
+
+    except (KeyError, TypeError, ValueError, RecursionError) as exc:
+        print(json.dumps({
+            "disposition": "FAIL_CLOSED",
+            "failed_predicate": "RECREATION_REQUEST_REQUIRED_EVIDENCE_PRESENT",
+            "error_type": type(exc).__name__,
+            "authority_effect": "NONE",
+        }, sort_keys=True))
+        return 2
 
     try:
         jsonschema.Draft202012Validator(
