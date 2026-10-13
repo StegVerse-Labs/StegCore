@@ -27,10 +27,22 @@ def main() -> int:
     request_schema = load(args.request_schema)
     receipt_schema = load(args.receipt_schema)
 
-    jsonschema.Draft202012Validator(
-        request_schema,
-        format_checker=jsonschema.FormatChecker(),
-    ).validate(request)
+    jsonschema.Draft202012Validator.check_schema(request_schema)
+    jsonschema.Draft202012Validator.check_schema(receipt_schema)
+    request_errors = sorted(
+        jsonschema.Draft202012Validator(
+            request_schema, format_checker=jsonschema.FormatChecker(),
+        ).iter_errors(request),
+        key=lambda error: (tuple(map(str, error.absolute_path)), error.message),
+    )
+    if request_errors:
+        print(json.dumps({
+            "disposition": "FAIL_CLOSED",
+            "failed_predicate": "RECREATION_REQUEST_SCHEMA_VALID",
+            "errors": [error.message for error in request_errors],
+            "authority_effect": "NONE",
+        }, sort_keys=True))
+        return 2
 
     checks = {
         "recreation_complete": request["recreation_complete"],
