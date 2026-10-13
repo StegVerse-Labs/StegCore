@@ -41,7 +41,10 @@ def evaluate_native_source(request: ThreeLayerRequest, *, governance_stage_vecto
         except (OSError, ValueError, TypeError, SchemaError) as exc:
             stage_errors = [f"GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:{type(exc).__name__}"]
             stage_status = "INVALID"
-        if not stage_errors and governance_stage_vector["aggregate_disposition"] not in (
+        if not stage_errors and not isinstance(governance_stage_vector, dict):
+            stage_status = "INVALID"
+            stage_errors.append("GOVERNANCE_STAGE_VECTOR_NOT_OBJECT")
+        if not stage_errors and governance_stage_vector.get("aggregate_disposition") not in (
             result.decision.replace("-", "_"), "UNKNOWN"
         ):
             stage_status = "INVALID"
