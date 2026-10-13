@@ -113,7 +113,7 @@ class SVGNativeAdapterTests(unittest.TestCase):
 
         def read_text_with_corrupt_schema(path, *args, **kwargs):
             if path.name == "governance_admissibility_stage_vector.schema.json":
-                raise UnicodeDecodeError("utf-8", b"\\xff", 0, 1, "invalid start byte")
+                raise UnicodeDecodeError("utf-8", bytes([0xFF]), 0, 1, "invalid start byte")
             return original_read_text(path, *args, **kwargs)
 
         with patch.object(Path, "read_text", read_text_with_corrupt_schema):
