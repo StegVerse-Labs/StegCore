@@ -35,11 +35,15 @@ def main():
     import yaml
     from jsonschema import Draft202012Validator
 
-    schema = json.loads(schema_path.read_text())
-    Draft202012Validator.check_schema(schema)
+    try:
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        classes = yaml.safe_load(classes_path.read_text(encoding="utf-8"))
+        transitions = classes["transitions"]["prohibited"]
+        prohibited = {(t["from"], t["to"]) for t in transitions}
+    except (OSError, ValueError, TypeError, KeyError, json.JSONDecodeError) as exc:
+        fail_closed("AI_REGISTRY_POLICY_INPUTS_VALID", f"valid schema/classes ({type(exc).__name__})")
     validator = Draft202012Validator(schema)
-
-    prohibited = {(t["from"], t["to"]) for t in yaml.safe_load(classes_path.read_text())["transitions"]["prohibited"]}
 
     # An empty population is not evidence: a missing or empty entities directory
     # validates nothing, so it fails closed rather than reporting OK.
@@ -48,8 +52,11 @@ def main():
         fail_closed("AI_REGISTRY_ENTITIES_PRESENT", "registry/entities/*.json")
 
     for p in entity_files:
-        data = json.loads(p.read_text())
-        errs = sorted(validator.iter_errors(data), key=lambda e: e.path)
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            fail_closed("AI_REGISTRY_ENTITY_JSON_VALID", f"{p.name} ({type(exc).__name__})")
+        errs = sorted(validator.iter_errors(data), key=lambda e: tuple(map(str, e.path)))
         if errs:
             fail(f"{p.name}: schema validation failed: " + "; ".join([e.message for e in errs]))
 
