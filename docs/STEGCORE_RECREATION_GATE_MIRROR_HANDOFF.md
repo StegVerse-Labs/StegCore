@@ -125,3 +125,6 @@ StegCore recreation gate - 99% complete TO GOAL ACTIVATION
 Delta: every repository workflow passes. The gate, mapping, tests, runtime contract, pinned Governance evidence snapshot, and transfer receipt are complete. Merge and post-merge receipts remain.
 Thread archive state: READY because repository handoffs and receipts preserve the complete build and next actions.
 ```
+
+## SDK #484 T6 source-only validator hardening
+Draft PR #254 now classifies malformed recreation request/receipt schemas and missing or invalid JSON source evidence as FAIL_CLOSED with authority_effect NONE, before evaluating recreation predicates. AI Registry source checks in the same PR classify malformed policy and entity JSON as FAIL_CLOSED. These are non-authorizing source validations; they do not attest runtime admission, authenticated TV/TVC provenance, or sovereign Organization ledger readback. Require exact-head checks, canonical Registry/COSV reconciliation, and owner-authorized expected-head merge before transition.
