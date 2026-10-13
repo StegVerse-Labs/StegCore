@@ -105,5 +105,40 @@ class SVGNativeAdapterTests(unittest.TestCase):
         self.assertEqual(evaluate_native_source(request(), governance_stage_vector=v)["disposition"], "FAIL_CLOSED")
 
 
+    def test_undecodable_pinned_governance_schema_fails_closed(self):
+        from pathlib import Path
+        from unittest.mock import patch
+
+        original_read_text = Path.read_text
+
+        def read_text_with_corrupt_schema(path, *args, **kwargs):
+            if path.name == "governance_admissibility_stage_vector.schema.json":
+                raise UnicodeDecodeError("utf-8", bytes([0xFF]), 0, 1, "invalid start byte")
+            return original_read_text(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", read_text_with_corrupt_schema):
+            result = evaluate_native_source(request(), governance_stage_vector=self.stage_vector())
+        self.assertEqual(result["disposition"], "FAIL_CLOSED")
+        self.assertEqual(result["governance_stage_vector_status"], "INVALID")
+        self.assertIn("GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:UnicodeDecodeError", result["governance_validation_errors"])
+
+
+    def test_prefix_items_ref_allof_rejects_duplicate_stage_identity(self):
+        vector = self.stage_vector()
+        vector["stages"][1]["stage"] = "A0"
+        result = evaluate_native_source(request(), governance_stage_vector=vector)
+        self.assertEqual(result["disposition"], "FAIL_CLOSED")
+        self.assertEqual(result["governance_stage_vector_status"], "INVALID")
+        self.assertTrue(result["governance_validation_errors"])
+
+    def test_ref_stage_required_status_fails_closed(self):
+        vector = self.stage_vector()
+        del vector["stages"][8]["status"]
+        result = evaluate_native_source(request(), governance_stage_vector=vector)
+        self.assertEqual(result["disposition"], "FAIL_CLOSED")
+        self.assertEqual(result["governance_stage_vector_status"], "INVALID")
+        self.assertTrue(result["governance_validation_errors"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -9,6 +9,7 @@ from hashlib import sha256
 import json
 from pathlib import Path
 from jsonschema import Draft202012Validator
+from jsonschema.exceptions import SchemaError
 import time
 from typing import Any
 
@@ -31,11 +32,19 @@ def evaluate_native_source(request: ThreeLayerRequest, *, governance_stage_vecto
     stage_errors = []
     if governance_stage_vector is not None:
         schema_path = Path(__file__).parent / "schemas/governance_admissibility_stage_vector.schema.json"
-        schema = json.loads(schema_path.read_text(encoding="utf-8"))
-        validator = Draft202012Validator(schema)
-        stage_errors = sorted(e.message for e in validator.iter_errors(governance_stage_vector))
-        stage_status = "INVALID" if stage_errors else "SCHEMA_VALID_SOURCE_ONLY"
-        if not stage_errors and governance_stage_vector["aggregate_disposition"] not in (
+        try:
+            schema = json.loads(schema_path.read_text(encoding="utf-8"))
+            Draft202012Validator.check_schema(schema)
+            validator = Draft202012Validator(schema)
+            stage_errors = sorted(e.message for e in validator.iter_errors(governance_stage_vector))
+            stage_status = "INVALID" if stage_errors else "SCHEMA_VALID_SOURCE_ONLY"
+        except (OSError, ValueError, TypeError, SchemaError, RecursionError, OverflowError, UnicodeError) as exc:
+            stage_errors = [f"GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:{type(exc).__name__}"]
+            stage_status = "INVALID"
+        if not stage_errors and not isinstance(governance_stage_vector, dict):
+            stage_status = "INVALID"
+            stage_errors.append("GOVERNANCE_STAGE_VECTOR_NOT_OBJECT")
+        if not stage_errors and governance_stage_vector.get("aggregate_disposition") not in (
             result.decision.replace("-", "_"), "UNKNOWN"
         ):
             stage_status = "INVALID"
