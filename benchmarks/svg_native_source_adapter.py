@@ -38,7 +38,7 @@ def evaluate_native_source(request: ThreeLayerRequest, *, governance_stage_vecto
             validator = Draft202012Validator(schema)
             stage_errors = sorted(e.message for e in validator.iter_errors(governance_stage_vector))
             stage_status = "INVALID" if stage_errors else "SCHEMA_VALID_SOURCE_ONLY"
-        except (OSError, ValueError, TypeError, SchemaError, RecursionError, OverflowError) as exc:
+        except (OSError, ValueError, TypeError, SchemaError, RecursionError, OverflowError, UnicodeError) as exc:
             stage_errors = [f"GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:{type(exc).__name__}"]
             stage_status = "INVALID"
         if not stage_errors and not isinstance(governance_stage_vector, dict):
