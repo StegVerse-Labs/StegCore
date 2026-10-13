@@ -34,6 +34,7 @@ def main():
     # even where the validation dependencies are not installed.
     import yaml
     from jsonschema import Draft202012Validator
+    from jsonschema.exceptions import SchemaError
 
     try:
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
@@ -41,7 +42,7 @@ def main():
         classes = yaml.safe_load(classes_path.read_text(encoding="utf-8"))
         transitions = classes["transitions"]["prohibited"]
         prohibited = {(t["from"], t["to"]) for t in transitions}
-    except (OSError, ValueError, TypeError, KeyError, json.JSONDecodeError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, SchemaError) as exc:
         fail_closed("AI_REGISTRY_POLICY_INPUTS_VALID", f"valid schema/classes ({type(exc).__name__})")
     validator = Draft202012Validator(schema)
 
