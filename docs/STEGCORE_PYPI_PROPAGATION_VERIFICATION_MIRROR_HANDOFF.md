@@ -36,7 +36,7 @@ DO NOT publish `v0.3.0` from `282f30e9e46efc3a8d0d867f48e08c3aa6534e22`: this la
 
 ## Propagation verification sequence
 
-After the release is published:
+After an ALLOW release transition, these are downstream verification transitions and evidence. None is a predicate of the release transition, none is awaited by it, and an unavailable destination is answered by durable queue or event materialization, never by waiting (`StegVerse-Labs/.github` `data/task-registry-global-invariants.json`):
 
 1. verify the tag resolves exactly to the release candidate commit;
 2. verify the trusted-publishing workflow succeeds;
@@ -54,6 +54,20 @@ This task grants no governance, runtime, credential, signing, or arbitrary publi
 
 Root `README.md` was reviewed for this release task. No new runtime capability is being introduced; the public distribution name/version is already separately documented in `docs/STEGVERSE_STEGCORE_PYPI_DISTRIBUTION.md`. No README wording change is required before publication.
 
-## Human action
+## Release transition (no human action)
 
-The GitHub connector available in the current session cannot create a GitHub Release. The required manual action is to open the repository Releases page, do not publish a release from the historical #203 commit; resolve the TVC release authority and frozen exact commit first. No alternate machine or manual action is a prerequisite for this documentation reconciliation. After publication, automated propagation verification can continue from this handoff.
+Publication is the manifest-bound release transition owned by TV/TVC (ACTIONS BY MANIFEST). Its predicates are GRANTED authorization, SKAP double-interlock custody, the immutable `v0.3.0` tag/release at `58445bb14642c1889cf9802666c15bd48c6d2e39`, and an aggregate receipt appended to the Organization ledger. No manual Releases-page action, session connector capability, external machine, second device or post-closure observer is a predicate (`external_machine_awaiting_allowed: false`, `post_closure_authentic_observer_gate_allowed: false`). Do not publish from the historical #203 commit.
+
+## Registered non-ALLOW disposition
+
+`publish-pypi.yml` exists on `main` but is absent from the frozen release commit `58445bb14642c1889cf9802666c15bd48c6d2e39`. For a `release` event GitHub Actions loads workflows from the tagged commit, so a `v0.3.0` release at that commit triggers no Trusted Publishing run.
+
+```text
+disposition: FAIL_CLOSED
+failure_code: RELEASE_WORKFLOW_ABSENT_AT_FROZEN_COMMIT
+failed_predicate: release-triggered publish-pypi.yml present at the tagged commit
+owning_existing_goal: StegVerse-Labs/StegCore#198 (TV/TVC successor release)
+next_attempt: TV/TVC-owned release transition that builds the exact frozen tag through the
+  publish-pypi.yml workflow file registered with PyPI Trusted Publishing
+consequence_committed: false
+```
