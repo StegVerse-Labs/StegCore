@@ -1,0 +1,13 @@
+{
+  "schema": "stegverse.stegcore.release-binding.v1",
+  "version": "0.3.1",
+  "tag": "v0.3.1",
+  "source_parent": "5d239db26206d3097198ed04c5cf276b2c09536b",
+  "frozen_predecessor": "58445bb14642c1889cf9802666c15bd48c6d2e39",
+  "release_commit_paths": [
+    "RELEASE_BINDING.json",
+    "RELEASE_NOTES_0_3_1.md"
+  ],
+  "release_authority": "TV/TVC",
+  "authority_effect": "NONE"
+}
