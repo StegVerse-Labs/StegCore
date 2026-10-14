@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import subprocess
+import tomllib
 import sys
 
 from stegcore import __version__
@@ -13,9 +14,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_portable_product_versions_are_aligned():
-    assert (ROOT / "VERSION").read_text(encoding="utf-8").strip() == "0.2.0"
-    assert __version__ == "0.2.0"
-    assert SERVICE_VERSION == __version__
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    package = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    assert version == package["project"]["version"]
+    assert __version__ == version
+    assert SERVICE_VERSION == version
 
 
 def test_runtime_identity_is_canonical_and_transport_independent():

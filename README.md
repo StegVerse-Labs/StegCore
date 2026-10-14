@@ -2,7 +2,7 @@
 
 StegCore is the canonical StegVerse commit-time governance runtime. **StegGate** is its portable product surface for evaluating one proposed consequential transition before execution.
 
-Current portable product version: **0.3.0**.
+Current portable product version: **0.3.1**.
 
 ## What it does
 

@@ -1,6 +1,6 @@
 [project]
 name = "stegcore"
-version = "0.3.0"
+version = "0.3.1"
 description = "StegCore – constraint and governance layer for StegVerse"
 requires-python = ">=3.11"
 dependencies = [

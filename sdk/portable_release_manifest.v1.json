@@ -1,19 +1,19 @@
 {
   "schema": "stegverse.sdk.portable-release-manifest.v1",
   "release_family": "stegverse-portable-ecosystem",
-  "release_version": "0.2.0",
+  "release_version": "0.3.1",
   "source_version_file": "pyproject.toml",
-  "source_version": "0.2.0",
+  "source_version": "0.3.1",
   "channel": "SDK_EARLY_ACCESS",
   "deployment_classes": ["S", "NS"],
   "required_archive_formats": ["zip", "tar.gz"],
-  "release_tag": "stegverse-portable-v0.2.0",
-  "release_name": "StegVerse Portable Ecosystem 0.2.0",
+  "release_tag": "stegverse-portable-v0.3.1",
+  "release_name": "StegVerse Portable Ecosystem 0.3.1",
   "versioned_components": {
-    "StegCore": "0.2.0",
-    "StegGate_AdmittedCode_micro_ecosystem": "0.2.0",
-    "S_package": "0.2.0",
-    "NS_package": "0.2.0"
+    "StegCore": "0.3.1",
+    "StegGate_AdmittedCode_micro_ecosystem": "0.3.1",
+    "S_package": "0.3.1",
+    "NS_package": "0.3.1"
   },
   "version_change_policy": {
     "new_release_required_when_release_version_changes": true,

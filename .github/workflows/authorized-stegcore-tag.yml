@@ -1,4 +1,9 @@
-name: Create Authorized StegCore Tag
+name: Verify Authorized StegCore Tag
+
+# Verify-only. Release and credential authority is TV/TVC and GitHub Actions holds no
+# runtime or release authority (StegVerse-Labs/.github TASK_REGISTRY_CANONICAL_INVARIANTS.md).
+# This workflow previously created the tag with the workflow GitHub token; it now only
+# verifies an existing annotated tag and fails closed when the tag is absent.
 
 on:
   push:
@@ -13,8 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
-  issues: write
+  contents: read
 
 jobs:
   tag:
@@ -54,40 +58,29 @@ jobs:
           assert readiness['gates']['downstream_verification'] == 'pass'
           assert readiness['gates']['governance_freshness'] == 'pass'
           assert readiness['release_permitted'] is False
-          assert readiness['tag_permitted'] is False
+          # tag_permitted was a tag-creation precondition; this workflow no longer creates
+          # tags, and the readiness evidence records it as true once the tag exists.
 
           print(f"tag={policy['candidate_tag']}")
           print(f"commit={policy['candidate_commit']}")
           print(f"decision_hash={policy['decision_hash']}")
           PY
 
-      - name: Create or verify authorized annotated tag
+      - name: Verify existing authorized annotated tag
         env:
           TAG: ${{ steps.policy.outputs.tag }}
           COMMIT: ${{ steps.policy.outputs.commit }}
-          DECISION_HASH: ${{ steps.policy.outputs.decision_hash }}
         run: |
           set -euo pipefail
           git fetch --tags --force
-          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
-            test "$(git rev-list -n 1 "refs/tags/${TAG}")" = "$COMMIT"
-            test "$(git cat-file -t "refs/tags/${TAG}")" = "tag"
-            echo "Authorized annotated tag ${TAG} already exists at ${COMMIT}."
-            exit 0
+          if ! git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            echo "disposition: FAIL_CLOSED"
+            echo "failure_code: TAG_ABSENT_TAG_CREATION_REQUIRES_TV_TVC_RELEASE_TRANSITION"
+            echo "failed_predicate: existing annotated tag ${TAG} at ${COMMIT}"
+            echo "next_attempt: TV/TVC-owned release transition"
+            echo "consequence_committed: false"
+            exit 1
           fi
-          git config user.name "stegverse-release-bot"
-          git config user.email "stegverse-release-bot@users.noreply.github.com"
-          git tag -a "$TAG" "$COMMIT" -m "StegCore ${TAG}: authorized by Governance decision ${DECISION_HASH}"
-          git push origin "refs/tags/${TAG}"
-          git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null
           test "$(git rev-list -n 1 "refs/tags/${TAG}")" = "$COMMIT"
           test "$(git cat-file -t "refs/tags/${TAG}")" = "tag"
-
-      - name: Record activation on release-readiness issue
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.policy.outputs.tag }}
-          COMMIT: ${{ steps.policy.outputs.commit }}
-          DECISION_HASH: ${{ steps.policy.outputs.decision_hash }}
-        run: |
-          gh issue comment 37 --body "Authorized annotated tag \`${TAG}\` activated at \`${COMMIT}\` after independent Governance ALLOW \`${DECISION_HASH}\`. This tag is not a GitHub Release, deployment, Continuity receipt, or execution-authority grant. Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
+          echo "AUTHORIZED_TAG_VERIFIED tag=${TAG} commit=${COMMIT}"

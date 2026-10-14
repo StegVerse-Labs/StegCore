@@ -16,6 +16,21 @@ Historical governance, schema, receipt, and research artifact versions retain th
 - Keep live product documentation, runtime identity, packaging, consumer evidence, performance baselines, onboarding evidence, and release measurement surfaces aligned through repository consistency verification.
 - Release candidates now compare against the compatible AdmittedCode hosted baseline and retain HTTP/performance regression evidence before a release PR is opened.
 
+## [0.3.1] - 2026-10-14
+
+Proposed successor release candidate to the frozen `0.3.0` release commit
+`58445bb14642c1889cf9802666c15bd48c6d2e39`, which cannot be published because it does not
+contain a release-triggered publish workflow. Runtime semantics are identical to `0.3.0`.
+
+### Added
+- Release-triggered PyPI Trusted Publishing workflow (`.github/workflows/publish-pypi.yml`) bound to the
+  exact release commit recorded in `RELEASE_BINDING.json`, with regression tests.
+- Regression test that no workflow creates tags or GitHub Releases (release authority is TV/TVC only).
+
+### Fixed
+- Stale `0.2.0` expectations in `tests/test_product_consistency.py`, `sdk/portable_release_manifest.v1.json`
+  and `VERSION.json` that made the frozen tree's own suite fail.
+
 ## [0.3.0] - 2026-08-25
 
 ### Added

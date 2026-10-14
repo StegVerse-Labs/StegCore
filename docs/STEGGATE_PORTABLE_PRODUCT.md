@@ -1,7 +1,7 @@
 # StegGate Portable Product
 
 Status: current product boundary  
-Product version: `0.3.0`  
+Product version: `0.3.1`  
 Canonical owner: `StegVerse-Labs/StegCore`
 
 ## Purpose
@@ -93,7 +93,7 @@ The following are transport or orchestration facts, not governance identity:
 
 Do not collapse unrelated version domains.
 
-`0.3.0` is the current **portable product/package/service** version and must agree across:
+`0.3.1` is the current **portable product/package/service** version and must agree across:
 
 - `VERSION`;
 - `pyproject.toml` project version;
