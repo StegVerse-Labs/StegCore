@@ -44,13 +44,15 @@ jobs:
       - name: Verify built metadata version
         run: |
           python - <<'PY'
-          import glob, zipfile
+          import glob, pathlib, tomllib, zipfile
+          version = tomllib.loads(pathlib.Path('pyproject.toml').read_text())['project']['version']
+          assert version == pathlib.Path('VERSION').read_text().strip()
           wheel = glob.glob('dist/*.whl')[0]
           with zipfile.ZipFile(wheel) as z:
               meta = [n for n in z.namelist() if n.endswith('.dist-info/METADATA')][0]
               text = z.read(meta).decode()
           assert 'Name: stegcore' in text
-          assert 'Version: 0.3.0' in text
+          assert f'Version: {version}' in text
           print('STEGCORE_0_3_RELEASE_CANDIDATE_ARTIFACT_IDENTITY_PASS')
           PY
       - name: Record non-authorizing boundary

@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "component_id": "STEGVERSE-STEGCORE",
   "repository": "StegVerse-Labs/StegCore",
-  "component_version": "0.2.0",
+  "component_version": "0.3.1",
   "version_stage": "DEVELOPMENT",
   "release": {
     "tag": null,
@@ -10,7 +10,7 @@
     "release_evidence": []
   },
   "product_identity": {
-    "portable_product_version": "0.2.0",
+    "portable_product_version": "0.3.1",
     "canonical_runtime_identity": "stegverse:steggate:canonical:three-layer:v1",
     "canonical_admissibility_runtime": "stegcore.three_layer.evaluate_three_layer"
   },
