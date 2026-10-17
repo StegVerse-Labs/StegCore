@@ -1,0 +1,15 @@
+{
+  "vendored_path": "src/stegcore/_vendor/structural_validator.py",
+  "source_repo": "StegVerse-org/StegVerse-SDK",
+  "source_url": "https://github.com/StegVerse-org/stegverse-sdk",
+  "source_path": "stegverse/structural_validator_candidate.py",
+  "source_commit": "ae4a2a12fb3261e5d9fbee1dae1b4195bcf69fc9",
+  "git_blob_sha1": "2622031c0317afc7a41b1f95e6570d5e8bf62d5c",
+  "sha256": "b488647085aca47d4c87383a23be249c455827a9d1f4deb3487d5821c7bb12a0",
+  "contract_version": "1.6",
+  "dialect": "stegverse-bounded-v1",
+  "modifications": "none (byte-for-byte copy; module imports only stdlib calendar, hashlib, json, re)",
+  "import_diff": null,
+  "reason": "Removes the jsonschema dependency from StegCore without adding a StegVerse-SDK dependency (StegVerse-org/StegVerse-SDK#484, RESPONSE-033).",
+  "authority_effect": "NONE"
+}

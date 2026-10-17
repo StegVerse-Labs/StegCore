@@ -50,13 +50,52 @@ def _run(tmp_path, monkeypatch, capsys, output, receipt_schema):
 
 def test_receipt_schema_rejection_fails_closed(tmp_path, monkeypatch, capsys):
     output = tmp_path / "receipt.json"
-    code, stdout = _run(tmp_path, monkeypatch, capsys, output, {"not": {}})
+    # A supported schema the receipt can never satisfy (the vendored contract 1.6
+    # refuses "not", which this test used under jsonschema).
+    code, stdout = _run(tmp_path, monkeypatch, capsys, output, {"required": ["never_present"]})
     assert code == 2
     assert not output.exists()
     payload = json.loads(stdout.strip().splitlines()[-1])
     assert payload["disposition"] == "FAIL_CLOSED"
     assert payload["failed_predicate"] == "RECREATION_RECEIPT_VALID_AND_PERSISTED"
+    assert payload["error_type"] == "ValidationError"
     assert payload["authority_effect"] == "NONE"
+
+
+def test_unsupported_receipt_schema_keyword_fails_closed(tmp_path, monkeypatch, capsys):
+    output = tmp_path / "receipt.json"
+    code, stdout = _run(tmp_path, monkeypatch, capsys, output, {"not": {}})
+    assert code == 2
+    assert not output.exists()
+    payload = json.loads(stdout.strip().splitlines()[-1])
+    assert payload["disposition"] == "FAIL_CLOSED"
+    assert payload["failed_predicate"] == "RECREATION_SOURCE_EVIDENCE_VALID"
+    assert payload["error_type"] == "SchemaError"
+    assert payload["authority_effect"] == "NONE"
+
+
+def test_unsupported_format_fails_closed_not_ignored(tmp_path, monkeypatch, capsys):
+    output = tmp_path / "receipt.json"
+    schema = {"properties": {"created_utc": {"type": "string", "format": "email"}}}
+    code, stdout = _run(tmp_path, monkeypatch, capsys, output, schema)
+    assert code == 2
+    assert not output.exists()
+    payload = json.loads(stdout.strip().splitlines()[-1])
+    assert payload["failed_predicate"] == "RECREATION_SOURCE_EVIDENCE_VALID"
+    assert payload["error_type"] == "SchemaError"
+
+
+def test_request_date_time_format_is_asserted(tmp_path, monkeypatch, capsys):
+    bad = _request()
+    bad["created_utc"] = "2026-02-30T00:00:00Z"
+    schema = {"properties": {"created_utc": {"type": "string", "format": "date-time"}}}
+    monkeypatch.setattr(gate, "load", lambda path: bad if path.name == "request.json" else schema)
+    code, stdout = _run(tmp_path, monkeypatch, capsys, tmp_path / "receipt.json", {})
+    assert code == 2
+    payload = json.loads(stdout.strip().splitlines()[-1])
+    assert payload["failed_predicate"] == "RECREATION_REQUEST_SCHEMA_VALID"
+    assert payload["errors"] == ["/created_utc:FORMAT"]
+    assert not (tmp_path / "receipt.json").exists()
 
 
 def test_receipt_write_failure_fails_closed(tmp_path, monkeypatch, capsys):

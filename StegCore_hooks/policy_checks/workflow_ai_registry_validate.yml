@@ -16,5 +16,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install jsonschema pyyaml
+      - run: pip install pyyaml
       - run: python StegCore_hooks/policy_checks/validate_ai_registry.py

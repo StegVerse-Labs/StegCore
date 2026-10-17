@@ -1,4 +1,5 @@
 """StegCore_hooks AI registry validator must fail closed on missing inputs."""
+import importlib.util
 import json
 import pathlib
 import subprocess
@@ -12,6 +13,12 @@ SCRIPT = (
     / "policy_checks"
     / "validate_ai_registry.py"
 )
+
+
+# Schema validation uses the vendored stdlib-only structural validator, so jsonschema is
+# never needed. PyYAML (for ethics/ai_classes.yaml) is not a declared StegCore dependency;
+# without it the validator fails closed at AI_REGISTRY_VALIDATOR_DEPENDENCIES_PRESENT.
+HAVE_YAML = importlib.util.find_spec("yaml") is not None
 
 
 def _run(cwd):
@@ -48,6 +55,8 @@ class ValidateAiRegistryFailClosedTest(unittest.TestCase):
 
 
     def _with_inputs(self, tmp):
+        if not HAVE_YAML:
+            self.skipTest("PyYAML not installed in this environment")
         root = pathlib.Path(tmp)
         (root / "registry").mkdir()
         (root / "registry" / "ai_entity_schema.json").write_text("{}")
@@ -59,16 +68,12 @@ class ValidateAiRegistryFailClosedTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             self._with_inputs(tmp)
             result = _run(tmp)
-            if "No module named" in result.stderr:
-                self.skipTest("yaml/jsonschema not installed in this environment")
             self._assert_fail_closed(result, "AI_REGISTRY_ENTITIES_PRESENT")
 
     def test_empty_entities_directory_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             (self._with_inputs(tmp) / "registry" / "entities").mkdir()
             result = _run(tmp)
-            if "No module named" in result.stderr:
-                self.skipTest("yaml/jsonschema not installed in this environment")
             self._assert_fail_closed(result, "AI_REGISTRY_ENTITIES_PRESENT")
 
     def test_malformed_entity_history_fails_closed(self):
@@ -103,6 +108,39 @@ class ValidateAiRegistryFailClosedTest(unittest.TestCase):
             result = _run(tmp)
             self._assert_fail_closed(result, "AI_REGISTRY_POLICY_INPUTS_VALID")
             self.assertNotIn("Traceback", result.stderr)
+
+    def test_missing_yaml_fails_closed_without_traceback(self):
+        if HAVE_YAML:
+            self.skipTest("PyYAML installed; the missing-dependency path is not reachable")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            (root / "registry").mkdir()
+            (root / "registry" / "ai_entity_schema.json").write_text("{}")
+            (root / "ethics").mkdir()
+            (root / "ethics" / "ai_classes.yaml").write_text("transitions: {}\n")
+            result = _run(tmp)
+            self._assert_fail_closed(result, "AI_REGISTRY_VALIDATOR_DEPENDENCIES_PRESENT")
+
+    def test_unsupported_schema_keyword_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._with_inputs(tmp)
+            (root / "registry" / "ai_entity_schema.json").write_text(json.dumps({"not": {}}))
+            (root / "registry" / "entities").mkdir()
+            (root / "registry" / "entities" / "a.json").write_text(json.dumps({"acknowledgements": ["x"]}))
+            result = _run(tmp)
+            self._assert_fail_closed(result, "AI_REGISTRY_POLICY_INPUTS_VALID")
+            self.assertNotIn("Traceback", result.stderr)
+
+    def test_entity_schema_violation_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._with_inputs(tmp)
+            (root / "registry" / "ai_entity_schema.json").write_text(json.dumps({"required": ["id"]}))
+            (root / "registry" / "entities").mkdir()
+            (root / "registry" / "entities" / "a.json").write_text(json.dumps({"acknowledgements": ["x"]}))
+            result = _run(tmp)
+            self._assert_fail_closed(result, "AI_REGISTRY_ENTITY_SCHEMA_VALID")
+            self.assertIn("/id:REQUIRED", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
