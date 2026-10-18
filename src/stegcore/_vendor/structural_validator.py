@@ -14,7 +14,16 @@ MAX_PATTERN_INPUT_LENGTH = 4096
 MAX_UNBOUNDED_QUANTIFIERS = 1
 SUPPORTED = {"type", "required", "properties", "additionalProperties", "items", "enum", "const", "minLength", "maxLength", "minimum", "maximum",
              "minItems", "maxItems", "uniqueItems", "pattern", "format", "exclusiveMinimum", "exclusiveMaximum",
-             "allOf", "if", "then", "else", "$ref"}
+             "allOf", "if", "then", "else", "$ref",
+             "anyOf", "oneOf", "not", "minProperties", "maxProperties", "prefixItems",
+             "propertyNames", "contains", "minContains", "maxContains"}
+# Contract 1.7: anyOf / oneOf / not evaluate isolated trial branches under the same budget;
+# additionalProperties may be a subschema; prefixItems validates positions, and `items` then
+# applies to the remaining positions (`items: false` is admitted only as the closing form of a
+# prefixItems tuple; other boolean subschemas stay unsupported). `default` is an annotation.
+# propertyNames applies its subschema to each object key; contains counts matching items,
+# bounded by minContains (default 1) and maxContains.
+BRANCH_LISTS = ("allOf", "anyOf", "oneOf")
 # Composition and references (contract 1.6): $defs only at the root, $ref only to "#/$defs/<name>"
 # with a plain name, no reference cycles, and a bounded evaluation budget. Remote, relative,
 # anchor and nested-$defs references stay unsupported and fail closed.
@@ -25,7 +34,7 @@ MAX_EVALUATION_STEPS = 200_000
 # FormatChecker uses without the optional rfc3339-validator dependency. Stdlib only.
 SUPPORTED_FORMATS = ("date", "date-time")
 # Annotation-only keywords: accepted and ignored, as in 2020-12 they never affect validity.
-ANNOTATIONS = {"title", "description", "$comment", "examples"}
+ANNOTATIONS = {"title", "description", "$comment", "examples", "default"}
 # Root-only identity metadata (T12): no effect on validity. $schema must name exactly the
 # dialect the ecosystem uses (all StegVerse-Labs/.github schemas declare it); anything else
 # fails closed. Below the root both stay unsupported, since $ref/$defs resolution is not.
@@ -41,8 +50,8 @@ TYPES = {"null": lambda v: v is None, "boolean": lambda v: type(v) is bool,
 # accepts, never the reverse.
 CONTRACT = {
     "dialect": DIALECT,
-    "contract_version": "1.6",
-    "composition": {"keywords": ["allOf", "if", "then", "else"], "references": "$ref to #/$defs/<name> only; $defs at the root only; cycles rejected",
+    "contract_version": "1.7",
+    "composition": {"keywords": ["allOf", "anyOf", "oneOf", "not", "if", "then", "else", "contains", "propertyNames"], "references": "$ref to #/$defs/<name> only; $defs at the root only; cycles rejected",
                     "max_evaluation_steps": MAX_EVALUATION_STEPS},
     "format": {"asserted": list(SUPPORTED_FORMATS), "standard": "RFC 3339 (date, date-time); calendar-checked; leap second 60 rejected",
                "other_values": "rejected (UNSUPPORTED_FORMAT)"},
@@ -58,7 +67,7 @@ CONTRACT = {
     "reference": "JSON Schema 2020-12 (jsonschema Draft202012Validator) as differential oracle only",
     "divergences_fail_closed": [
         "integer-valued floats such as 1.0 are not type integer",
-        "boolean subschemas (true/false) are unsupported",
+        "boolean subschemas (true/false) are unsupported, except items: false closing a prefixItems tuple",
         "every keyword outside supported_keywords is rejected; $schema, $id and $defs only at the root",
         "$ref other than #/$defs/<name>, and reference cycles, are rejected",
         "evaluation beyond max_evaluation_steps is rejected (EVALUATION_BUDGET_EXCEEDED)",
@@ -333,8 +342,14 @@ def _preflight(spec, path, error, depth=0, definitions=None):
         error(path, "INVALID_REQUIRED")
     if "enum" in spec and (not isinstance(spec["enum"], list) or not spec["enum"]):
         error(path, "INVALID_ENUM")
-    if "additionalProperties" in spec and type(spec["additionalProperties"]) is not bool:
+    extra = spec.get("additionalProperties")
+    if isinstance(extra, dict):
+        _preflight(extra, path + ["additionalProperties"], error, depth + 1, definitions)
+    elif "additionalProperties" in spec and type(extra) is not bool:
         error(path, "UNSUPPORTED_ADDITIONAL_PROPERTIES")
+    for key in ("minProperties", "maxProperties"):
+        if key in spec and (type(spec[key]) is not int or spec[key] < 0):
+            error(path, "INVALID_BOUND:" + key)
     for key in ("minLength", "maxLength"):
         if key in spec and (type(spec[key]) is not int or spec[key] < 0):
             error(path, "INVALID_BOUND:" + key)
@@ -343,13 +358,17 @@ def _preflight(spec, path, error, depth=0, definitions=None):
             error(path, "INVALID_BOUND:" + key)
     if "$ref" in spec and _ref_name(spec["$ref"], definitions) is None:
         error(path, "UNSUPPORTED_REF")
-    if "allOf" in spec:
-        if not isinstance(spec["allOf"], list) or not spec["allOf"]:
-            error(path, "INVALID_ALLOF")
-        else:
-            for i, sub in enumerate(spec["allOf"]):
-                _preflight(sub, path + ["allOf", i], error, depth + 1, definitions)
-    for key in ("if", "then", "else"):
+    for key in BRANCH_LISTS:
+        if key in spec:
+            if not isinstance(spec[key], list) or not spec[key]:
+                error(path, "INVALID_" + key.upper())
+            else:
+                for i, sub in enumerate(spec[key]):
+                    _preflight(sub, path + [key, i], error, depth + 1, definitions)
+    for key in ("minContains", "maxContains"):
+        if key in spec and (type(spec[key]) is not int or spec[key] < 0):
+            error(path, "INVALID_BOUND:" + key)
+    for key in ("if", "then", "else", "not", "propertyNames", "contains"):
         if key in spec:
             _preflight(spec[key], path + [key], error, depth + 1, definitions)
     for key in ("minItems", "maxItems"):
@@ -374,7 +393,13 @@ def _preflight(spec, path, error, depth=0, definitions=None):
     else:
         for k in sorted(props):
             _preflight(props[k], path + ["properties", k], error, depth + 1, definitions)
-    if "items" in spec:
+    if "prefixItems" in spec:
+        if not isinstance(spec["prefixItems"], list) or not spec["prefixItems"]:
+            error(path, "INVALID_PREFIXITEMS")
+        else:
+            for i, sub in enumerate(spec["prefixItems"]):
+                _preflight(sub, path + ["prefixItems", i], error, depth + 1, definitions)
+    if "items" in spec and not (spec["items"] is False and "prefixItems" in spec):
         _preflight(spec["items"], path + ["items"], error, depth + 1, definitions)
 
 def _admit_schema(schema, schema_digest, dialect, registry):
@@ -392,6 +417,11 @@ def _admit_schema(schema, schema_digest, dialect, registry):
     errors = []
     _preflight_root(schema, lambda path, code: errors.append({"path": pointer(path), "code": code}))
     return {"valid": not errors, "errors": errors, "schema_digest": actual, "dialect": dialect, "authority_effect": "NONE"}
+
+def _indeterminate(code):
+    """Error codes that mean the schema could not be evaluated, as opposed to the instance failing it."""
+    return (code in ("EVALUATION_BUDGET_EXCEEDED", "INVALID_SCHEMA_OR_DEPTH", "INVALID_OBJECT_SCHEMA")
+            or code.startswith(("UNSUPPORTED_", "INVALID_")))
 
 def check_schema(schema, schema_digest, dialect=DIALECT, registry=None):
     """Schema validity alone, independent of any instance. Returns findings, not ALLOW."""
@@ -425,14 +455,35 @@ def validate(instance, schema, schema_digest, dialect=DIALECT, registry=None):
             visit(value, definitions[_ref_name(spec["$ref"], definitions)], path, depth + 1, sink)
         for sub in spec.get("allOf", []):
             visit(value, sub, path, depth + 1, sink)
-        if "if" in spec:
+        def passes(sub, subject=value):
+            """Evaluate one branch in isolation: True or False, or None when the branch could
+            not be evaluated (budget, depth, unsupported or invalid schema). An indeterminate
+            branch propagates its structural errors; it never counts as an ordinary failure,
+            so not / else / anyOf can never fail open on it."""
             trial = []
-            visit(value, spec["if"], path, depth + 1, trial)
-            if any(e["code"] == "EVALUATION_BUDGET_EXCEEDED" for e in trial):
-                error(path, "EVALUATION_BUDGET_EXCEEDED")
-            elif not trial and "then" in spec:
+            visit(subject, sub, path, depth + 1, trial)
+            structural = [e for e in trial if _indeterminate(e["code"])]
+            if structural:
+                seen = {(e["path"], e["code"]) for e in sink}
+                for e in structural:
+                    if (e["path"], e["code"]) not in seen:
+                        seen.add((e["path"], e["code"]))
+                        sink.append(e)
+                return None
+            return not trial
+        for key, code in (("anyOf", "ANYOF"), ("oneOf", "ONEOF")):
+            if key in spec:
+                outcomes = [passes(sub) for sub in spec[key]]
+                if None not in outcomes and ((key == "anyOf" and not any(outcomes)) or
+                                             (key == "oneOf" and outcomes.count(True) != 1)):
+                    error(path, code)
+        if "not" in spec and passes(spec["not"]) is True:
+            error(path, "NOT")
+        if "if" in spec:
+            outcome = passes(spec["if"])
+            if outcome is True and "then" in spec:
                 visit(value, spec["then"], path, depth + 1, sink)
-            elif trial and "else" in spec:
+            elif outcome is False and "else" in spec:
                 visit(value, spec["else"], path, depth + 1, sink)
         types = spec.get("type")
         if types is not None:
@@ -460,16 +511,41 @@ def validate(instance, schema, schema_digest, dialect=DIALECT, registry=None):
                 if k not in value:
                     error(path + [k], "REQUIRED")
             extra = spec.get("additionalProperties", True)
-            if extra not in (True, False) or type(extra) is not bool:
+            if not isinstance(extra, dict) and type(extra) is not bool:
                 error(path, "UNSUPPORTED_ADDITIONAL_PROPERTIES")
             for k in sorted(value):
                 if k in props:
                     visit(value[k], props[k], path + [k], depth + 1, sink)
                 elif extra is False:
                     error(path + [k], "ADDITIONAL_PROPERTY")
-        if isinstance(value, list) and "items" in spec:
-            for i, item in enumerate(value):
-                visit(item, spec["items"], path + [i], depth + 1, sink)
+                elif isinstance(extra, dict):
+                    visit(value[k], extra, path + [k], depth + 1, sink)
+            if "propertyNames" in spec:
+                for k in sorted(value):
+                    visit(k, spec["propertyNames"], path + [k], depth + 1, sink)
+            if "minProperties" in spec and len(value) < spec["minProperties"]:
+                error(path, "MINPROPERTIES")
+            if "maxProperties" in spec and len(value) > spec["maxProperties"]:
+                error(path, "MAXPROPERTIES")
+        if isinstance(value, list):
+            prefix = spec.get("prefixItems", [])
+            for i, sub in enumerate(prefix[:len(value)]):
+                visit(value[i], sub, path + [i], depth + 1, sink)
+            rest = spec.get("items")
+            if rest is False and prefix:
+                for i in range(len(prefix), len(value)):
+                    error(path + [i], "ITEMS")
+            elif "items" in spec:
+                for i in range(len(prefix), len(value)):
+                    visit(value[i], rest, path + [i], depth + 1, sink)
+        if isinstance(value, list) and "contains" in spec:
+            outcomes = [passes(spec["contains"], item) for item in value]
+            if None not in outcomes:
+                matched = outcomes.count(True)
+                if matched < spec.get("minContains", 1):
+                    error(path, "CONTAINS")
+                elif "maxContains" in spec and matched > spec["maxContains"]:
+                    error(path, "MAXCONTAINS")
         if isinstance(value, list):
             if "minItems" in spec and len(value) < spec["minItems"]:
                 error(path, "MINITEMS")

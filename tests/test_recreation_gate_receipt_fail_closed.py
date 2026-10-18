@@ -50,8 +50,7 @@ def _run(tmp_path, monkeypatch, capsys, output, receipt_schema):
 
 def test_receipt_schema_rejection_fails_closed(tmp_path, monkeypatch, capsys):
     output = tmp_path / "receipt.json"
-    # A supported schema the receipt can never satisfy (the vendored contract 1.6
-    # refuses "not", which this test used under jsonschema).
+    # A supported schema the receipt can never satisfy.
     code, stdout = _run(tmp_path, monkeypatch, capsys, output, {"required": ["never_present"]})
     assert code == 2
     assert not output.exists()
@@ -64,7 +63,7 @@ def test_receipt_schema_rejection_fails_closed(tmp_path, monkeypatch, capsys):
 
 def test_unsupported_receipt_schema_keyword_fails_closed(tmp_path, monkeypatch, capsys):
     output = tmp_path / "receipt.json"
-    code, stdout = _run(tmp_path, monkeypatch, capsys, output, {"not": {}})
+    code, stdout = _run(tmp_path, monkeypatch, capsys, output, {"patternProperties": {}})
     assert code == 2
     assert not output.exists()
     payload = json.loads(stdout.strip().splitlines()[-1])

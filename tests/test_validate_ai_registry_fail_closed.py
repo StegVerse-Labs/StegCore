@@ -124,7 +124,7 @@ class ValidateAiRegistryFailClosedTest(unittest.TestCase):
     def test_unsupported_schema_keyword_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = self._with_inputs(tmp)
-            (root / "registry" / "ai_entity_schema.json").write_text(json.dumps({"not": {}}))
+            (root / "registry" / "ai_entity_schema.json").write_text(json.dumps({"patternProperties": {}}))
             (root / "registry" / "entities").mkdir()
             (root / "registry" / "entities" / "a.json").write_text(json.dumps({"acknowledgements": ["x"]}))
             result = _run(tmp)

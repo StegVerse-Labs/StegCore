@@ -3,13 +3,14 @@
   "source_repo": "StegVerse-org/StegVerse-SDK",
   "source_url": "https://github.com/StegVerse-org/stegverse-sdk",
   "source_path": "stegverse/structural_validator_candidate.py",
-  "source_commit": "ae4a2a12fb3261e5d9fbee1dae1b4195bcf69fc9",
-  "git_blob_sha1": "2622031c0317afc7a41b1f95e6570d5e8bf62d5c",
-  "sha256": "b488647085aca47d4c87383a23be249c455827a9d1f4deb3487d5821c7bb12a0",
-  "contract_version": "1.6",
+  "source_commit": "148d43a",
+  "git_blob_sha1": "e88f85666f60d5508c70ef0d61daf3f3ede3bdf4",
+  "sha256": "574b017a927acc9e4ef15ef90e0f71ddbdbd854dd1575ffa43bfbc1f1533bef7",
+  "contract_version": "1.7",
   "dialect": "stegverse-bounded-v1",
   "modifications": "none (byte-for-byte copy; module imports only stdlib calendar, hashlib, json, re)",
   "import_diff": null,
   "reason": "Removes the jsonschema dependency from StegCore without adding a StegVerse-SDK dependency (StegVerse-org/StegVerse-SDK#484, RESPONSE-033).",
-  "authority_effect": "NONE"
+  "authority_effect": "NONE",
+  "source_commit_note": "StegVerse-org/StegVerse-SDK#542 merge commit (contract 1.7; branch evaluation no longer fails open)"
 }
