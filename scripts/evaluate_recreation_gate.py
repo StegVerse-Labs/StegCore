@@ -4,15 +4,50 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib.util
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-import jsonschema
+# Vendored StegVerse-SDK structural validator (contract 1.6, stdlib only); loaded by
+# path so this script runs without installing StegCore or any third-party package.
+VALIDATOR_PATH = Path(__file__).resolve().parents[1] / "src" / "stegcore" / "_vendor" / "structural_validator.py"
+
+
+class SchemaError(ValueError):
+    """A schema the vendored validator refuses (invalid or outside its contract)."""
+
+
+class ValidationError(ValueError):
+    """An instance with structural findings against an admitted schema."""
 
 
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_validator():
+    spec = importlib.util.spec_from_file_location("_stegcore_vendored_structural_validator", VALIDATOR_PATH)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load {VALIDATOR_PATH}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def admit(validator, schema) -> str:
+    """Return the schema digest, or raise SchemaError: unsupported keywords/formats fail closed."""
+    digest = hashlib.sha256(validator.canonical_bytes(schema)).hexdigest()
+    admitted = validator.check_schema(schema, digest)
+    if not admitted["valid"]:
+        raise SchemaError([f"{e['path'] or '/'}:{e['code']}" for e in admitted["errors"]])
+    return digest
+
+
+def findings(validator, instance, schema, digest) -> list[str]:
+    result = validator.validate(instance, schema, digest)
+    return sorted(f"{e['path'] or '/'}:{e['code']}" for e in result["errors"])
 
 
 def main() -> int:
@@ -27,9 +62,10 @@ def main() -> int:
         request = load(args.request)
         request_schema = load(args.request_schema)
         receipt_schema = load(args.receipt_schema)
-        jsonschema.Draft202012Validator.check_schema(request_schema)
-        jsonschema.Draft202012Validator.check_schema(receipt_schema)
-    except (OSError, ValueError, jsonschema.exceptions.SchemaError) as exc:
+        validator = load_validator()
+        request_digest = admit(validator, request_schema)
+        receipt_digest = admit(validator, receipt_schema)
+    except (OSError, ImportError, ValueError, TypeError, RecursionError) as exc:
         print(json.dumps({
             "disposition": "FAIL_CLOSED",
             "failed_predicate": "RECREATION_SOURCE_EVIDENCE_VALID",
@@ -38,12 +74,8 @@ def main() -> int:
         }, sort_keys=True))
         return 2
     try:
-        request_errors = sorted(
-            jsonschema.Draft202012Validator(
-                request_schema, format_checker=jsonschema.FormatChecker(),
-            ).iter_errors(request),
-            key=lambda error: (tuple(map(str, error.absolute_path)), error.message),
-        )
+        # format date/date-time is asserted by the vendored contract (FormatChecker parity).
+        request_errors = findings(validator, request, request_schema, request_digest)
     except (TypeError, ValueError, KeyError, RecursionError) as exc:
         print(json.dumps({
             "disposition": "FAIL_CLOSED",
@@ -56,7 +88,7 @@ def main() -> int:
         print(json.dumps({
             "disposition": "FAIL_CLOSED",
             "failed_predicate": "RECREATION_REQUEST_SCHEMA_VALID",
-            "errors": [error.message for error in request_errors],
+            "errors": request_errors,
             "authority_effect": "NONE",
         }, sort_keys=True))
         return 2
@@ -104,13 +136,12 @@ def main() -> int:
         return 2
 
     try:
-        jsonschema.Draft202012Validator(
-            receipt_schema,
-            format_checker=jsonschema.FormatChecker(),
-        ).validate(receipt)
+        receipt_errors = findings(validator, receipt, receipt_schema, receipt_digest)
+        if receipt_errors:
+            raise ValidationError(receipt_errors)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    except (OSError, TypeError, ValueError, jsonschema.exceptions.ValidationError, RecursionError) as exc:
+    except (OSError, TypeError, ValueError, RecursionError) as exc:
         print(json.dumps({
             "disposition": "FAIL_CLOSED",
             "failed_predicate": "RECREATION_RECEIPT_VALID_AND_PERSISTED",

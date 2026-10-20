@@ -68,12 +68,23 @@ class SVGNativeAdapterTests(unittest.TestCase):
         }
 
     def test_governance_schema_valid_is_not_authentication(self):
+        from stegcore._vendor import structural_validator
+
         r = evaluate_native_source(request(), governance_stage_vector=self.stage_vector())
-        self.assertEqual(r["governance_stage_vector_status"], "SCHEMA_VALID_SOURCE_ONLY")
-        self.assertEqual(r["disposition"], "ALLOW")
         self.assertEqual(r["authority_effect"], "NONE")
         self.assertFalse(r["authentic_consequence_observed"])
         self.assertFalse(r["original_master_records_reconstruction_observed"])
+        if "prefixItems" not in structural_validator.SUPPORTED:
+            # Contract 1.6 does not support prefixItems: the pinned Governance schema is
+            # refused at admission and the adapter fails closed, never a silent pass.
+            self.assertEqual(r["governance_stage_vector_status"], "INVALID")
+            self.assertEqual(r["disposition"], "FAIL_CLOSED")
+            self.assertIn("GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:UNSUPPORTED_KEYWORD:prefixItems",
+                          r["governance_validation_errors"])
+            self.assertIsNone(r["governance_stage_vector_sha256"])
+            return
+        self.assertEqual(r["governance_stage_vector_status"], "SCHEMA_VALID_SOURCE_ONLY")
+        self.assertEqual(r["disposition"], "ALLOW")
         self.assertTrue(r["governance_stage_vector_sha256"])
 
     def test_shape_only_vector_fails_closed(self):
@@ -94,6 +105,14 @@ class SVGNativeAdapterTests(unittest.TestCase):
         r = evaluate_native_source(request(authority=False), governance_stage_vector=self.stage_vector("ALLOW"))
         self.assertEqual(r["native_disposition"], "DENY")
         self.assertEqual(r["disposition"], "FAIL_CLOSED")
+        from stegcore._vendor import structural_validator
+
+        if "prefixItems" not in structural_validator.SUPPORTED:
+            # Contract 1.6: the pinned schema is refused first, so the vector never
+            # reaches the disposition comparison; still fail closed.
+            self.assertIn("GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:UNSUPPORTED_KEYWORD:prefixItems",
+                          r["governance_validation_errors"])
+            return
         self.assertIn("AGGREGATE_DISPOSITION_CONFLICTS_WITH_NATIVE_EVALUATION", r["governance_validation_errors"])
 
     def test_stage_order_and_missing_evidence_fail_closed(self):

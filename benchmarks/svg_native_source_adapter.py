@@ -8,11 +8,10 @@ from __future__ import annotations
 from hashlib import sha256
 import json
 from pathlib import Path
-from jsonschema import Draft202012Validator
-from jsonschema.exceptions import SchemaError
 import time
 from typing import Any
 
+from stegcore._vendor import structural_validator
 from stegcore.three_layer import ThreeLayerRequest, evaluate_three_layer
 
 GOVERNANCE_SCHEMA = "StegVerse-Labs/Governance/schemas/admissibility_stage_vector.schema.json"
@@ -34,11 +33,19 @@ def evaluate_native_source(request: ThreeLayerRequest, *, governance_stage_vecto
         schema_path = Path(__file__).parent / "schemas/governance_admissibility_stage_vector.schema.json"
         try:
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
-            Draft202012Validator.check_schema(schema)
-            validator = Draft202012Validator(schema)
-            stage_errors = sorted(e.message for e in validator.iter_errors(governance_stage_vector))
+            # Vendored SDK structural validator (stdlib only). A schema keyword outside
+            # its contract (e.g. prefixItems under contract 1.6) is refused at admission
+            # and fails closed here; it is never silently ignored.
+            digest = sha256(structural_validator.canonical_bytes(schema)).hexdigest()
+            admitted = structural_validator.check_schema(schema, digest)
+            if not admitted["valid"]:
+                stage_errors = sorted(
+                    f"GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:{e['code']}" for e in admitted["errors"])
+            else:
+                findings = structural_validator.validate(governance_stage_vector, schema, digest)
+                stage_errors = sorted(f"{e['path'] or '/'}:{e['code']}" for e in findings["errors"])
             stage_status = "INVALID" if stage_errors else "SCHEMA_VALID_SOURCE_ONLY"
-        except (OSError, ValueError, TypeError, SchemaError, RecursionError, OverflowError, UnicodeError) as exc:
+        except (OSError, ValueError, TypeError, KeyError, RecursionError, OverflowError, UnicodeError) as exc:
             stage_errors = [f"GOVERNANCE_SCHEMA_UNAVAILABLE_OR_INVALID:{type(exc).__name__}"]
             stage_status = "INVALID"
         if not stage_errors and not isinstance(governance_stage_vector, dict):
