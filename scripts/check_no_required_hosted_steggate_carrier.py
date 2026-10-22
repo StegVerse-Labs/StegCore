@@ -47,8 +47,8 @@ if 'RESIDENT_RUNTIME_REQUIRED' not in heartbeat:
     raise SystemExit('HOSTED_STEGGATE_CARRIER_FAIL: reusable heartbeat path does not fail toward resident runtime')
 if 'STEGGATE_CANONICAL_RUNTIME=RESIDENT_STEGVERSE' not in fallback:
     raise SystemExit('HOSTED_STEGGATE_CARRIER_FAIL: fallback path does not declare resident canonical runtime')
-if 'STEGGATE_FALLBACK_SELECTION=EXPLICIT_OPT_IN_ONLY' not in fallback:
-    raise SystemExit('HOSTED_STEGGATE_CARRIER_FAIL: fallback path is not explicit-opt-in only')
+if 'STEGGATE_FALLBACK_SELECTION=DISABLED' not in fallback:
+    raise SystemExit('HOSTED_STEGGATE_CARRIER_FAIL: third-party fallback is not disabled')
 
 print('HOSTED_STEGGATE_CARRIER_RETIREMENT=PASS')
 print('CANONICAL_RUNTIME=RESIDENT_STEGVERSE')
