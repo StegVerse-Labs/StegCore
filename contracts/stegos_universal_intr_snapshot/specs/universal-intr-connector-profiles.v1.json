@@ -16,6 +16,38 @@
   "profiles": [
     {
       "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "sdk-manifest-ingress",
+      "request_class": "SDK_MANIFEST_INGRESS",
+      "payload_schema": "stegverse.ingress-manifest.v1",
+      "operations": [
+        "SUBMIT_MANIFEST"
+      ],
+      "source": {
+        "boundary": "DEVICE_SYSTEM",
+        "subsystem": "ExternalNode:ManifestClient"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "SDK:ManifestIngress"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "SDK:ManifestIngress"
+        },
+        "destination": {
+          "boundary": "DEVICE_SYSTEM",
+          "subsystem": "ExternalNode:ManifestClient"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-org/StegVerse-SDK",
+      "custody_mode": "REFERENCE",
+      "display_projection": null,
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
       "profile_id": "evaluator-read-review",
       "request_class": "EVALUATOR_READ_REVIEW",
       "payload_schema": "stegverse.evaluator_review.interlock_request.v1",
@@ -176,6 +208,44 @@
     },
     {
       "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "sv002-self-characterization",
+      "request_class": "EXTERNAL_ORGANIZATION_INTERACTION",
+      "payload_schema": "stegverse.external_organization.interlock_request.v1",
+      "operations": [
+        "REQUEST_SELF_CHARACTERIZATION"
+      ],
+      "source": {
+        "boundary": "DEVICE_SYSTEM",
+        "subsystem": "Site:SV002SelfCharacterization"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "SV002:SelfCharacterization"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "SV002:SelfCharacterization"
+        },
+        "destination": {
+          "boundary": "DEVICE_SYSTEM",
+          "subsystem": "Site:SV002SelfCharacterization"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-002/.github",
+      "custody_mode": "EXACT_BYTES",
+      "display_projection": "Site:SV002SelfCharacterization",
+      "authorization_required": true,
+      "authority_effect": "NONE",
+      "materialization_extension_fields": [
+        "sv002_request",
+        "goal_task_id",
+        "cosv_task_vector",
+        "invocation_count"
+      ]
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
       "profile_id": "device-kv",
       "request_class": "DEVICE_KV_INTR",
       "payload_schema": "kv.interlock.request.v1",
@@ -206,7 +276,11 @@
       "custody_mode": "CANONICAL_STATE_CANDIDATE",
       "display_projection": "Site:MyKV",
       "authorization_required": true,
-      "authority_effect": "NONE"
+      "authority_effect": "NONE",
+      "materialization_extension_fields": [
+        "portable_payload",
+        "kv_request"
+      ]
     },
     {
       "schema": "stegverse.universal-intr.connector-profile/v1",
@@ -243,29 +317,28 @@
     },
     {
       "schema": "stegverse.universal-intr.connector-profile/v1",
-      "profile_id": "kv-skap",
-      "request_class": "KV_SKAP_INTR",
-      "payload_schema": "stegverse.skap.reference-request/v1",
+      "profile_id": "external-provider-operation",
+      "request_class": "EXTERNAL_PROVIDER_OPERATION",
+      "payload_schema": "stegverse.external-provider.operation-request/v1",
       "operations": [
-        "RESOLVE_REFERENCE",
-        "VERIFY_SESSION"
+        "REQUEST_PROVIDER_OPERATION"
       ],
       "source": {
-        "boundary": "KV",
-        "subsystem": "KnowledgeVault:SKAPClient"
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "LLMAdapter:ProviderOperationClient"
       },
       "destination": {
-        "boundary": "SKAP_VAULT",
-        "subsystem": "SKAP:Vault"
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "TVC:ProviderOperationBroker"
       },
       "response": {
         "source": {
-          "boundary": "SKAP_VAULT",
-          "subsystem": "SKAP:Vault"
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "TVC:ProviderOperationBroker"
         },
         "destination": {
-          "boundary": "KV",
-          "subsystem": "KnowledgeVault:SKAPClient"
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "LLMAdapter:ProviderOperationClient"
         }
       },
       "downstream_owner_ref": "StegVerse-Labs/TVC",
@@ -369,6 +442,79 @@
       "downstream_owner_ref": "StegVerse-Labs/StegCore#163",
       "custody_mode": "REFERENCE",
       "display_projection": null,
+      "authorization_required": true,
+      "authority_effect": "NONE"
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "heterogeneous-interop",
+      "request_class": "HETEROGENEOUS_INTEROP",
+      "payload_schema": "stegverse.intr.interop-packet/v1",
+      "operations": [
+        "RELAY",
+        "ACKNOWLEDGE",
+        "TIMEOUT"
+      ],
+      "source": {
+        "boundary": "EXTERNAL_SYSTEM",
+        "subsystem": "ExternalSystem:InteropClient"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "InTr:HeterogeneousInterop"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "InTr:HeterogeneousInterop"
+        },
+        "destination": {
+          "boundary": "EXTERNAL_SYSTEM",
+          "subsystem": "ExternalSystem:InteropClient"
+        }
+      },
+      "downstream_owner_ref": "StegVerse-Labs/StegOS",
+      "custody_mode": "REFERENCE",
+      "display_projection": null,
+      "authorization_required": true,
+      "authority_effect": "NONE",
+      "materialization_extension_fields": [
+        "interop_client_state",
+        "verification_record",
+        "sequence",
+        "timeout_ref"
+      ]
+    },
+    {
+      "schema": "stegverse.universal-intr.connector-profile/v1",
+      "profile_id": "sdk-publisher-review",
+      "request_class": "SDK_PUBLISHER_EVALUATOR_REPORT",
+      "payload_schema": "stegverse.publisher.artifact-transfer/v1",
+      "operations": [
+        "TRANSFER",
+        "EXPORT"
+      ],
+      "source": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "SDK:ReviewerEvidenceExport"
+      },
+      "destination": {
+        "boundary": "STEGOS_ECOSYSTEM",
+        "subsystem": "Publisher:Ingress"
+      },
+      "response": {
+        "source": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "Publisher:Export"
+        },
+        "destination": {
+          "boundary": "STEGOS_ECOSYSTEM",
+          "subsystem": "SDK:ReviewerReturn"
+        }
+      },
+      "downstream_owner_ref": "GCAT-BCAT-Engine/Publisher",
+      "custody_mode": "EXACT_BYTES",
+      "display_projection": "SDK:EvaluatorReviewReturn",
       "authorization_required": true,
       "authority_effect": "NONE"
     }
