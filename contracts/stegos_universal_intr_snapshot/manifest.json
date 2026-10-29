@@ -1,7 +1,7 @@
 {
   "schema": "stegcore.stegos-universal-intr-snapshot-manifest.v1",
   "stegos_repository": "StegVerse-Labs/StegOS",
-  "stegos_source_commit": "c5263e18aa2be36d7c0fdeaffdbe53315b9f2140",
+  "stegos_source_commit": "500a9f07ae6fb6ec73ee41dc9842e55412425695",
   "source_files": [
     {
       "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/__init__.py",
@@ -25,7 +25,7 @@
     },
     {
       "snapshot_path": "contracts/stegos_universal_intr_snapshot/specs/universal-intr-connector-profiles.v1.json",
-      "source_blob_sha": "57331f4665ae81d36abe9a22db4896ec3b383784"
+      "source_blob_sha": "280e869ceeb490e747b64094e7513ba4c3cca014"
     }
   ],
   "authority_effect": "NONE_SNAPSHOT_ONLY",

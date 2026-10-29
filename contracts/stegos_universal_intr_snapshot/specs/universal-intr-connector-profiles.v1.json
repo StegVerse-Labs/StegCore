@@ -112,70 +112,6 @@
     },
     {
       "schema": "stegverse.universal-intr.connector-profile/v1",
-      "profile_id": "hil-ingress-custody",
-      "request_class": "HIL_INGRESS_CUSTODY",
-      "payload_schema": "stegverse.hil.intr_payload_binding/v1",
-      "operations": [
-        "ACCEPT_CUSTODY"
-      ],
-      "source": {
-        "boundary": "STEGOS_ECOSYSTEM",
-        "subsystem": "HIL:Ingress"
-      },
-      "destination": {
-        "boundary": "STEGOS_ECOSYSTEM",
-        "subsystem": "HIL:Custody"
-      },
-      "response": {
-        "source": {
-          "boundary": "STEGOS_ECOSYSTEM",
-          "subsystem": "HIL:Custody"
-        },
-        "destination": {
-          "boundary": "STEGOS_ECOSYSTEM",
-          "subsystem": "HIL:Ingress"
-        }
-      },
-      "downstream_owner_ref": "StegVerse-org/LLM-adapter",
-      "custody_mode": "EXACT_BYTES",
-      "display_projection": null,
-      "authorization_required": false,
-      "authority_effect": "NONE"
-    },
-    {
-      "schema": "stegverse.universal-intr.connector-profile/v1",
-      "profile_id": "hil-tvc-lifecycle",
-      "request_class": "HIL_TVC_LIFECYCLE",
-      "payload_schema": "stegverse.hil.intr_payload_binding/v1",
-      "operations": [
-        "ADMIT_LIFECYCLE"
-      ],
-      "source": {
-        "boundary": "STEGOS_ECOSYSTEM",
-        "subsystem": "HIL:Custody"
-      },
-      "destination": {
-        "boundary": "STEGOS_ECOSYSTEM",
-        "subsystem": "TVC:HIL-Lifecycle"
-      },
-      "response": {
-        "source": {
-          "boundary": "STEGOS_ECOSYSTEM",
-          "subsystem": "TVC:HIL-Lifecycle"
-        },
-        "destination": {
-          "boundary": "STEGOS_ECOSYSTEM",
-          "subsystem": "HIL:Custody"
-        }
-      },
-      "downstream_owner_ref": "StegVerse-Labs/TVC",
-      "custody_mode": "REFERENCE",
-      "display_projection": null,
-      "authorization_required": true,
-      "authority_effect": "NONE"
-    },
-    {
-      "schema": "stegverse.universal-intr.connector-profile/v1",
       "profile_id": "sv002-public-observe",
       "request_class": "SV002_PUBLIC_OBSERVE",
       "payload_schema": "stegverse.sv002.public_observation.interlock_request.v1",
@@ -324,8 +260,8 @@
         "REQUEST_PROVIDER_OPERATION"
       ],
       "source": {
-        "boundary": "STEGOS_ECOSYSTEM",
-        "subsystem": "LLMAdapter:ProviderOperationClient"
+        "boundary": "DEVICE_SYSTEM",
+        "subsystem": "ExternalNode:HealthyNodeProviderOperationClient"
       },
       "destination": {
         "boundary": "STEGOS_ECOSYSTEM",
@@ -337,41 +273,8 @@
           "subsystem": "TVC:ProviderOperationBroker"
         },
         "destination": {
-          "boundary": "STEGOS_ECOSYSTEM",
-          "subsystem": "LLMAdapter:ProviderOperationClient"
-        }
-      },
-      "downstream_owner_ref": "StegVerse-Labs/TVC",
-      "custody_mode": "REFERENCE",
-      "display_projection": null,
-      "authorization_required": true,
-      "authority_effect": "NONE"
-    },
-    {
-      "schema": "stegverse.universal-intr.connector-profile/v1",
-      "profile_id": "tvc-lifecycle-relay",
-      "request_class": "TVC_LIFECYCLE_RELAY",
-      "payload_schema": "stegverse.tvc.lifecycle-intent/v1",
-      "operations": [
-        "ADMIT_LIFECYCLE",
-        "RELAY"
-      ],
-      "source": {
-        "boundary": "STEGOS_ECOSYSTEM",
-        "subsystem": "Source:Custody"
-      },
-      "destination": {
-        "boundary": "STEGOS_ECOSYSTEM",
-        "subsystem": "TVC:Lifecycle"
-      },
-      "response": {
-        "source": {
-          "boundary": "STEGOS_ECOSYSTEM",
-          "subsystem": "TVC:Lifecycle"
-        },
-        "destination": {
-          "boundary": "STEGOS_ECOSYSTEM",
-          "subsystem": "Source:Custody"
+          "boundary": "DEVICE_SYSTEM",
+          "subsystem": "ExternalNode:HealthyNodeProviderOperationClient"
         }
       },
       "downstream_owner_ref": "StegVerse-Labs/TVC",
