@@ -19,7 +19,7 @@ def main() -> int:
         manifest = json.loads((SNAP / "manifest.json").read_text(encoding="utf-8"))
         if manifest.get("schema") != "stegcore.stegos-universal-intr-snapshot-manifest.v1":
             raise ValueError("snapshot manifest schema")
-        if manifest.get("stegos_source_commit") != "5231765d07b5b69b3ef52ad9912251d956a513d1":
+        if manifest.get("stegos_source_commit") != "500a9f07ae6fb6ec73ee41dc9842e55412425695":
             raise ValueError("unexpected StegOS source commit")
         if manifest.get("authority_effect") != "NONE_SNAPSHOT_ONLY":
             raise ValueError("snapshot authority effect")
@@ -48,7 +48,7 @@ def main() -> int:
         print(f"STEGOS_UNIVERSAL_INTR_SNAPSHOT: FAIL: {exc}")
         return 1
     print("STEGOS_UNIVERSAL_INTR_SNAPSHOT: PASS")
-    print("stegos_commit=5231765d07b5b69b3ef52ad9912251d956a513d1")
+    print("stegos_commit=500a9f07ae6fb6ec73ee41dc9842e55412425695")
     print("profile=governance-external-action")
     print("authority_effect=NONE")
     return 0

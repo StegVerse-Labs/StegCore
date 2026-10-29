@@ -503,3 +503,7 @@ AUTHENTIC_MASTER_RECORDS_ORGANIZATION_RECORD: false
 ACTIVATED: false
 COMPLETE: false
 ```
+
+## Snapshot re-vendored: the KV <-> SKAP InTr profiles are retired (2026-10-25)
+
+Ruling StegVerse-org/.github#167 c6393224851 (3) removes the intra-organisation `kv-skap`, `kv-skap-custody` and `kv-skap-account-metadata` profiles from StegOS. `contracts/stegos_universal_intr_snapshot/` is re-vendored from StegOS commit `500a9f07ae6fb6ec73ee41dc9842e55412425695`, the head of StegVerse-Labs/StegOS#428 after the normal merge of StegOS main with #429 (the earlier head `c5263e18aa2be36d7c0fdeaffdbe53315b9f2140` is superseded; only the registry blob changed, to `280e869c`). Each file is linked by its git blob sha in `manifest.json`, and `scripts/verify_stegos_universal_intr_snapshot.py` pins the commit. The re-vendor also brings `stegos/intr_backbone.py` and the registry up to that commit, so the registry also lacks the LLM-adapter-hop profiles that #429 removed. `tests/test_stegos_snapshot_retired_kv_skap_profiles.py` guards the retired ids. The earlier StegOS commit `5231765d07b5b69b3ef52ad9912251d956a513d1` named above is historical.
