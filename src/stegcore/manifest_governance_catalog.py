@@ -21,10 +21,11 @@ Every non-ALLOW disposition carries the six-field grammar:
 failure_code, failed_predicate, required_evidence_or_repair,
 retry_entrypoint, owning_existing_goal, next_attempt.
 
-This module is the FINAL REVIEW candidate for the catalog. Under the
-owner's M2 determination (2026-11-05), the tagged release of this
-code is the catalog's FREEZE: rules established in code, frozen by
-version. The module is stdlib-only and holds no authority of its own;
+This module is the catalog in force at version 1.0.0, frozen by the
+tag manifest-governance-catalog/v1.0.0 under the owner's M2
+determination (2026-11-05): rules established in code, frozen by
+version. Changes to these rules are a new version, never an edit
+of this one. The module is stdlib-only and holds no authority of its own;
 it computes dispositions over supplied evidence and nothing else.
 """
 
@@ -35,7 +36,7 @@ from dataclasses import dataclass, field
 from typing import Any, Mapping, Optional, Sequence
 
 CATALOG_ID = "MANIFEST-GOVERNANCE-001"
-CATALOG_VERSION = "0.1.0"  # pre-freeze candidate; the freeze tag sets 1.0.0
+CATALOG_VERSION = "1.0.0"  # frozen at tag manifest-governance-catalog/v1.0.0
 OWNING_GOAL = "StegVerse product revenue launch (goal_f74ab505b022)"
 
 ALLOW = "ALLOW"
