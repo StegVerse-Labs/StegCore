@@ -33,6 +33,7 @@ _PROFILE_FIELDS = {
     "custody_mode", "display_projection", "authorization_required",
     "authority_effect",
 }
+_PROFILE_OPTIONAL_FIELDS = {"materialization_extension_fields"}
 _ENDPOINT_FIELDS = {"boundary", "subsystem"}
 _CUSTODY_MODES = {"NONE", "REFERENCE", "EXACT_BYTES", "CANONICAL_STATE_CANDIDATE"}
 
@@ -86,10 +87,14 @@ class ConnectorProfile:
     custody_mode: str
     display_projection: str | None
     authorization_required: bool
+    materialization_extension_fields: tuple[str, ...] = ()
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "ConnectorProfile":
-        if not isinstance(value, Mapping) or set(value) != _PROFILE_FIELDS:
+        if not isinstance(value, Mapping):
+            raise UniversalInTrBackboneError("connector_profile_field_set_invalid")
+        fields = set(value)
+        if not _PROFILE_FIELDS.issubset(fields) or not fields.issubset(_PROFILE_FIELDS | _PROFILE_OPTIONAL_FIELDS):
             raise UniversalInTrBackboneError("connector_profile_field_set_invalid")
         if value.get("schema") != PROFILE_SCHEMA:
             raise UniversalInTrBackboneError("connector_profile_schema_invalid")
@@ -122,6 +127,11 @@ class ConnectorProfile:
             raise UniversalInTrBackboneError("connector_profile_display_projection_invalid")
         if not isinstance(value.get("authorization_required"), bool):
             raise UniversalInTrBackboneError("connector_profile_authorization_invalid")
+        extensions = value.get("materialization_extension_fields") or []
+        if not isinstance(extensions, list) or len(set(extensions)) != len(extensions):
+            raise UniversalInTrBackboneError("connector_profile_materialization_extension_fields_invalid")
+        if not all(isinstance(item, str) and item for item in extensions):
+            raise UniversalInTrBackboneError("connector_profile_materialization_extension_fields_invalid")
         return cls(
             profile_id=value["profile_id"], request_class=value["request_class"],
             payload_schema=value["payload_schema"], operations=tuple(operations),
@@ -129,6 +139,7 @@ class ConnectorProfile:
             downstream_owner_ref=value["downstream_owner_ref"],
             custody_mode=custody_mode, display_projection=display,
             authorization_required=value["authorization_required"],
+            materialization_extension_fields=tuple(extensions),
         )
 
 
