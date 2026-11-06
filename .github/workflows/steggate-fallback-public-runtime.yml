@@ -1,10 +1,7 @@
-name: StegGate Optional Hosted Fallback Declaration
+name: StegGate Provider-Free Runtime Declaration
 
-# This workflow intentionally does not launch StegGate, download tunnel software,
-# create a public tunnel, mutate GitHub state, finalize activation, supervise a
-# lease, or create runtime evidence. Canonical runtime work belongs to the
-# resident StegVerse lane. A third-party carrier may only be selected later by
-# an explicitly authorized fallback path outside this validation surface.
+# This workflow is non-authorizing and declares no hosted fallback.
+# Runtime admission remains with the original sovereign state-transition authorities.
 on:
   workflow_dispatch:
 
@@ -34,7 +31,7 @@ jobs:
           STEGGATE_HOSTED_RUNTIME=false
           STEGGATE_HOSTED_PUBLIC_TUNNEL=false
           STEGGATE_THIRD_PARTY_CARRIER_REQUIRED=false
-          STEGGATE_FALLBACK_SELECTION=EXPLICIT_OPT_IN_ONLY
+          STEGGATE_FALLBACK_SELECTION=DISABLED
           STEGGATE_GITHUB_RUNTIME_AUTHORITY=NONE
           STEGGATE_ACTIVATION_EFFECT=NONE
           STEGGATE_REPOSITORY_MUTATION=NONE
@@ -69,9 +66,9 @@ jobs:
           assert 'STEGGATE_CANONICAL_RUNTIME=RESIDENT_STEGVERSE' in source
           assert 'STEGGATE_HOSTED_RUNTIME=false' in source
           assert 'STEGGATE_THIRD_PARTY_CARRIER_REQUIRED=false' in source
-          assert 'STEGGATE_FALLBACK_SELECTION=EXPLICIT_OPT_IN_ONLY' in source
+          assert 'STEGGATE_FALLBACK_SELECTION=DISABLED' in source
           assert all(marker not in source for marker in forbidden), forbidden
-          print('STEGGATE_OPTIONAL_HOSTED_FALLBACK_DECLARATION=PASS')
+          print('STEGGATE_PROVIDER_FREE_DECLARATION=PASS')
           print('STEGGATE_CANONICAL_RUNTIME=RESIDENT_STEGVERSE')
           print('STEGGATE_THIRD_PARTY_CARRIER_REQUIRED=false')
           print('STEGGATE_ACTIVATION_EFFECT=NONE')

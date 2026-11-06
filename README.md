@@ -255,3 +255,7 @@ Run `python -m benchmarks.svg_governance_cycle --iterations 1000` and `python -m
 ## Licensing candidate (not an operative grant)
 
 A dual-license decision candidate and nonbinding commercial terms outline are under review in `docs/licensing/`. No root LICENSE has been adopted by this candidate, and public repository access alone grants no additional rights. See `docs/licensing/DUAL_LICENSE_DECISION_CANDIDATE.md` and `docs/licensing/LICENSING_MIRROR_HANDOFF.md`.
+
+## Provider-free StegGate declaration (2026-10-22)
+
+For enterprise eradication goal `ENTERPRISE-HOST-PROVIDER-ERADICATION-001` / COSV `40000100100000` (StegHealth #83), the proposed workflow repair disables third-party fallback selection. It does not grant resident runtime authority or establish sovereign observation, exact-head CI, independent review, provider shutdown, or protected merge. No replacement provider is authorized.
