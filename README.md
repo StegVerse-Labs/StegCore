@@ -1,6 +1,8 @@
 # StegCore / StegGate
 
-StegCore is the canonical StegVerse commit-time governance runtime. **StegGate** is its portable product surface for evaluating one proposed consequential transition before execution.
+StegCore is the canonical StegVerse commit-time governance mechanism: it applies established governance rules to the data carried by a manifest and records their application. It does not author those rules. **StegGate** is its portable product surface for evaluating one proposed consequential transition before execution.
+
+StegGovernance is the capability to govern the manifested data. A manifest states the route. InTr transfers between Organizations; each receiving Organization admits at ingress under its own established rules. The [system-division statement](docs/SYSTEM_DIVISION.md) records the complete role boundaries and the matched receipt pair that evidences inter-Org continuity.
 
 Current portable product version: **0.3.0**.
 
