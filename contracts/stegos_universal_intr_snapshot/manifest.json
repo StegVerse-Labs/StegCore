@@ -1,7 +1,7 @@
 {
   "schema": "stegcore.stegos-universal-intr-snapshot-manifest.v1",
   "stegos_repository": "StegVerse-Labs/StegOS",
-  "stegos_source_commit": "5231765d07b5b69b3ef52ad9912251d956a513d1",
+  "stegos_source_commit": "500a9f07ae6fb6ec73ee41dc9842e55412425695",
   "source_files": [
     {
       "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/__init__.py",
@@ -17,7 +17,7 @@
     },
     {
       "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/intr_backbone.py",
-      "source_blob_sha": "f2dffb6d53444282c317b0e1467fda5a30867be2"
+      "source_blob_sha": "c48322432da7be97bd9852eca55919dcbed4504b"
     },
     {
       "snapshot_path": "contracts/stegos_universal_intr_snapshot/stegos/interlock_reference_adapter.py",
@@ -25,7 +25,7 @@
     },
     {
       "snapshot_path": "contracts/stegos_universal_intr_snapshot/specs/universal-intr-connector-profiles.v1.json",
-      "source_blob_sha": "5b21b1d208c1aa025558ff4a6c37a232cdb49c04"
+      "source_blob_sha": "280e869ceeb490e747b64094e7513ba4c3cca014"
     }
   ],
   "authority_effect": "NONE_SNAPSHOT_ONLY",
